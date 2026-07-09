@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 07 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* vetor visual */
+.vec-wrap{display:flex;align-items:center;gap:4px;margin:.75rem 0;flex-wrap:wrap;}
+.vec-val{width:44px;height:44px;border-radius:8px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green-400);}
+.vec-label{font-size:.7rem;color:var(--text-muted);margin-right:8px;white-space:nowrap;}
+.vec-dots{color:var(--text-muted);font-size:1rem;padding:0 4px;}
+
+/* espaço vetorial diagram */
+.space-diagram{
+  position:relative;width:100%;height:220px;
+  background:rgba(255,255,255,.02);border:1px solid var(--card-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.space-diagram svg{width:100%;height:100%;}
+
+/* rag flow */
+.rag-flow{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.rag-step{display:flex;align-items:flex-start;gap:14px;padding:.85rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
+.rag-num{width:28px;height:28px;border-radius:7px;background:rgba(74,222,128,.15);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;flex-shrink:0;}
+.rag-body{}
+.rag-title{font-size:.83rem;font-weight:600;color:var(--text-primary);margin-bottom:2px;}
+.rag-desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.rag-code{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green-400);background:rgba(74,222,128,.08);padding:2px 7px;border-radius:5px;display:inline-block;margin-top:3px;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">07</div>
+    <h1 class="capa-titulo">Bancos<br><em>Vetoriais</em> e RAG</h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Início do Bloco 2</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>O que são embeddings e espaços vetoriais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ruler"></i></div><span>Similaridade cosseno e distância euclidiana</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-database"></i></div><span>pgvector — busca vetorial dentro do PostgreSQL</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-network-wired"></i></div><span>Arquitetura RAG — fundamento e implementação</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline RAG completo com pgvector + Python</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir um pipeline RAG: gerar embeddings de documentos, armazenar no pgvector e responder perguntas com contexto recuperado.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Por que este tema agora?</div>
+      <ul class="info-lista">
+        <li>Você já sabe SQL avançado, NoSQL, pipelines de dados</li>
+        <li>RAG é a aplicação mais comum de BD em sistemas de IA hoje</li>
+        <li>pgvector coloca busca vetorial dentro do PostgreSQL que você já conhece</li>
+        <li>Fundamento para aplicações com LLMs que usam dados próprios</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-robot"></i>O que é RAG?</div>
+      <ul class="info-lista">
+        <li><strong>R</strong>etrieval-<strong>A</strong>ugmented <strong>G</strong>eneration</li>
+        <li>LLM responde usando documentos recuperados em tempo real</li>
+        <li>Resolve o problema de "alucinação" e dados desatualizados</li>
+        <li>Usado no ChatGPT, Copilot, Gemini e todas as ferramentas modernas de IA</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>PostgreSQL + extensão <strong>pgvector</strong></li>
+        <li>Python: <strong>sentence-transformers</strong> para gerar embeddings</li>
+        <li>Python: <strong>psycopg2 / SQLAlchemy</strong> para persistir e buscar</li>
+        <li>Opcional: <strong>OpenAI API</strong> para a etapa de geração</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Embeddings e Similaridade ────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Embeddings — representando significado como números</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O problema que embeddings resolvem</div>
+      <p>Modelos de ML trabalham com números — mas dados reais são texto, imagem, áudio. A pergunta é: <strong>como representar "gato" e "felino" de forma que o modelo saiba que são parecidos?</strong></p>
+      <p>A resposta é o <strong>embedding</strong>: uma função que transforma qualquer dado em um vetor de números reais em um espaço de alta dimensão, onde <strong>itens semanticamente similares ficam próximos</strong>.</p>
+      <div class="destaque">
+        <strong>Intuição:</strong> "gato" e "felino" produzem vetores próximos. "gato" e "banco de dados" produzem vetores distantes. A distância no espaço vetorial representa a diferença semântica.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-vector-square"></i>O que é um vetor de embedding</div>
+      <p>Um modelo de embedding transforma texto em um vetor de <strong>N dimensões</strong> (típico: 384, 768, 1536). Cada dimensão captura algum aspecto semântico — nenhum dimensão isolada tem significado claro, mas o conjunto codifica o sentido.</p>
+
+      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.5rem;">Exemplo: vetor de 8 dimensões para "banco de dados relacional" (simplificado)</p>
+      <div class="vec-wrap">
+        <span class="vec-label">"banco de dados relacional"</span>
+        <div class="vec-val">0.42</div>
+        <div class="vec-val">-0.18</div>
+        <div class="vec-val">0.73</div>
+        <div class="vec-val">0.05</div>
+        <div class="vec-val">-0.61</div>
+        <div class="vec-val">0.29</div>
+        <div class="vec-val">0.88</div>
+        <div class="vec-val">-0.34</div>
+        <span class="vec-dots">... 376 mais</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — gerar embeddings com sentence-transformers</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+<span class="cm"># Modelo multilíngue — funciona bem com português</span>
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+<span class="cm"># Gratuito, roda local, 384 dimensões</span>
+
+textos = [
+    <span class="str">"Banco de dados relacional usa tabelas e SQL"</span>,
+    <span class="str">"PostgreSQL é um sistema gerenciador de banco de dados"</span>,
+    <span class="str">"Python é uma linguagem de programação"</span>,
+    <span class="str">"Futebol é o esporte mais popular do Brasil"</span>,
+]
+
+embeddings = modelo.encode(textos)
+print(embeddings.shape)  <span class="cm"># (4, 384) — 4 textos, 384 dimensões cada</span>
+
+<span class="cm"># Ver o vetor do primeiro texto</span>
+print(embeddings[<span class="num">0</span>][:<span class="num">8</span>])  <span class="cm"># primeiras 8 dimensões</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ruler"></i>Medidas de similaridade — cosseno e euclidiana</div>
+      <p>Dado dois vetores, precisamos medir o quão parecidos eles são. As duas métricas mais usadas:</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem;">Similaridade Cosseno</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7;">Mede o <strong>ângulo entre os vetores</strong>. Varia de -1 a 1, onde 1 = idênticos, 0 = sem relação, -1 = opostos. <strong>Não depende do tamanho do vetor</strong> — "banco" e "banco de dados relacional" ficam próximos mesmo tendo comprimentos diferentes.</p>
+        </div>
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem;">Distância Euclidiana</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7;">Mede a <strong>distância geométrica</strong> entre os pontos no espaço. Menor = mais similar. Sensível à magnitude dos vetores — geralmente menos usada para texto.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — calcular similaridade</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer, util
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+
+frases = [
+    <span class="str">"Banco de dados relacional usa SQL"</span>,          <span class="cm"># referência</span>
+    <span class="str">"PostgreSQL é um SGBD relacional"</span>,             <span class="cm"># muito similar</span>
+    <span class="str">"Python é uma linguagem de programação"</span>,       <span class="cm"># pouco similar</span>
+    <span class="str">"O gato dormiu na cadeira"</span>,                    <span class="cm"># não relacionado</span>
+]
+
+embs = modelo.encode(frases)
+
+<span class="cm"># Similaridade cosseno entre a frase 0 e todas as outras</span>
+sims = util.cos_sim(embs[<span class="num">0</span>], embs)
+<span class="kw">for</span> i, (frase, sim) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(frases, sims[<span class="num">0</span>])):
+    print(<span class="fn">f</span><span class="str">"{sim:.3f}  →  {frase}"</span>)
+
+<span class="cm"># Saída esperada:</span>
+<span class="cm"># 1.000  →  Banco de dados relacional usa SQL</span>
+<span class="cm"># 0.812  →  PostgreSQL é um SGBD relacional</span>
+<span class="cm"># 0.341  →  Python é uma linguagem de programação</span>
+<span class="cm"># 0.089  →  O gato dormiu na cadeira</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>pgvector usa três operadores:</strong> <code>&lt;-&gt;</code> distância euclidiana · <code>&lt;=&gt;</code> distância cosseno · <code>&lt;#&gt;</code> produto interno negativo. Para texto, use sempre <code>&lt;=&gt;</code> (cosseno).</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: pgvector ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">pgvector — busca vetorial no PostgreSQL</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plug"></i>Por que pgvector e não Pinecone / Weaviate?</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>pgvector</th><th>Pinecone / Weaviate</th></tr></thead>
+          <tbody>
+            <tr><td>Infraestrutura</td><td>Mesmo PostgreSQL que você já tem</td><td>Serviço separado para manter</td></tr>
+            <tr><td>SQL junto</td><td>✅ JOIN vetorial + SQL na mesma query</td><td>❌ API separada, sem SQL nativo</td></tr>
+            <tr><td>Escala</td><td>Até ~1M vetores com bom desempenho</td><td>Escala massiva (bilhões)</td></tr>
+            <tr><td>Custo</td><td>Gratuito — extensão open source</td><td>Pago acima do free tier</td></tr>
+            <tr><td>Quando usar</td><td>Maioria dos projetos reais</td><td>Escala de produto em produção</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Regra prática:</strong> comece com pgvector. Migre para um banco vetorial dedicado somente quando o volume de vetores ou a latência de busca se tornarem um gargalo real.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wrench"></i>Instalação e configuração do pgvector</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Ativar extensão e criar tabela vetorial</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- 1. Ativar a extensão (uma vez por banco)</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> vector;
+
+<span class="cm">-- 2. Criar tabela com coluna do tipo vector(N)</span>
+<span class="kw">CREATE TABLE</span> documentos (
+  id          <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  titulo      <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+  conteudo    <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+  fonte       <span class="fn">VARCHAR</span>(<span class="num">200</span>),
+  embedding   vector(<span class="num">384</span>),          <span class="cm">-- 384 dim do MiniLM</span>
+  criado_em   <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="cm">-- 3. Criar índice HNSW para busca aproximada rápida (recomendado)</span>
+<span class="kw">CREATE INDEX</span> ON documentos
+  <span class="kw">USING</span> hnsw (embedding vector_cosine_ops)
+  <span class="kw">WITH</span> (m = <span class="num">16</span>, ef_construction = <span class="num">64</span>);
+<span class="cm">-- HNSW = Hierarchical Navigable Small World</span>
+<span class="cm">-- muito mais rápido que busca exata para N > 10k</span></code></pre>
+      </div>
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Neon.tech (sandbox gratuito que usamos) já tem pgvector disponível — é só executar o <code>CREATE EXTENSION</code>. Para instalação local: <code>apt install postgresql-16-pgvector</code> no Ubuntu.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Inserir e buscar vetores com SQL</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Inserir vetor manualmente</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Inserir um documento com embedding (valores fictícios abreviados)</span>
+<span class="kw">INSERT INTO</span> documentos (titulo, conteudo, embedding) <span class="kw">VALUES</span> (
+  <span class="str">'Introdução a SQL'</span>,
+  <span class="str">'SQL é uma linguagem para consultar bancos relacionais...'</span>,
+  <span class="str">'[0.42, -0.18, 0.73, ...]'</span>::vector  <span class="cm">-- cast para tipo vector</span>
+);</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Busca por similaridade cosseno</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Buscar os 5 documentos mais similares a um vetor de query</span>
+<span class="cm">-- O vetor da query vem do Python (substituir pelos valores reais)</span>
+<span class="kw">SELECT</span>
+  id,
+  titulo,
+  conteudo,
+  <span class="num">1</span> <span class="op">-</span> (embedding <span class="op">&lt;=&gt;</span> <span class="str">'[0.38, -0.22, 0.71, ...]'</span>::vector) <span class="kw">AS</span> similaridade
+<span class="kw">FROM</span> documentos
+<span class="kw">ORDER BY</span> embedding <span class="op">&lt;=&gt;</span> <span class="str">'[0.38, -0.22, 0.71, ...]'</span>::vector
+<span class="kw">LIMIT</span> <span class="num">5</span>;
+<span class="cm">-- <=> = distância cosseno (menor = mais similar)</span>
+<span class="cm">-- 1 - distância = similaridade (maior = mais similar)</span>
+
+<span class="cm">-- Combinar busca vetorial com filtro SQL — o poder do pgvector</span>
+<span class="kw">SELECT</span>
+  titulo,
+  conteudo,
+  <span class="num">1</span> <span class="op">-</span> (embedding <span class="op">&lt;=&gt;</span> <span class="str">'[...]'</span>::vector) <span class="kw">AS</span> similaridade
+<span class="kw">FROM</span> documentos
+<span class="kw">WHERE</span> fonte <span class="op">=</span> <span class="str">'manual_bd'</span>                    <span class="cm">-- filtro SQL normal</span>
+  <span class="kw">AND</span> criado_em <span class="op">&gt;</span> <span class="str">'2025-01-01'</span>               <span class="cm">-- outro filtro</span>
+<span class="kw">ORDER BY</span> embedding <span class="op">&lt;=&gt;</span> <span class="str">'[...]'</span>::vector
+<span class="kw">LIMIT</span> <span class="num">3</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-python"></i>Inserir embeddings reais com Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — popular tabela com embeddings reais</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2, os
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+cur = conn.cursor()
+
+<span class="cm"># Documentos a indexar</span>
+documentos = [
+    (<span class="str">"1FN — Primeira Forma Normal"</span>,
+     <span class="str">"Uma tabela está na 1FN quando todos os atributos são atômicos e não há grupos repetidos."</span>,
+     <span class="str">"apostila_normalizacao"</span>),
+    (<span class="str">"INNER JOIN vs LEFT JOIN"</span>,
+     <span class="str">"INNER JOIN retorna apenas linhas com correspondência nos dois lados. LEFT JOIN retorna todos da tabela esquerda."</span>,
+     <span class="str">"apostila_sql"</span>),
+    (<span class="str">"Window Functions"</span>,
+     <span class="str">"Window functions calculam valores sobre um conjunto de linhas sem colapsar o resultado como o GROUP BY faz."</span>,
+     <span class="str">"apostila_sql"</span>),
+    (<span class="str">"Redis — Padrão Cache-Aside"</span>,
+     <span class="str">"No padrão Cache-Aside, a aplicação lê do cache primeiro. Se não encontrar, busca na fonte e armazena no cache com TTL."</span>,
+     <span class="str">"apostila_nosql"</span>),
+]
+
+<span class="cm"># Gerar embeddings em batch (eficiente)</span>
+textos = [titulo + <span class="str">" "</span> + conteudo <span class="kw">for</span> titulo, conteudo, _ <span class="kw">in</span> documentos]
+embeddings = modelo.encode(textos, show_progress_bar=<span class="kw">True</span>)
+
+<span class="cm"># Inserir no banco</span>
+<span class="kw">for</span> (titulo, conteudo, fonte), emb <span class="kw">in</span> <span class="fn">zip</span>(documentos, embeddings):
+    cur.execute(
+        <span class="str">"INSERT INTO documentos (titulo, conteudo, fonte, embedding) VALUES (%s, %s, %s, %s)"</span>,
+        (titulo, conteudo, fonte, emb.tolist())
+    )
+
+conn.commit()
+cur.close()
+conn.close()
+print(<span class="fn">f</span><span class="str">"{len(documentos)} documentos indexados."</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · RAG + Prática</span></div>
+
+  <!-- ── AULA 3: Arquitetura RAG ───────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Arquitetura RAG — Retrieval-Augmented Generation</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>Por que RAG existe — o problema dos LLMs</div>
+      <p>LLMs como GPT-4 e Llama são poderosos, mas têm limitações críticas para uso empresarial:</p>
+      <ul class="icon-list" style="margin-bottom:1rem;">
+        <li><i class="fas fa-times" style="color:#f87171;"></i><span><strong>Conhecimento estático:</strong> dados de treino têm data de corte — não sabe de eventos recentes</span></li>
+        <li><i class="fas fa-times" style="color:#f87171;"></i><span><strong>Alucinação:</strong> inventa fatos plausíveis mas incorretos com confiança</span></li>
+        <li><i class="fas fa-times" style="color:#f87171;"></i><span><strong>Sem dados privados:</strong> não conhece seus documentos internos, manuais, contratos</span></li>
+        <li><i class="fas fa-times" style="color:#f87171;"></i><span><strong>Janela de contexto limitada:</strong> não dá para enviar mil páginas de documentos</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>RAG resolve tudo isso:</strong> em vez de tentar colocar toda a base de conhecimento no prompt, o sistema <em>recupera</em> dinamicamente apenas os trechos mais relevantes para aquela pergunta específica.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>As duas fases do RAG</div>
+
+      <p style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">Fase 1 — Indexação (feita uma vez, offline)</p>
+      <div class="rag-flow">
+        <div class="rag-step">
+          <div class="rag-num">1</div>
+          <div class="rag-body">
+            <div class="rag-title">Carregar documentos</div>
+            <div class="rag-desc">PDFs, Markdown, banco de dados, APIs — qualquer fonte de texto</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">2</div>
+          <div class="rag-body">
+            <div class="rag-title">Chunking — dividir em pedaços</div>
+            <div class="rag-desc">Documentos grandes são divididos em chunks de ~300–500 tokens com sobreposição</div>
+            <div class="rag-code">chunk_size=500, overlap=50</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">3</div>
+          <div class="rag-body">
+            <div class="rag-title">Gerar embeddings de cada chunk</div>
+            <div class="rag-desc">Modelo de embedding transforma cada chunk em vetor de 384 ou 1536 dimensões</div>
+            <div class="rag-code">modelo.encode(chunks)</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">4</div>
+          <div class="rag-body">
+            <div class="rag-title">Armazenar no banco vetorial</div>
+            <div class="rag-desc">pgvector, Pinecone, Weaviate — junto com metadados (título, fonte, página)</div>
+            <div class="rag-code">INSERT INTO documentos (conteudo, embedding, ...)</div>
+          </div>
+        </div>
+      </div>
+
+      <p style="font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;margin-top:1.25rem;font-weight:600;">Fase 2 — Retrieval + Generation (em tempo real, por pergunta)</p>
+      <div class="rag-flow">
+        <div class="rag-step">
+          <div class="rag-num">5</div>
+          <div class="rag-body">
+            <div class="rag-title">Usuário faz uma pergunta</div>
+            <div class="rag-desc">"O que é a 2FN e como ela difere da 3FN?"</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">6</div>
+          <div class="rag-body">
+            <div class="rag-title">Gerar embedding da pergunta</div>
+            <div class="rag-desc">Mesma função de embedding usada na indexação</div>
+            <div class="rag-code">query_emb = modelo.encode(pergunta)</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">7</div>
+          <div class="rag-body">
+            <div class="rag-title">Busca vetorial — recuperar top-K chunks</div>
+            <div class="rag-desc">Encontrar os N chunks mais similares à pergunta por distância cosseno</div>
+            <div class="rag-code">ORDER BY embedding &lt;=&gt; query_emb LIMIT 5</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">8</div>
+          <div class="rag-body">
+            <div class="rag-title">Montar o prompt com contexto</div>
+            <div class="rag-desc">Pergunta + chunks recuperados → enviados ao LLM</div>
+            <div class="rag-code">"Contexto: {chunks}\n\nPergunta: {query}"</div>
+          </div>
+        </div>
+        <div class="rag-step">
+          <div class="rag-num">9</div>
+          <div class="rag-body">
+            <div class="rag-title">LLM gera a resposta final</div>
+            <div class="rag-desc">Resposta fundamentada nos documentos recuperados — sem alucinação</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Pipeline RAG completo em Python + pgvector</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — RAG com pgvector (sem API externa)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2, os
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="kw">def</span> buscar_contexto(pergunta: str, top_k: int = <span class="num">3</span>) -> list[dict]:
+    <span class="str">"""Fase de Retrieval: busca os chunks mais similares à pergunta."""</span>
+    <span class="cm"># 1. Embed da pergunta</span>
+    query_emb = modelo.encode(pergunta).tolist()
+
+    <span class="cm"># 2. Busca vetorial com filtro opcional</span>
+    cur = conn.cursor()
+    cur.execute(<span class="str">"""
+        SELECT
+          titulo,
+          conteudo,
+          fonte,
+          1 - (embedding <=> %s::vector) AS similaridade
+        FROM documentos
+        ORDER BY embedding <=> %s::vector
+        LIMIT %s
+    """</span>, (query_emb, query_emb, top_k))
+
+    resultados = []
+    <span class="kw">for</span> row <span class="kw">in</span> cur.fetchall():
+        resultados.append({
+            <span class="str">"titulo"</span>:      row[<span class="num">0</span>],
+            <span class="str">"conteudo"</span>:    row[<span class="num">1</span>],
+            <span class="str">"fonte"</span>:       row[<span class="num">2</span>],
+            <span class="str">"similaridade"</span>: round(row[<span class="num">3</span>], <span class="num">3</span>),
+        })
+    cur.close()
+    <span class="kw">return</span> resultados
+
+
+<span class="kw">def</span> responder(pergunta: str) -> str:
+    <span class="str">"""Pipeline RAG completo — sem API de LLM, só retrieval."""</span>
+    contextos = buscar_contexto(pergunta, top_k=<span class="num">3</span>)
+
+    <span class="kw">if not</span> contextos:
+        <span class="kw">return</span> <span class="str">"Nenhum documento relevante encontrado."</span>
+
+    <span class="cm"># Montar contexto para o prompt</span>
+    contexto_str = <span class="str">"\n\n---\n\n"</span>.join(
+        <span class="fn">f</span><span class="str">"[{c['titulo']}] {c['conteudo']}"</span> <span class="kw">for</span> c <span class="kw">in</span> contextos
+    )
+
+    print(<span class="str">f"\n📚 Contexto recuperado (top {len(contextos)}):"</span>)
+    <span class="kw">for</span> c <span class="kw">in</span> contextos:
+        print(<span class="fn">f</span><span class="str">  "  [{c['similaridade']:.3f}] {c['titulo']}"</span>)
+
+    <span class="cm"># Sem LLM: retorna o contexto diretamente</span>
+    <span class="cm"># Com LLM (ex: OpenAI), enviaria:</span>
+    <span class="cm"># prompt = f"Contexto:\n{contexto_str}\n\nPergunta: {pergunta}"</span>
+    <span class="cm"># response = openai.chat.completions.create(...)</span>
+    <span class="kw">return</span> contexto_str
+
+
+<span class="cm"># Teste</span>
+resposta = responder(<span class="str">"Como funciona a normalização em banco de dados?"</span>)
+print(<span class="str">"\n💬 Resposta:\n"</span>, resposta)</code></pre>
+      </div>
+
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Para adicionar a etapa de geração com um LLM real, substitua o return final por uma chamada à API da OpenAI, Anthropic ou um modelo local via Ollama. O retrieval já está completo.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · pgvector + Python</div>
+        <div class="secao-titulo">5 Exercícios — Embeddings e Busca Vetorial</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o banco no neon.tech (já tem pgvector). Para os exercícios Python, instale: <code>pip install sentence-transformers psycopg2-binary</code></span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Ative a extensão pgvector no seu banco e crie a tabela <code>documentos</code> exatamente como mostrado na aula. Depois crie o índice HNSW para busca por cosseno. Verifique que a extensão foi instalada com <code>SELECT * FROM pg_extension WHERE extname = 'vector'</code>.</p>
+      <span class="dificuldade dif-basico">Básico — Setup pgvector</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE EXTENSION IF NOT EXISTS</span> vector;
+
+<span class="kw">CREATE TABLE</span> documentos (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  titulo    <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+  conteudo  <span class="fn">TEXT</span> <span class="kw">NOT NULL</span>,
+  fonte     <span class="fn">VARCHAR</span>(<span class="num">200</span>),
+  embedding vector(<span class="num">384</span>),
+  criado_em <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="kw">CREATE INDEX</span> ON documentos
+  <span class="kw">USING</span> hnsw (embedding vector_cosine_ops)
+  <span class="kw">WITH</span> (m = <span class="num">16</span>, ef_construction = <span class="num">64</span>);
+
+<span class="cm">-- Verificar</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> pg_extension <span class="kw">WHERE</span> extname = <span class="str">'vector'</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Em Python, use <code>sentence-transformers</code> para gerar embeddings das 4 frases abaixo e imprima a similaridade cosseno entre a primeira frase e cada uma das outras. Ordene do mais ao menos similar.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Frases</span></div>
+        <pre><code>A: <span class="str">"Normalização remove redundância em banco de dados"</span>
+B: <span class="str">"A terceira forma normal elimina dependências transitivas"</span>
+C: <span class="str">"Window functions calculam ranking sem GROUP BY"</span>
+D: <span class="str">"Receita de bolo de chocolate com cobertura"</span></code></pre>
+      </div>
+      <span class="dificuldade dif-basico">Básico — Embeddings e similaridade</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer, util
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+
+frases = {
+    <span class="str">"A"</span>: <span class="str">"Normalização remove redundância em banco de dados"</span>,
+    <span class="str">"B"</span>: <span class="str">"A terceira forma normal elimina dependências transitivas"</span>,
+    <span class="str">"C"</span>: <span class="str">"Window functions calculam ranking sem GROUP BY"</span>,
+    <span class="str">"D"</span>: <span class="str">"Receita de bolo de chocolate com cobertura"</span>,
+}
+
+embs = modelo.encode(list(frases.values()))
+ref = embs[<span class="num">0</span>]  <span class="cm"># frase A como referência</span>
+
+resultados = []
+<span class="kw">for</span> (label, frase), emb <span class="kw">in</span> <span class="fn">zip</span>(frases.items(), embs):
+    sim = util.cos_sim(ref, emb).item()
+    resultados.append((sim, label, frase))
+
+resultados.sort(reverse=<span class="kw">True</span>)
+<span class="kw">for</span> sim, label, frase <span class="kw">in</span> resultados:
+    print(<span class="fn">f</span><span class="str">"{sim:.3f}  [{label}] {frase}"</span>)
+<span class="cm"># Esperado: A=1.0, B > C >> D</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Em Python, insira no pgvector pelo menos 6 documentos sobre conteúdo das semanas 1–6 desta disciplina (pode usar frases curtas resumindo cada tópico). Depois faça uma busca vetorial por <strong>"como fazer um JOIN no SQL"</strong> e mostre os 3 resultados mais similares com seus scores.</p>
+      <span class="dificuldade dif-medio">Médio — Indexar e buscar no pgvector</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+cur = conn.cursor()
+
+docs = [
+    (<span class="str">"INNER JOIN"</span>,    <span class="str">"INNER JOIN retorna linhas com correspondência nos dois lados da condição ON."</span>),
+    (<span class="str">"LEFT JOIN"</span>,     <span class="str">"LEFT JOIN retorna todos da tabela esquerda, mesmo sem correspondência à direita."</span>),
+    (<span class="str">"GROUP BY"</span>,      <span class="str">"GROUP BY agrupa linhas com valores iguais para aplicar funções de agregação."</span>),
+    (<span class="str">"1FN"</span>,           <span class="str">"Primeira Forma Normal exige atributos atômicos e sem grupos repetidos."</span>),
+    (<span class="str">"pgvector"</span>,      <span class="str">"pgvector é uma extensão do PostgreSQL para armazenar e buscar vetores de embeddings."</span>),
+    (<span class="str">"Cache-Aside"</span>,   <span class="str">"No padrão Cache-Aside lê-se do cache primeiro; em caso de miss busca-se a fonte e grava no cache."</span>),
+]
+
+embs = modelo.encode([t + <span class="str">" "</span> + c <span class="kw">for</span> t, c <span class="kw">in</span> docs])
+<span class="kw">for</span> (titulo, conteudo), emb <span class="kw">in</span> <span class="fn">zip</span>(docs, embs):
+    cur.execute(
+        <span class="str">"INSERT INTO documentos (titulo, conteudo, fonte, embedding) VALUES (%s,%s,%s,%s)"</span>,
+        (titulo, conteudo, <span class="str">"semanas_1_6"</span>, emb.tolist())
+    )
+conn.commit()
+
+<span class="cm"># Busca</span>
+pergunta = <span class="str">"como fazer um JOIN no SQL"</span>
+q_emb = modelo.encode(pergunta).tolist()
+cur.execute(<span class="str">"""
+    SELECT titulo, conteudo, 1-(embedding<=>%s::vector) AS sim
+    FROM documentos ORDER BY embedding<=>%s::vector LIMIT 3
+"""</span>, (q_emb, q_emb))
+<span class="kw">for</span> row <span class="kw">in</span> cur.fetchall():
+    print(<span class="fn">f</span><span class="str">"{row[2]:.3f}  {row[0]}: {row[1][:60]}..."</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Escreva uma query SQL que combine <strong>busca vetorial com filtro</strong>: busque os 3 documentos mais similares a "normalização de banco de dados", mas apenas entre os documentos cuja coluna <code>fonte</code> seja <code>'semanas_1_6'</code> e que foram criados nos últimos 7 dias.</p>
+      <span class="dificuldade dif-medio">Médio — Busca vetorial + filtro SQL</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">-- Substitua [VETOR] pelo embedding real gerado em Python</span>
+<span class="kw">SELECT</span>
+  titulo,
+  conteudo,
+  <span class="num">1</span> <span class="op">-</span> (embedding <span class="op">&lt;=&gt;</span> <span class="str">'[VETOR]'</span>::vector) <span class="kw">AS</span> similaridade
+<span class="kw">FROM</span> documentos
+<span class="kw">WHERE</span> fonte <span class="op">=</span> <span class="str">'semanas_1_6'</span>
+  <span class="kw">AND</span> criado_em <span class="op">&gt;</span> <span class="fn">NOW</span>() <span class="op">-</span> <span class="fn">INTERVAL</span> <span class="str">'7 days'</span>
+<span class="kw">ORDER BY</span> embedding <span class="op">&lt;=&gt;</span> <span class="str">'[VETOR]'</span>::vector
+<span class="kw">LIMIT</span> <span class="num">3</span>;</code></pre>
+        </div>
+        <div class="destaque"><strong>Ponto importante:</strong> o filtro WHERE é processado antes da ordenação vetorial — isso é muito mais eficiente do que buscar tudo e filtrar depois. É a principal vantagem do pgvector sobre bancos vetoriais externos.</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Implemente a <strong>função de retrieval completa</strong> de um sistema RAG: receba uma pergunta, gere o embedding, busque os top-3 chunks no pgvector, monte um prompt no formato <code>"Contexto:\n{chunks}\n\nPergunta: {pergunta}\n\nResponda com base no contexto acima."</code> e imprima o prompt pronto para ser enviado a um LLM. Teste com 3 perguntas diferentes e veja se os chunks recuperados fazem sentido.</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline RAG completo</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+modelo = SentenceTransformer(<span class="str">"paraphrase-multilingual-MiniLM-L12-v2"</span>)
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="kw">def</span> retrieval(pergunta: str, top_k: int = <span class="num">3</span>) -> list[dict]:
+    q_emb = modelo.encode(pergunta).tolist()
+    cur = conn.cursor()
+    cur.execute(<span class="str">"""
+        SELECT titulo, conteudo,
+               1-(embedding<=>%s::vector) AS sim
+        FROM documentos
+        ORDER BY embedding<=>%s::vector
+        LIMIT %s
+    """</span>, (q_emb, q_emb, top_k))
+    rows = cur.fetchall()
+    cur.close()
+    <span class="kw">return</span> [{<span class="str">"titulo"</span>: r[<span class="num">0</span>], <span class="str">"conteudo"</span>: r[<span class="num">1</span>], <span class="str">"sim"</span>: round(r[<span class="num">2</span>], <span class="num">3</span>)} <span class="kw">for</span> r <span class="kw">in</span> rows]
+
+<span class="kw">def</span> montar_prompt(pergunta: str) -> str:
+    chunks = retrieval(pergunta)
+    print(<span class="str">f"\n🔍 Chunks recuperados para: '{pergunta}'"</span>)
+    <span class="kw">for</span> c <span class="kw">in</span> chunks:
+        print(<span class="fn">f</span><span class="str">"  [{c['sim']}] {c['titulo']}"</span>)
+
+    contexto = <span class="str">"\n\n"</span>.join(
+        <span class="fn">f</span><span class="str">"Título: {c['titulo']}\n{c['conteudo']}"</span> <span class="kw">for</span> c <span class="kw">in</span> chunks
+    )
+    <span class="kw">return</span> (
+        <span class="str">f"Contexto:\n{contexto}\n\n"</span>
+        <span class="str">f"Pergunta: {pergunta}\n\n"</span>
+        <span class="str">f"Responda com base no contexto acima."</span>
+    )
+
+<span class="cm"># Testar com 3 perguntas</span>
+perguntas = [
+    <span class="str">"Como funciona o LEFT JOIN?"</span>,
+    <span class="str">"O que é a Segunda Forma Normal?"</span>,
+    <span class="str">"Para que serve o Redis no contexto de IA?"</span>,
+]
+<span class="kw">for</span> p <span class="kw">in</span> perguntas:
+    prompt = montar_prompt(p)
+    print(<span class="str">"\n📝 Prompt:\n"</span>, prompt[:<span class="num">300</span>], <span class="str">"...\n"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 7</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-brain"></i>
+        <strong>Embeddings</strong>
+        <p>Representação vetorial de texto — itens similares ficam próximos no espaço de alta dimensão</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-ruler"></i>
+        <strong>Similaridade Cosseno</strong>
+        <p>Operador <code>&lt;=&gt;</code> no pgvector — mede ângulo entre vetores independente da magnitude</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-database"></i>
+        <strong>pgvector</strong>
+        <p>Extensão do PostgreSQL — busca vetorial + SQL na mesma query, índice HNSW para escala</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-network-wired"></i>
+        <strong>RAG</strong>
+        <p>Indexação (chunk → embed → store) + Retrieval (query → embed → busca) + Generation (prompt + LLM)</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-08.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 8 — Organização de Dados para ML: limpeza, encoding e normalização</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

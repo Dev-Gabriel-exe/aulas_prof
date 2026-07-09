@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 18 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-revisao{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.destaque-amarelo{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border-left:3px solid #fbbf24;font-size:.88rem;color:rgba(253,230,138,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-amarelo strong{color:#fbbf24;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.sql-kw{color:#f9a8d4;}.sql-fn{color:#93c5fd;}.sql-str{color:#fde68a;}.sql-cm{color:#4b5563;font-style:italic;}.sql-num{color:#fca5a5;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* semana pills */
+.semana-trail{display:flex;flex-wrap:wrap;gap:.5rem;margin:.75rem 0;}
+.s-pill{display:inline-flex;align-items:center;gap:6px;padding:.35rem .85rem;border-radius:100px;font-size:.72rem;font-weight:600;border:1px solid;}
+.s-pill.passado{background:rgba(74,222,128,.08);color:var(--green-400);border-color:rgba(74,222,128,.2);}
+.s-pill.atual{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3);}
+.s-pill.proximo{background:rgba(239,68,68,.08);color:#f87171;border-color:rgba(239,68,68,.2);}
+
+/* mapa tópicos avançados */
+.av-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.av-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.av-card .ac-icon{font-size:1.2rem;color:var(--green-400);margin-bottom:.4rem;}
+.av-card .ac-titulo{font-size:.83rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem;}
+.av-card p{font-size:.76rem;color:var(--text-secondary);line-height:1.5;}
+
+/* simulado */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.questao-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.questao-tema{font-size:.72rem;color:var(--text-muted);margin-bottom:.5rem;}
+.questao-enunciado{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.6rem;}
+.questao-enunciado strong{color:var(--text-primary);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.45rem .9rem;color:var(--green-400);font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;margin-top:.5rem;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.07);}
+.gabarito-content{display:none;margin-top:.75rem;padding:.9rem 1.1rem;border-radius:9px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.gabarito-content.open{display:block;}
+.gabarito-content strong{color:var(--green-400);}
+
+/* mapa final */
+.mapa-final{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.mf-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;}
+.mf-card .mfc-sem{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--text-muted);margin-bottom:.3rem;}
+.mf-card .mfc-titulo{font-size:.82rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.mf-card ul{list-style:none;display:flex;flex-direction:column;gap:.25rem;}
+.mf-card ul li{font-size:.73rem;color:var(--text-secondary);line-height:1.4;display:flex;align-items:flex-start;gap:5px;}
+.mf-card ul li::before{content:'·';color:var(--text-muted);flex-shrink:0;}
+
+.nota-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+.nota-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:.9rem 1rem;text-align:center;}
+.nota-item .ni-num{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--green-400);}
+.nota-item .ni-desc{font-size:.75rem;color:var(--text-muted);margin-top:3px;}
+
+.prova-box{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.75rem;border-radius:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);margin-top:3rem;}
+.prova-left .pl-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;margin-bottom:4px;}
+.prova-left .pl-titulo{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;color:var(--white);}
+.prova-left .pl-sub{font-size:.82rem;color:var(--text-secondary);margin-top:4px;}
+.prova-right{font-size:2rem;color:#f87171;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.av-grid,.mapa-final,.nota-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-revisao">📝 Revisão · P3/Final</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">18</div>
+    <h1 class="capa-titulo">Revisão<br><em>Geral — P3</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Bloco 3 — Semana 5 · Pré-Final</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-copy"></i></div><span>Replicação — primary/replica, streaming replication, failover</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-th"></i></div><span>Sharding — particionamento horizontal, consistent hashing</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-save"></i></div><span>Backup e restore — pg_dump, pg_restore, PITR, estratégias</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-heartbeat"></i></div><span>Alta disponibilidade — SLA, RTO, RPO, Patroni, pgBouncer</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pen-alt"></i></div><span>Simulado completo — Semanas 14 a 17 + tópicos avançados</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Formato desta aula</div>
+      <p>Aula 1: tópicos avançados (replicação, sharding, backup, HA). Aula 2: revisão consolidada das Semanas 14–17. Aula 3: simulado com 10 questões comentadas. Próxima semana: Prova Final (P3).</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map"></i>O que cai na P3 / Final</div>
+      <ul class="info-lista">
+        <li>Semana 14: indexação — B-tree, hash, compostos, EXPLAIN ANALYZE</li>
+        <li>Semana 15: transações — ACID, isolamento, MVCC, deadlock</li>
+        <li>Semana 16: integração Python — psycopg2, SQLAlchemy, pandas</li>
+        <li>Semana 17: BD + IA — features, modelo, predições, SQL analítico</li>
+        <li>Esta semana: tópicos avançados — replicação, sharding, backup, HA</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle"></i>Pontos de maior erro nas provas</div>
+      <ul class="info-lista">
+        <li>Confundir RPO (perda máx. de dados) com RTO (tempo máx. de recuperação)</li>
+        <li>Achar que replicação substitui backup — não substitui</li>
+        <li>Confundir sharding (horizontal) com particionamento de tabela (vertical)</li>
+        <li>Não saber que psycopg2 usa <code>%s</code> e SQLAlchemy usa <code>:nome</code></li>
+        <li>Confundir Index Only Scan com Index Scan — a diferença é o heap fetch</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clock"></i>Trilha do Bloco 3</div>
+      <div class="semana-trail">
+        <span class="s-pill passado">Sem. 14 · Índices</span>
+        <span class="s-pill passado">Sem. 15 · Transações</span>
+        <span class="s-pill passado">Sem. 16 · Python</span>
+        <span class="s-pill passado">Sem. 17 · BD+IA</span>
+        <span class="s-pill atual">Sem. 18 · Revisão ◀</span>
+        <span class="s-pill proximo">Sem. 19 · P3/Final 🎯</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── TÓPICOS AVANÇADOS ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Tópicos avançados — replicação, sharding, backup e alta disponibilidade</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-copy"></i>Replicação — copiar dados para múltiplos servidores</div>
+      <p>Replicação é o processo de manter cópias sincronizadas do banco em diferentes servidores. Resolve dois problemas: <strong>disponibilidade</strong> (se o servidor primário cair, uma réplica assume) e <strong>escalabilidade de leitura</strong> (distribuir queries SELECT entre réplicas).</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Replicação síncrona vs assíncrona:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span><strong>Síncrona:</strong> COMMIT só confirma quando a réplica confirma recepção. RPO = 0 (zero perda de dados). Mais lenta.</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Assíncrona:</strong> COMMIT confirma imediatamente no primário. Réplica pode estar alguns milissegundos atrás. Padrão do PostgreSQL — mais rápida.</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Tipos de réplica no PostgreSQL:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span><strong>Streaming Replication:</strong> réplica recebe WAL (Write-Ahead Log) em tempo real. Réplica é read-only.</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Logical Replication:</strong> replica tabelas específicas, permite writes na réplica para outras tabelas.</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Patroni:</strong> ferramenta que gerencia failover automático em cluster PostgreSQL.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque-amarelo">
+        <strong>Replicação ≠ Backup.</strong> Se você deletar acidentalmente uma tabela, a deleção é replicada para todas as réplicas em segundos. Replicação protege contra falha de hardware — backup protege contra erro humano e corrupção lógica.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — configurar replicação e inspecionar status</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- No postgresql.conf do servidor primário:</span>
+<span class="sql-cm">-- wal_level = replica</span>
+<span class="sql-cm">-- max_wal_senders = 3</span>
+<span class="sql-cm">-- wal_keep_size = 64MB</span>
+
+<span class="sql-cm">-- Criar usuário de replicação</span>
+<span class="sql-kw">CREATE ROLE</span> replicador <span class="sql-kw">WITH</span> REPLICATION LOGIN PASSWORD <span class="sql-str">'senha_replicacao'</span>;
+
+<span class="sql-cm">-- Ver réplicas conectadas (no primário)</span>
+<span class="sql-kw">SELECT</span>
+    client_addr,
+    state,
+    sent_lsn,
+    write_lsn,
+    flush_lsn,
+    replay_lsn,
+    write_lag,
+    flush_lag,
+    replay_lag,
+    sync_state
+<span class="sql-kw">FROM</span> pg_stat_replication;
+
+<span class="sql-cm">-- Ver se sou réplica ou primário</span>
+<span class="sql-kw">SELECT</span> pg_is_in_recovery();
+<span class="sql-cm">-- TRUE = sou réplica (standby) | FALSE = sou primário</span>
+
+<span class="sql-cm">-- Lag de replicação em bytes</span>
+<span class="sql-kw">SELECT</span>
+    application_name,
+    <span class="sql-fn">pg_wal_lsn_diff</span>(pg_current_wal_lsn(), replay_lsn) <span class="sql-kw">AS</span> lag_bytes
+<span class="sql-kw">FROM</span> pg_stat_replication;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th"></i>Sharding — escalar horizontalmente</div>
+      <p><strong>Sharding</strong> distribui os dados de uma tabela entre múltiplos servidores (shards) com base em uma chave. Ao contrário da replicação (mesmos dados em todos), no sharding cada servidor tem uma fração dos dados.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito</th><th>Definição</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Shard key</strong></td><td>Coluna usada para distribuir os dados entre shards</td><td><code>cliente_id % N</code> distribui entre N shards</td></tr>
+            <tr><td><strong>Range sharding</strong></td><td>Shard por intervalo de valores da chave</td><td>IDs 1–1M → shard 1; 1M–2M → shard 2</td></tr>
+            <tr><td><strong>Hash sharding</strong></td><td>Shard por hash da chave — distribuição uniforme</td><td><code>hash(cliente_id) % 4</code> → shard 0,1,2,3</td></tr>
+            <tr><td><strong>Consistent hashing</strong></td><td>Permite adicionar/remover shards com mínimo re-balanceamento</td><td>Cassandra, Redis Cluster</td></tr>
+            <tr><td><strong>Cross-shard query</strong></td><td>Query que precisa acessar múltiplos shards — lenta e complexa</td><td><code>JOIN</code> entre duas tabelas em shards diferentes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>No PostgreSQL:</strong> sharding nativo via <code>pg_partman</code> + <code>postgres_fdw</code> (Foreign Data Wrappers). Ferramentas dedicadas: Citus, Vitess, PlanetScale. Para a maioria dos sistemas, particionamento de tabela (semana 14) é suficiente antes de precisar de sharding real.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-save"></i>Backup e restore — estratégias e comandos</div>
+      <div class="av-grid">
+        <div class="av-card">
+          <div class="ac-icon"><i class="fas fa-file-archive"></i></div>
+          <div class="ac-titulo">pg_dump — backup lógico</div>
+          <p>Exporta SQL ou formato binário. Portátil — restaura em versões diferentes. Mais lento para tabelas grandes.</p>
+        </div>
+        <div class="av-card">
+          <div class="ac-icon"><i class="fas fa-hdd"></i></div>
+          <div class="ac-titulo">pg_basebackup — físico</div>
+          <p>Cópia binária dos arquivos do banco. Muito rápido para bancos grandes. Deve ser restaurado na mesma versão do PostgreSQL.</p>
+        </div>
+        <div class="av-card">
+          <div class="ac-icon"><i class="fas fa-clock"></i></div>
+          <div class="ac-titulo">PITR — Point-in-Time Recovery</div>
+          <p>Combina pg_basebackup + WAL arquivado. Permite restaurar para qualquer momento no passado. Padrão para produção.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — backup e restore com pg_dump</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Backup completo em formato custom (comprimido, permite restore seletivo)</span>
+pg_dump -U postgres -d meu_banco -F c -f backup_$(date +%Y%m%d).dump
+
+<span class="cm"># Backup apenas do schema (sem dados)</span>
+pg_dump -U postgres -d meu_banco --schema-only -f schema.sql
+
+<span class="cm"># Backup de uma tabela específica</span>
+pg_dump -U postgres -d meu_banco -t pedidos -F c -f pedidos.dump
+
+<span class="cm"># Restore completo</span>
+pg_restore -U postgres -d meu_banco_novo -F c backup_20250115.dump
+
+<span class="cm"># Restore de uma tabela específica de um backup completo</span>
+pg_restore -U postgres -d meu_banco -t pedidos -F c backup_20250115.dump
+
+<span class="cm"># pg_dumpall — backup de todos os bancos + roles + tablespaces</span>
+pg_dumpall -U postgres -f todos_os_bancos.sql
+
+<span class="cm"># Verificar integridade do arquivo de backup</span>
+pg_restore --list backup_20250115.dump | head -20</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Métrica</th><th>Definição</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>RPO</strong> (Recovery Point Objective)</td><td>Máxima perda de dados tolerável — "quanto de dado posso perder?"</td><td>RPO = 1h → backup a cada hora; perco no máx. 1h de dados</td></tr>
+            <tr><td><strong>RTO</strong> (Recovery Time Objective)</td><td>Tempo máximo para recuperar o sistema — "quanto tempo posso ficar fora?"</td><td>RTO = 15min → sistema deve estar operacional em 15 minutos</td></tr>
+            <tr><td><strong>SLA</strong> (Service Level Agreement)</td><td>Acordo de disponibilidade — "99.9% uptime = 8.7h de downtime/ano"</td><td>99.99% = 52min downtime/ano</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-heartbeat"></i>Alta disponibilidade — Patroni e pgBouncer</div>
+      <div class="grid-2">
+        <div>
+          <p><strong>Patroni — failover automático:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span>Gerencia cluster PostgreSQL com primary + standbys</span></li>
+            <li><i class="fas fa-check ok"></i><span>Detecta falha do primário e promove automaticamente uma réplica</span></li>
+            <li><i class="fas fa-check ok"></i><span>Usa etcd, ZooKeeper ou Consul como DCS (distributed configuration store)</span></li>
+            <li><i class="fas fa-check ok"></i><span>Expõe endpoint REST para verificar quem é o primário atual</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>pgBouncer — connection pooling:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span>Proxy entre a aplicação e o PostgreSQL</span></li>
+            <li><i class="fas fa-check ok"></i><span>Mantém poucas conexões reais ao banco mas aceita milhares da aplicação</span></li>
+            <li><i class="fas fa-check ok"></i><span>3 modos: session pool, transaction pool (mais comum), statement pool</span></li>
+            <li><i class="fas fa-check ok"></i><span>Reduz overhead de conexão — cada conexão PG custa ~5MB de RAM</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — verificar saúde do cluster com Patroni</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Ver status do cluster (qual é o primário?)</span>
+patronictl -c /etc/patroni/config.yml list
+
+<span class="cm"># Saída esperada:
+# + Cluster: postgres-cluster ----+----+-----------+
+# | Member   | Host        | Role   | State   | TL |
+# +----------+-------------+--------+---------+----+
+# | pg-node1 | 10.0.0.1:5432 | Leader | running |  1 |
+# | pg-node2 | 10.0.0.2:5432 | Replica| running |  1 |
+
+# Verificar via API REST (útil para load balancers)
+curl -s http://10.0.0.1:8008/primary   # 200 = é o primário
+curl -s http://10.0.0.2:8008/replica   # 200 = é réplica
+
+# Failover manual controlado
+patronictl -c /etc/patroni/config.yml failover postgres-cluster</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Bloco 2 — Revisão Semanas 14–17</span></div>
+
+  <!-- ── REVISÃO CONSOLIDADA ──────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~30 minutos</div>
+        <div class="secao-titulo">Mapa consolidado — Semanas 14 a 17</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map-marked-alt"></i>Os 4 blocos do Bloco 3</div>
+      <div class="mapa-final">
+        <div class="mf-card">
+          <div class="mfc-sem">Semana 14</div>
+          <div class="mfc-titulo">Indexação e Otimização</div>
+          <ul>
+            <li>B-tree: O(log n), suporta range e ORDER BY</li>
+            <li>Hash: O(1), apenas igualdade exata</li>
+            <li>Composto: regra do prefixo de colunas</li>
+            <li>Covering: INCLUDE elimina heap fetch</li>
+            <li>EXPLAIN: Seq Scan × Index Scan × Index Only</li>
+            <li><code>Rows Removed by Filter</code> = falta índice</li>
+          </ul>
+        </div>
+        <div class="mf-card">
+          <div class="mfc-sem">Semana 15</div>
+          <div class="mfc-titulo">Transações e Concorrência</div>
+          <ul>
+            <li>ACID: Atomicidade, Consistência, Isolamento, Durabilidade</li>
+            <li>Dirty read, non-repeatable, phantom</li>
+            <li>Read Committed = padrão PostgreSQL</li>
+            <li>MVCC: leituras não bloqueiam escritas</li>
+            <li>Deadlock: ciclo de espera → PG cancela vítima</li>
+            <li>Prevenção: mesma ordem de locks sempre</li>
+          </ul>
+        </div>
+        <div class="mf-card">
+          <div class="mfc-sem">Semana 16</div>
+          <div class="mfc-titulo">Integração BD + Python</div>
+          <ul>
+            <li>psycopg2: <code>%s</code>, RealDictCursor, execute_values</li>
+            <li>SQLAlchemy: engine, pool, <code>text(:param)</code></li>
+            <li>pandas: read_sql, to_sql + method="multi"</li>
+            <li>Segurança: .env, nunca f-string em SQL</li>
+            <li>Pool: pool_size, max_overflow, pool_recycle</li>
+          </ul>
+        </div>
+        <div class="mf-card">
+          <div class="mfc-sem">Semana 17</div>
+          <div class="mfc-titulo">BD + IA</div>
+          <ul>
+            <li>BD → features via read_sql + groupby</li>
+            <li>Treino com scikit-learn, serializar com joblib</li>
+            <li>Predições → to_sql com versão do modelo</li>
+            <li>Registrar metadados na tabela modelos_registrados</li>
+            <li>NTILE, RANK, PARTITION BY sobre predições</li>
+            <li>VIEW como dashboard reutilizável</li>
+          </ul>
+        </div>
+        <div class="mf-card">
+          <div class="mfc-sem">Semana 18</div>
+          <div class="mfc-titulo">Tópicos Avançados</div>
+          <ul>
+            <li>Replicação ≠ Backup (deleção é replicada!)</li>
+            <li>RPO = perda máxima de dados</li>
+            <li>RTO = tempo máximo de recuperação</li>
+            <li>Sharding: distribuição horizontal por shard key</li>
+            <li>pg_dump: backup lógico portátil</li>
+            <li>Patroni: failover automático</li>
+          </ul>
+        </div>
+        <div class="mf-card" style="border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.04);">
+          <div class="mfc-sem" style="color:#fbbf24;">Pontos de confusão</div>
+          <div class="mfc-titulo">Nunca confundir</div>
+          <ul>
+            <li>Index Scan ≠ Index Only Scan (heap fetch)</li>
+            <li>Read Committed ≠ Repeatable Read (non-repeatable)</li>
+            <li>psycopg2 <code>%s</code> ≠ SQLAlchemy <code>:nome</code></li>
+            <li>RPO (dados) ≠ RTO (tempo)</li>
+            <li>Replicação (HA) ≠ Backup (recuperação lógica)</li>
+            <li>Sharding ≠ Particionamento de tabela</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bolt"></i>Referência rápida — comandos-chave para a prova</div>
+      <div class="grid-2">
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL — índices e EXPLAIN</span></div>
+            <pre><code><span class="sql-cm">-- Criar índice B-tree</span>
+<span class="sql-kw">CREATE INDEX</span> idx_nome <span class="sql-kw">ON</span> tabela (coluna);
+
+<span class="sql-cm">-- Índice composto</span>
+<span class="sql-kw">CREATE INDEX</span> idx_comp <span class="sql-kw">ON</span> tabela (col1, col2);
+
+<span class="sql-cm">-- Covering index</span>
+<span class="sql-kw">CREATE INDEX</span> idx_cov <span class="sql-kw">ON</span> tabela (id) <span class="sql-kw">INCLUDE</span> (nome);
+
+<span class="sql-cm">-- Analisar plano</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span> <span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> tabela <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;
+
+<span class="sql-cm">-- Atualizar estatísticas</span>
+<span class="sql-kw">ANALYZE</span> tabela;</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL — transações</span></div>
+            <pre><code><span class="sql-cm">-- Transação explícita</span>
+<span class="sql-kw">BEGIN</span>;
+<span class="sql-kw">UPDATE</span> ...;
+<span class="sql-kw">COMMIT</span>;  <span class="sql-cm">-- ou ROLLBACK</span>
+
+<span class="sql-cm">-- Nível de isolamento</span>
+<span class="sql-kw">BEGIN TRANSACTION ISOLATION LEVEL</span>
+    REPEATABLE READ;
+
+<span class="sql-cm">-- Savepoint</span>
+<span class="sql-kw">SAVEPOINT</span> sp1;
+<span class="sql-kw">ROLLBACK TO</span> sp1;
+
+<span class="sql-cm">-- Lock explícito</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> contas
+<span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span> <span class="sql-kw">FOR UPDATE</span>;</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python — psycopg2 e SQLAlchemy</span></div>
+            <pre><code><span class="cm"># psycopg2 — parâmetros com %s</span>
+cur.execute(<span class="str">"SELECT * FROM t WHERE id=%s"</span>,(<span class="num">1</span>,))
+
+<span class="cm"># SQLAlchemy Core — parâmetros com :nome</span>
+conn.execute(text(<span class="str">"SELECT * FROM t WHERE id=:id"</span>),
+             {<span class="str">"id"</span>: <span class="num">1</span>})
+
+<span class="cm"># pandas read_sql</span>
+df = pd.read_sql(<span class="str">"SELECT * FROM t"</span>, engine,
+                 parse_dates=[<span class="str">"data"</span>])
+
+<span class="cm"># pandas to_sql</span>
+df.to_sql(<span class="str">"tabela"</span>, engine,
+          if_exists=<span class="str">"replace"</span>, index=<span class="kw">False</span>,
+          chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Python — pipeline BD+IA</span></div>
+            <pre><code><span class="cm"># Features → modelo → predições → BD</span>
+feat = df.groupby(<span class="str">"cliente_id"</span>).agg(...)
+X = feat[COLS].fillna(<span class="num">0</span>)
+clf.fit(X_tr, y_tr)
+joblib.dump(clf, <span class="str">"modelo.pkl"</span>)
+
+proba = clf.predict_proba(X)[:, <span class="num">1</span>]
+df_pred = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: feat[<span class="str">"cliente_id"</span>],
+    <span class="str">"score"</span>: proba.round(<span class="num">4</span>),
+    <span class="str">"versao"</span>: <span class="str">"v1"</span>,
+})
+df_pred.to_sql(<span class="str">"predicoes"</span>, engine,
+               if_exists=<span class="str">"append"</span>, index=<span class="kw">False</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado Final</span></div>
+
+  <!-- ── SIMULADO ─────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado · 10 questões</div>
+        <div class="secao-titulo">Questões no estilo da P3/Final — Semanas 14 a 18</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Tente responder antes de abrir o gabarito. As questões cobrem todos os temas das Semanas 14 a 18.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="questao-num">Questão 01</div>
+      <div class="questao-tema">Indexação — B-tree e seletividade</div>
+      <div class="questao-enunciado">Uma tabela <code>pedidos</code> tem 2 milhões de linhas e uma coluna <code>status</code> com apenas 3 valores distintos: "pendente", "entregue", "cancelado". Um desenvolvedor criou um índice B-tree em <code>status</code> para acelerar a query <code>WHERE status = 'entregue'</code>, mas o PostgreSQL continua fazendo Seq Scan. <strong>Por que isso acontece?</strong> Em que situação o índice em <code>status</code> seria útil?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>Por que o Seq Scan persiste:</strong> "entregue" representa ~33% das linhas (1 de 3 valores). O planner estima que um Index Scan para buscar 666k linhas seria mais caro que um Seq Scan: cada linha encontrada no índice exige um <em>heap fetch</em> (acesso ao bloco da tabela) — para 666k acessos aleatórios, o custo supera o de ler a tabela sequencialmente. O planner escolhe Seq Scan racionalmente.<br><br>
+        <strong>Quando seria útil:</strong> com um índice composto — ex: <code>(status, criado_em)</code> e uma query <code>WHERE status = 'pendente' AND criado_em > '2025-01-01'</code>. A combinação é muito mais seletiva (ex: 0,1% das linhas) e o Index Scan compensa. Ou um covering index com <code>INCLUDE</code> que evita o heap fetch completamente (Index Only Scan).
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="questao-num">Questão 02</div>
+      <div class="questao-tema">Indexação — regra do prefixo</div>
+      <div class="questao-enunciado">Existe um índice composto <code>(cidade, data_criacao, status)</code> na tabela <code>clientes</code>. Diga se cada query abaixo <strong>usa ou não usa</strong> o índice, justificando: (a) <code>WHERE cidade = 'SP'</code>; (b) <code>WHERE data_criacao &gt; '2025-01-01'</code>; (c) <code>WHERE cidade = 'SP' AND data_criacao &gt; '2025-01-01'</code>; (d) <code>WHERE cidade = 'SP' AND status = 'ativo'</code>.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) ✅ Usa</strong> — filtra pela 1ª coluna do prefixo (cidade). O índice é útil para encontrar todas as linhas de SP.<br>
+        <strong>(b) ❌ Não usa</strong> — pula a 1ª coluna (cidade) e vai direto para a 2ª. Sem cidade no filtro, o banco não consegue navegar pelo prefixo da B-tree e faz Seq Scan.<br>
+        <strong>(c) ✅ Usa com máxima eficiência</strong> — filtra pela 1ª coluna (cidade = SP, igualdade) e depois restringe por range na 2ª (data). O índice elimina a maioria das linhas.<br>
+        <strong>(d) ✅ Usa parcialmente</strong> — filtra por cidade (1ª coluna, igualdade) mas pula data_criacao (2ª coluna) e vai para status (3ª). O índice é usado para encontrar clientes de SP, mas status precisa ser verificado linha a linha dentro dessa partição — menos eficiente que (c).
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="questao-num">Questão 03</div>
+      <div class="questao-tema">Transações — ACID e anomalias</div>
+      <div class="questao-enunciado">Explique com um exemplo concreto o que é uma <strong>Non-Repeatable Read</strong> e qual nível de isolamento do PostgreSQL a previne. Por que o nível padrão (Read Committed) não a previne?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>Non-Repeatable Read:</strong> a Transação A lê o saldo da conta 1 e obtém R$1.000. Antes de A terminar, a Transação B atualiza o saldo para R$500 e dá COMMIT. Quando A relê o saldo da mesma linha, obtém R$500 — o mesmo dado retornou valor diferente dentro da mesma transação.<br><br>
+        <strong>Por que Read Committed não previne:</strong> neste nível, cada statement lê um snapshot atualizado no momento em que ele é executado. Entre dois SELECTs na mesma transação, COMMITs de outras transações se tornam visíveis. A transação A não tem garantia de que dados não mudarão entre leituras.<br><br>
+        <strong>Solução — Repeatable Read:</strong> o PostgreSQL cria um snapshot no início da transação. Todos os SELECTs dentro da transação enxergam o mesmo estado do banco — COMMITs feitos por outras transações após o início de A não são visíveis para A.
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="questao-num">Questão 04</div>
+      <div class="questao-tema">Transações — deadlock</div>
+      <div class="questao-enunciado">Descreva a sequência exata de eventos que causa um deadlock entre duas transações acessando as contas de IDs 10 e 20. Em seguida, descreva <strong>duas estratégias</strong> para prevenir esse deadlock.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>Sequência do deadlock:</strong><br>
+        t1: Tx A faz UPDATE em conta 10 → adquire lock em 10<br>
+        t2: Tx B faz UPDATE em conta 20 → adquire lock em 20<br>
+        t3: Tx A tenta UPDATE em conta 20 → aguarda Tx B liberar<br>
+        t4: Tx B tenta UPDATE em conta 10 → aguarda Tx A liberar → <strong>ciclo!</strong><br>
+        O PostgreSQL detecta o ciclo e cancela uma das transações com "deadlock detected".<br><br>
+        <strong>Estratégia 1 — Ordenação de locks:</strong> Tx A e Tx B devem sempre bloquear o menor ID primeiro. Se ambas usam <code>ORDER BY id FOR UPDATE</code>, nunca formarão um ciclo de espera — a primeira que chegar ao menor ID terá o lock, a outra esperará sem criar deadlock.<br><br>
+        <strong>Estratégia 2 — Retry com backoff:</strong> capturar <code>psycopg2.errors.DeadlockDetected</code>, fazer ROLLBACK e retentar a transação com espera exponencial (0.1s, 0.2s, 0.4s…). Não previne o deadlock, mas torna o sistema resiliente — a transação vítima re-executa e geralmente encontra o caminho livre.
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="questao-num">Questão 05</div>
+      <div class="questao-tema">Integração Python — segurança</div>
+      <div class="questao-enunciado">O código abaixo tem uma vulnerabilidade grave. Identifique o problema, explique o risco e reescreva o trecho de forma segura:<br><br><code>status = request.args.get("status")<br>cur.execute(f"SELECT * FROM pedidos WHERE status = '{status}'")</code></div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>Problema:</strong> SQL Injection. A variável <code>status</code> é interpolada diretamente na string SQL com f-string. Um atacante pode passar <code>status = "' OR '1'='1"</code> para retornar todos os pedidos, ou <code>status = "x'; DROP TABLE pedidos; --"</code> para apagar a tabela inteira.<br><br>
+        <strong>Versão segura com psycopg2:</strong>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># psycopg2 — parâmetros como tupla</span>
+cur.execute(<span class="str">"SELECT * FROM pedidos WHERE status = %s"</span>, (status,))
+
+<span class="cm"># SQLAlchemy — parâmetros nomeados com text()</span>
+conn.execute(text(<span class="str">"SELECT * FROM pedidos WHERE status = :status"</span>),
+             {<span class="str">"status"</span>: status})</code></pre>
+        </div>
+        O driver escapa automaticamente os valores, tornando qualquer tentativa de injeção inofensiva.
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="questao-num">Questão 06</div>
+      <div class="questao-tema">Integração Python — performance</div>
+      <div class="questao-enunciado">Explique a diferença de performance entre: (a) inserir 50.000 linhas com um loop Python chamando <code>cur.execute()</code> individualmente; (b) usando <code>execute_values</code> do psycopg2 com <code>page_size=1000</code>; (c) usando <code>df.to_sql(..., method="multi", chunksize=1000)</code>. Por que existe essa diferença?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) Loop individual:</strong> cada <code>execute()</code> gera um round-trip cliente→servidor→cliente: 50.000 round-trips para 50.000 linhas. O overhead de rede e de parse SQL domina. Muito lento (pode levar minutos).<br><br>
+        <strong>(b) execute_values:</strong> agrupa as inserções em batches de 1.000 linhas. Em vez de 50.000 statements, envia 50 statements com 1.000 valores cada. O PostgreSQL recebe e processa muito mais eficientemente. Tipicamente 20–100× mais rápido que o loop.<br><br>
+        <strong>(c) to_sql com method="multi" e chunksize=1000:</strong> similar ao execute_values — pandas gera INSERTs com múltiplos VALUES por statement. Levemente diferente internamente mas mesma ordem de magnitude de performance. A vantagem do pandas é a integração direta com DataFrames.<br><br>
+        <strong>Por que a diferença:</strong> o custo dominante em inserções em loop é o round-trip de rede + parsing SQL + overhead de transação por statement. Batch insert amortiza esses custos por N linhas em vez de 1.
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="questao-num">Questão 07</div>
+      <div class="questao-tema">BD + IA — pipeline</div>
+      <div class="questao-enunciado">Descreva as <strong>5 etapas</strong> de um pipeline BD ↔ IA para um modelo de classificação de risco de crédito, mencionando: (1) como extrair os dados do banco; (2) quais features calcular; (3) como treinar e serializar o modelo; (4) como gravar predições de volta com rastreabilidade; (5) como o time de negócio consome os resultados via SQL.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>1. Extração:</strong> <code>pd.read_sql()</code> lê as tabelas <code>clientes</code>, <code>historico_pagamentos</code> e <code>contratos</code> via SQLAlchemy engine. <code>parse_dates</code> para colunas de data.<br><br>
+        <strong>2. Features por cliente:</strong> via <code>groupby("cliente_id").agg()</code> — total de contratos, valor médio de parcelas, % de atrasos, dias desde último pagamento, renda declarada, tempo de relacionamento com a instituição.<br><br>
+        <strong>3. Treino:</strong> <code>RandomForestClassifier</code> com <code>class_weight="balanced"</code>. <code>train_test_split</code> estratificado. Avaliar com <code>roc_auc_score</code>. Serializar com <code>joblib.dump(model, "risco_v{versao}.pkl")</code>. Registrar metadados em <code>modelos_registrados</code>.<br><br>
+        <strong>4. Predições com rastreabilidade:</strong> <code>predict_proba(X)[:,1]</code> gera scores 0–1. DataFrame com <code>cliente_id, score_risco, classe_risco, modelo_versao, gerado_em</code>. Gravar com <code>to_sql("predicoes_risco", if_exists="append")</code>. Constraint <code>UNIQUE(cliente_id, modelo_versao)</code> evita duplicatas.<br><br>
+        <strong>5. Consumo SQL:</strong> VIEW <code>vw_risco_dashboard</code> une predições + dados do cliente. Time de crédito consulta <code>SELECT * FROM vw_risco_dashboard WHERE nivel_risco = 'Alto' ORDER BY score DESC LIMIT 100</code> sem precisar de Python.
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="questao">
+      <div class="questao-num">Questão 08</div>
+      <div class="questao-tema">Replicação e Backup</div>
+      <div class="questao-enunciado">Uma empresa tem um banco PostgreSQL em produção com replicação assíncrona para um servidor standby. Um desenvolvedor apaga acidentalmente a tabela <code>pedidos</code> com <code>DROP TABLE pedidos</code>. <strong>(a)</strong> O standby será afetado? <strong>(b)</strong> Como recuperar os dados? <strong>(c)</strong> Como evitar esse problema no futuro?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) Sim, o standby será afetado.</strong> A replicação replica todas as operações WAL, incluindo DDL como DROP TABLE. Em segundos (ou imediatamente em replicação síncrona), a tabela também desaparece do standby. A replicação não protege contra erro humano — é uma cópia fiel, inclusive dos erros.<br><br>
+        <strong>(b) Recuperação:</strong> usar backup. Se a empresa tem PITR (Point-in-Time Recovery) configurado com WAL archiving, é possível restaurar o banco para o momento exato antes do DROP. Alternativamente, restaurar o backup lógico mais recente (<code>pg_restore</code>) e depois aplicar os WALs até o ponto do acidente. Sem backup, os dados estão perdidos.<br><br>
+        <strong>(c) Prevenção:</strong> (1) Política de backup regular — pg_dump diário ou pg_basebackup + WAL archiving para PITR. (2) Permissões por papel — usuário da aplicação não deve ter <code>DROP TABLE</code>; apenas o DBA deve ter. (3) Proteção de tabelas críticas: <code>REVOKE DROP ON TABLE pedidos FROM app_user</code>. (4) Teste periódico de restore — backup não testado não é backup confiável.
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="questao">
+      <div class="questao-num">Questão 09</div>
+      <div class="questao-tema">RPO, RTO e Alta Disponibilidade</div>
+      <div class="questao-enunciado">Uma fintech define em seu SLA: RPO = 5 minutos e RTO = 2 minutos. <strong>(a)</strong> O que significa cada métrica neste contexto? <strong>(b)</strong> Qual estratégia de backup e replicação atenderia esses requisitos? <strong>(c)</strong> O que é Patroni e como ele contribui para o RTO de 2 minutos?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong> <strong>RPO = 5 minutos:</strong> se o servidor cair, a empresa aceita perder no máximo 5 minutos de transações. Dados mais antigos que 5 minutos devem estar preservados. <strong>RTO = 2 minutos:</strong> o sistema deve estar operacional novamente em até 2 minutos após a falha. Cada minuto além disso representa prejuízo financeiro.<br><br>
+        <strong>(b) Estratégia:</strong> replicação síncrona (RPO = 0, zero perda) ou assíncrona com lag &lt; 5 min + WAL archiving a cada 5 minutos. Cluster Patroni com pelo menos 1 réplica hot standby que pode assumir imediatamente. Backups diários com pg_basebackup para recuperação de desastres.<br><br>
+        <strong>(c) Patroni:</strong> é uma ferramenta de gestão de clusters PostgreSQL de alta disponibilidade. Monitora continuamente o primário. Se detectar falha (timeout de heartbeat), automaticamente elege e promove a réplica mais atualizada como novo primário em segundos — sem intervenção manual. O failover automático é o que torna o RTO de 2 minutos alcançável; sem ele, seria necessário intervenção humana que tipicamente leva 10–30 minutos.
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="questao">
+      <div class="questao-num">Questão 10 — Integradora</div>
+      <div class="questao-tema">Pipeline completo — todos os temas do bloco</div>
+      <div class="questao-enunciado">Você foi contratado para construir um sistema de dados para uma empresa de saúde. Descreva as decisões técnicas para: <strong>(a)</strong> Qual índice criar para acelerar buscas por <code>paciente_id</code> e <code>data_consulta</code>? <strong>(b)</strong> Qual nível de isolamento usar para transações de registro de consultas e por quê? <strong>(c)</strong> Como estruturar a conexão Python ao banco com segurança? <strong>(d)</strong> Como alimentar um modelo de ML de risco de internação com dados do banco e gravar as predições de volta com rastreabilidade? <strong>(e)</strong> Qual estratégia de backup para RPO = 1 hora?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) Índice:</strong> <code>CREATE INDEX idx_consultas_comp ON consultas (paciente_id, data_consulta DESC)</code>. Índice composto com paciente primeiro (igualdade) e data segundo (range/ordenação). Adicionar <code>INCLUDE (diagnostico, medico_id)</code> se a query precisar dessas colunas — evita heap fetch com Index Only Scan.<br><br>
+        <strong>(b) Isolamento:</strong> <strong>Read Committed</strong> (padrão) é suficiente para registro de consultas. Cada INSERT/UPDATE em consulta é autocontido. Se houver relatório que lê múltiplas tabelas e precisa de snapshot consistente (ex: prontuário completo), usar <strong>Repeatable Read</strong> para aquela transação específica.<br><br>
+        <strong>(c) Conexão segura:</strong> credenciais em <code>.env</code> carregado com <code>python-dotenv</code>. SQLAlchemy engine com <code>pool_size=5, pool_recycle=1800, sslmode=require</code>. Usuário de banco com mínimas permissões (SELECT/INSERT/UPDATE nas tabelas necessárias — sem DROP). Parâmetros SQL sempre com <code>text(:param)</code> — nunca f-string.<br><br>
+        <strong>(d) Pipeline IA:</strong> <code>read_sql</code> extrai histórico de consultas e exames → <code>groupby(paciente_id).agg()</code> gera features (freq. de consultas, diagnósticos prévios, idade, comorbidades) → treino com RandomForest → <code>joblib.dump</code> salva modelo → <code>predict_proba</code> gera scores → <code>to_sql("predicoes_internacao", if_exists="append")</code> com <code>modelo_versao</code> e <code>gerado_em</code> → VIEW SQL para consumo pelo time clínico.<br><br>
+        <strong>(e) Backup RPO=1h:</strong> <code>pg_basebackup</code> diário para backup físico completo + <code>archive_mode = on</code> no PostgreSQL arquivando WAL segments a cada minuto (garantindo RPO &lt;&lt; 1h). PITR permite restaurar para qualquer ponto. Armazenar backups em storage externo (S3). Testar restore mensalmente.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Fechamento</span></div>
+
+  <!-- ── FECHAMENTO ────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Distribuição da P3/Final</div>
+        <div class="secao-titulo">O que a Prova Final vai cobrar</div>
+      </div>
+    </div>
+
+    <div class="nota-grid">
+      <div class="nota-item">
+        <div class="ni-num">Semanas 14–15</div>
+        <div class="ni-desc">Índices + Transações · ~35%</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Semanas 16–17</div>
+        <div class="ni-desc">Python + BD+IA · ~45%</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Semana 18</div>
+        <div class="ni-desc">Tópicos avançados · ~20%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-lightbulb"></i>Dicas finais para a prova</div>
+      <div class="grid-2">
+        <ul class="icon-list">
+          <li><i class="fas fa-check ok"></i><span>Em EXPLAIN, <strong>Seq Scan com Rows Removed alto</strong> = índice faltando na coluna do filtro</span></li>
+          <li><i class="fas fa-check ok"></i><span><strong>Index Only Scan</strong> é melhor que Index Scan — significa que o índice tem tudo que a query precisa</span></li>
+          <li><i class="fas fa-check ok"></i><span><strong>Read Committed</strong> previne dirty read mas não non-repeatable. <strong>Repeatable Read</strong> previne ambos</span></li>
+          <li><i class="fas fa-check ok"></i><span>Deadlock = ciclo de espera. Prevenção = mesma ordem de locks sempre</span></li>
+          <li><i class="fas fa-check ok"></i><span>psycopg2 usa <code>%s</code>. SQLAlchemy usa <code>:nome</code>. Nunca f-string em SQL.</span></li>
+        </ul>
+        <ul class="icon-list">
+          <li><i class="fas fa-check ok"></i><span><strong>to_sql method="multi"</strong> é muito mais rápido que o padrão — use sempre com <code>chunksize</code></span></li>
+          <li><i class="fas fa-check ok"></i><span>No pipeline IA: features via <code>groupby+agg</code> → treino → <code>predict_proba[:,1]</code> → <code>to_sql append</code></span></li>
+          <li><i class="fas fa-check ok"></i><span><strong>RPO</strong> = perda de dados. <strong>RTO</strong> = tempo de recuperação. São diferentes!</span></li>
+          <li><i class="fas fa-check ok"></i><span>Replicação protege contra falha de hardware. Backup protege contra erro humano.</span></li>
+          <li><i class="fas fa-check ok"></i><span>Sharding distribui dados horizontalmente. Particionamento de tabela é local em um servidor.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prova-box">
+      <div class="prova-left">
+        <div class="pl-label">Próxima semana</div>
+        <div class="pl-titulo">Semana 19 — Prova Final (P3)</div>
+        <div class="pl-sub">Conteúdo das Semanas 14–18 · Entrega do projeto integrador</div>
+      </div>
+      <div class="prova-right"><i class="fas fa-pen-alt"></i></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

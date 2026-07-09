@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 08 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.destaque-azul{padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.07);border-left:3px solid #60a5fa;font-size:.88rem;color:rgba(186,230,253,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-azul strong{color:#93c5fd;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+.aviso-erro{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-erro i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* pipeline steps */
+.pipeline-v{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.pipe-step{display:flex;align-items:flex-start;gap:14px;padding:.85rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
+.pipe-num{width:28px;height:28px;border-radius:7px;background:rgba(74,222,128,.15);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;flex-shrink:0;}
+.pipe-title{font-size:.83rem;font-weight:600;color:var(--text-primary);margin-bottom:2px;}
+.pipe-desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* enc visual */
+.enc-row{display:flex;align-items:center;gap:10px;margin:.4rem 0;flex-wrap:wrap;}
+.enc-label{font-size:.78rem;color:var(--text-muted);min-width:90px;}
+.enc-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);padding:3px 10px;border-radius:6px;color:var(--green-400);}
+.enc-arrow{color:rgba(74,222,128,.5);}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">08</div>
+    <h1 class="capa-titulo">Dados para<br><em>Machine Learning</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Bloco 2 — Semana 2</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-search"></i></div><span>Auditoria de qualidade — nulos, duplicatas, outliers</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tags"></i></div><span>Encoding de variáveis categóricas — Label e One-Hot</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sliders-h"></i></div><span>Normalização e padronização — MinMax e StandardScaler</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>Feature engineering avançado — datas, bins e interações</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline completo banco → dataset pronto para treino</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Pipeline SQL + Python: extrair do banco loja_exemplo, tratar qualidade, encodar, normalizar e exportar dataset pronto para scikit-learn.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com o semestre</div>
+      <ul class="info-lista">
+        <li>Semana 4: pipeline de dados — raw → silver → gold</li>
+        <li>Semana 7: embeddings para texto — uma forma de encoding</li>
+        <li>Esta semana: encoding e normalização para dados tabulares</li>
+        <li>Próxima semana: armazenamento distribuído — onde guardar esses datasets</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle"></i>Por que preparação de dados importa</div>
+      <ul class="info-lista">
+        <li>80% do tempo de um projeto de ML é gasto aqui</li>
+        <li>Modelo treinado em dados sujos aprende padrões errados</li>
+        <li>Scaler ajustado no conjunto de teste vaza informação — invalida a avaliação</li>
+        <li>"Garbage in, garbage out" — qualidade dos dados define o teto do modelo</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>pandas — análise e transformação de DataFrames</li>
+        <li>scikit-learn — LabelEncoder, StandardScaler, MinMaxScaler</li>
+        <li>SQLAlchemy — extração do banco para DataFrame</li>
+        <li>numpy — operações numéricas de apoio</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Qualidade e Limpeza ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Auditoria de qualidade — nulos, duplicatas e outliers</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clipboard-check"></i>O checklist de qualidade</div>
+      <p>Antes de qualquer transformação, <strong>audite os dados</strong>. Surpresas aqui custam horas mais tarde.</p>
+      <div class="pipeline-v">
+        <div class="pipe-step"><div class="pipe-num">1</div><div><div class="pipe-title">Shape e tipos</div><div class="pipe-desc">Quantas linhas e colunas? Tipos corretos? Números lidos como string?</div></div></div>
+        <div class="pipe-step"><div class="pipe-num">2</div><div><div class="pipe-title">Nulos por coluna</div><div class="pipe-desc">Quanto % de cada coluna é nulo? Nulo aleatório ou sistemático?</div></div></div>
+        <div class="pipe-step"><div class="pipe-num">3</div><div><div class="pipe-title">Duplicatas</div><div class="pipe-desc">Linhas completamente repetidas? IDs duplicados com dados diferentes?</div></div></div>
+        <div class="pipe-step"><div class="pipe-num">4</div><div><div class="pipe-title">Distribuições e outliers</div><div class="pipe-desc">Valores absurdos? Média muito diferente da mediana?</div></div></div>
+        <div class="pipe-step"><div class="pipe-num">5</div><div><div class="pipe-title">Cardinalidade de categorias</div><div class="pipe-desc">Quantos valores únicos? Categorias com typos ("SP" vs "São Paulo")?</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Auditoria completa em Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — auditoria de DataFrame</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># Extrair do banco — tabela gold de features de cliente</span>
+df = pd.read_sql(<span class="str">"""
+    SELECT
+        c.id           AS cliente_id,
+        c.cidade,
+        c.tem_email,
+        COUNT(p.id)                                          AS total_pedidos,
+        ROUND(AVG(p.total)::numeric, 2)                      AS ticket_medio,
+        SUM(p.total)                                         AS total_gasto,
+        MAX(CURRENT_DATE - p.criado_em::date)                AS dias_inativo,
+        COUNT(*) FILTER (WHERE p.status = 'cancelado')       AS qtd_cancelados,
+        COUNT(*) FILTER (WHERE p.status = 'entregue')        AS qtd_entregues
+    FROM clientes c
+    LEFT JOIN pedidos p ON p.cliente_id = c.id
+    GROUP BY c.id, c.cidade, c.tem_email
+"""</span>, engine)
+
+<span class="cm"># ── 1. Shape e tipos ────────────────────────────────────────────</span>
+print(<span class="str">"Shape:"</span>, df.shape)
+print(df.dtypes)
+
+<span class="cm"># ── 2. Nulos ─────────────────────────────────────────────────────</span>
+nulos = df.isnull().sum()
+pct_nulos = (nulos / len(df) <span class="op">*</span> <span class="num">100</span>).round(<span class="num">1</span>)
+auditoria = pd.DataFrame({<span class="str">"nulos"</span>: nulos, <span class="str">"pct_%"</span>: pct_nulos})
+print(auditoria[auditoria[<span class="str">"nulos"</span>] > <span class="num">0</span>])
+
+<span class="cm"># ── 3. Duplicatas ────────────────────────────────────────────────</span>
+print(<span class="str">f"Linhas duplicadas: {df.duplicated().sum()}"</span>)
+print(<span class="str">f"IDs únicos: {df['cliente_id'].nunique()} / {len(df)}"</span>)
+
+<span class="cm"># ── 4. Outliers — regra do IQR ───────────────────────────────────</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">"ticket_medio"</span>, <span class="str">"total_gasto"</span>, <span class="str">"dias_inativo"</span>]:
+    Q1 = df[col].quantile(<span class="num">0.25</span>)
+    Q3 = df[col].quantile(<span class="num">0.75</span>)
+    IQR = Q3 <span class="op">-</span> Q1
+    outliers = ((df[col] < Q1 <span class="op">-</span> <span class="num">1.5</span><span class="op">*</span>IQR) <span class="op">|</span> (df[col] > Q3 <span class="op">+</span> <span class="num">1.5</span><span class="op">*</span>IQR)).sum()
+    print(<span class="fn">f</span><span class="str">"{col}: {outliers} outliers"</span>)
+
+<span class="cm"># ── 5. Cardinalidade ─────────────────────────────────────────────</span>
+print(df[<span class="str">"cidade"</span>].value_counts())</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wrench"></i>Estratégias de tratamento de nulos</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Situação</th><th>Estratégia</th><th>Código</th></tr></thead>
+          <tbody>
+            <tr><td>Numérico — cliente sem pedidos</td><td>Preencher com 0</td><td><code>fillna(0)</code></td></tr>
+            <tr><td>Numérico — valor faltante aleatório</td><td>Preencher com mediana</td><td><code>fillna(df[col].median())</code></td></tr>
+            <tr><td>Categórico — cidade desconhecida</td><td>Preencher com "Desconhecida"</td><td><code>fillna("Desconhecida")</code></td></tr>
+            <tr><td>Mais de 50% nulos na coluna</td><td>Remover a coluna</td><td><code>drop(columns=[col])</code></td></tr>
+            <tr><td>Linha com muitos nulos críticos</td><td>Remover a linha</td><td><code>dropna(subset=[cols])</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — tratar nulos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Clientes sem pedidos têm nulos nas métricas de pedido → 0</span>
+cols_zerar = [<span class="str">"total_pedidos"</span>, <span class="str">"total_gasto"</span>, <span class="str">"qtd_cancelados"</span>, <span class="str">"qtd_entregues"</span>]
+df[cols_zerar] = df[cols_zerar].fillna(<span class="num">0</span>)
+
+<span class="cm"># Ticket médio → mediana (mais robusto que média em dados com outliers)</span>
+df[<span class="str">"ticket_medio"</span>].fillna(df[<span class="str">"ticket_medio"</span>].median(), inplace=<span class="kw">True</span>)
+
+<span class="cm"># dias_inativo: cliente nunca comprou → 9999 (sinal explícito para o modelo)</span>
+df[<span class="str">"dias_inativo"</span>].fillna(<span class="num">9999</span>, inplace=<span class="kw">True</span>)
+
+<span class="cm"># Cidade nula → "Desconhecida"</span>
+df[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>, inplace=<span class="kw">True</span>)
+
+<span class="cm"># Verificar que não sobrou nulo</span>
+assert df.isnull().sum().sum() == <span class="num">0</span>, <span class="str">"Ainda há nulos!"</span>
+print(<span class="str">"✅ Nenhum nulo restante"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Encoding e Normalização ──────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Encoding de categorias e normalização numérica</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tags"></i>Por que precisamos fazer encoding?</div>
+      <p>A maioria dos algoritmos de ML trabalha com números — não conseguem processar strings como <code>"São Paulo"</code> diretamente. Encoding transforma categorias em representações numéricas que o modelo consegue usar.</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.75rem;">Label Encoding</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);">Converte cada categoria em um inteiro. Simples e compacto, mas <strong>implica ordem</strong> — o modelo pode interpretar que "São Paulo" (2) > "Fortaleza" (0), o que não faz sentido.</p>
+          <div style="margin-top:.75rem;">
+            <div class="enc-row"><span class="enc-label">Fortaleza</span><span class="enc-arrow">→</span><span class="enc-val">0</span></div>
+            <div class="enc-row"><span class="enc-label">Recife</span><span class="enc-arrow">→</span><span class="enc-val">1</span></div>
+            <div class="enc-row"><span class="enc-label">São Paulo</span><span class="enc-arrow">→</span><span class="enc-val">2</span></div>
+          </div>
+          <p style="font-size:.78rem;color:var(--text-muted);margin-top:.5rem;">✅ Use em: variáveis ordinais (ex: "baixo/médio/alto"), target encoding, tree-based models</p>
+        </div>
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.75rem;">One-Hot Encoding</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);">Cria uma coluna binária para cada categoria. <strong>Não implica ordem</strong>. Pode criar muitas colunas se a cardinalidade for alta.</p>
+          <div style="margin-top:.75rem;">
+            <div class="enc-row"><span class="enc-label">Fortaleza</span><span class="enc-arrow">→</span><span class="enc-val">1 0 0</span></div>
+            <div class="enc-row"><span class="enc-label">Recife</span><span class="enc-arrow">→</span><span class="enc-val">0 1 0</span></div>
+            <div class="enc-row"><span class="enc-label">São Paulo</span><span class="enc-arrow">→</span><span class="enc-val">0 0 1</span></div>
+          </div>
+          <p style="font-size:.78rem;color:var(--text-muted);margin-top:.5rem;">✅ Use em: variáveis nominais com até ~20 categorias, regressão, redes neurais</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Label e One-Hot Encoding</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+
+<span class="cm"># Label Encoding — para colunas ordinais ou tree-based models</span>
+le = LabelEncoder()
+df[<span class="str">"cidade_enc"</span>] = le.fit_transform(df[<span class="str">"cidade"</span>])
+print(dict(<span class="fn">zip</span>(le.classes_, le.transform(le.classes_))))
+<span class="cm"># {'Desconhecida': 0, 'Fortaleza': 1, 'Recife': 2, 'São Paulo': 3, ...}</span>
+
+<span class="cm"># One-Hot Encoding com pandas — mais prático para DataFrames</span>
+df_ohe = pd.get_dummies(df, columns=[<span class="str">"cidade"</span>], prefix=<span class="str">"cidade"</span>, dtype=int)
+<span class="cm"># Cria: cidade_Fortaleza, cidade_Recife, cidade_São Paulo, ...</span>
+
+<span class="cm"># Atenção: drop_first=True remove uma categoria para evitar multicolinearidade</span>
+df_ohe = pd.get_dummies(df, columns=[<span class="str">"cidade"</span>], prefix=<span class="str">"cidade"</span>,
+                         drop_first=<span class="kw">True</span>, dtype=int)
+
+<span class="cm"># Booleano → inteiro (tem_email: True/False → 1/0)</span>
+df[<span class="str">"tem_email"</span>] = df[<span class="str">"tem_email"</span>].astype(int)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sliders-h"></i>Normalização vs Padronização — quando usar cada uma</div>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem;">Min-Max Normalization</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7;">Escala os valores para <strong>[0, 1]</strong>. Preserva a distribuição original. Sensível a outliers — um outlier extremo comprime todos os outros valores.</p>
+          <div class="destaque-azul" style="margin-top:.5rem;"><strong>Fórmula:</strong> x_norm = (x - x_min) / (x_max - x_min)</div>
+          <p style="font-size:.78rem;color:var(--text-muted);">✅ Use em: redes neurais, KNN, imagens</p>
+        </div>
+        <div>
+          <p style="font-size:.8rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem;">Standard Scaler (Z-score)</p>
+          <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7;">Centraliza na <strong>média 0 e desvio padrão 1</strong>. Mais robusto a outliers. Não tem limite fixo — valores podem ultrapassar [-3, 3].</p>
+          <div class="destaque-azul" style="margin-top:.5rem;"><strong>Fórmula:</strong> x_std = (x - μ) / σ</div>
+          <p style="font-size:.78rem;color:var(--text-muted);">✅ Use em: regressão linear, SVM, PCA</p>
+        </div>
+      </div>
+
+      <div class="aviso-erro">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><strong>Erro mais comum:</strong> fazer <code>fit_transform</code> no conjunto de teste. O scaler deve ser ajustado (<code>fit</code>) <em>apenas no treino</em> e depois aplicado (<code>transform</code>) no teste. Fazer fit no teste vaza informação e invalida a avaliação do modelo.</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — MinMax e StandardScaler (correto)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, MinMaxScaler
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+cols_numericas = [<span class="str">"ticket_medio"</span>, <span class="str">"total_gasto"</span>, <span class="str">"total_pedidos"</span>,
+                  <span class="str">"dias_inativo"</span>, <span class="str">"qtd_cancelados"</span>]
+
+X = df[cols_numericas]
+y = df[<span class="str">"churn"</span>]  <span class="cm"># target hipotético</span>
+
+<span class="cm"># Dividir ANTES de normalizar</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># fit apenas no treino → transform no treino E no teste</span>
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)   <span class="cm"># fit + transform</span>
+X_test_scaled  = scaler.transform(X_test)        <span class="cm"># só transform — sem fit!</span>
+
+print(<span class="str">"Treino média:"</span>, X_train_scaled.mean(axis=<span class="num">0</span>).round(<span class="num">3</span>))  <span class="cm"># ≈ 0</span>
+print(<span class="str">"Treino std: "</span>, X_train_scaled.std(axis=<span class="num">0</span>).round(<span class="num">3</span>))   <span class="cm"># ≈ 1</span>
+
+<span class="cm"># Salvar scaler para usar na inferência depois</span>
+<span class="kw">import</span> joblib
+joblib.dump(scaler, <span class="str">"scaler_v1.pkl"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Feature Engineering + Prática</span></div>
+
+  <!-- ── AULA 3: Feature Engineering ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Feature Engineering — extraindo mais valor dos dados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cogs"></i>O que é feature engineering</div>
+      <p>Feature engineering é o processo de <strong>criar variáveis novas e mais informativas</strong> a partir dos dados brutos. Um bom conjunto de features pode ser mais importante que a escolha do algoritmo.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — features de data e tempo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Extrair componentes de data</span>
+df[<span class="str">"criado_em"</span>] = pd.to_datetime(df[<span class="str">"criado_em"</span>])
+df[<span class="str">"ano"</span>]             = df[<span class="str">"criado_em"</span>].dt.year
+df[<span class="str">"mes"</span>]             = df[<span class="str">"criado_em"</span>].dt.month
+df[<span class="str">"dia_semana"</span>]      = df[<span class="str">"criado_em"</span>].dt.dayofweek   <span class="cm"># 0=seg, 6=dom</span>
+df[<span class="str">"fim_de_semana"</span>]   = (df[<span class="str">"dia_semana"</span>] >= <span class="num">5</span>).astype(int)
+df[<span class="str">"trimestre"</span>]       = df[<span class="str">"criado_em"</span>].dt.quarter
+
+<span class="cm"># Dias desde um evento de referência</span>
+referencia = pd.Timestamp(<span class="str">"2025-01-01"</span>)
+df[<span class="str">"dias_desde_cadastro"</span>] = (df[<span class="str">"criado_em"</span>] - referencia).dt.days</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — bins, ratios e interações</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Binning — discretizar contínuo em categorias</span>
+df[<span class="str">"faixa_gasto"</span>] = pd.cut(
+    df[<span class="str">"total_gasto"</span>],
+    bins=[<span class="num">0</span>, <span class="num">500</span>, <span class="num">2000</span>, <span class="num">5000</span>, float(<span class="str">"inf"</span>)],
+    labels=[<span class="str">"baixo"</span>, <span class="str">"medio"</span>, <span class="str">"alto"</span>, <span class="str">"vip"</span>]
+)
+
+<span class="cm"># Quantile bins — igual distribuição entre faixas</span>
+df[<span class="str">"quartil_gasto"</span>] = pd.qcut(df[<span class="str">"total_gasto"</span>], q=<span class="num">4</span>, labels=[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])
+
+<span class="cm"># Ratios — relações entre variáveis</span>
+df[<span class="str">"taxa_cancelamento"</span>] = (
+    df[<span class="str">"qtd_cancelados"</span>] /
+    df[<span class="str">"total_pedidos"</span>].replace(<span class="num">0</span>, float(<span class="str">"nan"</span>))
+).fillna(<span class="num">0</span>)
+
+df[<span class="str">"receita_por_dia_ativo"</span>] = (
+    df[<span class="str">"total_gasto"</span>] /
+    df[<span class="str">"dias_inativo"</span>].replace([<span class="num">0</span>, <span class="num">9999</span>], float(<span class="str">"nan"</span>))
+).fillna(<span class="num">0</span>)
+
+<span class="cm"># Flag binário — é um cliente recente?</span>
+df[<span class="str">"cliente_ativo"</span>] = (df[<span class="str">"dias_inativo"</span>] < <span class="num">30</span>).astype(int)
+df[<span class="str">"cliente_vip"</span>]   = (df[<span class="str">"total_gasto"</span>]   > <span class="num">5000</span>).astype(int)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Pipeline completo — banco → dataset pronto</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline end-to-end</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np, joblib, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, LabelEncoder
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># ── 1. EXTRAIR ───────────────────────────────────────────────────</span>
+df = pd.read_sql(<span class="str">"""
+    SELECT c.id AS cliente_id, c.cidade, c.tem_email::int AS tem_email,
+           COUNT(p.id) AS total_pedidos,
+           COALESCE(ROUND(AVG(p.total)::numeric,2), 0) AS ticket_medio,
+           COALESCE(SUM(p.total), 0) AS total_gasto,
+           COALESCE(MAX(CURRENT_DATE - p.criado_em::date), 9999) AS dias_inativo,
+           COUNT(*) FILTER (WHERE p.status='cancelado') AS qtd_cancelados,
+           COUNT(*) FILTER (WHERE p.status='entregue')  AS qtd_entregues
+    FROM clientes c LEFT JOIN pedidos p ON p.cliente_id = c.id
+    GROUP BY c.id, c.cidade, c.tem_email
+"""</span>, engine)
+
+<span class="cm"># ── 2. LIMPAR ────────────────────────────────────────────────────</span>
+df[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>, inplace=<span class="kw">True</span>)
+df.drop_duplicates(subset=<span class="str">"cliente_id"</span>, inplace=<span class="kw">True</span>)
+
+<span class="cm"># ── 3. FEATURE ENGINEERING ───────────────────────────────────────</span>
+df[<span class="str">"taxa_cancelamento"</span>] = (df[<span class="str">"qtd_cancelados"</span>] /
+    df[<span class="str">"total_pedidos"</span>].replace(<span class="num">0</span>, np.nan)).fillna(<span class="num">0</span>)
+df[<span class="str">"cliente_ativo"</span>]    = (df[<span class="str">"dias_inativo"</span>] < <span class="num">30</span>).astype(int)
+df[<span class="str">"faixa_gasto_enc"</span>]  = pd.cut(
+    df[<span class="str">"total_gasto"</span>], bins=[<span class="num">0</span>,<span class="num">500</span>,<span class="num">2000</span>,<span class="num">5000</span>,np.inf],
+    labels=[<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]).astype(int)
+
+<span class="cm"># ── 4. ENCODING ──────────────────────────────────────────────────</span>
+le = LabelEncoder()
+df[<span class="str">"cidade_enc"</span>] = le.fit_transform(df[<span class="str">"cidade"</span>])
+joblib.dump(le, <span class="str">"le_cidade_v1.pkl"</span>)
+
+<span class="cm"># ── 5. DIVIDIR TREINO / TESTE ─────────────────────────────────────</span>
+<span class="cm"># Target hipotético: clientes inativos há mais de 60 dias = churn</span>
+df[<span class="str">"churn"</span>] = (df[<span class="str">"dias_inativo"</span>] > <span class="num">60</span>).astype(int)
+
+feature_cols = [<span class="str">"tem_email"</span>,<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,
+                <span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>,<span class="str">"taxa_cancelamento"</span>,
+                <span class="str">"cliente_ativo"</span>,<span class="str">"faixa_gasto_enc"</span>,<span class="str">"cidade_enc"</span>]
+X = df[feature_cols]
+y = df[<span class="str">"churn"</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+<span class="cm"># ── 6. NORMALIZAR (fit só no treino!) ─────────────────────────────</span>
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s  = scaler.transform(X_test)
+joblib.dump(scaler, <span class="str">"scaler_v1.pkl"</span>)
+
+<span class="cm"># ── 7. SALVAR COMO PARQUET ────────────────────────────────────────</span>
+pd.DataFrame(X_train_s, columns=feature_cols).to_parquet(<span class="str">"X_train.parquet"</span>, index=<span class="kw">False</span>)
+pd.DataFrame(X_test_s,  columns=feature_cols).to_parquet(<span class="str">"X_test.parquet"</span>,  index=<span class="kw">False</span>)
+y_train.to_frame().to_parquet(<span class="str">"y_train.parquet"</span>, index=<span class="kw">False</span>)
+y_test.to_frame().to_parquet(<span class="str">"y_test.parquet"</span>,  index=<span class="kw">False</span>)
+
+print(<span class="fn">f</span><span class="str">"Dataset pronto: {X_train_s.shape[0]} treino / {X_test_s.shape[0]} teste"</span>)
+print(<span class="fn">f</span><span class="str">"Churn rate treino: {y_train.mean():.1%}"</span>)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Artefatos gerados:</strong> <code>X_train.parquet</code>, <code>X_test.parquet</code>, <code>y_train.parquet</code>, <code>y_test.parquet</code>, <code>scaler_v1.pkl</code>, <code>le_cidade_v1.pkl</code>. Todos com versão no nome — essencial para reprodutibilidade.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · pandas + scikit-learn</div>
+        <div class="secao-titulo">5 Exercícios — Preparação de dados para ML</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o banco loja_exemplo. Instale: <code>pip install pandas scikit-learn sqlalchemy psycopg2-binary pyarrow</code></span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Extraia a tabela <code>clientes</code> do banco para um DataFrame. Faça o checklist de qualidade completo: shape, tipos, contagem de nulos por coluna, duplicatas e valores únicos de <code>cidade</code>. Imprima um relatório de auditoria.</p>
+      <span class="dificuldade dif-basico">Básico — Auditoria de qualidade</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM clientes"</span>, engine)
+
+print(<span class="str">"═══ AUDITORIA ═══"</span>)
+print(<span class="str">f"Shape: {df.shape}"</span>)
+print(<span class="str">"\nTipos:\n"</span>, df.dtypes)
+print(<span class="str">"\nNulos:\n"</span>, df.isnull().sum())
+print(<span class="str">f"\nDuplicatas: {df.duplicated().sum()}"</span>)
+print(<span class="str">f"IDs únicos: {df['id'].nunique()}/{len(df)}"</span>)
+print(<span class="str">"\nCidades:\n"</span>, df[<span class="str">"cidade"</span>].value_counts())
+print(<span class="str">"\nEstatísticas:\n"</span>, df.describe())</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Aplique <strong>Label Encoding</strong> na coluna <code>status</code> da tabela <code>pedidos</code>. Mostre o mapeamento categoria→número. Depois aplique <strong>One-Hot Encoding</strong> na mesma coluna com <code>pd.get_dummies</code> e compare o resultado.</p>
+      <span class="dificuldade dif-basico">Básico — Label vs One-Hot Encoding</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+
+df_p = pd.read_sql(<span class="str">"SELECT id, status, total FROM pedidos"</span>, engine)
+
+<span class="cm"># Label Encoding</span>
+le = LabelEncoder()
+df_p[<span class="str">"status_enc"</span>] = le.fit_transform(df_p[<span class="str">"status"</span>])
+print(<span class="str">"Mapeamento:"</span>, dict(<span class="fn">zip</span>(le.classes_, le.transform(le.classes_))))
+
+<span class="cm"># One-Hot Encoding</span>
+df_ohe = pd.get_dummies(df_p, columns=[<span class="str">"status"</span>], prefix=<span class="str">"status"</span>, dtype=int)
+print(<span class="str">"\nColunas OHE:"</span>, [c <span class="kw">for</span> c <span class="kw">in</span> df_ohe.columns <span class="kw">if</span> c.startswith(<span class="str">"status_"</span>)])
+print(df_ohe.head())</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Extraia do banco as features de cliente (total_pedidos, ticket_medio, total_gasto, dias_inativo). Aplique <strong>StandardScaler</strong> corretamente: divida treino/teste primeiro, ajuste apenas no treino e aplique em ambos. Verifique que a média do treino é ≈0 e o desvio padrão ≈1.</p>
+      <span class="dificuldade dif-medio">Médio — StandardScaler correto</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df_feat = pd.read_sql(<span class="str">"""
+    SELECT c.id,
+      COUNT(p.id) AS total_pedidos,
+      COALESCE(ROUND(AVG(p.total)::numeric,2),0) AS ticket_medio,
+      COALESCE(SUM(p.total),0) AS total_gasto,
+      COALESCE(MAX(CURRENT_DATE-p.criado_em::date),9999) AS dias_inativo
+    FROM clientes c LEFT JOIN pedidos p ON p.cliente_id=c.id
+    GROUP BY c.id
+"""</span>, engine)
+
+cols = [<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,<span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>]
+X = df_feat[cols]
+
+X_train, X_test = train_test_split(X, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)   <span class="cm"># fit + transform</span>
+X_test_s  = scaler.transform(X_test)        <span class="cm"># só transform</span>
+
+print(<span class="str">"Treino média:"</span>, np.round(X_train_s.mean(axis=<span class="num">0</span>), <span class="num">3</span>))   <span class="cm"># ≈ 0</span>
+print(<span class="str">"Treino std: "</span>, np.round(X_train_s.std(axis=<span class="num">0</span>), <span class="num">3</span>))    <span class="cm"># ≈ 1</span>
+print(<span class="str">"Teste  média:"</span>, np.round(X_test_s.mean(axis=<span class="num">0</span>), <span class="num">3</span>))    <span class="cm"># ≠ 0 (ok)</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Crie as seguintes features de <strong>feature engineering</strong> a partir dos dados de pedidos: (a) <code>taxa_cancelamento</code> = qtd_cancelados / total_pedidos; (b) <code>cliente_ativo</code> = 1 se dias_inativo &lt; 30, 0 caso contrário; (c) <code>faixa_gasto</code> = bins em baixo/médio/alto/vip com <code>pd.cut</code>. Mostre a distribuição de cada feature criada.</p>
+      <span class="dificuldade dif-medio">Médio — Feature Engineering</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>df_feat[<span class="str">"taxa_cancelamento"</span>] = (
+    df_feat[<span class="str">"qtd_cancelados"</span>] /
+    df_feat[<span class="str">"total_pedidos"</span>].replace(<span class="num">0</span>, np.nan)
+).fillna(<span class="num">0</span>).round(<span class="num">3</span>)
+
+df_feat[<span class="str">"cliente_ativo"</span>] = (df_feat[<span class="str">"dias_inativo"</span>] < <span class="num">30</span>).astype(int)
+
+df_feat[<span class="str">"faixa_gasto"</span>] = pd.cut(
+    df_feat[<span class="str">"total_gasto"</span>],
+    bins=[<span class="num">0</span>, <span class="num">500</span>, <span class="num">2000</span>, <span class="num">5000</span>, float(<span class="str">"inf"</span>)],
+    labels=[<span class="str">"baixo"</span>, <span class="str">"medio"</span>, <span class="str">"alto"</span>, <span class="str">"vip"</span>]
+)
+
+print(df_feat[<span class="str">"taxa_cancelamento"</span>].describe())
+print(df_feat[<span class="str">"cliente_ativo"</span>].value_counts())
+print(df_feat[<span class="str">"faixa_gasto"</span>].value_counts())</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Monte o <strong>pipeline end-to-end completo</strong>: extração do banco → auditoria → limpeza → feature engineering (pelo menos 3 features novas) → Label Encoding da cidade → train/test split → StandardScaler (correto) → salvar <code>X_train.parquet</code>, <code>X_test.parquet</code>, <code>y_train.parquet</code>, <code>y_test.parquet</code> e <code>scaler_v1.pkl</code>. Use <code>dias_inativo &gt; 60</code> como target (churn).</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline completo BD → ML</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">O gabarito completo está no bloco de código da Aula 3 desta semana — pipeline end-to-end com todos os passos comentados. Revise e adapte para incluir suas 3 features de feature engineering extras.</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — verificação final</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> os, pandas <span class="kw">as</span> pd, joblib
+
+<span class="cm"># Verificar arquivos gerados</span>
+arquivos = [<span class="str">"X_train.parquet"</span>,<span class="str">"X_test.parquet"</span>,
+            <span class="str">"y_train.parquet"</span>,<span class="str">"y_test.parquet"</span>,<span class="str">"scaler_v1.pkl"</span>]
+<span class="kw">for</span> arq <span class="kw">in</span> arquivos:
+    exists = os.path.exists(arq)
+    size   = os.path.getsize(arq) <span class="kw">if</span> exists <span class="kw">else</span> <span class="num">0</span>
+    print(<span class="fn">f</span><span class="str">"{'✅' if exists else '❌'} {arq} ({size} bytes)"</span>)
+
+X_train = pd.read_parquet(<span class="str">"X_train.parquet"</span>)
+print(<span class="str">f"\nX_train: {X_train.shape}"</span>)
+print(<span class="str">"Colunas:"</span>, list(X_train.columns))
+
+scaler = joblib.load(<span class="str">"scaler_v1.pkl"</span>)
+print(<span class="str">"Scaler médias (treino):"</span>, scaler.mean_.round(<span class="num">2</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 8</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-search"></i>
+        <strong>Auditoria</strong>
+        <p>Shape, tipos, nulos, duplicatas, outliers (IQR), cardinalidade — checklist obrigatório</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tags"></i>
+        <strong>Encoding</strong>
+        <p>Label (ordinal, trees) vs One-Hot (nominal, linear/redes). drop_first para evitar multicolinearidade</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sliders-h"></i>
+        <strong>Normalização</strong>
+        <p>MinMax [0,1] vs StandardScaler (μ=0, σ=1). Fit <strong>apenas no treino</strong> — transform no teste</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cogs"></i>
+        <strong>Feature Engineering</strong>
+        <p>Bins, ratios, flags, componentes de data — criar variáveis mais informativas para o modelo</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-09.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 9 — Armazenamento Distribuído: S3, Delta Lake e Parquet avançado</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

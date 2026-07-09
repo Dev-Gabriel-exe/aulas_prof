@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 03 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA ─────────────────────────────────────────────────────────── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+
+.destaque-vermelho{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border-left:3px solid #ef4444;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-vermelho strong{color:#f87171;}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td.ok{color:#4ade80;}
+td.nok{color:#f87171;}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.bad{color:#f87171;}
+
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+.aviso-erro{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-erro i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* fn steps */
+.fn-steps{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.fn-step{display:flex;align-items:flex-start;gap:12px;padding:.75rem 1rem;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
+.fn-step-num{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.1rem;color:rgba(74,222,128,.4);flex-shrink:0;width:28px;line-height:1.3;}
+.fn-step-body{}
+.fn-step-title{font-size:.82rem;font-weight:600;color:var(--text-primary);margin-bottom:3px;}
+.fn-step-desc{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+
+/* anomalia cards */
+.anomalia-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.anomalia-card{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:1rem;}
+.anomalia-card .ac-icon{font-size:1.2rem;margin-bottom:.5rem;color:#f87171;}
+.anomalia-card .ac-title{font-size:.78rem;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;}
+.anomalia-card p{font-size:.78rem;color:rgba(252,165,165,.75);line-height:1.5;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.anomalia-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">03</div>
+    <h1 class="capa-titulo">Normalização<br><em>Avançada</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Pré-requisito: Semanas 1–2</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exclamation-triangle"></i></div><span>Anomalias de atualização, inserção e exclusão</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-atom"></i></div><span>1FN — atomicidade e grupos repetidos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-key"></i></div><span>2FN — dependências parciais da chave composta</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-random"></i></div><span>3FN e FNBC — dependências transitivas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Desnormalização controlada — quando e por quê</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Identificar violações de forma normal e refatorar um esquema desnormalizado até a 3FN.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com o semestre</div>
+      <ul class="info-lista">
+        <li>Semana 1: você viu PK e FK — integridade estrutural</li>
+        <li>Aqui: integridade lógica — dados sem redundância nem anomalia</li>
+        <li>Próxima semana: pipelines de dados — normalização é pré-requisito</li>
+        <li>ML: dados mal modelados → features inconsistentes → modelos ruins</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-brain"></i>Por que normalizar importa para IA?</div>
+      <ul class="info-lista">
+        <li>Dados duplicados introduzem ruído nos datasets de treino</li>
+        <li>Anomalias de atualização criam inconsistências entre registros</li>
+        <li>Um banco normalizado tem features mais confiáveis e rastreáveis</li>
+        <li>Feature engineering parte de tabelas bem modeladas</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Formas Normais — visão geral</div>
+      <ul class="info-lista">
+        <li><strong>1FN:</strong> atributos atômicos, sem grupos repetidos</li>
+        <li><strong>2FN:</strong> 1FN + sem dependência parcial da PK</li>
+        <li><strong>3FN:</strong> 2FN + sem dependência transitiva</li>
+        <li><strong>FNBC:</strong> todo determinante é superchave</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Anomalias + 1FN ───────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que normalizar? Anomalias e 1FN</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O problema da redundância</div>
+      <p>Imagine uma tabela que armazena pedidos assim — tudo em uma linha só:</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>pedido_id</th><th>cliente_nome</th><th>cliente_cidade</th><th>produtos_comprados</th><th>fornecedor</th><th>fornecedor_cidade</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Ana Lima</td><td>São Paulo</td><td>Notebook, Mouse</td><td>Dell</td><td>Austin</td></tr>
+            <tr><td>2</td><td>Ana Lima</td><td>São Paulo</td><td>Monitor</td><td>LG</td><td>Seoul</td></tr>
+            <tr><td>3</td><td>Bruno Costa</td><td>Rio</td><td>Teclado, Mouse</td><td>Logitech</td><td>Lausanne</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Parece simples — mas esse esquema tem <strong>três tipos de anomalias</strong> esperando para acontecer.</p>
+    </div>
+
+    <div class="anomalia-grid">
+      <div class="anomalia-card">
+        <div class="ac-icon"><i class="fas fa-plus-circle"></i></div>
+        <div class="ac-title">Anomalia de Inserção</div>
+        <p>Não consigo cadastrar um fornecedor sem que ele tenha pelo menos um pedido associado.</p>
+      </div>
+      <div class="anomalia-card">
+        <div class="ac-icon"><i class="fas fa-edit"></i></div>
+        <div class="ac-title">Anomalia de Atualização</div>
+        <p>Ana Lima mudou para Campinas — preciso atualizar N linhas. Se esquecer uma, os dados ficam inconsistentes.</p>
+      </div>
+      <div class="anomalia-card">
+        <div class="ac-icon"><i class="fas fa-trash"></i></div>
+        <div class="ac-title">Anomalia de Exclusão</div>
+        <p>Se deletar o único pedido do fornecedor Dell, perco todos os dados desse fornecedor.</p>
+      </div>
+    </div>
+
+    <div class="destaque">
+      <strong>Normalização</strong> é o processo de organizar as tabelas para <strong>eliminar redundância</strong> e <strong>evitar anomalias</strong>, aplicando regras chamadas Formas Normais.
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-atom"></i>Primeira Forma Normal (1FN)</div>
+      <p>Uma tabela está na <strong>1FN</strong> quando:</p>
+      <ul class="icon-list" style="margin-bottom:1rem;">
+        <li><i class="fas fa-check-circle"></i><span>Todos os atributos são <strong>atômicos</strong> (valor único, indivisível)</span></li>
+        <li><i class="fas fa-check-circle"></i><span>Não há <strong>grupos repetidos</strong> (colunas como produto1, produto2, produto3)</span></li>
+        <li><i class="fas fa-check-circle"></i><span>Cada linha é única (tem uma chave primária)</span></li>
+      </ul>
+
+      <div class="aviso-erro">
+        <i class="fas fa-times-circle"></i>
+        <span><strong>Viola a 1FN:</strong> a coluna <code>produtos_comprados</code> com valor <em>"Notebook, Mouse"</em> não é atômica — contém múltiplos valores numa única célula.</span>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem;">
+        <div>
+          <p style="font-size:.75rem;color:#f87171;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;font-weight:600;">❌ Violação — não atômico</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL — estrutura ruim</span></div>
+            <pre><code><span class="cm">-- produtos_comprados não é atômico</span>
+pedido_id | produtos_comprados
+    1     | <span class="str">'Notebook, Mouse'</span>
+    2     | <span class="str">'Monitor'</span>
+
+<span class="cm">-- grupos repetidos — igualmente ruim</span>
+pedido_id | produto_1   | produto_2
+    1     | <span class="str">'Notebook'</span>  | <span class="str">'Mouse'</span>
+    2     | <span class="str">'Monitor'</span>   | <span class="kw">NULL</span></code></pre>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.75rem;color:#4ade80;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;font-weight:600;">✅ Correto — 1FN</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL — correto</span></div>
+            <pre><code><span class="cm">-- Uma linha por produto por pedido</span>
+pedido_id | produto_id | quantidade
+    1     |     1      |     1      <span class="cm">-- Notebook</span>
+    1     |     2      |     1      <span class="cm">-- Mouse</span>
+    2     |     4      |     1      <span class="cm">-- Monitor</span>
+
+<span class="cm">-- PK composta: (pedido_id, produto_id)</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: 2FN e 3FN ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Segunda e Terceira Formas Normais</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-key"></i>Segunda Forma Normal (2FN)</div>
+      <p>Uma tabela está na <strong>2FN</strong> quando está na 1FN e <strong>não tem dependências parciais</strong> — todo atributo não-chave depende da <em>chave inteira</em>, não de uma parte dela.</p>
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>Só se aplica a tabelas com PK composta.</strong> Se a PK tem apenas uma coluna, a tabela já está automaticamente na 2FN (se estiver na 1FN).</span>
+      </div>
+
+      <p>Considere a tabela <code>itens_pedido_ruim</code> com PK composta <code>(pedido_id, produto_id)</code>:</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>pedido_id</th><th>produto_id</th><th>quantidade</th><th>nome_produto</th><th>categoria</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>1</td><td>1</td><td>Notebook Dell</td><td>Eletrônicos</td></tr>
+            <tr><td>1</td><td>2</td><td>2</td><td>Mouse Logitech</td><td>Eletrônicos</td></tr>
+            <tr><td>2</td><td>1</td><td>1</td><td>Notebook Dell</td><td>Eletrônicos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso-erro">
+        <i class="fas fa-times-circle"></i>
+        <span><code>nome_produto</code> e <code>categoria</code> dependem <strong>só de produto_id</strong> — não do pedido inteiro. Isso é uma <strong>dependência parcial</strong>: viola a 2FN.</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Corrigindo para 2FN</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Separar o que depende do produto inteiro</span>
+<span class="kw">CREATE TABLE</span> produtos (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome      <span class="fn">VARCHAR</span>(<span class="num">120</span>) <span class="kw">NOT NULL</span>,   <span class="cm">-- depende de id (produto)</span>
+  categoria <span class="fn">VARCHAR</span>(<span class="num">60</span>)               <span class="cm">-- depende de id (produto)</span>
+);
+
+<span class="cm">-- Só fica o que depende da PK composta inteira</span>
+<span class="kw">CREATE TABLE</span> itens_pedido (
+  pedido_id  <span class="fn">INT</span> <span class="kw">REFERENCES</span> pedidos(id),
+  produto_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> produtos(id),
+  quantidade <span class="fn">INT</span> <span class="kw">NOT NULL</span>,             <span class="cm">-- depende do pedido + produto</span>
+  preco_unit <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,   <span class="cm">-- depende do pedido + produto</span>
+  <span class="kw">PRIMARY KEY</span> (pedido_id, produto_id)
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-random"></i>Terceira Forma Normal (3FN)</div>
+      <p>Uma tabela está na <strong>3FN</strong> quando está na 2FN e <strong>não tem dependências transitivas</strong> — nenhum atributo não-chave determina outro atributo não-chave.</p>
+      <p><strong>A → B → C</strong> é uma dependência transitiva: C depende de A indiretamente, via B. Isso cria redundância.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>pedido_id (PK)</th><th>cliente_id</th><th>cliente_nome</th><th>cliente_cidade</th><th>cep_cliente</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>10</td><td>Ana Lima</td><td>São Paulo</td><td>01310-100</td></tr>
+            <tr><td>2</td><td>10</td><td>Ana Lima</td><td>São Paulo</td><td>01310-100</td></tr>
+            <tr><td>3</td><td>11</td><td>Bruno Costa</td><td>Rio</td><td>20040-020</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso-erro">
+        <i class="fas fa-times-circle"></i>
+        <span><code>cliente_nome</code>, <code>cliente_cidade</code> e <code>cep_cliente</code> dependem de <code>cliente_id</code> — que não é a PK. Isso é <strong>dependência transitiva</strong>: viola a 3FN. Dados do cliente repetidos em todo pedido.</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Corrigindo para 3FN</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Dados do cliente ficam na tabela de clientes</span>
+<span class="kw">CREATE TABLE</span> clientes (
+  id     <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome   <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  cidade <span class="fn">VARCHAR</span>(<span class="num">80</span>),
+  cep    <span class="fn">VARCHAR</span>(<span class="num">10</span>)
+);
+
+<span class="cm">-- Pedido referencia o cliente pela FK — sem repetição</span>
+<span class="kw">CREATE TABLE</span> pedidos (
+  id         <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  cliente_id <span class="fn">INT</span> <span class="kw">NOT NULL REFERENCES</span> clientes(id),
+  status     <span class="fn">VARCHAR</span>(<span class="num">20</span>) <span class="kw">DEFAULT</span> <span class="str">'pendente'</span>,
+  total      <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>),
+  criado_em  <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+  <span class="cm">-- sem cliente_nome, cliente_cidade — estão na tabela clientes</span>
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-graduation-cap"></i>Forma Normal de Boyce-Codd (FNBC)</div>
+      <p>A FNBC é uma versão <strong>mais estrita da 3FN</strong>: <em>todo determinante deve ser uma superchave</em>. Na prática, a diferença entre 3FN e FNBC aparece em tabelas com <strong>múltiplas chaves candidatas que se sobrepõem</strong>.</p>
+
+      <div class="destaque">
+        <strong>Regra resumida:</strong> se X → Y (X determina Y), então X deve ser superchave da tabela. Ou seja: só a(s) chave(s) podem determinar outros atributos.
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Forma Normal</th><th>O que elimina</th><th>Pré-requisito</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-inline">1FN</span></td><td>Atributos não-atômicos e grupos repetidos</td><td>—</td></tr>
+            <tr><td><span class="badge-inline">2FN</span></td><td>Dependências parciais da PK composta</td><td>Estar na 1FN</td></tr>
+            <tr><td><span class="badge-inline">3FN</span></td><td>Dependências transitivas entre não-chaves</td><td>Estar na 2FN</td></tr>
+            <tr><td><span class="badge-inline">FNBC</span></td><td>Determinantes que não são superchave</td><td>Estar na 3FN</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo para normalizar</div>
+      <div class="fn-steps">
+        <div class="fn-step">
+          <div class="fn-step-num">1</div>
+          <div class="fn-step-body">
+            <div class="fn-step-title">Identifique a chave primária</div>
+            <div class="fn-step-desc">Qual combinação de atributos identifica unicamente cada linha?</div>
+          </div>
+        </div>
+        <div class="fn-step">
+          <div class="fn-step-num">2</div>
+          <div class="fn-step-body">
+            <div class="fn-step-title">Verifique a 1FN — atributos atômicos</div>
+            <div class="fn-step-desc">Há células com múltiplos valores? Listas separadas por vírgula? Grupos repetidos? → Decompor.</div>
+          </div>
+        </div>
+        <div class="fn-step">
+          <div class="fn-step-num">3</div>
+          <div class="fn-step-body">
+            <div class="fn-step-title">Verifique a 2FN — dependências parciais (só se PK for composta)</div>
+            <div class="fn-step-desc">Algum atributo não-chave depende de apenas parte da PK? → Mover para tabela própria com a parte da PK que o determina.</div>
+          </div>
+        </div>
+        <div class="fn-step">
+          <div class="fn-step-num">4</div>
+          <div class="fn-step-body">
+            <div class="fn-step-title">Verifique a 3FN — dependências transitivas</div>
+            <div class="fn-step-desc">Algum atributo não-chave determina outro atributo não-chave? → Mover o determinado para tabela própria com o determinante como PK.</div>
+          </div>
+        </div>
+        <div class="fn-step">
+          <div class="fn-step-num">5</div>
+          <div class="fn-step-body">
+            <div class="fn-step-title">Crie as FKs entre as tabelas</div>
+            <div class="fn-step-desc">Cada tabela nova é referenciada pela anterior via chave estrangeira — mantendo o relacionamento sem repetir dados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Desnormalização + Exercícios ──────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Desnormalização Controlada + Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Quando desnormalizar é correto</div>
+      <p>Normalização até 3FN é o padrão para sistemas transacionais (OLTP). Em <strong>sistemas analíticos (OLAP)</strong>, Data Warehouses e pipelines de ML, desnormalizar pode ser a decisão certa.</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">OLTP — normalizado</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span>Muitos INSERTs, UPDATEs, DELETEs</span></li>
+            <li><i class="fas fa-check"></i><span>Integridade crítica — bancos de e-commerce, ERP</span></li>
+            <li><i class="fas fa-check"></i><span>Poucos dados lidos por vez</span></li>
+            <li><i class="fas fa-check"></i><span>JOINs no momento da consulta são aceitáveis</span></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">OLAP / ML — pode desnormalizar</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span>Leituras massivas, poucos writes</span></li>
+            <li><i class="fas fa-check"></i><span>Relatórios, dashboards, feature stores</span></li>
+            <li><i class="fas fa-check"></i><span>JOINs pesados prejudicam performance</span></li>
+            <li><i class="fas fa-check"></i><span>Redundância aceitável se documentada</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Regra de ouro:</strong> normalize primeiro, desnormalize depois — com justificativa técnica documentada. Nunca desnormalize por preguiça de modelar corretamente.</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Exemplo de tabela desnormalizada para analytics</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Tabela "wide" para feature engineering em ML</span>
+<span class="cm">-- Viola 3FN de propósito — justificativa: leitura em batch por modelo</span>
+<span class="kw">CREATE TABLE</span> features_cliente_v1 (
+  cliente_id        <span class="fn">INT</span> <span class="kw">PRIMARY KEY</span>,
+  cliente_nome      <span class="fn">VARCHAR</span>(<span class="num">100</span>),     <span class="cm">-- desnorm: redundante com tabela clientes</span>
+  total_pedidos     <span class="fn">INT</span>,
+  ticket_medio      <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>),
+  total_gasto       <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>),
+  dias_desde_ultimo <span class="fn">INT</span>,
+  categorias_compradas <span class="fn">TEXT</span>,         <span class="cm">-- viola 1FN de propósito — array para ML</span>
+  atualizado_em     <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="cm">-- Popular via pipeline (Airflow/Spark) — não por trigger</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Identificação e refatoração</div>
+        <div class="secao-titulo">5 Exercícios — Normalização na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Nos exercícios 1–3, analise o esquema proposto e identifique as violações. Nos exercícios 4–5, escreva o SQL corrigido.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>A tabela abaixo viola a 1FN? Justifique e proponha a correção.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Esquema</span></div>
+        <pre><code>funcionario(id, nome, telefones, habilidades)
+<span class="cm">-- Exemplo de dado:</span>
+<span class="cm">-- id=1, nome='Ana', telefones='(85)9999-1111,(85)8888-2222', habilidades='Python,SQL,Docker'</span></code></pre>
+      </div>
+      <span class="dificuldade dif-basico">Básico — 1FN</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Violação:</strong> <code>telefones</code> e <code>habilidades</code> são multivalorados — armazenam múltiplos valores numa célula. Viola a 1FN (atributos devem ser atômicos).
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Corrigido (1FN)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE TABLE</span> funcionarios (
+  id   <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>
+);
+<span class="kw">CREATE TABLE</span> funcionario_telefones (
+  funcionario_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> funcionarios(id),
+  telefone       <span class="fn">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (funcionario_id, telefone)
+);
+<span class="kw">CREATE TABLE</span> funcionario_habilidades (
+  funcionario_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> funcionarios(id),
+  habilidade     <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (funcionario_id, habilidade)
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>A tabela abaixo tem PK composta <code>(turma_id, aluno_id)</code>. Ela está na 2FN? Identifique as dependências parciais.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Esquema</span></div>
+        <pre><code>matricula(turma_id, aluno_id, nota_final, nome_aluno, email_aluno, nome_turma, professor)</code></pre>
+      </div>
+      <span class="dificuldade dif-basico">Básico — 2FN</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Dependências parciais identificadas:</strong><br>
+          • <code>nome_aluno</code>, <code>email_aluno</code> → dependem só de <code>aluno_id</code><br>
+          • <code>nome_turma</code>, <code>professor</code> → dependem só de <code>turma_id</code><br>
+          • <code>nota_final</code> → depende da PK inteira ✅
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Corrigido (2FN)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE TABLE</span> alunos (
+  id    <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome  <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  email <span class="fn">VARCHAR</span>(<span class="num">150</span>)
+);
+<span class="kw">CREATE TABLE</span> turmas (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome      <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  professor <span class="fn">VARCHAR</span>(<span class="num">100</span>)
+);
+<span class="kw">CREATE TABLE</span> matriculas (
+  turma_id   <span class="fn">INT</span> <span class="kw">REFERENCES</span> turmas(id),
+  aluno_id   <span class="fn">INT</span> <span class="kw">REFERENCES</span> alunos(id),
+  nota_final <span class="fn">NUMERIC</span>(<span class="num">4</span>,<span class="num">1</span>),
+  <span class="kw">PRIMARY KEY</span> (turma_id, aluno_id)
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>A tabela abaixo está na 3FN? Identifique a dependência transitiva.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Esquema</span></div>
+        <pre><code>produto(id, nome, categoria_id, categoria_nome, categoria_descricao)</code></pre>
+      </div>
+      <span class="dificuldade dif-basico">Básico — 3FN</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Dependência transitiva:</strong> <code>categoria_nome</code> e <code>categoria_descricao</code> dependem de <code>categoria_id</code> — que não é a PK. Ou seja: <code>id → categoria_id → categoria_nome</code>. Viola a 3FN.
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Corrigido (3FN)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE TABLE</span> categorias (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome      <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
+  descricao <span class="fn">TEXT</span>
+);
+<span class="kw">CREATE TABLE</span> produtos (
+  id           <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome         <span class="fn">VARCHAR</span>(<span class="num">120</span>) <span class="kw">NOT NULL</span>,
+  categoria_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> categorias(id)
+  <span class="cm">-- sem categoria_nome e categoria_descricao aqui</span>
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>A tabela <code>vendas_loja</code> abaixo viola <strong>múltiplas formas normais</strong>. Normalize até a 3FN e escreva o SQL completo das tabelas resultantes.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Tabela inicial</span></div>
+        <pre><code>vendas_loja(venda_id, data_venda, cliente_cpf, cliente_nome,
+            cliente_cidade, vendedor_id, vendedor_nome, vendedor_regiao,
+            produtos_vendidos, total)</code></pre>
+      </div>
+      <span class="dificuldade dif-medio">Médio — 1FN + 2FN + 3FN</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Violações identificadas:</strong><br>
+          • <code>produtos_vendidos</code> → não atômico (1FN)<br>
+          • <code>cliente_nome</code>, <code>cliente_cidade</code> → transitivo via <code>cliente_cpf</code> (3FN)<br>
+          • <code>vendedor_nome</code>, <code>vendedor_regiao</code> → transitivo via <code>vendedor_id</code> (3FN)
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Normalizado até 3FN</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE TABLE</span> clientes (
+  cpf    <span class="fn">CHAR</span>(<span class="num">11</span>) <span class="kw">PRIMARY KEY</span>,
+  nome   <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  cidade <span class="fn">VARCHAR</span>(<span class="num">80</span>)
+);
+<span class="kw">CREATE TABLE</span> vendedores (
+  id     <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome   <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  regiao <span class="fn">VARCHAR</span>(<span class="num">60</span>)
+);
+<span class="kw">CREATE TABLE</span> produtos (
+  id   <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome <span class="fn">VARCHAR</span>(<span class="num">120</span>) <span class="kw">NOT NULL</span>
+);
+<span class="kw">CREATE TABLE</span> vendas (
+  id           <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  data_venda   <span class="fn">DATE</span> <span class="kw">NOT NULL</span>,
+  cliente_cpf  <span class="fn">CHAR</span>(<span class="num">11</span>) <span class="kw">REFERENCES</span> clientes(cpf),
+  vendedor_id  <span class="fn">INT</span> <span class="kw">REFERENCES</span> vendedores(id),
+  total        <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>)
+);
+<span class="kw">CREATE TABLE</span> itens_venda (
+  venda_id   <span class="fn">INT</span> <span class="kw">REFERENCES</span> vendas(id),
+  produto_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> produtos(id),
+  quantidade <span class="fn">INT</span> <span class="kw">NOT NULL</span>,
+  preco_unit <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (venda_id, produto_id)
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Dado o esquema normalizado do banco <strong>loja_exemplo</strong> (Semana 1), escreva uma query SQL que <strong>reconstituí a visão desnormalizada</strong> de uma venda — mostrando numa única linha: nome do cliente, cidade, nome do produto, categoria, quantidade, preço unitário e subtotal. Use CTEs para organizar as etapas.</p>
+      <span class="dificuldade dif-desafio">Desafio — JOINs + CTE + Desnormalização via Query</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span>
+
+itens_detalhados <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    p.id           <span class="kw">AS</span> pedido_id,
+    p.cliente_id,
+    p.criado_em,
+    pr.nome        <span class="kw">AS</span> produto,
+    pr.categoria,
+    i.quantidade,
+    i.preco_unit,
+    (i.quantidade <span class="op">*</span> i.preco_unit) <span class="kw">AS</span> subtotal
+  <span class="kw">FROM</span> pedidos p
+  <span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.pedido_id  <span class="op">=</span> p.id
+  <span class="kw">INNER JOIN</span> produtos pr    <span class="kw">ON</span> pr.id       <span class="op">=</span> i.produto_id
+)
+
+<span class="kw">SELECT</span>
+  c.nome          <span class="kw">AS</span> cliente,
+  c.cidade,
+  id.pedido_id,
+  id.criado_em::date <span class="kw">AS</span> data_pedido,
+  id.produto,
+  id.categoria,
+  id.quantidade,
+  id.preco_unit,
+  id.subtotal
+<span class="kw">FROM</span> itens_detalhados id
+<span class="kw">INNER JOIN</span> clientes c <span class="kw">ON</span> c.id <span class="op">=</span> id.cliente_id
+<span class="kw">ORDER BY</span> id.pedido_id, id.produto;</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 3</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Anomalias</strong>
+        <p>Inserção, atualização e exclusão — o que causam e por que surgem em esquemas desnormalizados</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-atom"></i>
+        <strong>1FN e 2FN</strong>
+        <p>Atomicidade, sem grupos repetidos, sem dependências parciais da PK composta</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-random"></i>
+        <strong>3FN e FNBC</strong>
+        <p>Sem dependências transitivas — todo determinante deve ser superchave</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-balance-scale"></i>
+        <strong>Desnormalização</strong>
+        <p>OLTP normaliza, OLAP desnormaliza com justificativa — regra de ouro do trade-off</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-04.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 4 — Pipelines de Dados para IA: ETL, ingestão e feature engineering</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const c = btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML = c.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

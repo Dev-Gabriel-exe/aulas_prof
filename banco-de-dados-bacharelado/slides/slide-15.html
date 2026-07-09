@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 15 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border-left:3px solid #f87171;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-red strong{color:#f87171;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.sql-kw{color:#f9a8d4;}.sql-fn{color:#93c5fd;}.sql-str{color:#fde68a;}.sql-cm{color:#4b5563;font-style:italic;}.sql-num{color:#fca5a5;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* ACID cards */
+.acid-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.acid-card{border-radius:12px;padding:1.1rem;text-align:center;}
+.acid-a{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);}
+.acid-c{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);}
+.acid-i{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);}
+.acid-d{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);}
+.acid-card .ac-letra{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;margin-bottom:.3rem;}
+.acid-a .ac-letra{color:var(--green-400);}
+.acid-c .ac-letra{color:#60a5fa;}
+.acid-i .ac-letra{color:#a78bfa;}
+.acid-d .ac-letra{color:#fbbf24;}
+.acid-card .ac-nome{font-size:.8rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.acid-card p{font-size:.75rem;color:var(--text-secondary);line-height:1.45;}
+
+/* timeline de transação */
+.timeline{display:flex;flex-direction:column;gap:0;margin:.85rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.tl-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:.5rem;align-items:center;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.tl-row:last-child{border-bottom:none;}
+.tl-t{color:var(--text-muted);font-size:.7rem;}
+.tl-tx1{color:#93c5fd;}
+.tl-tx2{color:#f9a8d4;}
+.tl-ok{color:var(--green-400);}
+.tl-bad{color:#f87171;}
+.tl-wait{color:#fbbf24;}
+.tl-head{font-weight:700;color:var(--text-muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;padding-bottom:.5rem;border-bottom:1px solid rgba(74,222,128,.15);}
+
+/* níveis isolamento */
+.nivel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin:.75rem 0;}
+.nivel-card{border-radius:12px;padding:1rem;border:1px solid;}
+.nivel-ru{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+.nivel-rc{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.2);}
+.nivel-rr{background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.2);}
+.nivel-se{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.2);}
+.nivel-card .nc-nome{font-size:.78rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem;}
+.nivel-ru .nc-label{color:#f87171;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.nivel-rc .nc-label{color:#fbbf24;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.nivel-rr .nc-label{color:#60a5fa;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.nivel-se .nc-label{color:var(--green-400);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.nivel-card p{font-size:.74rem;color:var(--text-secondary);line-height:1.45;}
+.nivel-card .nc-permite{font-size:.7rem;margin-top:.5rem;}
+.nivel-ru .nc-permite{color:rgba(252,165,165,.7);}
+.nivel-rc .nc-permite{color:rgba(253,230,138,.7);}
+.nivel-rr .nc-permite{color:rgba(186,230,253,.7);}
+.nivel-se .nc-permite{color:rgba(134,239,172,.7);}
+
+/* deadlock visual */
+.deadlock-vis{display:flex;align-items:center;justify-content:center;gap:2rem;margin:1rem 0;flex-wrap:wrap;}
+.dl-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:.75rem 1.25rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.dl-tx{color:#f87171;font-weight:700;margin-bottom:.25rem;}
+.dl-lock{color:var(--text-muted);font-size:.72rem;}
+.dl-arrow{font-size:1.5rem;color:#f87171;}
+.dl-wait{font-size:.7rem;color:#fbbf24;margin-top:.25rem;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-4,.acid-grid,.nivel-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+  .tl-row{grid-template-columns:60px 1fr;}
+  .tl-tx2{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">15</div>
+    <h1 class="capa-titulo">Transações e<br><em>Concorrência</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Bloco 3 — Semana 2</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-check-circle"></i></div><span>ACID — Atomicidade, Consistência, Isolamento, Durabilidade</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-eye-slash"></i></div><span>Anomalias de concorrência — dirty read, non-repeatable, phantom</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sliders-h"></i></div><span>Níveis de isolamento — Read Uncommitted ao Serializable</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-lock"></i></div><span>MVCC — como o PostgreSQL evita locks em leituras</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-skull-crossbones"></i></div><span>Deadlock — detecção, prevenção e simulação prática</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Simular concorrência com duas conexões psycopg2 em threads, observar anomalias de isolamento, provocar e detectar um deadlock, e implementar estratégias de prevenção com ordenação de locks.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 14: índices — como acelerar leituras individuais</li>
+        <li>Esta semana: transações — como garantir integridade com múltiplos usuários</li>
+        <li>Semana 16: integração BD com Python — psycopg2, SQLAlchemy, boas práticas</li>
+        <li>Transações são a base de qualquer sistema financeiro, e-commerce, saúde</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que transações importam para IA?</div>
+      <ul class="info-lista">
+        <li>Pipelines de ML fazem escritas em lote — sem transação, falha parcial corrompe o dataset</li>
+        <li>Feature stores atualizam features de clientes — concorrência sem isolamento gera valores incorretos</li>
+        <li>Modelos que leem features durante o treino precisam de snapshot consistente dos dados</li>
+        <li>Delta Lake usa ACID exatamente porque aprendeu com os problemas de transações</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>PostgreSQL — BEGIN, COMMIT, ROLLBACK, SAVEPOINT, SET TRANSACTION</li>
+        <li>psycopg2 — controle manual de transações em Python</li>
+        <li>threading — simular concorrência com múltiplas conexões</li>
+        <li>pg_locks — inspecionar locks ativos no PostgreSQL</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: ACID e anomalias ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">ACID — as quatro propriedades que tornam bancos confiáveis</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-check-circle"></i>As quatro propriedades ACID</div>
+      <p>Uma <strong>transação</strong> é uma sequência de operações tratada como uma unidade indivisível. O banco garante que ela respeita as quatro propriedades ACID — mesmo em caso de falha de hardware, queda de energia ou múltiplos usuários simultâneos.</p>
+
+      <div class="acid-grid">
+        <div class="acid-card acid-a">
+          <div class="ac-letra">A</div>
+          <div class="ac-nome">Atomicidade</div>
+          <p>Tudo ou nada. Se qualquer passo falhar, o banco desfaz <em>todas</em> as operações da transação.</p>
+        </div>
+        <div class="acid-card acid-c">
+          <div class="ac-letra">C</div>
+          <div class="ac-nome">Consistência</div>
+          <p>A transação leva o banco de um estado válido a outro estado válido — nunca viola constraints ou regras de negócio.</p>
+        </div>
+        <div class="acid-card acid-i">
+          <div class="ac-letra">I</div>
+          <div class="ac-nome">Isolamento</div>
+          <p>Transações concorrentes não se interferem. Cada uma enxerga o banco como se fosse a única executando.</p>
+        </div>
+        <div class="acid-card acid-d">
+          <div class="ac-letra">D</div>
+          <div class="ac-nome">Durabilidade</div>
+          <p>Uma vez confirmada (COMMIT), a transação persiste mesmo que o servidor caia logo depois.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — estrutura básica de transação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Transferência bancária: deve ser atômica</span>
+<span class="sql-kw">BEGIN</span>;  <span class="sql-cm">-- inicia a transação</span>
+
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo - <span class="sql-num">500</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;  <span class="sql-cm">-- debitar Ana</span>
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo + <span class="sql-num">500</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">2</span>;  <span class="sql-cm">-- creditar Bruno</span>
+
+<span class="sql-cm">-- Se ambos funcionaram:</span>
+<span class="sql-kw">COMMIT</span>;
+
+<span class="sql-cm">-- Se algo falhou:</span>
+<span class="sql-kw">ROLLBACK</span>;
+
+<span class="sql-cm">-- SAVEPOINT: ponto de retorno parcial dentro da transação</span>
+<span class="sql-kw">BEGIN</span>;
+<span class="sql-kw">INSERT INTO</span> log VALUES (<span class="sql-str">'inicio'</span>);
+<span class="sql-kw">SAVEPOINT</span> antes_debit;
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo - <span class="sql-num">500</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;
+<span class="sql-cm">-- Se o débito falhou, volta só até o savepoint:</span>
+<span class="sql-kw">ROLLBACK TO</span> antes_debit;
+<span class="sql-cm">-- o INSERT no log ainda está ativo!</span>
+<span class="sql-kw">COMMIT</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-eye-slash"></i>Anomalias de concorrência — o que pode dar errado</div>
+      <p>Sem controle adequado de isolamento, transações concorrentes podem produzir resultados incorretos. Existem três anomalias clássicas:</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Anomalia</th><th>O que acontece</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Dirty Read</strong><br><span style="font-size:.72rem;color:#f87171;">leitura suja</span></td>
+              <td>Tx B lê dados que Tx A escreveu mas ainda não confirmou. Se A fizer ROLLBACK, B leu um dado que nunca existiu.</td>
+              <td>Ana transfere R$500 mas ainda não deu COMMIT. Bruno lê o saldo atualizado e toma decisão baseada num dado que pode ser desfeito.</td>
+            </tr>
+            <tr>
+              <td><strong>Non-Repeatable Read</strong><br><span style="font-size:.72rem;color:#fbbf24;">leitura não repetível</span></td>
+              <td>Tx A lê uma linha, Tx B atualiza e dá COMMIT, Tx A lê a mesma linha de novo e obtém valor diferente.</td>
+              <td>Relatório lê saldo = 1000, outro processo paga uma conta (saldo → 500 + COMMIT), relatório lê saldo de novo = 500. Mesmo relatório, valores diferentes.</td>
+            </tr>
+            <tr>
+              <td><strong>Phantom Read</strong><br><span style="font-size:.72rem;color:#a78bfa;">leitura fantasma</span></td>
+              <td>Tx A executa uma query com filtro, Tx B insere novas linhas que satisfazem o filtro e dá COMMIT, Tx A repete a query e encontra linhas novas ("fantasmas").</td>
+              <td>Auditoria conta pedidos do dia = 150. Novo pedido é inserido + COMMIT. Auditoria recontará = 151. Mesma query, resultados diferentes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Timeline visual -->
+      <p style="margin-top:.85rem;"><strong>Dirty Read — linha do tempo:</strong></p>
+      <div class="timeline">
+        <div class="tl-row tl-head">
+          <span>Tempo</span><span>Transação A</span><span>Transação B</span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-t">t1</span>
+          <span class="tl-tx1">BEGIN</span>
+          <span class="tl-tx2"></span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-t">t2</span>
+          <span class="tl-tx1">UPDATE saldo → 500</span>
+          <span class="tl-tx2"></span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-t">t3</span>
+          <span class="tl-tx1"><em>(ainda não fez COMMIT)</em></span>
+          <span class="tl-tx2 tl-bad">SELECT saldo → lê 500 ⚠️</span>
+        </div>
+        <div class="tl-row">
+          <span class="tl-t">t4</span>
+          <span class="tl-tx1 tl-bad">ROLLBACK — saldo volta a 1000</span>
+          <span class="tl-tx2 tl-bad">B usou dado inválido!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Níveis de isolamento e MVCC ───────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Níveis de isolamento, MVCC e deadlock</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sliders-h"></i>Os 4 níveis de isolamento do SQL padrão</div>
+      <p>O SQL padrão define quatro níveis de isolamento que controlam quais anomalias são permitidas. Mais isolamento = mais segurança, mas menos concorrência (mais contenção de locks).</p>
+
+      <div class="nivel-grid">
+        <div class="nivel-card nivel-ru">
+          <div class="nc-label">Nível 1</div>
+          <div class="nc-nome">Read Uncommitted</div>
+          <p>Permite ler dados não confirmados de outras transações.</p>
+          <div class="nc-permite">Permite: dirty read, non-repeatable, phantom</div>
+        </div>
+        <div class="nivel-card nivel-rc">
+          <div class="nc-label">Nível 2 · padrão PG</div>
+          <div class="nc-nome">Read Committed</div>
+          <p>Só lê dados já confirmados. Padrão do PostgreSQL.</p>
+          <div class="nc-permite">Previne: dirty read<br>Permite: non-repeatable, phantom</div>
+        </div>
+        <div class="nivel-card nivel-rr">
+          <div class="nc-label">Nível 3</div>
+          <div class="nc-nome">Repeatable Read</div>
+          <p>Garante que releituras na mesma transação retornam os mesmos dados.</p>
+          <div class="nc-permite">Previne: dirty read, non-repeatable<br>Permite: phantom (em alguns SGBDs; PG previne)</div>
+        </div>
+        <div class="nivel-card nivel-se">
+          <div class="nc-label">Nível 4 · máximo</div>
+          <div class="nc-nome">Serializable</div>
+          <p>Transações executam como se fossem em série, uma de cada vez.</p>
+          <div class="nc-permite">Previne: todas as anomalias<br>Custo: maior contenção</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — configurar nível de isolamento</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Definir isolamento para a próxima transação</span>
+<span class="sql-kw">BEGIN</span> <span class="sql-kw">TRANSACTION ISOLATION LEVEL</span> REPEATABLE READ;
+<span class="sql-kw">SELECT</span> saldo <span class="sql-kw">FROM</span> contas <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;
+<span class="sql-cm">-- Mesmo que outra transação altere e dê COMMIT,
+-- esta transação continuará vendo o valor original</span>
+<span class="sql-kw">COMMIT</span>;
+
+<span class="sql-cm">-- Serializable — máxima segurança (relatórios de auditoria, transações financeiras)</span>
+<span class="sql-kw">BEGIN</span> <span class="sql-kw">TRANSACTION ISOLATION LEVEL</span> SERIALIZABLE;
+<span class="sql-kw">SELECT</span> <span class="sql-fn">count</span>(*) <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> status = <span class="sql-str">'pendente'</span>;
+<span class="sql-cm">-- Nenhum novo pedido pendente pode ser inserido e confirmado
+-- enquanto esta transação estiver aberta</span>
+<span class="sql-kw">COMMIT</span>;
+
+<span class="sql-cm">-- Verificar nível de isolamento atual</span>
+<span class="sql-kw">SHOW</span> transaction_isolation;
+
+<span class="sql-cm">-- Alterar padrão da sessão (raro — use com cuidado)</span>
+<span class="sql-kw">SET</span> SESSION CHARACTERISTICS <span class="sql-kw">AS TRANSACTION ISOLATION LEVEL</span> SERIALIZABLE;</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Nível</th><th>Dirty Read</th><th>Non-Repeatable</th><th>Phantom</th><th>Performance</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Read Uncommitted</strong></td><td style="color:#f87171;">Possível</td><td style="color:#f87171;">Possível</td><td style="color:#f87171;">Possível</td><td style="color:var(--green-400);">Máxima</td></tr>
+            <tr><td><strong>Read Committed</strong> ← padrão PG</td><td style="color:var(--green-400);">Prevenido</td><td style="color:#f87171;">Possível</td><td style="color:#f87171;">Possível</td><td style="color:var(--green-400);">Alta</td></tr>
+            <tr><td><strong>Repeatable Read</strong></td><td style="color:var(--green-400);">Prevenido</td><td style="color:var(--green-400);">Prevenido</td><td style="color:#fbbf24;">Raro no PG*</td><td style="color:#fbbf24;">Média</td></tr>
+            <tr><td><strong>Serializable</strong></td><td style="color:var(--green-400);">Prevenido</td><td style="color:var(--green-400);">Prevenido</td><td style="color:var(--green-400);">Prevenido</td><td style="color:#f87171;">Menor</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.75rem;color:var(--text-muted);">* No PostgreSQL, Repeatable Read usa MVCC e previne phantom reads na prática — comportamento mais seguro que o padrão SQL.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-copy"></i>MVCC — Multi-Version Concurrency Control</div>
+      <p>O PostgreSQL não usa locks para leituras — usa <strong>MVCC</strong>. Cada linha tem versões com timestamps de validade. Quando uma transação lê, enxerga um <strong>snapshot</strong> do banco no momento em que a transação começou. Escritas criam novas versões sem sobrescrever as antigas — leitores e escritores não se bloqueiam mutuamente.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Como o MVCC funciona:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span>Cada linha armazena <code>xmin</code> (txid que criou) e <code>xmax</code> (txid que deletou)</span></li>
+            <li><i class="fas fa-check ok"></i><span>UPDATE = INSERT de nova versão + marcar <code>xmax</code> na antiga</span></li>
+            <li><i class="fas fa-check ok"></i><span>Cada transação enxerga apenas versões cuja <code>xmin</code> foi confirmada antes do início</span></li>
+            <li><i class="fas fa-check ok"></i><span>Leituras nunca bloqueiam escritas — e vice-versa</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Consequências do MVCC:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span>Alta concorrência — reads e writes coexistem sem espera</span></li>
+            <li><i class="fas fa-check ok"></i><span>Time travel natural — snapshot consistente da transação</span></li>
+            <li><i class="fas fa-times bad"></i><span>Dead tuples — versões antigas acumulam em disco</span></li>
+            <li><i class="fas fa-check ok"></i><span><code>VACUUM</code> limpa dead tuples periodicamente (autovacuum é automático)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — inspecionar versões MVCC e dead tuples</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Ver xmin e xmax das linhas (versões MVCC)</span>
+<span class="sql-kw">SELECT</span> xmin, xmax, id, saldo <span class="sql-kw">FROM</span> contas;
+
+<span class="sql-cm">-- Ver dead tuples acumuladas (candidatas ao VACUUM)</span>
+<span class="sql-kw">SELECT</span>
+    relname,
+    n_live_tup   <span class="sql-kw">AS</span> linhas_vivas,
+    n_dead_tup   <span class="sql-kw">AS</span> linhas_mortas,
+    last_vacuum,
+    last_autovacuum
+<span class="sql-kw">FROM</span> pg_stat_user_tables
+<span class="sql-kw">ORDER BY</span> n_dead_tup <span class="sql-kw">DESC</span>;
+
+<span class="sql-cm">-- Forçar limpeza manual</span>
+<span class="sql-kw">VACUUM</span> contas;
+<span class="sql-kw">VACUUM ANALYZE</span> contas;  <span class="sql-cm">-- também atualiza estatísticas</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-skull-crossbones"></i>Deadlock — quando duas transações se bloqueiam mutuamente</div>
+      <p>Um <strong>deadlock</strong> ocorre quando a Transação A aguarda um lock que a Transação B possui, e B aguarda um lock que A possui. Nenhuma pode avançar — impasse eterno. O PostgreSQL detecta automaticamente e cancela uma das transações (a "vítima") para desbloquear a outra.</p>
+
+      <!-- Deadlock visual -->
+      <div class="deadlock-vis">
+        <div class="dl-box">
+          <div class="dl-tx">Transação A</div>
+          <div class="dl-lock">🔒 tem lock em conta_id=1</div>
+          <div class="dl-wait">⏳ aguardando conta_id=2</div>
+        </div>
+        <div class="dl-arrow">⇄</div>
+        <div class="dl-box">
+          <div class="dl-tx">Transação B</div>
+          <div class="dl-lock">🔒 tem lock em conta_id=2</div>
+          <div class="dl-wait">⏳ aguardando conta_id=1</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — sequência que provoca deadlock</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Sessão A (executa na ordem: conta 1 → conta 2)</span>
+<span class="sql-kw">BEGIN</span>;
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo - <span class="sql-num">100</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;  <span class="sql-cm">-- adquire lock em id=1</span>
+<span class="sql-cm">-- aguarda Sessão B liberar lock em id=2...</span>
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo + <span class="sql-num">100</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">2</span>;
+<span class="sql-kw">COMMIT</span>;
+
+<span class="sql-cm">-- Sessão B (executa na ordem INVERSA: conta 2 → conta 1)</span>
+<span class="sql-kw">BEGIN</span>;
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo - <span class="sql-num">200</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">2</span>;  <span class="sql-cm">-- adquire lock em id=2</span>
+<span class="sql-cm">-- aguarda Sessão A liberar lock em id=1... → DEADLOCK!</span>
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo + <span class="sql-num">200</span> <span class="sql-kw">WHERE</span> id = <span class="sql-num">1</span>;
+<span class="sql-kw">COMMIT</span>;
+
+<span class="sql-cm">-- O PostgreSQL detectará e cancelará uma das transações com:
+-- ERROR: deadlock detected
+-- DETAIL: Process 1234 waits for ShareLock on transaction 5678
+-- HINT: See server log for query details.</span>
+
+<span class="sql-cm">-- SOLUÇÃO: sempre acessar recursos na mesma ordem</span>
+<span class="sql-cm">-- Sessão A e B devem ambas fazer: conta menor id ANTES do maior</span>
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo - <span class="sql-num">100</span> <span class="sql-kw">WHERE</span> id = <span class="sql-kw">LEAST</span>(<span class="sql-num">1</span>,<span class="sql-num">2</span>);
+<span class="sql-kw">UPDATE</span> contas <span class="sql-kw">SET</span> saldo = saldo + <span class="sql-num">100</span> <span class="sql-kw">WHERE</span> id = <span class="sql-kw">GREATEST</span>(<span class="sql-num">1</span>,<span class="sql-num">2</span>);</code></pre>
+      </div>
+
+      <div class="destaque-red">
+        <strong>Regra de ouro para evitar deadlocks:</strong> sempre acesse múltiplos recursos (linhas, tabelas) na <em>mesma ordem</em> em todas as transações. Se A sempre bloqueia conta 1 antes de conta 2, e B também, eles nunca formarão um ciclo de espera.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Simulação de concorrência ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Simulação de concorrência — anomalias, deadlock e prevenção</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Preparar tabela de contas para os experimentos</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — tabela de contas para simulação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-kw">CREATE TABLE IF NOT EXISTS</span> contas (
+    id     SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    nome   TEXT           <span class="sql-kw">NOT NULL</span>,
+    saldo  NUMERIC(<span class="sql-num">12</span>,<span class="sql-num">2</span>) <span class="sql-kw">NOT NULL</span> <span class="sql-kw">CHECK</span> (saldo >= <span class="sql-num">0</span>)
+);
+
+<span class="sql-kw">INSERT INTO</span> contas (nome, saldo) <span class="sql-kw">VALUES</span>
+    (<span class="sql-str">'Ana'</span>,   <span class="sql-num">5000.00</span>),
+    (<span class="sql-str">'Bruno'</span>, <span class="sql-num">3000.00</span>),
+    (<span class="sql-str">'Carla'</span>, <span class="sql-num">1500.00</span>)
+<span class="sql-kw">ON CONFLICT DO NOTHING</span>;
+
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> contas;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code-branch"></i>Simulando concorrência com threads Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — simulação de transferência concorrente</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2, threading, time, os
+
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+
+<span class="kw">def</span> <span class="fn">transferir</span>(de_id, para_id, valor, nome_tx, nivel=<span class="str">"READ COMMITTED"</span>):
+    <span class="str">"""Realiza uma transferência dentro de uma transação."""</span>
+    conn = psycopg2.connect(DB)
+    conn.autocommit = <span class="kw">False</span>
+    cur = conn.cursor()
+    <span class="kw">try</span>:
+        cur.execute(<span class="fn">f</span><span class="str">"SET TRANSACTION ISOLATION LEVEL {nivel}"</span>)
+        <span class="cm"># Lê saldo atual</span>
+        cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id = %s"</span>, (de_id,))
+        saldo_atual = cur.fetchone()[<span class="num">0</span>]
+        print(<span class="fn">f</span><span class="str">"[{nome_tx}] saldo de conta {de_id} = R${saldo_atual}"</span>)
+
+        <span class="kw">if</span> saldo_atual < valor:
+            print(<span class="fn">f</span><span class="str">"[{nome_tx}] saldo insuficiente — ROLLBACK"</span>)
+            conn.rollback()
+            <span class="kw">return</span>
+
+        time.sleep(<span class="num">0.1</span>)  <span class="cm"># simular latência</span>
+
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo - %s WHERE id = %s"</span>, (valor, de_id))
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + %s WHERE id = %s"</span>, (valor, para_id))
+        conn.commit()
+        print(<span class="fn">f</span><span class="str">"[{nome_tx}] transferência R${valor} de {de_id}→{para_id} — COMMIT ✓"</span>)
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        conn.rollback()
+        print(<span class="fn">f</span><span class="str">"[{nome_tx}] ERRO: {e} — ROLLBACK"</span>)
+    <span class="kw">finally</span>:
+        cur.close(); conn.close()
+
+<span class="cm"># Duas transferências simultâneas do mesmo saldo (Ana → Bruno e Ana → Carla)</span>
+print(<span class="str">"=== Simulando transferências concorrentes ==="</span>)
+t1 = threading.Thread(target=transferir, args=(<span class="num">1</span>, <span class="num">2</span>, <span class="num">4000</span>, <span class="str">"Tx-A"</span>))
+t2 = threading.Thread(target=transferir, args=(<span class="num">1</span>, <span class="num">3</span>, <span class="num">4000</span>, <span class="str">"Tx-B"</span>))
+t1.start(); t2.start()
+t1.join(); t2.join()
+
+<span class="cm"># Verificar saldo final — o CHECK constraint garante que nunca fica negativo</span>
+conn = psycopg2.connect(DB)
+cur = conn.cursor()
+cur.execute(<span class="str">"SELECT id, nome, saldo FROM contas"</span>)
+print(<span class="str">"\nSaldos finais:"</span>)
+<span class="kw">for</span> row <span class="kw">in</span> cur.fetchall():
+    print(<span class="fn">f</span><span class="str">"  conta {row[0]} ({row[1]}): R${row[2]}"</span>)
+cur.close(); conn.close()</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-skull-crossbones"></i>Provocando e capturando deadlock em Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — simulação de deadlock e tratamento</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2, threading, time, os
+<span class="kw">from</span> psycopg2 <span class="kw">import</span> errors <span class="kw">as</span> pg_errors
+
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+resultado = {}
+
+<span class="kw">def</span> <span class="fn">tx_a</span>():
+    <span class="str">"""Acessa conta 1 → conta 2"""</span>
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>
+    cur = conn.cursor()
+    <span class="kw">try</span>:
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo - 100 WHERE id = 1"</span>)
+        print(<span class="str">"[Tx-A] lock em conta 1 adquirido"</span>)
+        time.sleep(<span class="num">0.2</span>)  <span class="cm"># deixa Tx-B adquirir lock em conta 2</span>
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + 100 WHERE id = 2"</span>)
+        conn.commit()
+        resultado[<span class="str">"A"</span>] = <span class="str">"COMMIT"</span>
+    <span class="kw">except</span> pg_errors.DeadlockDetected:
+        conn.rollback()
+        resultado[<span class="str">"A"</span>] = <span class="str">"DEADLOCK → ROLLBACK"</span>
+        print(<span class="str">"[Tx-A] 💀 DEADLOCK detectado — rollback automático"</span>)
+    <span class="kw">finally</span>:
+        cur.close(); conn.close()
+
+<span class="kw">def</span> <span class="fn">tx_b</span>():
+    <span class="str">"""Acessa conta 2 → conta 1 (ordem inversa = deadlock!)"""</span>
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>
+    cur = conn.cursor()
+    <span class="kw">try</span>:
+        time.sleep(<span class="num">0.05</span>)  <span class="cm"># garante que Tx-A começa primeiro</span>
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo - 200 WHERE id = 2"</span>)
+        print(<span class="str">"[Tx-B] lock em conta 2 adquirido"</span>)
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + 200 WHERE id = 1"</span>)
+        conn.commit()
+        resultado[<span class="str">"B"</span>] = <span class="str">"COMMIT"</span>
+    <span class="kw">except</span> pg_errors.DeadlockDetected:
+        conn.rollback()
+        resultado[<span class="str">"B"</span>] = <span class="str">"DEADLOCK → ROLLBACK"</span>
+        print(<span class="str">"[Tx-B] 💀 DEADLOCK detectado — rollback automático"</span>)
+    <span class="kw">finally</span>:
+        cur.close(); conn.close()
+
+print(<span class="str">"=== Simulando DEADLOCK ==="</span>)
+ta = threading.Thread(target=tx_a)
+tb = threading.Thread(target=tx_b)
+ta.start(); tb.start()
+ta.join(); tb.join()
+
+print(<span class="fn">f</span><span class="str">"\nResultados: Tx-A={resultado.get('A')} | Tx-B={resultado.get('B')}"</span>)
+print(<span class="str">"Uma transação foi cancelada pelo PostgreSQL — a outra completou com sucesso."</span>)
+
+<span class="cm"># ── SOLUÇÃO: mesma ordem de acesso ───────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">transferir_seguro</span>(de_id, para_id, valor, nome):
+    <span class="str">"""Sempre acessa o menor ID primeiro — evita deadlock."""</span>
+    primeiro  = min(de_id, para_id)
+    segundo   = max(de_id, para_id)
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>
+    cur = conn.cursor()
+    <span class="kw">try</span>:
+        cur.execute(<span class="str">"SELECT id FROM contas WHERE id = ANY(%s) ORDER BY id FOR UPDATE"</span>,
+                    ([primeiro, segundo],))
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo - %s WHERE id = %s"</span>, (valor, de_id))
+        cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + %s WHERE id = %s"</span>, (valor, para_id))
+        conn.commit()
+        print(<span class="fn">f</span><span class="str">"[{nome}] transferência segura: COMMIT ✓"</span>)
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        conn.rollback()
+        print(<span class="fn">f</span><span class="str">"[{nome}] ERRO: {e}"</span>)
+    <span class="kw">finally</span>:
+        cur.close(); conn.close()</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>SELECT FOR UPDATE</strong> adquire um lock exclusivo nas linhas selecionadas, garantindo que nenhuma outra transação as modifique enquanto a sua ainda está aberta. Use com <code>ORDER BY id</code> para garantir ordem consistente de aquisição de locks.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Inspecionar locks ativos no PostgreSQL</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — ver locks e transações em espera</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Ver todos os locks ativos</span>
+<span class="sql-kw">SELECT</span>
+    pid,
+    locktype,
+    relation::regclass <span class="sql-kw">AS</span> tabela,
+    mode,
+    granted,
+    wait_event_type,
+    wait_event
+<span class="sql-kw">FROM</span> pg_locks l
+<span class="sql-kw">LEFT JOIN</span> pg_stat_activity a <span class="sql-kw">USING</span> (pid)
+<span class="sql-kw">WHERE</span> relation <span class="sql-kw">IS NOT NULL</span>
+<span class="sql-kw">ORDER BY</span> granted, pid;
+
+<span class="sql-cm">-- Transações bloqueadas esperando lock</span>
+<span class="sql-kw">SELECT</span>
+    pid,
+    now() - pg_stat_activity.query_start <span class="sql-kw">AS</span> duracao,
+    query,
+    state
+<span class="sql-kw">FROM</span> pg_stat_activity
+<span class="sql-kw">WHERE</span> (now() - pg_stat_activity.query_start) > <span class="sql-kw">INTERVAL</span> <span class="sql-str">'5 seconds'</span>
+  <span class="sql-kw">AND</span> state = <span class="sql-str">'active'</span>
+<span class="sql-kw">ORDER BY</span> duracao <span class="sql-kw">DESC</span>;
+
+<span class="sql-cm">-- Cancelar transação que está bloqueando outra (emergência)</span>
+<span class="sql-kw">SELECT</span> <span class="sql-fn">pg_cancel_backend</span>(<span class="sql-num">1234</span>);  <span class="sql-cm">-- cancela a query, mantém a conexão</span>
+<span class="sql-kw">SELECT</span> <span class="sql-fn">pg_terminate_backend</span>(<span class="sql-num">1234</span>); <span class="sql-cm">-- encerra a conexão</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · PostgreSQL + Python</div>
+        <div class="secao-titulo">5 Exercícios — Transações e concorrência na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use a tabela <code>contas</code> criada durante a aula. Para os exercícios de concorrência, abra duas sessões psql ou use threads Python com conexões separadas.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Escreva um script Python que realiza uma transferência de R$ 2.000 da conta 1 (Ana) para a conta 2 (Bruno) dentro de uma transação explícita. O script deve: (a) imprimir os saldos antes da transferência; (b) executar o débito e o crédito; (c) verificar se o saldo de Ana ficaria negativo — se sim, fazer ROLLBACK e imprimir mensagem de erro; (d) caso contrário, fazer COMMIT e imprimir os saldos após a transferência.</p>
+      <span class="dificuldade dif-basico">Básico — BEGIN / COMMIT / ROLLBACK</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+conn.autocommit = <span class="kw">False</span>
+cur = conn.cursor()
+
+VALOR = <span class="num">2000</span>
+DE_ID, PARA_ID = <span class="num">1</span>, <span class="num">2</span>
+
+<span class="kw">try</span>:
+    <span class="cm"># Saldos antes</span>
+    cur.execute(<span class="str">"SELECT nome, saldo FROM contas WHERE id = ANY(%s)"</span>, ([DE_ID, PARA_ID],))
+    print(<span class="str">"Antes:"</span>, {r[<span class="num">0</span>]: r[<span class="num">1</span>] <span class="kw">for</span> r <span class="kw">in</span> cur.fetchall()})
+
+    <span class="cm"># Verificar saldo suficiente</span>
+    cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id = %s"</span>, (DE_ID,))
+    saldo = cur.fetchone()[<span class="num">0</span>]
+    <span class="kw">if</span> saldo < VALOR:
+        <span class="kw">raise</span> ValueError(<span class="fn">f</span><span class="str">"Saldo insuficiente: R${saldo} < R${VALOR}"</span>)
+
+    <span class="cm"># Transferência</span>
+    cur.execute(<span class="str">"UPDATE contas SET saldo = saldo - %s WHERE id = %s"</span>, (VALOR, DE_ID))
+    cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + %s WHERE id = %s"</span>, (VALOR, PARA_ID))
+    conn.commit()
+
+    <span class="cm"># Saldos depois</span>
+    cur.execute(<span class="str">"SELECT nome, saldo FROM contas WHERE id = ANY(%s)"</span>, ([DE_ID, PARA_ID],))
+    print(<span class="str">"Depois:"</span>, {r[<span class="num">0</span>]: r[<span class="num">1</span>] <span class="kw">for</span> r <span class="kw">in</span> cur.fetchall()})
+    print(<span class="fn">f</span><span class="str">"✓ Transferência de R${VALOR} realizada com sucesso"</span>)
+
+<span class="kw">except</span> ValueError <span class="kw">as</span> e:
+    conn.rollback()
+    print(<span class="fn">f</span><span class="str">"✗ ROLLBACK: {e}"</span>)
+<span class="kw">finally</span>:
+    cur.close(); conn.close()</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Demonstre o uso de <strong>SAVEPOINT</strong>: inicie uma transação que insere dois registros em uma tabela de log (<code>id SERIAL, evento TEXT, ts TIMESTAMP DEFAULT NOW()</code>). Após o primeiro INSERT, crie um SAVEPOINT. Tente o segundo INSERT com um valor inválido que viole alguma constraint. Use <code>ROLLBACK TO SAVEPOINT</code> para desfazer apenas o segundo INSERT e confirme que o primeiro ainda está ativo com um COMMIT final.</p>
+      <span class="dificuldade dif-basico">Básico — SAVEPOINT e rollback parcial</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL + Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="sql-cm">-- Criar tabela de log</span>
+<span class="sql-kw">CREATE TABLE IF NOT EXISTS</span> log_eventos (
+    id     SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    evento TEXT <span class="sql-kw">NOT NULL</span>,
+    ts     TIMESTAMP <span class="sql-kw">DEFAULT NOW</span>()
+);</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+conn.autocommit = <span class="kw">False</span>
+cur = conn.cursor()
+
+<span class="kw">try</span>:
+    <span class="cm"># Primeiro INSERT</span>
+    cur.execute(<span class="str">"INSERT INTO log_eventos (evento) VALUES (%s)"</span>, (<span class="str">"pipeline iniciado"</span>,))
+    print(<span class="str">"INSERT 1 executado"</span>)
+
+    <span class="cm"># SAVEPOINT</span>
+    cur.execute(<span class="str">"SAVEPOINT sp1"</span>)
+
+    <span class="kw">try</span>:
+        <span class="cm"># Segundo INSERT — evento NULL viola NOT NULL</span>
+        cur.execute(<span class="str">"INSERT INTO log_eventos (evento) VALUES (%s)"</span>, (<span class="kw">None</span>,))
+        print(<span class="str">"INSERT 2 executado"</span>)
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        print(<span class="fn">f</span><span class="str">"INSERT 2 falhou: {e}"</span>)
+        cur.execute(<span class="str">"ROLLBACK TO SAVEPOINT sp1"</span>)
+        print(<span class="str">"Voltou ao SAVEPOINT — INSERT 1 ainda ativo"</span>)
+
+    conn.commit()
+    cur.execute(<span class="str">"SELECT * FROM log_eventos ORDER BY id DESC LIMIT 3"</span>)
+    print(<span class="str">"Registros no log:"</span>, cur.fetchall())
+
+<span class="kw">finally</span>:
+    cur.close(); conn.close()</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Demonstre a diferença entre <strong>Read Committed</strong> e <strong>Repeatable Read</strong>: use duas threads Python com conexões separadas. A Thread 1 inicia uma transação com Repeatable Read e lê o saldo da conta 1. A Thread 2 atualiza o saldo da conta 1 e dá COMMIT. A Thread 1 relê o saldo. Mostre que com Repeatable Read o valor não muda para a Thread 1, e repita o experimento com Read Committed para mostrar que o valor muda.</p>
+      <span class="dificuldade dif-medio">Médio — Níveis de isolamento na prática</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, threading, time, os
+
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+eventos = []
+
+<span class="kw">def</span> <span class="fn">leitor</span>(nivel):
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+    cur.execute(<span class="fn">f</span><span class="str">"SET TRANSACTION ISOLATION LEVEL {nivel}"</span>)
+    cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id = 1"</span>)
+    v1 = cur.fetchone()[<span class="num">0</span>]
+    eventos.append(<span class="fn">f</span><span class="str">"[{nivel}] Leitura 1: R${v1}"</span>)
+    time.sleep(<span class="num">0.4</span>)  <span class="cm"># escritor faz COMMIT nesse intervalo</span>
+    cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id = 1"</span>)
+    v2 = cur.fetchone()[<span class="num">0</span>]
+    eventos.append(<span class="fn">f</span><span class="str">"[{nivel}] Leitura 2: R${v2} {'← MUDOU!' if v1!=v2 else '← mesmo valor ✓'}"</span>)
+    conn.rollback(); cur.close(); conn.close()
+
+<span class="kw">def</span> <span class="fn">escritor</span>():
+    time.sleep(<span class="num">0.15</span>)  <span class="cm"># garante que leitura 1 já aconteceu</span>
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+    cur.execute(<span class="str">"UPDATE contas SET saldo = saldo + 999 WHERE id = 1"</span>)
+    conn.commit(); eventos.append(<span class="str">"[Escritor] UPDATE + COMMIT"</span>)
+    cur.close(); conn.close()
+
+<span class="kw">for</span> nivel <span class="kw">in</span> [<span class="str">"READ COMMITTED"</span>, <span class="str">"REPEATABLE READ"</span>]:
+    <span class="cm"># Resetar saldo</span>
+    conn = psycopg2.connect(DB)
+    conn.autocommit = <span class="kw">True</span>
+    conn.cursor().execute(<span class="str">"UPDATE contas SET saldo = 5000 WHERE id = 1"</span>)
+    conn.close()
+
+    eventos.clear()
+    threads = [threading.Thread(target=leitor, args=(nivel,)),
+               threading.Thread(target=escritor)]
+    <span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+    <span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+    print(<span class="fn">f</span><span class="str">"\n=== {nivel} ==="</span>)
+    <span class="kw">for</span> e <span class="kw">in</span> sorted(eventos): print(<span class="str">" "</span>, e)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Escreva um script Python que provoca um deadlock intencionalmente entre duas threads (Thread A: bloqueia conta 1 → aguarda conta 2; Thread B: bloqueia conta 2 → aguarda conta 1), captura a exceção <code>psycopg2.errors.DeadlockDetected</code> em ambas as threads, imprime qual transação foi a vítima e qual completou. Em seguida, reimplemente as mesmas threads usando a estratégia de <strong>ordenação de locks</strong> (sempre bloquear o menor ID primeiro) e confirme que o deadlock não ocorre mais.</p>
+      <span class="dificuldade dif-medio">Médio — Deadlock e prevenção</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, threading, time, os
+<span class="kw">from</span> psycopg2 <span class="kw">import</span> errors <span class="kw">as</span> pge
+
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+log = {}
+
+<span class="kw">def</span> <span class="fn">sem_ordenacao</span>(nome, primeiro, segundo, valor):
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+    <span class="kw">try</span>:
+        cur.execute(<span class="str">"UPDATE contas SET saldo=saldo-%s WHERE id=%s"</span>,(valor,primeiro))
+        time.sleep(<span class="num">0.15</span>)
+        cur.execute(<span class="str">"UPDATE contas SET saldo=saldo+%s WHERE id=%s"</span>,(valor,segundo))
+        conn.commit(); log[nome] = <span class="str">"COMMIT ✓"</span>
+    <span class="kw">except</span> pge.DeadlockDetected:
+        conn.rollback(); log[nome] = <span class="str">"💀 DEADLOCK vítima → ROLLBACK"</span>
+    <span class="kw">finally</span>: cur.close(); conn.close()
+
+<span class="kw">def</span> <span class="fn">com_ordenacao</span>(nome, de_id, para_id, valor):
+    <span class="str">"""Bloqueia sempre pelo menor ID primeiro"""</span>
+    ids = sorted([de_id, para_id])
+    conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+    <span class="kw">try</span>:
+        cur.execute(<span class="str">"SELECT id FROM contas WHERE id=ANY(%s) ORDER BY id FOR UPDATE"</span>,(ids,))
+        cur.execute(<span class="str">"UPDATE contas SET saldo=saldo-%s WHERE id=%s"</span>,(valor,de_id))
+        cur.execute(<span class="str">"UPDATE contas SET saldo=saldo+%s WHERE id=%s"</span>,(valor,para_id))
+        conn.commit(); log[nome] = <span class="str">"COMMIT ✓ (sem deadlock)"</span>
+    <span class="kw">except</span> pge.DeadlockDetected:
+        conn.rollback(); log[nome] = <span class="str">"💀 DEADLOCK (não deveria acontecer!)"</span>
+    <span class="kw">finally</span>: cur.close(); conn.close()
+
+<span class="cm"># Sem ordenação — deve dar deadlock</span>
+print(<span class="str">"=== SEM ordenação de locks ==="</span>)
+log.clear()
+ta = threading.Thread(target=sem_ordenacao, args=(<span class="str">"A"</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">100</span>))
+tb = threading.Thread(target=sem_ordenacao, args=(<span class="str">"B"</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">200</span>))
+ta.start(); tb.start(); ta.join(); tb.join()
+<span class="kw">for</span> k,v <span class="kw">in</span> log.items(): print(<span class="fn">f</span><span class="str">"  Tx-{k}: {v}"</span>)
+
+<span class="cm"># Com ordenação — sem deadlock</span>
+print(<span class="str">"\n=== COM ordenação de locks ==="</span>)
+log.clear()
+ta = threading.Thread(target=com_ordenacao, args=(<span class="str">"A"</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">100</span>))
+tb = threading.Thread(target=com_ordenacao, args=(<span class="str">"B"</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">200</span>))
+ta.start(); tb.start(); ta.join(); tb.join()
+<span class="kw">for</span> k,v <span class="kw">in</span> log.items(): print(<span class="fn">f</span><span class="str">"  Tx-{k}: {v}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Implemente uma função Python <code>transferir_robusto(de_id, para_id, valor, max_tentativas=3)</code> que: (1) executa a transferência dentro de uma transação com nível <strong>Read Committed</strong>; (2) usa <code>SELECT ... FOR UPDATE</code> para adquirir locks na ordem correta (menor ID primeiro); (3) em caso de deadlock ou serialization failure, faz ROLLBACK e reexecuta automaticamente (retry com backoff exponencial: 0.1s, 0.2s, 0.4s…); (4) registra em um log cada tentativa, sucesso ou falha definitiva; (5) teste a função com 10 threads simultâneas fazendo transferências aleatórias entre 3 contas e verifique que o saldo total permanece constante (invariante de conservação).</p>
+      <span class="dificuldade dif-desafio">Desafio — Transferência robusta com retry e invariante</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, threading, time, random, os
+<span class="kw">from</span> psycopg2 <span class="kw">import</span> errors <span class="kw">as</span> pge
+
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+log_lock = threading.Lock()
+log_msgs = []
+
+<span class="kw">def</span> <span class="fn">log</span>(msg):
+    <span class="kw">with</span> log_lock:
+        log_msgs.append(msg)
+        print(msg)
+
+<span class="kw">def</span> <span class="fn">transferir_robusto</span>(de_id, para_id, valor, max_tentativas=<span class="num">3</span>):
+    ids = sorted([de_id, para_id])
+    <span class="kw">for</span> tentativa <span class="kw">in</span> range(<span class="num">1</span>, max_tentativas + <span class="num">1</span>):
+        conn = psycopg2.connect(DB)
+        conn.autocommit = <span class="kw">False</span>
+        cur = conn.cursor()
+        <span class="kw">try</span>:
+            <span class="cm"># Lock na ordem correta</span>
+            cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id=ANY(%s) ORDER BY id FOR UPDATE"</span>, (ids,))
+            rows = {r[<span class="num">0</span>]: r[<span class="num">1</span>] <span class="kw">for</span> r <span class="kw">in</span> cur.fetchall()}
+
+            <span class="kw">if</span> rows[de_id] < valor:
+                conn.rollback()
+                log(<span class="fn">f</span><span class="str">"[{de_id}→{para_id}] saldo insuficiente — abortado"</span>)
+                <span class="kw">return False</span>
+
+            cur.execute(<span class="str">"UPDATE contas SET saldo=saldo-%s WHERE id=%s"</span>,(valor,de_id))
+            cur.execute(<span class="str">"UPDATE contas SET saldo=saldo+%s WHERE id=%s"</span>,(valor,para_id))
+            conn.commit()
+            log(<span class="fn">f</span><span class="str">"[{de_id}→{para_id}] R${valor} — COMMIT (tentativa {tentativa})"</span>)
+            <span class="kw">return True</span>
+
+        <span class="kw">except</span> (pge.DeadlockDetected, pge.SerializationFailure) <span class="kw">as</span> e:
+            conn.rollback()
+            espera = <span class="num">0.1</span> * (<span class="num">2</span> ** (tentativa - <span class="num">1</span>))
+            log(<span class="fn">f</span><span class="str">"[{de_id}→{para_id}] {type(e).__name__} — retry {tentativa}/{max_tentativas} em {espera:.1f}s"</span>)
+            time.sleep(espera)
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            conn.rollback()
+            log(<span class="fn">f</span><span class="str">"[{de_id}→{para_id}] ERRO: {e}"</span>)
+            <span class="kw">return False</span>
+        <span class="kw">finally</span>:
+            cur.close(); conn.close()
+
+    log(<span class="fn">f</span><span class="str">"[{de_id}→{para_id}] FALHA definitiva após {max_tentativas} tentativas"</span>)
+    <span class="kw">return False</span>
+
+<span class="cm"># Verificar saldo total inicial</span>
+conn = psycopg2.connect(DB)
+cur = conn.cursor()
+cur.execute(<span class="str">"SELECT SUM(saldo) FROM contas"</span>)
+total_inicial = cur.fetchone()[<span class="num">0</span>]
+cur.close(); conn.close()
+print(<span class="fn">f</span><span class="str">"Saldo total inicial: R${total_inicial}"</span>)
+
+<span class="cm"># 10 threads fazendo transferências aleatórias</span>
+threads = []
+<span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">10</span>):
+    ids = random.sample([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], <span class="num">2</span>)
+    valor = random.randint(<span class="num">100</span>, <span class="num">500</span>)
+    t = threading.Thread(target=transferir_robusto, args=(*ids, valor))
+    threads.append(t)
+
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+<span class="cm"># Verificar invariante: saldo total não mudou</span>
+conn = psycopg2.connect(DB)
+cur = conn.cursor()
+cur.execute(<span class="str">"SELECT SUM(saldo) FROM contas"</span>)
+total_final = cur.fetchone()[<span class="num">0</span>]
+cur.close(); conn.close()
+print(<span class="fn">f</span><span class="str">"\nSaldo total final:   R${total_final}"</span>)
+print(<span class="fn">f</span><span class="str">"Invariante {'✓ mantido' if total_final == total_inicial else '✗ VIOLADO!'}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 15</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-check-circle"></i>
+        <strong>ACID</strong>
+        <p>Atomicidade, Consistência, Isolamento, Durabilidade — as 4 garantias de toda transação</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sliders-h"></i>
+        <strong>Isolamento</strong>
+        <p>Read Committed (padrão PG) previne dirty read. Repeatable Read evita non-repeatable. Serializable: máximo</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-copy"></i>
+        <strong>MVCC</strong>
+        <p>Leituras nunca bloqueiam escritas — snapshot por transação. VACUUM remove versões obsoletas</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-skull-crossbones"></i>
+        <strong>Deadlock</strong>
+        <p>PG detecta e cancela a vítima. Prevenção: sempre acessar recursos na mesma ordem + retry com backoff</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-16.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 16 — Integração BD com Python: psycopg2, SQLAlchemy e pandas read_sql</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

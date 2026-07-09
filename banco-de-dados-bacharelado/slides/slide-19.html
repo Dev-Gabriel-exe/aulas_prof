@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 19 — Banco de Dados · Bacharelado · P3/P4 -Projeto Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA ── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-prova{background:rgba(239,68,68,.14);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── PROVA ── */
+.conteudo{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.6rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1rem;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+.instrucoes{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.25rem 0;}
+.instr-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.instr-card i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.instr-card .ic-val{font-family:'Montserrat',sans-serif;font-size:1.25rem;font-weight:800;color:var(--white);margin-bottom:3px;}
+.instr-card .ic-desc{font-size:.75rem;color:var(--text-secondary);line-height:1.4;}
+
+.prova-secao-header{display:flex;align-items:center;gap:12px;padding:.75rem 1.25rem;border-radius:10px;margin-bottom:1.25rem;}
+.ps-teoria{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);}
+.ps-pratica{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);}
+.ps-desafio{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);}
+.ps-projeto{background:rgba(192,132,252,.07);border:1px solid rgba(192,132,252,.25);}
+.ps-icon{font-size:1.1rem;}
+.ps-teoria .ps-icon{color:#60a5fa;}
+.ps-pratica .ps-icon{color:var(--green-400);}
+.ps-desafio .ps-icon{color:#f87171;}
+.ps-projeto .ps-icon{color:#c084fc;}
+.ps-info{display:flex;flex-direction:column;}
+.ps-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--white);}
+.ps-sub{font-size:.72rem;color:var(--text-muted);}
+
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.4rem;margin-bottom:1rem;}
+.questao-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.85rem;}
+.questao-meta{display:flex;flex-direction:column;gap:3px;}
+.questao-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;}
+.questao-tema{font-size:.72rem;color:var(--text-muted);}
+.pts-badge{flex-shrink:0;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.3rem .75rem;font-size:.75rem;font-weight:700;color:var(--green-400);white-space:nowrap;}
+.questao-enunciado{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.85rem;}
+.questao-enunciado strong{color:var(--text-primary);}
+.resposta-area{background:rgba(0,0,0,.18);border:1px dashed rgba(74,222,128,.18);border-radius:8px;padding:1rem 1.2rem;font-size:.8rem;color:var(--text-muted);font-style:italic;min-height:80px;display:flex;align-items:flex-start;}
+.gabarito-toggle{display:inline-flex;align-items:center;gap:7px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.45rem .9rem;color:var(--green-400);font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;margin-top:.75rem;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.07);}
+.gabarito-content{display:none;margin-top:.85rem;padding:1rem 1.2rem;border-radius:9px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.gabarito-content.open{display:block;}
+.gabarito-content strong{color:var(--green-400);}
+.criterios{list-style:none;display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem;}
+.criterios li{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--text-secondary);}
+.criterios li::before{content:'✓';color:var(--green-400);flex-shrink:0;font-size:.75rem;margin-top:2px;}
+
+.nota-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+.nota-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.nota-item .ni-num{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--green-400);}
+.nota-item .ni-desc{font-size:.75rem;color:var(--text-muted);margin-top:3px;}
+
+.fim-box{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.75rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.22);margin-top:3rem;}
+.fim-left .fl-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:4px;}
+.fim-left .fl-titulo{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;color:var(--white);}
+.fim-left .fl-sub{font-size:.82rem;color:var(--text-secondary);margin-top:4px;}
+.fim-right{font-size:2rem;color:var(--green-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── TRABALHO FINAL / PROJETO ── */
+.entrega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.25rem 0;}
+.entrega-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.entrega-item .ei-fase{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:#c084fc;font-weight:700;margin-bottom:6px;}
+.entrega-item .ei-titulo{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:6px;}
+.entrega-item .ei-desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.entrega-item .ei-prazo{font-size:.7rem;color:var(--text-muted);margin-top:8px;display:flex;align-items:center;gap:6px;}
+.tema-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+.tema-card{background:rgba(192,132,252,.05);border:1px solid rgba(192,132,252,.18);border-radius:12px;padding:1.1rem;}
+.tema-card .tc-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.tema-card .tc-titulo{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:6px;}
+.tema-card .tc-desc{font-size:.8rem;color:var(--text-secondary);line-height:1.55;}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.instrucoes,.nota-grid,.entrega-grid,.tema-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-prova">🎯 Avaliação P3 / Trabalho Final P4</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">19</div>
+    <h1 class="capa-titulo">Avaliação<br><em>P3 / Final</em></h1>
+    <p class="capa-sub">Prova escrita e prática · 100 pontos · 100 minutos</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tree"></i></div><span>Semana 14 — Indexação: B-tree, hash, compostos, EXPLAIN</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-check-circle"></i></div><span>Semana 15 — Transações: ACID, isolamento, MVCC, deadlock</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>Semana 16 — Python + BD: psycopg2, SQLAlchemy, pandas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Semana 17 — BD + IA: features, modelo, predições, SQL analítico</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-server"></i></div><span>Semana 18 — Avançados: replicação, sharding, backup, RPO/RTO</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-list-ol"></i>Distribuição da prova</div>
+      <ul class="info-lista">
+        <li>Parte A — Questões conceituais (40 pts): 4 questões × 10 pts</li>
+        <li>Parte B — Questões práticas em Python/SQL (45 pts): 3 questões × 15 pts</li>
+        <li>Parte C — Questão integradora (15 pts): 1 questão</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-ruler"></i>Critérios gerais</div>
+      <ul class="info-lista">
+        <li>Conceituais: clareza e completude — citar o termo sem explicar vale pouco</li>
+        <li>Práticas: código funcional + comentários; erro de sintaxe com lógica correta recebe crédito parcial</li>
+        <li>Integradora: avalia capacidade de integrar múltiplos conceitos</li>
+        <li>Consulta: slides e anotações permitidos; uso de IA não é permitido</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-bullseye"></i>Média e aprovação</div>
+      <ul class="info-lista">
+        <li>Aprovação direta: média ≥ 7,0 entre P1, P2 e P3</li>
+        <li>Segunda chamada: Semana 20 — alunos com frequência válida</li>
+        <li>Esta é a última avaliação do semestre</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para a prova</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ PROVA ══════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── INSTRUÇÕES ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">!</div>
+      <div class="secao-info">
+        <div class="secao-label">Antes de começar</div>
+        <div class="secao-titulo">Instruções gerais</div>
+      </div>
+    </div>
+
+    <div class="instrucoes">
+      <div class="instr-card"><i class="fas fa-clock"></i><div class="ic-val">100 min</div><div class="ic-desc">Duração total</div></div>
+      <div class="instr-card"><i class="fas fa-star"></i><div class="ic-val">100 pts</div><div class="ic-desc">Pontuação máxima</div></div>
+      <div class="instr-card"><i class="fas fa-layer-group"></i><div class="ic-val">3 partes</div><div class="ic-desc">A: conceitual · B: prática · C: integradora</div></div>
+      <div class="instr-card"><i class="fas fa-book"></i><div class="ic-val">Consulta</div><div class="ic-desc">Slides e anotações permitidos</div></div>
+    </div>
+
+    <div class="aviso-red">
+      <i class="fas fa-ban"></i>
+      <span><strong>Não é permitido:</strong> assistentes de IA (ChatGPT, Claude, Copilot etc.), comunicação entre alunos, compartilhamento de código. Avaliações com evidências de uso de IA ou cola terão nota zerada.</span>
+    </div>
+    <div class="aviso">
+      <i class="fas fa-lightbulb"></i>
+      <span><strong>Dica:</strong> leia todas as questões antes de começar. Nas práticas, código com lógica correta mas pequenos erros de sintaxe recebe crédito. Na integradora, demonstre que sabe conectar os conceitos — não precisa de código perfeito, mas de raciocínio completo.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte A — Questões Conceituais · 40 pontos</span></div>
+
+  <!-- ── PARTE A ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">A</div>
+      <div class="secao-info">
+        <div class="secao-label">4 questões × 10 pontos</div>
+        <div class="secao-titulo">Questões conceituais e dissertativas</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-teoria">
+      <span class="ps-icon"><i class="fas fa-pen"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte A — Conceitual</span>
+        <span class="ps-sub">Responda com clareza e exemplos · 10 pts cada</span>
+      </div>
+    </div>
+
+    <!-- A1 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A1</div>
+          <div class="questao-tema">Semana 14 — Indexação</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Uma tabela <code>logs_acesso</code> tem 10 milhões de linhas com as colunas <code>usuario_id</code>, <code>endpoint</code>, <code>criado_em</code> e <code>status_code</code>. Existe um índice B-tree em <code>usuario_id</code>. O DBA recebe reclamação de que a query abaixo ainda está lenta:<br><br>
+        <code>SELECT endpoint, criado_em FROM logs_acesso WHERE usuario_id = 42 ORDER BY criado_em DESC LIMIT 10;</code><br><br>
+        <strong>(a)</strong> Por que o índice em <code>usuario_id</code> sozinho pode não ser suficiente para esta query? <strong>(b)</strong> Qual índice você criaria para torná-la mais rápida — e por quê esse índice ajudaria? <strong>(c)</strong> Explique o que é <em>heap fetch</em> e como um covering index o elimina nesta query.
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong> O índice em <code>usuario_id</code> ajuda a encontrar as linhas do usuário 42, mas o <code>ORDER BY criado_em DESC</code> exige que o banco ordene os resultados — como a ordenação não está no índice, o banco busca todas as linhas do usuário 42 (pode ser milhares), faz heap fetch em cada uma para obter <code>endpoint</code> e <code>criado_em</code>, e depois ordena tudo. Com muitas linhas por usuário, isso é caro.<br><br>
+        <strong>(b)</strong> <code>CREATE INDEX idx_logs_usuario_data ON logs_acesso (usuario_id, criado_em DESC) INCLUDE (endpoint);</code><br>
+        Isso cria um índice composto onde o banco: (1) navega pelo prefixo <code>usuario_id = 42</code>, (2) os resultados já estão ordenados por <code>criado_em DESC</code> no índice, (3) o LIMIT 10 pega os 10 primeiros sem ler mais nada.<br><br>
+        <strong>(c) Heap fetch:</strong> após encontrar uma linha via Index Scan, o banco precisa ir buscar os dados da linha na tabela principal (o "heap") para ler as colunas que não estão no índice. Cada heap fetch é um acesso aleatório ao disco. O <strong>covering index</strong> (com INCLUDE) armazena <code>endpoint</code> diretamente no índice — o banco nunca precisa ir ao heap, fazendo um <em>Index Only Scan</em> muito mais rápido.
+        <ul class="criterios">
+          <li>3 pts — (a) explicação correta: ordenação não coberta pelo índice simples</li>
+          <li>4 pts — (b) índice composto correto com ordenação + INCLUDE</li>
+          <li>3 pts — (c) definição de heap fetch e como covering index elimina</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A2</div>
+          <div class="questao-tema">Semana 15 — Transações e MVCC</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        <strong>(a)</strong> O que é MVCC (Multi-Version Concurrency Control) no PostgreSQL e qual problema ele resolve em relação aos locks tradicionais?<br><br>
+        <strong>(b)</strong> Um DBA percebe que a tabela <code>pedidos</code> tem crescido de forma anormal em disco, mesmo sem novos dados sendo inseridos. Há muitos UPDATE e DELETE acontecendo diariamente. Explique por que isso ocorre e qual comando resolve.
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) MVCC:</strong> em vez de usar locks exclusivos para leituras, o PostgreSQL mantém múltiplas versões de cada linha. Cada transação enxerga um snapshot do banco no momento em que começou — versões criadas após seu início são invisíveis para ela. O resultado: leituras nunca bloqueiam escritas e escritas nunca bloqueiam leituras. O problema resolvido: em bancos sem MVCC, um SELECT precisa esperar um UPDATE terminar (e vice-versa), reduzindo drasticamente a concorrência em cargas mistas de leitura e escrita.<br><br>
+        <strong>(b) Dead tuples:</strong> no MVCC, um UPDATE não sobrescreve a linha — cria uma nova versão com os dados atualizados e marca a versão antiga com <code>xmax</code> (quem a invalidou). A versão antiga é uma "dead tuple" — ocupa espaço em disco mas não é visível para nenhuma transação ativa. Com muitos UPDATEs e DELETEs, dead tuples acumulam. O comando <code>VACUUM pedidos</code> (ou <code>VACUUM ANALYZE</code>) remove as dead tuples e libera o espaço para reutilização. O <code>autovacuum</code> faz isso automaticamente em background, mas pode estar atrasado em tabelas com muita escrita.
+        <ul class="criterios">
+          <li>5 pts — (a) definição correta + problema resolvido (leitura não bloqueia escrita)</li>
+          <li>5 pts — (b) dead tuples explicadas corretamente + VACUUM como solução</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A3</div>
+          <div class="questao-tema">Semana 16 — Integração Python</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        <strong>(a)</strong> Explique a diferença entre <strong>psycopg2</strong>, <strong>SQLAlchemy Core</strong> e <strong>SQLAlchemy ORM</strong> — quando você usaria cada um?<br><br>
+        <strong>(b)</strong> O que é um <em>connection pool</em> e por que é crítico em produção? Qual o risco de abrir uma nova conexão para cada operação de banco em um servidor web com 200 requisições simultâneas?
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong>
+        <strong>psycopg2:</strong> driver de baixo nível — controle total sobre conexão, cursor, transação e tipos PostgreSQL específicos. Usar quando precisar de cursores de servidor, stored procedures, ou controle fino de transações.<br>
+        <strong>SQLAlchemy Core:</strong> SQL toolkit de nível médio — constrói SQL programaticamente com <code>text(:param)</code>, gerencia connection pool automaticamente, abstrai diferenças entre SGBDs. Usar em pipelines de dados e APIs que precisam de banco independente.<br>
+        <strong>SQLAlchemy ORM:</strong> mapeamento objeto-relacional — tabelas viram classes Python, relacionamentos são atributos. Usar em aplicações web (FastAPI, Flask) onde a lógica de negócio gira em torno de entidades e relacionamentos.<br><br>
+        <strong>(b) Connection pool:</strong> mantém um conjunto de conexões ao banco já abertas e prontas. A aplicação "toma emprestado" uma conexão do pool, usa e devolve — sem o custo de abrir/fechar TCP, autenticar e alocar processo no servidor. <strong>Risco sem pool:</strong> cada conexão PostgreSQL cria um processo (~5 MB de RAM) e exige handshake TCP+SSL. Com 200 requisições simultâneas criando conexões novas, o servidor PostgreSQL tentaria criar 200 processos simultaneamente, podendo ultrapassar o limite de <code>max_connections</code> (padrão 100), resultando em erros "too many connections" e crash da aplicação.
+        <ul class="criterios">
+          <li>6 pts — (a): 2 pts por ferramenta (definição + caso de uso correto)</li>
+          <li>4 pts — (b): definição de pool (2 pts) + risco concreto explicado (2 pts)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A4</div>
+          <div class="questao-tema">Semana 18 — Replicação, Backup e HA</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Uma empresa define os seguintes requisitos para seu banco de dados: RPO = 10 minutos e RTO = 5 minutos.<br><br>
+        <strong>(a)</strong> Defina RPO e RTO com suas próprias palavras e explique o que cada valor significa neste contexto.<br><br>
+        <strong>(b)</strong> Descreva a arquitetura mínima (replicação + backup) que atenderia esses requisitos, justificando cada componente.<br><br>
+        <strong>(c)</strong> Por que <em>apenas replicação</em> não é suficiente para garantir RPO de 10 minutos contra todos os tipos de falha?
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) RPO = 10 minutos:</strong> se o sistema falhar, aceita-se perder no máximo 10 minutos de dados — transações confirmadas há mais de 10 minutos devem estar preservadas. <strong>RTO = 5 minutos:</strong> após a falha, o banco deve estar operacional novamente em no máximo 5 minutos — cada minuto além disso representa impacto ao negócio.<br><br>
+        <strong>(b) Arquitetura:</strong><br>
+        — <strong>Streaming replication assíncrona</strong> para um standby hot: cobre falha de hardware do primário com lag &lt; 1 min (bem abaixo do RPO de 10 min).<br>
+        — <strong>Patroni</strong> para failover automático: promove o standby em &lt; 1 minuto, atendendo o RTO de 5 min sem intervenção manual.<br>
+        — <strong>WAL archiving</strong> a cada 5 minutos para storage externo (S3): garante que, mesmo no pior cenário, no máximo 10 min de WAL são perdidos — cobrindo o RPO.<br>
+        — <strong>pg_basebackup diário</strong>: para recuperação de desastres completos (ex: datacenter destruído).<br><br>
+        <strong>(c)</strong> Replicação replica tudo — inclusive erros humanos (DROP TABLE, UPDATE sem WHERE). Se um desenvolvedor apagar dados acidentalmente, a deleção é replicada para o standby em milissegundos. Nenhuma versão dos dados estará correta. O backup (especialmente PITR) permite restaurar o banco para o ponto imediatamente antes do erro, o que a replicação não consegue fazer.
+        <ul class="criterios">
+          <li>3 pts — (a) definições corretas com aplicação ao contexto</li>
+          <li>4 pts — (b) arquitetura com replicação + failover + WAL archiving justificados</li>
+          <li>3 pts — (c) distinção correta: replicação copia erros; backup permite recuperação lógica</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte B — Questões Práticas · 45 pontos</span></div>
+
+  <!-- ── PARTE B ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">B</div>
+      <div class="secao-info">
+        <div class="secao-label">3 questões × 15 pontos</div>
+        <div class="secao-titulo">Questões práticas — código Python e SQL</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-pratica">
+      <span class="ps-icon"><i class="fas fa-terminal"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte B — Prática</span>
+        <span class="ps-sub">Código completo e funcional · 15 pts cada · Comentários são bem-vindos</span>
+      </div>
+    </div>
+
+    <!-- B1 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B1</div>
+          <div class="questao-tema">Semanas 14–15 — Índices e transação segura</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Dada a tabela <code>transferencias</code> abaixo, escreva um script Python que:<br><br>
+        <strong>(1)</strong> Crie um índice composto <code>(conta_origem, criado_em DESC)</code> e um covering index <code>(conta_origem) INCLUDE (valor, status)</code> via <code>execute()</code>.<br>
+        <strong>(2)</strong> Execute <code>EXPLAIN ANALYZE</code> em <code>SELECT valor, status FROM transferencias WHERE conta_origem = 10 ORDER BY criado_em DESC LIMIT 5</code> e imprima o tipo de nó raiz e o tempo de execução.<br>
+        <strong>(3)</strong> Dentro de uma transação com <code>SELECT ... FOR UPDATE</code> na ordem correta de IDs, realize uma transferência de R$ 500 da conta 10 para a conta 20, com tratamento de <code>DeadlockDetected</code> e retry.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dataset de referência</span></div>
+        <pre><code><span class="sql-kw">CREATE TABLE IF NOT EXISTS</span> transferencias (
+    id             SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    conta_origem   INTEGER <span class="sql-kw">NOT NULL</span>,
+    conta_destino  INTEGER <span class="sql-kw">NOT NULL</span>,
+    valor          NUMERIC(<span class="sql-num">10</span>,<span class="sql-num">2</span>) <span class="sql-kw">NOT NULL CHECK</span> (valor > <span class="sql-num">0</span>),
+    status         TEXT <span class="sql-kw">DEFAULT</span> <span class="sql-str">'pendente'</span>,
+    criado_em      TIMESTAMP <span class="sql-kw">DEFAULT NOW</span>()
+);</code></pre>
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B1</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os, time
+<span class="kw">from</span> psycopg2 <span class="kw">import</span> errors <span class="kw">as</span> pge
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+
+<span class="cm"># ── 1. Criar índices ──────────────────────────────────────────────</span>
+<span class="kw">with</span> psycopg2.connect(DB) <span class="kw">as</span> conn:
+    conn.autocommit = <span class="kw">True</span>
+    <span class="kw">with</span> conn.cursor() <span class="kw">as</span> cur:
+        cur.execute(<span class="str">"""
+            CREATE INDEX IF NOT EXISTS idx_transf_origem_data
+            ON transferencias (conta_origem, criado_em DESC)
+        """</span>)
+        cur.execute(<span class="str">"""
+            CREATE INDEX IF NOT EXISTS idx_transf_covering
+            ON transferencias (conta_origem) INCLUDE (valor, status)
+        """</span>)
+        print(<span class="str">"Índices criados ✓"</span>)
+
+<span class="cm"># ── 2. EXPLAIN ANALYZE ───────────────────────────────────────────</span>
+<span class="kw">with</span> psycopg2.connect(DB) <span class="kw">as</span> conn:
+    <span class="kw">with</span> conn.cursor() <span class="kw">as</span> cur:
+        cur.execute(<span class="str">"""
+            EXPLAIN (ANALYZE, FORMAT JSON)
+            SELECT valor, status FROM transferencias
+            WHERE conta_origem = 10
+            ORDER BY criado_em DESC LIMIT 5
+        """</span>)
+        plano = cur.fetchone()[<span class="num">0</span>][<span class="num">0</span>]
+        no = plano[<span class="str">"Plan"</span>]
+        print(<span class="fn">f</span><span class="str">"Nó raiz:    {no['Node Type']}"</span>)
+        print(<span class="fn">f</span><span class="str">"Tempo real: {no.get('Actual Total Time', 0):.3f} ms"</span>)
+
+<span class="cm"># ── 3. Transferência com retry ────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">transferir</span>(de_id, para_id, valor, max_tentativas=<span class="num">3</span>):
+    ids = sorted([de_id, para_id])
+    <span class="kw">for</span> t <span class="kw">in</span> range(<span class="num">1</span>, max_tentativas + <span class="num">1</span>):
+        conn = psycopg2.connect(DB)
+        conn.autocommit = <span class="kw">False</span>
+        cur = conn.cursor()
+        <span class="kw">try</span>:
+            cur.execute(<span class="str">"SELECT saldo FROM contas WHERE id=ANY(%s) ORDER BY id FOR UPDATE"</span>, (ids,))
+            saldos = {r[<span class="num">0</span>]: r[<span class="num">1</span>] <span class="kw">for</span> r <span class="kw">in</span> cur.fetchall()}
+            <span class="kw">if</span> saldos.get(de_id, <span class="num">0</span>) < valor:
+                conn.rollback(); <span class="kw">return False</span>
+            cur.execute(<span class="str">"UPDATE contas SET saldo=saldo-%s WHERE id=%s"</span>, (valor, de_id))
+            cur.execute(<span class="str">"UPDATE contas SET saldo=saldo+%s WHERE id=%s"</span>, (valor, para_id))
+            conn.commit()
+            print(<span class="fn">f</span><span class="str">"Transferência R${valor}: COMMIT ✓ (tentativa {t})"</span>)
+            <span class="kw">return True</span>
+        <span class="kw">except</span> pge.DeadlockDetected:
+            conn.rollback()
+            time.sleep(<span class="num">0.1</span> * (<span class="num">2</span> ** (t-<span class="num">1</span>)))
+        <span class="kw">finally</span>:
+            cur.close(); conn.close()
+    <span class="kw">return False</span>
+
+transferir(<span class="num">10</span>, <span class="num">20</span>, <span class="num">500</span>)</code></pre>
+        </div>
+        <ul class="criterios">
+          <li>4 pts — criação correta dos dois índices (composto + covering)</li>
+          <li>4 pts — EXPLAIN ANALYZE com extração de nó raiz e tempo</li>
+          <li>4 pts — FOR UPDATE com ordenação de IDs e transação correta</li>
+          <li>3 pts — captura de DeadlockDetected e retry com backoff</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- B2 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B2</div>
+          <div class="questao-tema">Semana 16 — psycopg2, SQLAlchemy e pandas integrados</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Escreva um módulo Python <code>relatorio_vendas.py</code> que:<br><br>
+        <strong>(1)</strong> Conecta ao banco via SQLAlchemy engine com <code>pool_size=3</code> e credenciais de um arquivo <code>.env</code>.<br>
+        <strong>(2)</strong> Usa <code>pd.read_sql</code> para carregar a tabela <code>pedidos</code> com <code>parse_dates=["criado_em"]</code>.<br>
+        <strong>(3)</strong> Calcula por mês: total de pedidos, receita total e ticket médio (use <code>Grouper(freq="ME")</code>).<br>
+        <strong>(4)</strong> Grava o resultado em <code>relatorio_mensal</code> com <code>to_sql</code>, <code>if_exists="replace"</code>, <code>method="multi"</code>.<br>
+        <strong>(5)</strong> Com psycopg2 puro, insere um registro em <code>log_relatorios</code> (<code>evento TEXT, gerado_em TIMESTAMP</code>) confirmando a geração, usando <code>execute_values</code>.
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B2</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># relatorio_vendas.py</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, psycopg2, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> psycopg2.extras <span class="kw">import</span> execute_values
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+load_dotenv()
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+
+<span class="cm"># (1) Engine com pool</span>
+engine = create_engine(DB, pool_size=<span class="num">3</span>, max_overflow=<span class="num">5</span>)
+
+<span class="cm"># (2) Carregar pedidos</span>
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine,
+                 parse_dates=[<span class="str">"criado_em"</span>])
+print(<span class="fn">f</span><span class="str">"Pedidos carregados: {len(df)}"</span>)
+
+<span class="cm"># (3) Agregar por mês</span>
+mensal = df.groupby(pd.Grouper(key=<span class="str">"criado_em"</span>, freq=<span class="str">"ME"</span>)).agg(
+    total_pedidos =(<span class="str">"id"</span>,    <span class="str">"count"</span>),
+    receita_total =(<span class="str">"total"</span>, <span class="str">"sum"</span>),
+    ticket_medio  =(<span class="str">"total"</span>, <span class="str">"mean"</span>),
+).reset_index()
+mensal.rename(columns={<span class="str">"criado_em"</span>: <span class="str">"mes_ref"</span>}, inplace=<span class="kw">True</span>)
+mensal[<span class="str">"ticket_medio"</span>]  = mensal[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+mensal[<span class="str">"receita_total"</span>] = mensal[<span class="str">"receita_total"</span>].round(<span class="num">2</span>)
+print(mensal.tail(<span class="num">3</span>).to_string(index=<span class="kw">False</span>))
+
+<span class="cm"># (4) Gravar via to_sql</span>
+mensal.to_sql(<span class="str">"relatorio_mensal"</span>, engine,
+              if_exists=<span class="str">"replace"</span>, index=<span class="kw">False</span>,
+              chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+print(<span class="str">"Relatório mensal gravado ✓"</span>)
+
+<span class="cm"># (5) Log via psycopg2 + execute_values</span>
+<span class="kw">with</span> psycopg2.connect(DB) <span class="kw">as</span> conn:
+    <span class="kw">with</span> conn.cursor() <span class="kw">as</span> cur:
+        execute_values(
+            cur,
+            <span class="str">"INSERT INTO log_relatorios (evento, gerado_em) VALUES %s"</span>,
+            [(<span class="fn">f</span><span class="str">"relatorio_mensal gerado — {len(mensal)} meses"</span>, datetime.now())],
+        )
+    conn.commit()
+    print(<span class="str">"Log inserido ✓"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="kw">pass</span></code></pre>
+        </div>
+        <ul class="criterios">
+          <li>3 pts — engine com pool_size e credenciais via .env</li>
+          <li>3 pts — read_sql com parse_dates correto</li>
+          <li>4 pts — aggregação mensal correta com Grouper + rename</li>
+          <li>3 pts — to_sql com if_exists, method e chunksize corretos</li>
+          <li>2 pts — execute_values com psycopg2 + commit</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B3</div>
+          <div class="questao-tema">Semana 17 — Pipeline BD + IA com SQL analítico</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Escreva um script Python que:<br><br>
+        <strong>(1)</strong> Extrai features de clientes do banco via <code>read_sql</code>: <code>total_pedidos</code>, <code>ticket_medio</code>, <code>total_gasto</code>, <code>dias_inativo</code> e cria o label <code>churn = 1 se dias_inativo &gt; 45</code>.<br>
+        <strong>(2)</strong> Treina um <code>RandomForestClassifier</code> com 50 árvores, <code>class_weight="balanced"</code> e imprime a acurácia no conjunto de teste.<br>
+        <strong>(3)</strong> Gera predições de probabilidade para todos os clientes e grava em <code>predicoes_churn</code> com <code>cliente_id</code>, <code>score_churn</code>, <code>classe_churn</code> e <code>modelo_versao="p3_2025"</code>.<br>
+        <strong>(4)</strong> Executa via <code>pd.read_sql</code> uma query SQL que usa <code>NTILE(4)</code> para dividir os clientes em quartis de risco e retorna score mínimo, máximo e médio por quartil.
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B3</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+HOJE = pd.Timestamp(<span class="str">"today"</span>).normalize()
+VERSAO = <span class="str">"p3_2025"</span>
+
+<span class="cm"># (1) Features</span>
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+feat = df.groupby(<span class="str">"cliente_id"</span>).agg(
+    total_pedidos =(<span class="str">"id"</span>,        <span class="str">"count"</span>),
+    ticket_medio  =(<span class="str">"total"</span>,     <span class="str">"mean"</span>),
+    total_gasto   =(<span class="str">"total"</span>,     <span class="str">"sum"</span>),
+    ultimo_pedido =(<span class="str">"criado_em"</span>, <span class="str">"max"</span>),
+).reset_index()
+feat[<span class="str">"dias_inativo"</span>] = (HOJE - feat[<span class="str">"ultimo_pedido"</span>]).dt.days
+feat[<span class="str">"churn"</span>]        = (feat[<span class="str">"dias_inativo"</span>] > <span class="num">45</span>).astype(int)
+
+COLS = [<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,<span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>]
+X = feat[COLS].fillna(<span class="num">0</span>)
+y = feat[<span class="str">"churn"</span>]
+
+<span class="cm"># (2) Treino</span>
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="num">0.2</span>,
+                                            random_state=<span class="num">42</span>, stratify=y)
+clf = RandomForestClassifier(n_estimators=<span class="num">50</span>, class_weight=<span class="str">"balanced"</span>,
+                              random_state=<span class="num">42</span>)
+clf.fit(X_tr, y_tr)
+acc = accuracy_score(y_te, clf.predict(X_te))
+print(<span class="fn">f</span><span class="str">"Acurácia teste: {acc:.4f}"</span>)
+
+<span class="cm"># (3) Predições → banco</span>
+proba = clf.predict_proba(X)[:, <span class="num">1</span>]
+df_pred = pd.DataFrame({
+    <span class="str">"cliente_id"</span>:   feat[<span class="str">"cliente_id"</span>].values,
+    <span class="str">"score_churn"</span>:  proba.round(<span class="num">4</span>),
+    <span class="str">"classe_churn"</span>: (proba > <span class="num">0.5</span>),
+    <span class="str">"modelo_versao"</span>: VERSAO,
+})
+df_pred.to_sql(<span class="str">"predicoes_churn"</span>, engine, if_exists=<span class="str">"append"</span>,
+               index=<span class="kw">False</span>, chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+print(<span class="fn">f</span><span class="str">"Predições gravadas: {len(df_pred)}"</span>)
+
+<span class="cm"># (4) SQL analítico — quartis</span>
+df_quartis = pd.read_sql(<span class="fn">f</span><span class="str">"""
+    SELECT quartil,
+           COUNT(*) AS clientes,
+           ROUND(MIN(score_churn)::NUMERIC, 4) AS score_min,
+           ROUND(MAX(score_churn)::NUMERIC, 4) AS score_max,
+           ROUND(AVG(score_churn)::NUMERIC, 4) AS score_medio
+    FROM (
+        SELECT score_churn,
+               NTILE(4) OVER (ORDER BY score_churn DESC) AS quartil
+        FROM predicoes_churn
+        WHERE modelo_versao = '{VERSAO}'
+    ) t
+    GROUP BY quartil ORDER BY quartil
+"""</span>, engine)
+print(<span class="str">"\nQuartis de risco:"</span>)
+print(df_quartis.to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+        <ul class="criterios">
+          <li>4 pts — features corretas com groupby, dias_inativo e label churn</li>
+          <li>3 pts — RandomForest com parâmetros corretos e acurácia impressa</li>
+          <li>4 pts — predições com score, classe, versão e to_sql append</li>
+          <li>4 pts — query com NTILE(4) correta e resultado em DataFrame</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte C — Questão Integradora · 15 pontos</span></div>
+
+  <!-- ── PARTE C ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">C</div>
+      <div class="secao-info">
+        <div class="secao-label">1 questão · 15 pontos</div>
+        <div class="secao-titulo">Questão integradora — todos os temas do Bloco 3</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-desafio">
+      <span class="ps-icon"><i class="fas fa-star"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte C — Integradora</span>
+        <span class="ps-sub">Combina todos os temas das Semanas 14–18 · 15 pts</span>
+      </div>
+    </div>
+
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão C1</div>
+          <div class="questao-tema">Projeto de arquitetura — decisão técnica completa</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Uma startup de logística opera uma frota de 5.000 veículos. O banco de dados contém: tabela <code>viagens</code> (50M linhas, crescendo 200k/dia) e tabela <code>motoristas</code> (50k linhas). O sistema precisa:<br><br>
+        — Buscar rapidamente as 10 últimas viagens de um motorista específico (mais recente primeiro).<br>
+        — Garantir que o pagamento de uma viagem seja atômico (debitar do saldo do motorista + marcar viagem como paga).<br>
+        — Alimentar um modelo de ML que prediz atrasos nas próximas viagens.<br>
+        — Sobreviver à falha de hardware com RPO ≤ 15 min e RTO ≤ 3 min.<br><br>
+        <strong>Responda:</strong><br>
+        <strong>(a)</strong> Qual índice criar na tabela <code>viagens</code> para a busca das últimas 10 viagens de um motorista? Justifique a escolha.<br>
+        <strong>(b)</strong> Qual nível de isolamento usar para a transação de pagamento e por quê? Escreva a estrutura da transação em Python (psicop2 ou SQLAlchemy).<br>
+        <strong>(c)</strong> Descreva as 4 etapas do pipeline BD → IA para prever atrasos, incluindo quais features extrair, como treinar e como gravar predições de volta.<br>
+        <strong>(d)</strong> Qual arquitetura de replicação + backup atenderia RPO ≤ 15 min e RTO ≤ 3 min?
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) Índice para últimas 10 viagens:</strong><br>
+        <code>CREATE INDEX idx_viagens_motorista_data ON viagens (motorista_id, criado_em DESC) INCLUDE (origem, destino, status);</code><br>
+        Índice composto com <code>motorista_id</code> primeiro (igualdade) + <code>criado_em DESC</code> (já ordenado para o LIMIT) + INCLUDE das colunas da projeção. Query <code>WHERE motorista_id = X ORDER BY criado_em DESC LIMIT 10</code> faz Index Only Scan sem heap fetch — lê apenas 10 entradas do índice independente dos 50M de linhas.<br><br>
+        <strong>(b) Nível de isolamento e transação:</strong><br>
+        <strong>Read Committed</strong> é suficiente — o pagamento é uma operação atômica pontual sem necessidade de releituras consistentes. O importante é que seja atômica (tudo ou nada).<br>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="kw">def</span> <span class="fn">pagar_viagem</span>(viagem_id, motorista_id, valor):
+    <span class="kw">with</span> engine.begin() <span class="kw">as</span> conn:  <span class="cm"># COMMIT automático ou ROLLBACK se exceção</span>
+        conn.execute(text(
+            <span class="str">"UPDATE motoristas SET saldo=saldo-:v WHERE id=:m"</span>),
+            {<span class="str">"v"</span>: valor, <span class="str">"m"</span>: motorista_id})
+        conn.execute(text(
+            <span class="str">"UPDATE viagens SET status='pago' WHERE id=:vid"</span>),
+            {<span class="str">"vid"</span>: viagem_id})</code></pre>
+        </div>
+        <strong>(c) Pipeline BD → IA:</strong><br>
+        1. <strong>Extração:</strong> <code>read_sql</code> com JOIN entre viagens e motoristas. <code>parse_dates</code> em <code>criado_em</code>.<br>
+        2. <strong>Features por motorista:</strong> total de viagens, % de viagens com atraso histórico, distância média, hora do dia mais frequente, antiguidade na frota, avaliação média.<br>
+        3. <strong>Treino:</strong> <code>RandomForestClassifier</code> com label <code>atrasou = 1 se duração > previsão</code>. Salvar com <code>joblib.dump</code>. Registrar metadados em <code>modelos_registrados</code>.<br>
+        4. <strong>Predições → banco:</strong> <code>predict_proba</code> para todas as viagens programadas → <code>to_sql("predicoes_atraso", if_exists="append")</code> com <code>viagem_id, score, modelo_versao, gerado_em</code>. Índice em <code>score DESC</code> para o time de operações priorizar ações preventivas.<br><br>
+        <strong>(d) Arquitetura para RPO ≤ 15 min e RTO ≤ 3 min:</strong><br>
+        — <strong>Streaming replication assíncrona</strong> para standby hot (lag típico &lt; 1 min — bem abaixo de 15 min).<br>
+        — <strong>Patroni</strong> com etcd: detecta falha e promove standby em &lt; 60 segundos — atende RTO de 3 min.<br>
+        — <strong>WAL archiving</strong> a cada 5 minutos para S3/storage externo: garante PITR com janela de até 5 min de perda no pior caso — dentro do RPO de 15 min.<br>
+        — <strong>pg_basebackup semanal</strong>: para recuperação de desastres completos.
+        <ul class="criterios">
+          <li>4 pts — (a) índice composto correto com INCLUDE e justificativa</li>
+          <li>3 pts — (b) nível correto + estrutura de transação atômica</li>
+          <li>5 pts — (c) 4 etapas completas: extração, features, treino+serialização, predições→BD</li>
+          <li>3 pts — (d) replicação + Patroni + WAL archiving com justificativa de cada</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Distribuição de Pontos</span></div>
+
+  <!-- ── GABARITO FINAL ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Para o professor</div>
+        <div class="secao-titulo">Distribuição de pontos e critérios gerais</div>
+      </div>
+    </div>
+
+    <div class="nota-grid">
+      <div class="nota-item">
+        <div class="ni-num">Parte A · 40 pts</div>
+        <div class="ni-desc">A1 (10) + A2 (10) + A3 (10) + A4 (10)</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Parte B · 45 pts</div>
+        <div class="ni-desc">B1 (15) + B2 (15) + B3 (15)</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Parte C · 15 pts</div>
+        <div class="ni-desc">C1 integradora (15)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Critérios gerais de correção</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Situação</th><th>Crédito sugerido</th></tr></thead>
+          <tbody>
+            <tr><td>Resposta completa, correta e com justificativa</td><td><strong>100%</strong></td></tr>
+            <tr><td>Resposta correta sem justificativa adequada</td><td><strong>60–70%</strong></td></tr>
+            <tr><td>Conceito correto, aplicação parcialmente errada</td><td><strong>40–60%</strong></td></tr>
+            <tr><td>Código com erro de sintaxe mas lógica correta</td><td><strong>70–80%</strong> da questão prática</td></tr>
+            <tr><td>Só o nome do conceito sem explicação</td><td><strong>20%</strong></td></tr>
+            <tr><td>Resposta em branco ou totalmente equivocada</td><td><strong>0%</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Trabalho Final · Projeto Prático em Grupo</span></div>
+
+  <!-- ── TRABALHO FINAL / PROJETO PRÁTICO ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">P</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade prática · Trabalho para entregar</div>
+        <div class="secao-titulo">Projeto Final — Sistema de Banco de Dados com IA Integrada</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-projeto">
+      <span class="ps-icon"><i class="fas fa-diagram-project"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Trabalho em grupo · Bloco 3 completo (Semanas 14–18)</span>
+        <span class="ps-sub">Grupos de 3 a 4 alunos · Entrega escrita (relatório) + código + apresentação</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bullseye"></i>Objetivo do trabalho</div>
+      <p>Em vez de uma prova tradicional isolada, cada grupo vai <strong>projetar, implementar e documentar</strong> um sistema de banco de dados completo para um cenário real, aplicando na prática tudo que foi visto no Bloco 3: indexação, transações seguras, integração com Python, um pipeline simples de IA sobre os dados, e uma estratégia de replicação/backup.</p>
+      <p>O trabalho não é sobre "decorar sintaxe" — é sobre <strong>tomar decisões de arquitetura</strong> e defendê-las, exatamente como um profissional de dados faria em uma reunião técnica.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shapes"></i>Escolha um cenário (ou proponha o seu)</div>
+      <div class="tema-grid">
+        <div class="tema-card">
+          <div class="tc-num">Cenário 1</div>
+          <div class="tc-titulo">E-commerce regional</div>
+          <div class="tc-desc">Plataforma de vendas online com catálogo de produtos, pedidos e clientes. Precisa prever quais clientes têm risco de abandonar a plataforma (churn) e responder rápido a buscas por histórico de pedidos.</div>
+        </div>
+        <div class="tema-card">
+          <div class="tc-num">Cenário 2</div>
+          <div class="tc-titulo">Clínica / rede de saúde</div>
+          <div class="tc-desc">Sistema de agendamento de consultas com histórico de pacientes. Precisa prever faltas em consultas (no-show) e garantir que remarcações sejam transações atômicas e consistentes.</div>
+        </div>
+        <div class="tema-card">
+          <div class="tc-num">Cenário 3</div>
+          <div class="tc-titulo">Delivery / logística urbana</div>
+          <div class="tc-desc">Aplicativo de entregas com motoboys, pedidos e rotas. Precisa prever atrasos nas entregas e processar pagamentos aos entregadores de forma segura sob concorrência.</div>
+        </div>
+        <div class="tema-card">
+          <div class="tc-num">Cenário 4</div>
+          <div class="tc-titulo">Biblioteca / sistema acadêmico</div>
+          <div class="tc-desc">Gestão de empréstimos de livros e matrículas de alunos. Precisa prever atrasos na devolução e garantir que reservas concorrentes do mesmo exemplar nunca gerem inconsistência.</div>
+        </div>
+      </div>
+      <p>Grupos que preferirem podem propor um cenário próprio, desde que aprovado previamente pelo professor e que contemple os quatro pilares abaixo.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-check"></i>Requisitos técnicos obrigatórios</div>
+      <p>O sistema entregue precisa demonstrar, de forma concreta e funcionando, os quatro pilares do Bloco 3:</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Pilar</th><th>O que deve conter</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. Modelagem e Indexação</strong></td><td>Esquema relacional com pelo menos 4 tabelas relacionadas; no mínimo um índice composto e um covering index, com <code>EXPLAIN ANALYZE</code> comparando antes/depois</td></tr>
+            <tr><td><strong>2. Transações seguras</strong></td><td>Ao menos uma operação crítica (pagamento, reserva, remarcação) implementada com transação atômica, nível de isolamento justificado e tratamento de concorrência (lock ou retry)</td></tr>
+            <tr><td><strong>3. Integração Python + IA</strong></td><td>Script(s) usando psycopg2 e/ou SQLAlchemy + pandas para extrair features e treinar um modelo simples (classificação ou regressão) sobre os dados do próprio sistema, com predições gravadas de volta no banco</td></tr>
+            <tr><td><strong>4. Disponibilidade</strong></td><td>Proposta escrita de arquitetura de replicação e backup para o sistema, com RPO/RTO definidos e justificados para o cenário escolhido</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Etapas de entrega</div>
+      <div class="entrega-grid">
+        <div class="entrega-item">
+          <div class="ei-fase">Etapa 1</div>
+          <div class="ei-titulo">Proposta e modelagem</div>
+          <div class="ei-desc">Documento curto com o cenário escolhido, esquema relacional (diagrama ER) e quais índices serão usados e por quê.</div>
+          <div class="ei-prazo"><i class="fas fa-calendar"></i> Entregar até a Semana 20</div>
+        </div>
+        <div class="entrega-item">
+          <div class="ei-fase">Etapa 2</div>
+          <div class="ei-titulo">Implementação técnica</div>
+          <div class="ei-desc">Código-fonte completo: scripts SQL de criação, scripts Python de integração e do pipeline de IA, com comentários explicando cada decisão.</div>
+          <div class="ei-prazo"><i class="fas fa-calendar"></i> Entregar até a Semana 21</div>
+        </div>
+        <div class="entrega-item">
+          <div class="ei-fase">Etapa 3</div>
+          <div class="ei-titulo">Relatório final + apresentação</div>
+          <div class="ei-desc">Relatório em PDF/Word explicando as escolhas de arquitetura, resultados do modelo de IA e a estratégia de disponibilidade. Apresentação de 10 minutos por grupo.</div>
+          <div class="ei-prazo"><i class="fas fa-calendar"></i> Apresentações na Semana 22</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Critérios de avaliação (100 pts)</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>Pontos</th></tr></thead>
+          <tbody>
+            <tr><td>Modelagem do banco e uso correto de índices, com evidência de EXPLAIN ANALYZE</td><td><strong>20 pts</strong></td></tr>
+            <tr><td>Transação crítica implementada corretamente (atomicidade, isolamento, concorrência)</td><td><strong>20 pts</strong></td></tr>
+            <tr><td>Pipeline Python + IA funcional, com predições gravadas de volta no banco</td><td><strong>25 pts</strong></td></tr>
+            <tr><td>Proposta de replicação/backup coerente com RPO/RTO justificados</td><td><strong>15 pts</strong></td></tr>
+            <tr><td>Qualidade do relatório escrito (clareza, justificativas técnicas)</td><td><strong>10 pts</strong></td></tr>
+            <tr><td>Apresentação oral (domínio do conteúdo, capacidade de responder perguntas)</td><td><strong>10 pts</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-lightbulb"></i>
+      <span><strong>Dica para os grupos:</strong> comecem pela modelagem (Etapa 1) antes de escrever qualquer código — um esquema mal pensado obriga a refazer índices e transações depois. Usar dados fictícios gerados com script (ao invés de digitar manualmente) economiza tempo e deixa o pipeline de IA mais realista.</span>
+    </div>
+
+    <div class="aviso-red">
+      <i class="fas fa-users"></i>
+      <span><strong>Trabalho em grupo, mas nota individual pode variar:</strong> cada integrante deve estar apto a explicar qualquer parte do código na apresentação. O professor pode fazer perguntas individuais durante a apresentação, e a nota do grupo pode ser ajustada por aluno conforme o domínio demonstrado.</span>
+    </div>
+  </section>
+
+  <!-- ── FIM DO SEMESTRE ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="fim-box">
+      <div class="fim-left">
+        <div class="fl-label">Fim do semestre</div>
+        <div class="fl-titulo">Parabéns por completar Banco de Dados!</div>
+        <div class="fl-sub">Semana 20 — Segunda chamada para alunos com frequência válida · Projeto Final entregue até a Semana 22</div>
+      </div>
+      <div class="fim-right"><i class="fas fa-graduation-cap"></i></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  const aberto=c.classList.contains('open');
+  btn.innerHTML=aberto
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

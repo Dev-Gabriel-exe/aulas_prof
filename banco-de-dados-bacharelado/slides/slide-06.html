@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 06 — Banco de Dados · Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA AVALIAÇÃO ───────────────────────────────────────────── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7f1d1d;top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:#450a0a;bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:#991b1b;top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:#f87171;border:1px solid rgba(239,68,68,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:#f87171;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:#f87171;}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:#ef4444;border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.18);color:#f87171;display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(239,68,68,.05);border-left:3px solid #ef4444;}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:#f87171;font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-avaliacao{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:#f87171;font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.03);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.07);border-left:3px solid #ef4444;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-red strong{color:#f87171;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.1);}
+th{padding:.6rem 1rem;text-align:left;color:#f87171;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.warn{color:#fbbf24;}
+
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+.badge-green{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* revisão topic cards */
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.rev-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.rev-card:hover{border-color:rgba(239,68,68,.2);}
+.rev-semana{font-size:.62rem;color:#f87171;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.35rem;}
+.rev-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);margin-bottom:.6rem;}
+.rev-lista{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.rev-lista li{font-size:.78rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:7px;line-height:1.5;}
+.rev-lista li::before{content:'→';color:rgba(239,68,68,.5);flex-shrink:0;font-size:.7rem;margin-top:2px;}
+
+/* simulado */
+.sim-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.sim-header{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;}
+.sim-num{width:30px;height:30px;border-radius:8px;background:rgba(239,68,68,.15);color:#f87171;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:800;flex-shrink:0;}
+.sim-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sim-tipo{font-size:.65rem;padding:2px 8px;border-radius:5px;font-weight:600;letter-spacing:.05em;}
+.sim-sql{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.sim-teoria{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.sim-nosql{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.sim-pts{font-size:.65rem;color:var(--text-muted);}
+.sim-item p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.75rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:.65rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:.15s;user-select:none;}
+.check-item:hover{border-color:rgba(74,222,128,.2);background:rgba(74,222,128,.04);}
+.check-item.done{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.05);}
+.check-box{width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:.15s;}
+.check-item.done .check-box{background:rgba(74,222,128,.25);border-color:rgba(74,222,128,.5);color:var(--green-400);}
+.check-text{font-size:.85rem;color:var(--text-secondary);line-height:1.5;}
+.check-item.done .check-text{color:var(--text-muted);text-decoration:line-through;}
+
+/* score */
+.score-wrap{display:flex;align-items:center;gap:1.5rem;padding:1.25rem 1.5rem;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:14px;margin-top:1.5rem;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:#f87171;line-height:1;}
+.score-label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+.score-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;}
+.score-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#ef4444,#f87171);transition:width .5s ease;}
+
+/* proxima */
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.rev-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-avaliacao">📝 Avaliação</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Bacharelado · 2° Período</div>
+    <div class="semana-num">06</div>
+    <h1 class="capa-titulo">Avaliação<br><em>P1</em></h1>
+    <p class="capa-sub">Semanas 1 a 5 · Revisão + Simulado + Prova</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>SQL avançado — subqueries, CTEs, window functions</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-atom"></i></div><span>Normalização — 1FN, 2FN, 3FN, FNBC</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Pipelines de dados — ETL/ELT, zonas, feature engineering</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-leaf"></i></div><span>NoSQL — MongoDB, Redis, tipos e casos de uso</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-graduation-cap"></i></div><span>Simulado completo com gabarito comentado</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Avaliação P1</div>
+      <p>Prova escrita e/ou prática cobrindo o conteúdo das semanas 1 a 5.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Estrutura da aula de hoje</div>
+      <ul class="info-lista">
+        <li><strong>Aula 1:</strong> Revisão express — flashcards de cada semana</li>
+        <li><strong>Aula 2:</strong> Simulado — 8 questões comentadas</li>
+        <li><strong>Aula 3:</strong> Prova P1</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Distribuição da prova</div>
+      <ul class="info-lista">
+        <li>SQL básico e avançado — 30%</li>
+        <li>Window functions e CTEs — 25%</li>
+        <li>Normalização (1FN–FNBC) — 25%</li>
+        <li>Pipelines + NoSQL — 20%</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dicas para a prova</div>
+      <ul class="info-lista">
+        <li>Leia o enunciado inteiro antes de escrever</li>
+        <li>Nos JOINs: identifique qual tabela é "N" antes de escrever</li>
+        <li>Em normalização: identifique o determinante de cada atributo</li>
+        <li>HAVING filtra depois do GROUP BY — não confunda com WHERE</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para a revisão</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Revisão Express ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Revisão Express — Semanas 1 a 5</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-clock"></i>
+      <span>5–8 minutos por semana. O objetivo não é re-ensinar — é garantir que os conceitos-chave estão frescos na memória antes do simulado.</span>
+    </div>
+
+    <div class="rev-grid">
+      <!-- Semana 1 -->
+      <div class="rev-card">
+        <div class="rev-semana">Semana 1</div>
+        <div class="rev-titulo">Modelo Relacional e SQL Básico</div>
+        <ul class="rev-lista">
+          <li>PK identifica unicamente cada linha — não pode ser nula</li>
+          <li>FK cria vínculo entre tabelas — garante integridade referencial</li>
+          <li>INNER JOIN: só linhas com correspondência nos dois lados</li>
+          <li>LEFT JOIN: todos da tabela esquerda, mesmo sem match</li>
+          <li>WHERE filtra antes do GROUP BY · HAVING filtra depois</li>
+        </ul>
+      </div>
+
+      <!-- Semana 2 -->
+      <div class="rev-card">
+        <div class="rev-semana">Semana 2</div>
+        <div class="rev-titulo">Subqueries, CTEs e Window Functions</div>
+        <ul class="rev-lista">
+          <li>Subquery escalar retorna um único valor — usada no WHERE</li>
+          <li>EXISTS para verificar existência — para na primeira linha</li>
+          <li>WITH cria CTEs nomeadas — mais legível que subquery aninhada</li>
+          <li>Window function: calcula sem colapsar linhas (≠ GROUP BY)</li>
+          <li>RANK pula posições no empate · DENSE_RANK não pula</li>
+          <li>LAG acessa linha anterior · LEAD acessa linha seguinte</li>
+        </ul>
+      </div>
+
+      <!-- Semana 3 -->
+      <div class="rev-card">
+        <div class="rev-semana">Semana 3</div>
+        <div class="rev-titulo">Normalização 1FN → FNBC</div>
+        <ul class="rev-lista">
+          <li>1FN: atributos atômicos, sem grupos repetidos</li>
+          <li>2FN: 1FN + sem dependência parcial da PK composta</li>
+          <li>3FN: 2FN + sem dependência transitiva entre não-chaves</li>
+          <li>FNBC: todo determinante deve ser superchave</li>
+          <li>Anomalias: inserção, atualização e exclusão</li>
+          <li>OLTP normaliza · OLAP/ML pode desnormalizar com justificativa</li>
+        </ul>
+      </div>
+
+      <!-- Semana 4 -->
+      <div class="rev-card">
+        <div class="rev-semana">Semana 4</div>
+        <div class="rev-titulo">Pipelines de Dados para IA</div>
+        <ul class="rev-lista">
+          <li>ETL: transforma antes de carregar · ELT: carrega bruto, transforma depois</li>
+          <li>Raw/Bronze → Silver (limpo) → Gold (pronto para ML)</li>
+          <li>Parquet: binário colunar, 3–10x menor que CSV, schema embutido</li>
+          <li>FILTER (WHERE ...) no PostgreSQL: condicional dentro de agregação</li>
+          <li>COALESCE e NULLIF para tratar nulos com segurança</li>
+          <li>pd.read_sql + to_sql: Python ↔ PostgreSQL via SQLAlchemy</li>
+        </ul>
+      </div>
+
+      <!-- Semana 5 -->
+      <div class="rev-card" style="grid-column:span 2;">
+        <div class="rev-semana">Semana 5</div>
+        <div class="rev-titulo">Bancos NoSQL — MongoDB e Redis</div>
+        <ul class="rev-lista" style="columns:2;gap:2rem;">
+          <li>NoSQL = "Not Only SQL" — projetado para casos específicos</li>
+          <li>Tipos: documento, chave-valor, colunar, grafos</li>
+          <li>CAP: Consistência, Disponibilidade, Partição — escolha 2</li>
+          <li>MongoDB: coleção = tabela · documento = linha · field = coluna</li>
+          <li>find() com projeção · $match, $group, $lookup no aggregate</li>
+          <li>Redis: in-memory → 10–100x mais rápido que BD em disco</li>
+          <li>TTL: chaves expiram automaticamente — ideal para cache</li>
+          <li>Cache-Aside: leia cache → miss → busque fonte → grave cache</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-check-square"></i>Checklist de revisão — marque o que já sabe</div>
+      <div class="checklist" id="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Escrever um INNER JOIN e um LEFT JOIN e explicar a diferença</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Escrever uma CTE com WITH e referenciar ela no SELECT final</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Usar RANK() OVER (PARTITION BY ... ORDER BY ...) corretamente</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Identificar se uma tabela viola a 1FN, 2FN ou 3FN e explicar por quê</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Descrever as 3 anomalias (inserção, atualização, exclusão) com exemplo</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar ETL vs ELT e as 3 zonas do data lake (raw/silver/gold)</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Escrever uma query com FILTER (WHERE ...) dentro de COUNT ou SUM</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Citar 2 diferenças entre MongoDB e PostgreSQL com exemplo de caso de uso</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar o Teorema CAP e dizer qual par MongoDB e Cassandra escolhem</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Descrever o padrão Cache-Aside do Redis com os 3 passos</span></div>
+      </div>
+      <div class="score-wrap" id="scoreWrap">
+        <div><div class="score-num" id="scoreNum">0</div><div class="score-label">/ 10 itens</div></div>
+        <div style="flex:1;">
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-bottom:.4rem;" id="scoreMsg">Marque os itens que você já domina</div>
+          <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Simulado</span></div>
+
+  <!-- ── AULA 2: Simulado ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Simulado — 8 Questões com Gabarito Comentado</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Tente resolver cada questão antes de ver o gabarito. O simulado cobre exatamente os tópicos da P1, com o mesmo nível de dificuldade.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q1</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-sql">SQL</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>Usando o banco <strong>loja_exemplo</strong>, escreva uma única query que retorne: nome do cliente, cidade, quantidade de pedidos entregues e ticket médio. Mostre apenas clientes com <strong>2 ou mais pedidos entregues</strong>, ordenados pelo ticket médio decrescente.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Gabarito Q1</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  c.nome,
+  c.cidade,
+  <span class="fn">COUNT</span>(p.id)               <span class="kw">AS</span> qtd_pedidos,
+  <span class="fn">ROUND</span>(<span class="fn">AVG</span>(p.total)::numeric, <span class="num">2</span>) <span class="kw">AS</span> ticket_medio
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">GROUP BY</span> c.id, c.nome, c.cidade
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(p.id) <span class="op">&gt;=</span> <span class="num">2</span>
+<span class="kw">ORDER BY</span> ticket_medio <span class="kw">DESC</span>;</code></pre>
+        </div>
+        <div class="destaque"><strong>Pontos críticos:</strong> WHERE p.status = 'entregue' filtra antes do GROUP BY. HAVING COUNT(p.id) &gt;= 2 filtra depois. Sem o WHERE, contaria pedidos cancelados no ticket médio.</div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q2</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-sql">SQL — CTE</span>
+          <span class="sim-pts">2,5 pts</span>
+        </div>
+      </div>
+      <p>Usando CTEs encadeadas: (1) calcule a receita total por produto; (2) calcule o rank de receita dentro de cada categoria usando <code>DENSE_RANK()</code>; (3) retorne apenas o produto com maior receita de cada categoria.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Gabarito Q2</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span>
+
+receita_produto <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    pr.id,
+    pr.nome,
+    pr.categoria,
+    <span class="fn">SUM</span>(i.quantidade <span class="op">*</span> i.preco_unit) <span class="kw">AS</span> receita
+  <span class="kw">FROM</span> produtos pr
+  <span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.produto_id <span class="op">=</span> pr.id
+  <span class="kw">GROUP BY</span> pr.id, pr.nome, pr.categoria
+),
+
+rankeados <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (
+      <span class="kw">PARTITION BY</span> categoria
+      <span class="kw">ORDER BY</span> receita <span class="kw">DESC</span>
+    ) <span class="kw">AS</span> pos
+  <span class="kw">FROM</span> receita_produto
+)
+
+<span class="kw">SELECT</span> categoria, nome, receita
+<span class="kw">FROM</span> rankeados
+<span class="kw">WHERE</span> pos <span class="op">=</span> <span class="num">1</span>
+<span class="kw">ORDER BY</span> receita <span class="kw">DESC</span>;</code></pre>
+        </div>
+        <div class="destaque"><strong>Ponto crítico:</strong> o filtro <code>WHERE pos = 1</code> não pode estar dentro da CTE rankeados — window functions são calculadas depois do WHERE. Por isso precisamos de uma CTE extra ou subquery para filtrar pelo resultado do rank.</div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q3</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-sql">Window Function</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>Escreva uma query que mostre cada pedido entregue com: id do pedido, nome do cliente, data, total do pedido, <strong>total acumulado</strong> (running sum ordenado por data) e <strong>percentual</strong> que cada pedido representa do total geral de pedidos entregues.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Gabarito Q3</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  p.id,
+  c.nome                                                     <span class="kw">AS</span> cliente,
+  p.criado_em::date                                          <span class="kw">AS</span> data,
+  p.total,
+  <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> p.criado_em
+    <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+  )                                                          <span class="kw">AS</span> total_acumulado,
+  <span class="fn">ROUND</span>(p.total <span class="op">/</span> <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> () <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>)           <span class="kw">AS</span> pct_total
+<span class="kw">FROM</span> pedidos p
+<span class="kw">INNER JOIN</span> clientes c <span class="kw">ON</span> c.id <span class="op">=</span> p.cliente_id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">ORDER BY</span> p.criado_em;</code></pre>
+        </div>
+        <div class="destaque"><strong>Ponto crítico:</strong> <code>SUM(...) OVER ()</code> sem nenhuma cláusula calcula o total de todas as linhas do resultado — é o denominador do percentual. O frame <code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> garante o acumulado até a linha atual.</div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q4</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-teoria">Normalização</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>A tabela abaixo tem PK composta <code>(projeto_id, funcionario_id)</code>. Identifique todas as violações de forma normal, especifique qual forma normal cada uma viola, e escreva o SQL corrigido até a 3FN.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Esquema</span></div>
+        <pre><code>alocacao(projeto_id, funcionario_id, horas_alocadas,
+         nome_funcionario, cargo_funcionario, salario_funcionario,
+         nome_projeto, cliente_projeto, orcamento_projeto)</code></pre>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque-red">
+          <strong>Violações identificadas:</strong><br>
+          • <code>nome_funcionario</code>, <code>cargo_funcionario</code>, <code>salario_funcionario</code> → dependem só de <code>funcionario_id</code> — <strong>viola 2FN</strong> (dependência parcial)<br>
+          • <code>nome_projeto</code>, <code>cliente_projeto</code>, <code>orcamento_projeto</code> → dependem só de <code>projeto_id</code> — <strong>viola 2FN</strong> (dependência parcial)<br>
+          • <code>horas_alocadas</code> → depende da PK inteira ✅
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Gabarito Q4 (corrigido até 3FN)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE TABLE</span> funcionarios (
+  id     <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome   <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  cargo  <span class="fn">VARCHAR</span>(<span class="num">80</span>),
+  salario <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>)
+);
+
+<span class="kw">CREATE TABLE</span> projetos (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  nome      <span class="fn">VARCHAR</span>(<span class="num">120</span>) <span class="kw">NOT NULL</span>,
+  cliente   <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  orcamento <span class="fn">NUMERIC</span>(<span class="num">12</span>,<span class="num">2</span>)
+);
+
+<span class="kw">CREATE TABLE</span> alocacoes (
+  projeto_id     <span class="fn">INT</span> <span class="kw">REFERENCES</span> projetos(id),
+  funcionario_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> funcionarios(id),
+  horas_alocadas <span class="fn">NUMERIC</span>(<span class="num">6</span>,<span class="num">1</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (projeto_id, funcionario_id)
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q5</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-teoria">Normalização — Conceito</span>
+          <span class="sim-pts">1,5 pts</span>
+        </div>
+      </div>
+      <p>Explique com suas palavras a diferença entre <strong>dependência parcial</strong> (viola 2FN) e <strong>dependência transitiva</strong> (viola 3FN). Dê um exemplo de cada uma com uma tabela hipotética.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Dependência parcial (viola 2FN):</strong> ocorre quando um atributo não-chave depende de <em>parte</em> da chave primária composta — não dela inteira.<br><br>
+          Exemplo: tabela <code>matricula(turma_id, aluno_id, nota, nome_aluno)</code> com PK (turma_id, aluno_id). <code>nome_aluno</code> depende só de <code>aluno_id</code> — dependência parcial.<br><br>
+          <strong>Dependência transitiva (viola 3FN):</strong> ocorre quando um atributo não-chave determina outro atributo não-chave — criando uma cadeia indireta.<br><br>
+          Exemplo: tabela <code>pedido(id, cliente_id, cliente_cidade)</code>. <code>id → cliente_id → cliente_cidade</code>. <code>cliente_cidade</code> depende de <code>cliente_id</code>, que não é a PK — dependência transitiva.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q6</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-sql">Pipeline SQL</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>Escreva uma query SQL que gere uma <strong>tabela gold de features de cliente</strong> para um modelo de propensão à compra. Inclua: <code>cliente_id</code>, <code>total_pedidos</code>, <code>ticket_medio</code>, <code>dias_desde_ultimo_pedido</code>, <code>qtd_cancelados</code> e <code>pct_pedidos_entregues</code>. Use CTEs para organizar.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — Gabarito Q6</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span> metricas <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    cliente_id,
+    <span class="fn">COUNT</span>(*)                                             <span class="kw">AS</span> total_pedidos,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(total)::numeric, <span class="num">2</span>)                      <span class="kw">AS</span> ticket_medio,
+    <span class="fn">CURRENT_DATE</span> <span class="op">-</span> <span class="fn">MAX</span>(criado_em::date)               <span class="kw">AS</span> dias_desde_ultimo,
+    <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'cancelado'</span>)      <span class="kw">AS</span> qtd_cancelados,
+    <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>)       <span class="kw">AS</span> qtd_entregues
+  <span class="kw">FROM</span> pedidos
+  <span class="kw">GROUP BY</span> cliente_id
+)
+<span class="kw">SELECT</span>
+  cliente_id,
+  total_pedidos,
+  ticket_medio,
+  dias_desde_ultimo,
+  qtd_cancelados,
+  <span class="fn">ROUND</span>(
+    qtd_entregues::numeric <span class="op">/</span> <span class="fn">NULLIF</span>(total_pedidos, <span class="num">0</span>) <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                                      <span class="kw">AS</span> pct_entregues
+<span class="kw">FROM</span> metricas
+<span class="kw">ORDER BY</span> ticket_medio <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q7</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-nosql">NoSQL — MongoDB</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>No MongoDB, escreva um pipeline de agregação que: (1) filtre pedidos com status <strong>"entregue"</strong>; (2) agrupe por <code>cliente_id</code> calculando total de pedidos e soma do total; (3) ordene pelo maior total; (4) limite aos 5 maiores clientes. Depois, reescreva a consulta equivalente em SQL.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">MongoDB</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>db.pedidos.aggregate([
+  { $match:  { status: <span class="str">"entregue"</span> } },
+  { $group:  {
+      _id:           <span class="str">"$cliente_id"</span>,
+      total_pedidos: { $sum: <span class="num">1</span> },
+      soma_total:    { $sum: <span class="str">"$total"</span> }
+  }},
+  { $sort:   { soma_total: -<span class="num">1</span> } },
+  { $limit:  <span class="num">5</span> }
+])</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL — equivalente</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  cliente_id,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_pedidos,
+  <span class="fn">SUM</span>(total) <span class="kw">AS</span> soma_total
+<span class="kw">FROM</span> pedidos
+<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">GROUP BY</span> cliente_id
+<span class="kw">ORDER BY</span> soma_total <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">5</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q8</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-nosql">NoSQL — Conceito</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>Você está projetando o backend de um sistema de recomendação de produtos para um e-commerce de alta escala. O sistema precisa: (a) armazenar o perfil de cada usuário com campos variáveis; (b) servir features pré-calculadas em menos de 5ms para o modelo de ML; (c) registrar o histórico de todas as interações (cliques, compras) com volume de 50k eventos/segundo. Para cada necessidade, indique qual banco usar e justifique a escolha.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>(a) Perfis com campos variáveis → MongoDB</strong><br>
+          Esquema flexível: cada usuário pode ter campos diferentes sem necessidade de ALTER TABLE. Documentos JSON nativos para dados semi-estruturados.<br><br>
+          <strong>(b) Features em menos de 5ms → Redis</strong><br>
+          In-memory garante latência sub-milissegundo. Hash por chave <code>features:usuario:{id}</code> com TTL. Features pré-calculadas em batch e servidas do cache sem tocar o banco relacional.<br><br>
+          <strong>(c) 50k eventos/segundo → Cassandra</strong><br>
+          Banco colunar projetado para writes massivos e escala horizontal. Particionamento por <code>usuario_id</code> + timestamp distribui a carga. Eventual consistency (AP no CAP) é aceitável para histórico de cliques.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prova P1</span></div>
+
+  <!-- ── AULA 3: Orientações da Prova ─────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Avaliação P1 — Orientações</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-info-circle"></i>Instruções gerais</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle ok"></i><span>Permitido: anotações próprias em papel</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Permitido: calculadora simples</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Em SQL, sintaxe não precisa ser exata — lógica conta mais</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não permitido: internet, celular ou consulta ao colega</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Questões em branco não recebem crédito parcial</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-star"></i>Critérios de correção</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-circle warn"></i><span><strong>SQL:</strong> lógica + sintaxe + resultado correto</span></li>
+          <li><i class="fas fa-circle warn"></i><span><strong>Normalização:</strong> identificação correta + justificativa</span></li>
+          <li><i class="fas fa-circle warn"></i><span><strong>Conceito:</strong> clareza da explicação + exemplo</span></li>
+          <li><i class="fas fa-circle warn"></i><span>Erros de digitação menores não penalizam</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do segundo semestre</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Avaliação</th><th>Semana</th><th>Conteúdo</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-inline">P1</span> ← você está aqui</td><td>6</td><td>Semanas 1–5</td></tr>
+            <tr><td><span class="badge-inline">P2</span></td><td>13</td><td>Semanas 7–12</td></tr>
+            <tr><td><span class="badge-inline">Revisão Geral</span></td><td>18</td><td>—</td></tr>
+            <tr><td><span class="badge-inline">P3 Final</span></td><td>19</td><td>Semanas 14–17 + projeto integrador</td></tr>
+            <tr><td><span class="badge-inline">2ª Chamada</span></td><td>20</td><td>Prova não realizada</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-07.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 7 — Bancos Vetoriais e Aplicações RAG/LLM</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+function toggleCheck(item){
+  item.classList.toggle('done');
+  const box=item.querySelector('.check-box');
+  box.innerHTML=item.classList.contains('done')?'<i class="fas fa-check"></i>':'';
+  const total=document.querySelectorAll('.check-item').length;
+  const done=document.querySelectorAll('.check-item.done').length;
+  document.getElementById('scoreNum').textContent=done;
+  document.getElementById('scoreBar').style.width=(done/total*100)+'%';
+  const msgs=['Marque os itens que você já domina','Bom começo — continue revisando!','Metade do caminho percorrido!','Quase lá — revise os itens restantes','Você está pronto para a P1! 🚀'];
+  const idx=Math.min(Math.floor(done/(total/4)),4);
+  document.getElementById('scoreMsg').textContent=msgs[idx];
+}
+</script>
+</body>
+</html>
