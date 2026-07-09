@@ -1,0 +1,277 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #2c3e50;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    flex-shrink: 0;
+}
+
+.navbar h1 {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.slide-counter {
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Container dos Slides */
+.slides-container {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+
+/* Iframe dos Slides */
+#slideFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+/* Footer */
+.footer {
+    background-color: #1a1a2e;
+    padding: 12px 30px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .navbar h1 {
+        font-size: 1.2rem;
+    }
+
+    .nav-buttons {
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .slide-counter {
+        font-size: 0.9rem;
+    }
+
+    .footer {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
+}
+
+/* Loading animation */
+.slides-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.slides-container.loading::before {
+    opacity: 1;
+}
+
+@keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Scroll suave para navegação por teclado */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ===== ANIMAÇÕES BASE ===== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ===== FUNDO VIVO ===== */
+@keyframes floatBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, -30px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+.blob-1, .blob-2 {
+    animation: floatBlob 20s ease-in-out infinite;
+}
+
+/* ===== SEQUÊNCIA DE ENTRADA ===== */
+.animate-icon {
+    animation: scaleIn 1s ease forwards;
+}
+
+.animate-title {
+    opacity: 0;
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 0.8s;
+}
+
+.animate-subtitle {
+    opacity: 0;
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 1.6s;
+}
+
+.animate-panel {
+    opacity: 0;
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 2.6s;
+}
+
+/* Swing (efeito gangorra) */
+.quote-text.swing {
+  display: inline-block;
+  transform-origin: 50% 140%; /* pivô abaixo do texto para efeito de gangorra */
+  will-change: transform;
+  animation: swing 2s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 11;
+  /* pequena elevação para evitar clipping com sombras/glow */
+  backface-visibility: hidden;
+}
+
+/* keyframes da gangorra */
+@keyframes swing {
+  0% {
+    transform: rotate(-8deg) translateY(-6px);
+  }
+  40% {
+    transform: rotate(-4deg) translateY(-3px);
+  }
+  60% {
+    transform: rotate(4deg) translateY(3px);
+  }
+  100% {
+    transform: rotate(8deg) translateY(6px);
+  }
+}
+
+/* pausa ao passar o mouse para facilitar leitura */
+.quote-text.swing:hover,
+.quote-text.swing:focus {
+  animation-play-state: paused;
+  transform: rotate(0deg) translateY(0);
+  outline: none;
+}
+
+/* reduzir movimento para usuários que preferem menos animação */
+@media (prefers-reduced-motion: reduce) {
+  .quote-text.swing {
+    animation: none;
+    transform: none;
+  }
+}
