@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 16 — Plataformas IoT e Node-RED</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Plataforma cards ── */
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.plat-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.plat-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+.plat-card__logo{font-size:1.5rem;margin-bottom:.5rem;display:block;}
+.plat-card__name{font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:.2rem;}
+.plat-card__sub{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.75rem;font-weight:600;}
+.plat-card__row{display:flex;justify-content:space-between;padding:.22rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem;}
+.plat-card__row:last-of-type{border-bottom:none;}
+.plat-card__k{color:var(--text-muted);}
+.plat-card__v{color:var(--text-primary);font-weight:600;text-align:right;}
+
+/* ── Node-RED flow visual ── */
+.flow-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.flow-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.flow-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.85rem;}
+.flow-row:last-child{margin-bottom:0;}
+.flow-node{border-radius:8px;padding:.55rem 1rem;font-size:.78rem;font-weight:700;text-align:center;flex-shrink:0;position:relative;min-width:85px;}
+.flow-node__type{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;opacity:.65;display:block;margin-bottom:1px;font-weight:600;}
+.flow-wire{flex:1;min-width:20px;height:2px;border-radius:1px;position:relative;}
+.flow-wire::after{content:'▶';position:absolute;right:-4px;top:-8px;font-size:.65rem;color:var(--text-muted);}
+.flow-label{font-size:.68rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+
+/* ── Dashboard mockup ── */
+.dashboard-mock{background:#0d1117;border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.dashboard-mock__title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:700;margin-bottom:1.1rem;}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 2fr;gap:.85rem;}
+.dash-widget{border-radius:10px;padding:1rem;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);}
+.dash-widget__label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.4rem;font-weight:600;}
+.dash-widget__value{font-family:'Montserrat',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;}
+.dash-widget__unit{font-size:.8rem;opacity:.6;margin-left:3px;}
+.dash-gauge{position:relative;width:80px;height:80px;margin:0 auto .3rem;}
+.dash-gauge svg{width:100%;height:100%;}
+.dash-chart{height:60px;display:flex;align-items:flex-end;gap:2px;}
+.dash-chart-bar{flex:1;border-radius:2px 2px 0 0;min-width:4px;}
+.dash-btn{padding:.5rem 1.25rem;border-radius:7px;font-size:.8rem;font-weight:700;font-family:'Montserrat',sans-serif;border:none;cursor:pointer;margin-right:.4rem;transition:opacity .2s;}
+.dash-btn:hover{opacity:.85;}
+.dash-status{display:flex;align-items:center;gap:6px;font-size:.8rem;margin-top:.5rem;}
+.dash-dot{width:8px;height:8px;border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+
+/* ── Node palette ── */
+.palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:.75rem 0;}
+.palette-node{border-radius:9px;padding:.85rem .9rem;border:1px solid;text-align:center;}
+.palette-node__type{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;opacity:.7;font-weight:700;margin-bottom:.3rem;}
+.palette-node__name{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;margin-bottom:.25rem;}
+.palette-node__desc{font-size:.73rem;color:var(--text-muted);line-height:1.4;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:1000px){.palette-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.plat-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+  .dash-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .plat-grid,.resumo-grid,.palette-grid,.dash-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">16</div>
+    <h1 class="capa-titulo">Plataformas<br><em>IoT e Node-RED</em><br>Dashboards Reais</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do sensor ao painel visual sem escrever HTML</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-bar"></i></div><span>ThingSpeak — canais, fields, HTTP API, visualização e MATLAB</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-heart"></i></div><span>Adafruit IO — feeds, dashboards, triggers e automações</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Node-RED — programação visual por fluxo, instalação, interface</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-puzzle-piece"></i></div><span>Nodes fundamentais: inject, mqtt, function, debug, http</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Dashboard nodes: gauge, chart, text, button, switch</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: Node-RED consome MQTT e exibe dashboard em tempo real</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Instalar Node-RED, criar flow MQTT → dashboard com gauge de temperatura, gráfico histórico e botão de controle que publica de volta no broker — tudo sem escrever uma linha de HTML.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 + DHT22 (semanas anteriores) publicando via MQTT</li>
+        <li>Node.js instalado no PC (<code style="font-family:'JetBrains Mono',monospace;">node -v</code> para verificar)</li>
+        <li>Node-RED: <code style="font-family:'JetBrains Mono',monospace;">npm install -g --unsafe-perm node-red</code></li>
+        <li>Conta gratuita em thingspeak.com (opcional) ou adafruit.io</li>
+        <li>Broker Mosquitto local ativo (Semana 9)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 9 — MQTT local com Mosquitto</li>
+        <li>✅ Sem. 15 — AWS IoT Core, TLS, Shadow</li>
+        <li>▶ Sem. 16 — Plataformas IoT e Node-RED</li>
+        <li>Sem. 17 — Eficiência energética e segurança em IoT</li>
+        <li>🔴 Sem. 18 — P3 / Revisão Geral</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>Node-RED é a ferramenta padrão de prototipagem IoT na indústria — IBM, Siemens, Bosch usam em produção</li>
+        <li>Criar um dashboard completo em 15 minutos sem código HTML/CSS/JS muda a velocidade de prototipagem</li>
+        <li>ThingSpeak e Adafruit IO são as plataformas mais usadas para projetos maker e acadêmicos de IoT</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">ThingSpeak e Adafruit IO — plataformas prontas para IoT</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Quando usar plataforma pronta vs construir do zero</div>
+      <p>Nas semanas anteriores você construiu tudo do zero: MQTT local, servidor Flask, AWS IoT Core com Rules Engine. Isso dá controle total mas exige tempo de implementação. Para protótipos, projetos acadêmicos e MVPs, <strong>plataformas IoT prontas</strong> entregam visualização, armazenamento e alertas em minutos.</p>
+      <p>A escolha entre construir ou usar plataforma pronta não é binária — depende do estágio do projeto, do volume de dados e dos requisitos de privacidade. Conhecer as opções disponíveis é tão importante quanto saber implementar do zero.</p>
+
+      <div class="plat-grid">
+        <div class="plat-card" style="background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.2);">
+          <span class="plat-card__logo">📊</span>
+          <div class="plat-card__name" style="color:var(--teal-400);">ThingSpeak</div>
+          <div class="plat-card__sub" style="color:var(--teal-300);">MathWorks · IoT analytics</div>
+          <div class="plat-card__row"><span class="plat-card__k">Protocolo</span><span class="plat-card__v">HTTP REST</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Free tier</span><span class="plat-card__v">3 canais, 3M msgs/ano</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Intervalo mínimo</span><span class="plat-card__v">15s (free)</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Análise</span><span class="plat-card__v">MATLAB integrado</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Dashboard</span><span class="plat-card__v">Gráficos automáticos</span></div>
+          <div style="margin-top:.75rem;"><span class="badge">Melhor para: acadêmico, MATLAB</span></div>
+        </div>
+
+        <div class="plat-card" style="background:rgba(244,114,182,.04);border-color:rgba(244,114,182,.2);">
+          <span class="plat-card__logo">❤️</span>
+          <div class="plat-card__name" style="color:#f472b6;">Adafruit IO</div>
+          <div class="plat-card__sub" style="color:#fbb6ce;">Adafruit · maker IoT</div>
+          <div class="plat-card__row"><span class="plat-card__k">Protocolo</span><span class="plat-card__v">MQTT + HTTP</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Free tier</span><span class="plat-card__v">5 feeds, 30 dias histórico</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Intervalo mínimo</span><span class="plat-card__v">~1s (free)</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Triggers</span><span class="plat-card__v">Ações automáticas</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Dashboard</span><span class="plat-card__v">Gauge, chart, button</span></div>
+          <div style="margin-top:.75rem;"><span class="badge" style="background:rgba(244,114,182,.12);color:#f472b6;border-color:rgba(244,114,182,.25);">Melhor para: maker, MQTT nativo</span></div>
+        </div>
+
+        <div class="plat-card" style="background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.2);">
+          <span class="plat-card__logo">🔴</span>
+          <div class="plat-card__name" style="color:#fb923c;">Node-RED</div>
+          <div class="plat-card__sub" style="color:#fed7aa;">IBM / OpenJS · self-hosted</div>
+          <div class="plat-card__row"><span class="plat-card__k">Protocolo</span><span class="plat-card__v">MQTT, HTTP, WebSocket...</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Custo</span><span class="plat-card__v">Gratuito e open-source</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Hospedagem</span><span class="plat-card__v">Local / VPS / cloud</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Lógica</span><span class="plat-card__v">JavaScript nos function nodes</span></div>
+          <div class="plat-card__row"><span class="plat-card__k">Integração</span><span class="plat-card__v">4.000+ nodes disponíveis</span></div>
+          <div style="margin-top:.75rem;"><span class="badge" style="background:rgba(251,146,60,.12);color:#fb923c;border-color:rgba(251,146,60,.25);">Melhor para: flexibilidade total</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-bar"></i>ThingSpeak — publicando dados via HTTP com o ESP32</div>
+      <p>O ThingSpeak organiza dados em <strong>Channels</strong> (canais), cada um com até 8 <strong>fields</strong> (campos). Para enviar dados, faça uma requisição HTTP GET ou POST para a API com sua <strong>Write API Key</strong>. O ThingSpeak cria automaticamente gráficos para cada field.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito ThingSpeak</th><th>O que é</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Channel</strong></td><td>Agrupador de dados — um projeto/sensor</td><td>Estação meteorológica</td></tr>
+            <tr><td><strong>Field 1–8</strong></td><td>Variável numérica dentro do canal</td><td>Field1=temperatura, Field2=umidade</td></tr>
+            <tr><td><strong>Write API Key</strong></td><td>Chave para publicar dados no canal</td><td><code style="font-family:'JetBrains Mono',monospace;">XXXXXXXXXXXXXXXX</code></td></tr>
+            <tr><td><strong>Channel ID</strong></td><td>Número único do canal para leitura pública</td><td><code style="font-family:'JetBrains Mono',monospace;">2345678</code></td></tr>
+            <tr><td><strong>MATLAB Analysis</strong></td><td>Processar dados do canal com scripts MATLAB</td><td>Calcular média móvel, detectar outliers</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 + DHT22 → ThingSpeak via HTTP</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;HTTPClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> SSID        = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA       = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> API_KEY     = <span class="str">"SUA_WRITE_API_KEY"</span>;
+<span class="kw">const char</span><span class="op">*</span> TS_URL      = <span class="str">"http://api.thingspeak.com/update"</span>;
+<span class="pp">#define</span> PINO_DHT <span class="num">4</span>
+<span class="pp">#define</span> INTERVALO <span class="num">20000UL</span>   <span class="cm">// ThingSpeak free: mínimo 15s</span>
+
+DHT dht(PINO_DHT, DHT22);
+<span class="kw">unsigned long</span> ultimoEnvio = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Wi-Fi"</span>);
+  <span class="kw">while</span>(<span class="fn">WiFi</span>.<span class="fn">status</span>()!=WL_CONNECTED){<span class="fn">delay</span>(<span class="num">400</span>);<span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>);}
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" OK"</span>);
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimoEnvio < INTERVALO) <span class="kw">return</span>;
+  ultimoEnvio = <span class="fn">millis</span>();
+
+  <span class="kw">float</span> t=<span class="fn">dht</span>.<span class="fn">readTemperature</span>(), u=<span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+  <span class="kw">if</span>(<span class="fn">isnan</span>(t)||<span class="fn">isnan</span>(u)) <span class="kw">return</span>;
+
+  HTTPClient http;
+  <span class="cm">// GET com parâmetros na URL — cada fieldN é um campo do canal</span>
+  String url = String(TS_URL)
+    + <span class="str">"?api_key="</span> + API_KEY
+    + <span class="str">"&field1="</span>  + String(t, <span class="num">1</span>)
+    + <span class="str">"&field2="</span>  + String(u, <span class="num">1</span>);
+
+  http.<span class="fn">begin</span>(url);
+  <span class="kw">int</span> code = http.<span class="fn">GET</span>();
+  http.<span class="fn">end</span>();
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"ThingSpeak: T=%.1f U=%.1f → HTTP %d\n"</span>, t, u, code);
+  <span class="cm">// Resposta 200 com o entry_id = dado salvo com sucesso</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-heart"></i>Adafruit IO — MQTT nativo com feeds e triggers</div>
+      <p>O Adafruit IO suporta MQTT diretamente — você usa o mesmo PubSubClient da Semana 9, apenas apontando para o broker da Adafruit com autenticação por usuário e chave. Os <strong>feeds</strong> são equivalentes a tópicos MQTT, e o <strong>dashboard</strong> é configurado visualmente no site.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 → Adafruit IO via MQTT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> AIO_SERVER   = <span class="str">"io.adafruit.com"</span>;
+<span class="kw">const int</span>  AIO_PORT     = <span class="num">1883</span>;              <span class="cm">// ou 8883 para TLS</span>
+<span class="kw">const char</span><span class="op">*</span> AIO_USERNAME = <span class="str">"seu_usuario"</span>;
+<span class="kw">const char</span><span class="op">*</span> AIO_KEY      = <span class="str">"sua_aio_key"</span>;
+
+<span class="cm">// Feeds no formato: usuario/feeds/nome-do-feed</span>
+<span class="kw">const char</span><span class="op">*</span> FEED_TEMP = <span class="str">"seu_usuario/feeds/temperatura"</span>;
+<span class="kw">const char</span><span class="op">*</span> FEED_UMID = <span class="str">"seu_usuario/feeds/umidade"</span>;
+
+WiFiClient   wc;
+PubSubClient mqtt(wc);
+DHT          dht(<span class="num">4</span>, DHT22);
+
+<span class="kw">void</span> <span class="fn">conectar</span>() {
+  mqtt.<span class="fn">setServer</span>(AIO_SERVER, AIO_PORT);
+  <span class="kw">while</span>(!mqtt.<span class="fn">connect</span>(<span class="str">"esp32-aio"</span>, AIO_USERNAME, AIO_KEY)){
+    <span class="fn">delay</span>(<span class="num">1000</span>);
+  }
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Adafruit IO conectado!"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span>(!mqtt.<span class="fn">connected</span>()) <span class="fn">conectar</span>();
+  mqtt.<span class="fn">loop</span>();
+
+  <span class="kw">static unsigned long</span> t0 = <span class="num">0</span>;
+  <span class="kw">if</span>(<span class="fn">millis</span>()-t0 < <span class="num">10000</span>) <span class="kw">return</span>; t0=<span class="fn">millis</span>();
+
+  <span class="kw">float</span> t=<span class="fn">dht</span>.<span class="fn">readTemperature</span>(), u=<span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+  <span class="kw">if</span>(<span class="fn">isnan</span>(t)||<span class="fn">isnan</span>(u)) <span class="kw">return</span>;
+
+  <span class="cm">// Publicar cada variável no seu feed</span>
+  mqtt.<span class="fn">publish</span>(FEED_TEMP, String(t,<span class="num">1</span>).<span class="fn">c_str</span>());
+  mqtt.<span class="fn">publish</span>(FEED_UMID, String(u,<span class="num">1</span>).<span class="fn">c_str</span>());
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"AIO: T=%.1f U=%.1f\n"</span>, t, u);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 O ESP32 publica no ThingSpeak a cada 10 segundos mas o canal só recebe dados a cada 2 minutos. Qual é a causa mais provável?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O ESP32 está publicando no feed errado — o channel ID não confere</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">O ThingSpeak free tier tem intervalo mínimo de 15 segundos entre updates — requisições mais frequentes são silenciosamente descartadas</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">O WiFi do ESP32 está desconectando a cada publicação e demorando para reconectar</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">A biblioteca HTTPClient tem um cooldown interno de 2 minutos entre requisições</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Node-RED — programação visual por fluxo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>O que é Node-RED — fluxos, nodes e wires</div>
+      <p>O <strong>Node-RED</strong> é uma ferramenta de programação visual baseada em fluxos (flows), criada pela IBM e atualmente mantida pela OpenJS Foundation. Em vez de escrever código imperativo, você arrasta blocos chamados <strong>nodes</strong> e os conecta com <strong>wires</strong> — o dado flui de node em node sendo transformado a cada etapa.</p>
+      <p>Cada node tem uma função específica: receber mensagens MQTT, fazer parse de JSON, calcular algo, enviar para uma API, mostrar em um gauge. A composição desses nodes forma um <strong>flow</strong> — equivalente a um script completo, mas visual e editável em tempo de execução sem reiniciar o servidor.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-diagram__title">Anatomia de um flow Node-RED — MQTT → Dashboard</div>
+
+        <div class="flow-row">
+          <div class="flow-node" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;">
+            <span class="flow-node__type">input</span>mqtt in
+          </div>
+          <div class="flow-wire" style="background:rgba(45,212,191,.25);flex:1;height:2px;position:relative;"><span style="position:absolute;right:-2px;top:-8px;font-size:.65rem;color:var(--text-muted);">▶</span></div>
+          <div class="flow-node" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24;">
+            <span class="flow-node__type">parser</span>JSON
+          </div>
+          <div class="flow-wire" style="background:rgba(45,212,191,.25);flex:1;height:2px;position:relative;"><span style="position:absolute;right:-2px;top:-8px;font-size:.65rem;color:var(--text-muted);">▶</span></div>
+          <div class="flow-node" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);color:#fb923c;">
+            <span class="flow-node__type">logic</span>function
+          </div>
+          <div class="flow-wire" style="background:rgba(45,212,191,.25);flex:1;height:2px;position:relative;"><span style="position:absolute;right:-2px;top:-8px;font-size:.65rem;color:var(--text-muted);">▶</span></div>
+          <div style="display:flex;flex-direction:column;gap:.4rem;">
+            <div class="flow-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);font-size:.73rem;">
+              <span class="flow-node__type">output</span>gauge
+            </div>
+            <div class="flow-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);font-size:.73rem;">
+              <span class="flow-node__type">output</span>chart
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-row" style="margin-top:.5rem;">
+          <div class="flow-node" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:#60a5fa;font-size:.73rem;">
+            <span class="flow-node__type">input</span>button
+          </div>
+          <div class="flow-wire" style="background:rgba(45,212,191,.25);flex:1;height:2px;position:relative;"><span style="position:absolute;right:-2px;top:-8px;font-size:.65rem;color:var(--text-muted);">▶</span></div>
+          <div class="flow-node" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#c4b5fd;font-size:.73rem;">
+            <span class="flow-node__type">output</span>mqtt out
+          </div>
+          <div class="flow-wire" style="background:transparent;flex:2;height:2px;"></div>
+          <div class="flow-label">→ publica comando no broker</div>
+        </div>
+
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);">
+          <strong style="color:var(--text-secondary);">msg.payload</strong> é o objeto que passa pelos wires — cada node pode ler, modificar e repassar. Tudo em JavaScript simples nos function nodes.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-puzzle-piece"></i>Nodes fundamentais — os blocos de construção</div>
+
+      <div class="palette-grid">
+        <div class="palette-node" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.2);">
+          <div class="palette-node__type" style="color:#c4b5fd;">Input</div>
+          <div class="palette-node__name" style="color:#c4b5fd;">mqtt in</div>
+          <div class="palette-node__desc">Assina um tópico MQTT e injeta cada mensagem como msg.payload</div>
+        </div>
+        <div class="palette-node" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.2);">
+          <div class="palette-node__type" style="color:#c4b5fd;">Output</div>
+          <div class="palette-node__name" style="color:#c4b5fd;">mqtt out</div>
+          <div class="palette-node__desc">Publica msg.payload em um tópico MQTT ao receber uma mensagem</div>
+        </div>
+        <div class="palette-node" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.18);">
+          <div class="palette-node__type" style="color:#fbbf24;">Parser</div>
+          <div class="palette-node__name" style="color:#fbbf24;">JSON</div>
+          <div class="palette-node__desc">Converte string JSON → objeto JS e vice-versa automaticamente</div>
+        </div>
+        <div class="palette-node" style="background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.18);">
+          <div class="palette-node__type" style="color:#fb923c;">Logic</div>
+          <div class="palette-node__name" style="color:#fb923c;">function</div>
+          <div class="palette-node__desc">JavaScript livre — transforma, filtra ou gera mensagens. <code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">return msg</code> para repassar</div>
+        </div>
+        <div class="palette-node" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <div class="palette-node__type" style="color:var(--teal-400);">Debug</div>
+          <div class="palette-node__name" style="color:var(--teal-400);">debug</div>
+          <div class="palette-node__desc">Exibe msg.payload na barra lateral — essencial para depurar flows</div>
+        </div>
+        <div class="palette-node" style="background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.18);">
+          <div class="palette-node__type" style="color:#60a5fa;">Input</div>
+          <div class="palette-node__name" style="color:#60a5fa;">inject</div>
+          <div class="palette-node__desc">Injeta mensagem manualmente ou em intervalos — ótimo para testes sem sensor</div>
+        </div>
+        <div class="palette-node" style="background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.18);">
+          <div class="palette-node__type" style="color:#60a5fa;">Network</div>
+          <div class="palette-node__name" style="color:#60a5fa;">http request</div>
+          <div class="palette-node__desc">Faz GET/POST para qualquer URL — integra com REST APIs externas</div>
+        </div>
+        <div class="palette-node" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <div class="palette-node__type" style="color:var(--teal-400);">Router</div>
+          <div class="palette-node__name" style="color:var(--teal-400);">switch</div>
+          <div class="palette-node__desc">Roteia mensagens para saídas diferentes com base em condições</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">JavaScript — function node: extrair temp e classificar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// msg.payload chega como objeto JS após o node JSON:</span>
+<span class="cm">// { temp: 27.3, umid: 64.8, dispositivo: "esp32-lab" }</span>
+
+<span class="kw">var</span> t = msg.payload.temp;
+<span class="kw">var</span> u = msg.payload.umid;
+
+<span class="cm">// Classificar conforto</span>
+<span class="kw">var</span> conforto;
+<span class="kw">if</span>      (t < <span class="num">18</span>)           conforto = <span class="str">"🥶 Frio"</span>;
+<span class="kw">else if</span> (t > <span class="num">28</span> || u > <span class="num">75</span>) conforto = <span class="str">"🥵 Quente/Úmido"</span>;
+<span class="kw">else</span>                        conforto = <span class="str">"😊 Confortável"</span>;
+
+<span class="cm">// Enviar 3 mensagens independentes para diferentes widgets</span>
+<span class="kw">var</span> msgTemp = { payload: t };
+<span class="kw">var</span> msgUmid = { payload: u };
+<span class="kw">var</span> msgText = { payload: conforto };
+
+<span class="kw">return</span> [ msgTemp, msgUmid, msgText ];
+<span class="cm">// Saída 1 → gauge temperatura</span>
+<span class="cm">// Saída 2 → gauge umidade</span>
+<span class="cm">// Saída 3 → text widget</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Instalar o Node-RED Dashboard:</strong> após instalar o Node-RED, abra o Palette Manager (<strong>☰ → Manage Palette → Install</strong>) e instale <code style="font-family:'JetBrains Mono',monospace;">node-red-dashboard</code>. Os nodes de UI (gauge, chart, text, button, switch) aparecerão na palette. Acesse o dashboard em <code style="font-family:'JetBrains Mono',monospace;">http://localhost:1880/ui</code>.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Preview do dashboard — o resultado do LAB</div>
+      <p>Com os nodes de dashboard instalados, você monta a interface visual abaixo em poucos minutos. Nenhum HTML, nenhum CSS — apenas configurar os nodes e conectar aos wires certos.</p>
+
+      <div class="dashboard-mock">
+        <div class="dashboard-mock__title">Node-RED Dashboard · localhost:1880/ui</div>
+        <div class="dash-grid">
+          <div class="dash-widget">
+            <div class="dash-widget__label">Temperatura</div>
+            <!-- Gauge SVG simples -->
+            <div class="dash-gauge">
+              <svg viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+                <circle cx="40" cy="40" r="32" fill="none" stroke="#2dd4bf" stroke-width="8"
+                  stroke-dasharray="140 201" stroke-dashoffset="50" stroke-linecap="round"/>
+                <text x="40" y="44" text-anchor="middle" fill="#f8fafc" font-size="14" font-family="Montserrat" font-weight="800">27.3</text>
+                <text x="40" y="56" text-anchor="middle" fill="#5eead4" font-size="8" font-family="Inter">°C</text>
+              </svg>
+            </div>
+            <div class="dash-status">
+              <span class="dash-dot" style="background:var(--teal-400);"></span>
+              <span style="font-size:.75rem;color:var(--text-muted);">Confortável</span>
+            </div>
+          </div>
+
+          <div class="dash-widget">
+            <div class="dash-widget__label">Umidade</div>
+            <div class="dash-gauge">
+              <svg viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+                <circle cx="40" cy="40" r="32" fill="none" stroke="#60a5fa" stroke-width="8"
+                  stroke-dasharray="130 201" stroke-dashoffset="50" stroke-linecap="round"/>
+                <text x="40" y="44" text-anchor="middle" fill="#f8fafc" font-size="14" font-family="Montserrat" font-weight="800">64.8</text>
+                <text x="40" y="56" text-anchor="middle" fill="#93c5fd" font-size="8" font-family="Inter">%</text>
+              </svg>
+            </div>
+            <div class="dash-status">
+              <span class="dash-dot" style="background:#60a5fa;"></span>
+              <span style="font-size:.75rem;color:var(--text-muted);">Normal</span>
+            </div>
+          </div>
+
+          <div class="dash-widget" style="grid-column:span 1;">
+            <div class="dash-widget__label">Histórico — temperatura (últimas 20 leituras)</div>
+            <div class="dash-chart" id="dashChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:.4rem;">
+              <span style="font-size:.65rem;color:var(--text-muted);">mais antigo</span>
+              <span style="font-size:.65rem;color:var(--text-muted);">agora</span>
+            </div>
+            <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.4rem;">
+              <button class="dash-btn" style="background:var(--teal-400);color:#012a25;" onclick="this.textContent=this.textContent==='LED ON'?'LED OFF':'LED ON'">LED ON</button>
+              <button class="dash-btn" style="background:rgba(255,255,255,.08);color:var(--text-secondary);" onclick="">Resetar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Em um flow Node-RED, um function node recebe msg.payload como string <code style="font-family:'JetBrains Mono',monospace;">'{"temp":27.3}'</code> mas você tenta acessar <code style="font-family:'JetBrains Mono',monospace;">msg.payload.temp</code> e obtém <code style="font-family:'JetBrains Mono',monospace;">undefined</code>. Qual é a solução mais simples?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div>
+          <span class="quiz-texto">Usar msg.payload['temp'] em vez de msg.payload.temp — sintaxe de bracket notation para JSON</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Adicionar um node JSON antes do function node — ele converte a string para objeto JS, permitindo acessar .temp normalmente</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">Node-RED não suporta JSON — usar CSV como formato de dados</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">Configurar o broker MQTT para desempacotar JSON automaticamente antes de entregar ao Node-RED</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — Node-RED: MQTT → Dashboard + controle do ESP32</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: criar um flow Node-RED que (1) assina o tópico MQTT do ESP32, (2) faz parse do JSON, (3) exibe temperatura num gauge e gráfico histórico, e (4) tem um botão que publica um comando de volta ao ESP32 via MQTT.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Instalar Node-RED e o dashboard</div>
+            <div class="lab-step__desc">No terminal: <code style="font-family:'JetBrains Mono',monospace;">npm install -g --unsafe-perm node-red</code>. Inicie com <code style="font-family:'JetBrains Mono',monospace;">node-red</code>. Acesse <code style="font-family:'JetBrains Mono',monospace;">http://localhost:1880</code>. Instale o dashboard: <strong>☰ → Manage Palette → Install</strong> → buscar <code style="font-family:'JetBrains Mono',monospace;">node-red-dashboard</code> → Install.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Confirmar que o ESP32 está publicando</div>
+            <div class="lab-step__desc">Antes de criar o flow, confirme com <code style="font-family:'JetBrains Mono',monospace;">mosquitto_sub -h localhost -t "lab/#" -v</code> que as mensagens do ESP32 estão chegando no broker local. O Node-RED se conecta ao mesmo broker.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Importar o flow via JSON</div>
+            <div class="lab-step__desc">No editor Node-RED: <strong>☰ → Import</strong> → cole o JSON do flow abaixo → <strong>Import</strong>. Configure o broker MQTT (localhost:1883) clicando duas vezes no node mqtt in. Clique <strong>Deploy</strong>.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Ver o dashboard funcionando</div>
+            <div class="lab-step__desc">Acesse <code style="font-family:'JetBrains Mono',monospace;">http://localhost:1880/ui</code>. Você verá o gauge de temperatura atualizando a cada leitura do ESP32. Clique no botão "LED ON/OFF" e confirme no Serial Monitor do ESP32 que o comando chegou.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">JSON — flow Node-RED completo para importar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>[
+  {
+    <span class="str">"id"</span>: <span class="str">"mqtt-in-1"</span>, <span class="str">"type"</span>: <span class="str">"mqtt in"</span>,
+    <span class="str">"topic"</span>: <span class="str">"lab/esp32/dados"</span>, <span class="str">"qos"</span>: <span class="str">"1"</span>,
+    <span class="str">"wires"</span>: [[<span class="str">"json-1"</span>]], <span class="str">"x"</span>: <span class="num">100</span>, <span class="str">"y"</span>: <span class="num">100</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"json-1"</span>, <span class="str">"type"</span>: <span class="str">"json"</span>,
+    <span class="str">"wires"</span>: [[<span class="str">"func-1"</span>]], <span class="str">"x"</span>: <span class="num">280</span>, <span class="str">"y"</span>: <span class="num">100</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"func-1"</span>, <span class="str">"type"</span>: <span class="str">"function"</span>,
+    <span class="str">"func"</span>: <span class="str">"var t=msg.payload.temp||0;\nvar u=msg.payload.umid||0;\nreturn [{payload:t},{payload:u}];"</span>,
+    <span class="str">"outputs"</span>: <span class="num">2</span>,
+    <span class="str">"wires"</span>: [[<span class="str">"gauge-temp"</span>, <span class="str">"chart-temp"</span>],[<span class="str">"gauge-umid"</span>]],
+    <span class="str">"x"</span>: <span class="num">460</span>, <span class="str">"y"</span>: <span class="num">100</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"gauge-temp"</span>, <span class="str">"type"</span>: <span class="str">"ui_gauge"</span>,
+    <span class="str">"label"</span>: <span class="str">"Temperatura"</span>, <span class="str">"min"</span>: <span class="str">"0"</span>, <span class="str">"max"</span>: <span class="str">"50"</span>,
+    <span class="str">"unit"</span>: <span class="str">"°C"</span>, <span class="str">"wires"</span>: [], <span class="str">"x"</span>: <span class="num">680</span>, <span class="str">"y"</span>: <span class="num">60</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"chart-temp"</span>, <span class="str">"type"</span>: <span class="str">"ui_chart"</span>,
+    <span class="str">"label"</span>: <span class="str">"Histórico Temperatura"</span>,
+    <span class="str">"wires"</span>: [], <span class="str">"x"</span>: <span class="num">680</span>, <span class="str">"y"</span>: <span class="num">120</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"gauge-umid"</span>, <span class="str">"type"</span>: <span class="str">"ui_gauge"</span>,
+    <span class="str">"label"</span>: <span class="str">"Umidade"</span>, <span class="str">"min"</span>: <span class="str">"0"</span>, <span class="str">"max"</span>: <span class="str">"100"</span>,
+    <span class="str">"unit"</span>: <span class="str">"%"</span>, <span class="str">"wires"</span>: [], <span class="str">"x"</span>: <span class="num">680</span>, <span class="str">"y"</span>: <span class="num">180</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"btn-led"</span>, <span class="str">"type"</span>: <span class="str">"ui_button"</span>,
+    <span class="str">"label"</span>: <span class="str">"LED ON/OFF"</span>, <span class="str">"payload"</span>: <span class="str">"toggle"</span>,
+    <span class="str">"wires"</span>: [[<span class="str">"func-led"</span>]], <span class="str">"x"</span>: <span class="num">100</span>, <span class="str">"y"</span>: <span class="num">220</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"func-led"</span>, <span class="str">"type"</span>: <span class="str">"function"</span>,
+    <span class="str">"func"</span>: <span class="str">"var estado=context.get('led')||'OFF';\nestado=estado==='ON'?'OFF':'ON';\ncontext.set('led',estado);\nmsg.payload=estado; msg.topic='lab/esp32/comando';\nreturn msg;"</span>,
+    <span class="str">"wires"</span>: [[<span class="str">"mqtt-out-1"</span>]], <span class="str">"x"</span>: <span class="num">280</span>, <span class="str">"y"</span>: <span class="num">220</span>
+  },
+  {
+    <span class="str">"id"</span>: <span class="str">"mqtt-out-1"</span>, <span class="str">"type"</span>: <span class="str">"mqtt out"</span>,
+    <span class="str">"topic"</span>: <span class="str">""</span>, <span class="str">"qos"</span>: <span class="str">"1"</span>,
+    <span class="str">"wires"</span>: [], <span class="str">"x"</span>: <span class="num">460</span>, <span class="str">"y"</span>: <span class="num">220</span>
+  }
+]</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Configure o broker MQTT no Node-RED:</strong> clique duas vezes em qualquer node <em>mqtt in</em> ou <em>mqtt out</em> → clique no lápis ao lado de "Add new mqtt-broker" → Server: <code style="font-family:'JetBrains Mono',monospace;">localhost</code>, Port: <code style="font-family:'JetBrains Mono',monospace;">1883</code> → Add. Todos os nodes MQTT do flow usarão essa configuração.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Análise</div>
+        <div class="secao-titulo">4 exercícios — do flow básico ao sistema completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Alerta visual no dashboard</div>
+      <p>Adicione ao flow um node <strong>ui_text</strong> que exibe o indicador de conforto térmico ("Frio", "Confortável", "Quente/Úmido") com cor diferente para cada estado. No function node, mude <code style="font-family:'JetBrains Mono',monospace;">msg.style</code> para aplicar cor: vermelho para quente, azul para frio, verde para confortável. Use a sintaxe de HTML inline que o <code style="font-family:'JetBrains Mono',monospace;">ui_text</code> suporta: <code style="font-family:'JetBrains Mono',monospace;">msg.payload = "&lt;span style='color:red'&gt;Quente&lt;/span&gt;"</code>.</p>
+      <span class="dif-basico">Node-RED · Dashboard</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JavaScript — function node com alerta colorido</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">var</span> t = msg.payload.temp || <span class="num">0</span>;
+<span class="kw">var</span> u = msg.payload.umid || <span class="num">0</span>;
+<span class="kw">var</span> texto, cor;
+
+<span class="kw">if</span>      (t < <span class="num">18</span>)            { texto=<span class="str">"🥶 Frio"</span>;          cor=<span class="str">"#60a5fa"</span>; }
+<span class="kw">else if</span> (t > <span class="num">28</span> || u > <span class="num">75</span>)  { texto=<span class="str">"🥵 Quente/Úmido"</span>;  cor=<span class="str">"#f87171"</span>; }
+<span class="kw">else</span>                          { texto=<span class="str">"😊 Confortável"</span>;    cor=<span class="str">"#2dd4bf"</span>; }
+
+<span class="kw">var</span> msgStatus = {
+    payload: <span class="str">"&lt;span style='color:"</span> + cor + <span class="str">";font-weight:700;font-size:1.1em'&gt;"</span>
+             + texto + <span class="str">"&lt;/span&gt;"</span>
+};
+<span class="kw">return</span> [ {payload: t}, {payload: u}, msgStatus ];</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Publicar no ThingSpeak via Node-RED</div>
+      <p>Adicione ao flow existente um node <strong>http request</strong> que publica os dados do DHT22 no ThingSpeak sempre que uma nova leitura chega. Monte a URL de atualização dinamicamente no function node com sua API key e os campos field1 (temperatura) e field2 (umidade). O Node-RED centraliza todos os destinos dos dados: MQTT broker local, dashboard E ThingSpeak — a partir de um único input MQTT.</p>
+      <span class="dif-medio">Integração · Múltiplos destinos</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JavaScript — function node para ThingSpeak via http request</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">var</span> t = msg.payload.temp;
+<span class="kw">var</span> u = msg.payload.umid;
+<span class="kw">var</span> apiKey = <span class="str">"SUA_WRITE_API_KEY"</span>;
+
+msg.method  = <span class="str">"GET"</span>;
+msg.url     = <span class="str">"http://api.thingspeak.com/update?api_key="</span>
+              + apiKey + <span class="str">"&field1="</span> + t + <span class="str">"&field2="</span> + u;
+<span class="kw">return</span> msg;
+<span class="cm">// Conectar saída deste function → node http request → node debug</span></code></pre>
+        </div>
+        <div class="destaque" style="margin-top:.75rem;">
+          <strong>Respeite o rate limit:</strong> adicione um node <strong>delay</strong> entre o function e o http request configurado para "Rate Limit 1 msg per 20 seconds" — evita que o ThingSpeak rejeite requisições acima do limite do free tier.
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Notificação por e-mail com nodemailer</div>
+      <p>Instale o node <code style="font-family:'JetBrains Mono',monospace;">node-red-node-email</code> (Palette Manager) e configure-o para enviar um e-mail de alerta quando a temperatura ultrapassar 32°C. O flow deve: receber a mensagem MQTT → fazer parse → verificar threshold em um switch node → se acima do limite, enviar e-mail com subject "Alerta Temperatura" e body contendo o valor atual. Use debounce (node delay ou variável de contexto) para não enviar mais que 1 e-mail por hora.</p>
+      <span class="dif-medio">Integração · Alertas</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-route"></i>Estrutura do flow</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>mqtt in → json → switch:</strong> configurar o switch para "msg.payload.temp > 32" na saída 1 e "otherwise" na saída 2.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Debounce via contexto:</strong> no function node, verificar <code style="font-family:'JetBrains Mono',monospace;">context.get('ultimoAlerta')</code> — se foi há menos de 3600 segundos, retornar null (sem mensagem).</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>node email:</strong> configurar servidor SMTP (Gmail com app password, ou Ethereal para testes). Definir <code style="font-family:'JetBrains Mono',monospace;">msg.topic</code> como subject e <code style="font-family:'JetBrains Mono',monospace;">msg.payload</code> como body.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Para Gmail: ativar "App Passwords" em Conta Google → Segurança (não use a senha principal).</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: dashboard multi-dispositivo</div>
+      <p>Expanda o flow para suportar <strong>dois ESP32</strong> distintos publicando em tópicos diferentes: <code style="font-family:'JetBrains Mono',monospace;">lab/esp32-01/dados</code> e <code style="font-family:'JetBrains Mono',monospace;">lab/esp32-02/dados</code>. O dashboard deve mostrar os dados de ambos com labels distintos, e um terceiro widget exibe a <strong>diferença de temperatura entre os dois</strong> (calculada em um function node com estado de contexto). Teste publicando manualmente com <code style="font-family:'JetBrains Mono',monospace;">mosquitto_pub</code> para simular o segundo dispositivo caso não tenha dois ESP32 disponíveis.</p>
+      <span class="dif-desafio">Desafio · Multi-dispositivo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">JavaScript — function node com contexto de dois dispositivos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Contexto de fluxo compartilhado entre mensagens de dispositivos distintos</span>
+<span class="kw">var</span> id  = msg.payload.dispositivo || msg.topic;
+<span class="kw">var</span> tmp = msg.payload.temp;
+
+flow.<span class="fn">set</span>(<span class="str">'temp_'</span> + id, tmp);
+
+<span class="kw">var</span> t1 = flow.<span class="fn">get</span>(<span class="str">'temp_esp32-01'</span>) || <span class="num">0</span>;
+<span class="kw">var</span> t2 = flow.<span class="fn">get</span>(<span class="str">'temp_esp32-02'</span>) || <span class="num">0</span>;
+<span class="kw">var</span> diff = Math.<span class="fn">abs</span>(t1 - t2);
+
+<span class="kw">return</span> [
+  { payload: t1, topic: <span class="str">'esp32-01'</span> },   <span class="cm">// → chart 1</span>
+  { payload: t2, topic: <span class="str">'esp32-02'</span> },   <span class="cm">// → chart 2 (mesmo chart, linhas diferentes)</span>
+  { payload: diff }                        <span class="cm">// → gauge diferença</span>
+];</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 16</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-chart-bar"></i>
+        <strong>ThingSpeak e Adafruit IO</strong>
+        <p>ThingSpeak: HTTP GET com field1..8 e API key. Intervalo mínimo 15s (free). Adafruit IO: MQTT nativo com feeds. Plataformas prontas para protótipos rápidos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Node-RED</strong>
+        <p>Flows visuais: nodes conectados por wires. msg.payload flui entre nodes. JSON node converte string → objeto. Instalar em localhost:1880, dashboard em /ui.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-puzzle-piece"></i>
+        <strong>Nodes essenciais</strong>
+        <p>mqtt in/out para MQTT. json para parse. function para lógica JS. ui_gauge, ui_chart, ui_button para o dashboard. Debug para depurar flows.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O dashboard Node-RED está exibindo dados reais do ESP32? O botão de controle publica de volta no broker? Você sabe qual plataforma usar para cada tipo de projeto? Se sim — pronto para a Semana 17: eficiência energética e segurança em IoT.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 17 — Eficiência energética: deep sleep ESP32 · segurança: TLS/SSL, autenticação de dispositivos · Revisão para P3</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O ThingSpeak free tier impõe um intervalo mínimo de 15 segundos entre atualizações de um mesmo canal. Requisições mais frequentes que isso recebem resposta "0" (sem entry_id) e os dados são descartados silenciosamente. Basta ajustar o INTERVALO no ESP32 para 20 segundos para garantir margem de segurança.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O node mqtt in entrega msg.payload como string — o conteúdo do payload MQTT. Para acessar campos individuais de um JSON como msg.payload.temp, o payload precisa ser um objeto JavaScript, não uma string. O node JSON faz essa conversão automaticamente. Também seria possível usar JSON.parse() dentro de um function node, mas adicionar o node JSON é a solução canônica do Node-RED.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+
+/* ── Dashboard chart ── */
+(function(){
+  const chart = document.getElementById('dashChart');
+  if(!chart) return;
+  const temps=[24.1,24.3,23.9,24.0,24.5,24.8,25.1,26.0,27.3,27.1,
+               26.8,26.5,26.2,25.9,25.5,25.2,25.0,24.8,24.6,27.3];
+  const max=Math.max(...temps); const min=Math.min(...temps);
+  temps.forEach(v=>{
+    const bar=document.createElement('div');
+    const pct=((v-min)/(max-min+2))*85+10;
+    bar.className='dash-chart-bar';
+    bar.style.height=pct+'%';
+    bar.style.background=v>26.5?'rgba(251,191,36,.6)':'rgba(45,212,191,.5)';
+    bar.title=`${v}°C`;
+    chart.appendChild(bar);
+  });
+})();
+</script>
+</body>
+</html>

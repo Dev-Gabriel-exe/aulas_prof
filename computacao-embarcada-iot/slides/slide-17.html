@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 17 — Energia e Segurança em IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+
+/* ── Power modes ── */
+.power-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.power-card{border-radius:12px;padding:1.1rem;border:1px solid;text-align:center;transition:transform .2s;}
+.power-card:hover{transform:translateY(-2px);}
+.power-card__name{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:800;margin-bottom:.2rem;}
+.power-card__ma{font-family:'Montserrat',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:.15rem;}
+.power-card__unit{font-size:.72rem;opacity:.65;margin-bottom:.6rem;}
+.power-card__desc{font-size:.75rem;color:var(--text-secondary);line-height:1.5;}
+.power-card__cpu{display:inline-block;margin-top:.5rem;padding:2px 7px;border-radius:5px;font-size:.65rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* ── Battery calc ── */
+.battery-calc{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.battery-calc__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.bc-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.85rem;}
+.bc-row:last-child{border-bottom:none;}
+.bc-label{color:var(--text-muted);}
+.bc-value{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--text-primary);}
+.bc-result{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;display:flex;align-items:center;justify-content:space-between;}
+.bc-result__label{font-size:.8rem;color:var(--teal-400);font-weight:600;}
+.bc-result__value{font-family:'Montserrat',sans-serif;font-size:1.25rem;font-weight:800;color:var(--teal-400);}
+
+/* ── Ciclo deep sleep ── */
+.cycle-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.cycle-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.cy-row{display:flex;align-items:center;gap:0;margin-bottom:1rem;}
+.cy-block{border-radius:7px;padding:.55rem .9rem;font-size:.78rem;font-weight:700;text-align:center;position:relative;}
+.cy-arrow{color:var(--text-muted);font-size:.7rem;padding:0 .4rem;flex-shrink:0;}
+.cy-time{font-size:.65rem;font-family:'JetBrains Mono',monospace;color:var(--text-muted);display:block;margin-top:3px;}
+
+/* ── Ataques IoT ── */
+.ataques-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.ataque-card{border-radius:12px;padding:1.1rem;border:1px solid rgba(239,68,68,.15);background:rgba(239,68,68,.03);}
+.ataque-card__title{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:#f87171;margin-bottom:.35rem;display:flex;align-items:center;gap:8px;}
+.ataque-card__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.55;margin-bottom:.5rem;}
+.ataque-card__contra{font-size:.78rem;color:var(--teal-400);background:rgba(45,212,191,.06);padding:.5rem .75rem;border-radius:7px;line-height:1.5;}
+
+/* ── Segurança layers ── */
+.sec-layers{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.sec-layer{border-radius:10px;padding:.85rem 1.1rem;border:1px solid;display:flex;align-items:center;gap:12px;}
+.sec-layer__num{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-layer__title{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;margin-bottom:.1rem;}
+.sec-layer__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:1000px){.power-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.ataques-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .power-grid,.ataques-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">17</div>
+    <h1 class="capa-titulo">Energia<br><em>e Segurança</em><br>em IoT</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Deep sleep, bateria e defesa contra ataques</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-battery-three-quarters"></i></div><span>Modos de consumo do ESP32 — Active, Modem Sleep, Light Sleep, Deep Sleep</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-calculator"></i></div><span>Cálculo de vida útil de bateria — mAh, corrente média, estimativa real</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bed"></i></div><span>Deep sleep com timer e wake-up externo (GPIO / touch)</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-alt"></i></div><span>Camadas de segurança IoT — transporte, autenticação, autorização</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-user-secret"></i></div><span>Ataques comuns em IoT — MITM, replay, firmware tampering, DoS</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: Deep sleep + wake + MQTT — sensor a bateria com vida longa</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>ESP32 entra em deep sleep, acorda por timer a cada 30 segundos, lê o DHT22, publica via MQTT e volta a dormir. Calcular a vida estimada com bateria 18650 (2500mAh).</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit + DHT22 (semanas anteriores)</li>
+        <li>Bateria Li-Ion 18650 ou power bank (opcional — para medir consumo real)</li>
+        <li>Multímetro em série para medir mA (opcional mas recomendado)</li>
+        <li>Broker Mosquitto local ativo</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 15 — AWS IoT Core, TLS/mTLS</li>
+        <li>✅ Sem. 16 — Node-RED, ThingSpeak, Adafruit IO</li>
+        <li>▶ Sem. 17 — Energia e Segurança em IoT</li>
+        <li>🔴 Sem. 18 — P3 / Revisão Final do Semestre</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>Um sensor a bateria sem deep sleep dura horas. Com deep sleep, pode durar anos — mesma bateria</li>
+        <li>Segurança em IoT não é opcional — dispositivos comprometidos viram bots para ataques DDoS</li>
+        <li>A estimativa de vida de bateria diferencia o projeto de lab do produto comercializável</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Eficiência energética — modos de consumo e cálculo de bateria</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-battery-full"></i>Os 4 modos de consumo do ESP32</div>
+      <p>O ESP32 tem quatro modos de operação com consumos radicalmente diferentes. A diferença entre o modo ativo e o deep sleep é de <strong>três ordens de grandeza</strong> — 240mA vs 10µA. Para um sensor a bateria, essa diferença determina se o projeto dura horas ou anos.</p>
+
+      <div class="power-grid">
+        <div class="power-card" style="background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);">
+          <div class="power-card__name" style="color:#f87171;">Active Mode</div>
+          <div class="power-card__ma" style="color:#f87171;">160–260</div>
+          <div class="power-card__unit">mA</div>
+          <div class="power-card__desc">CPU ativa, Wi-Fi transmitindo, todos os periféricos ligados.</div>
+          <div class="power-card__cpu" style="background:rgba(239,68,68,.12);color:#f87171;">CPU: 2 cores ON</div>
+        </div>
+
+        <div class="power-card" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);">
+          <div class="power-card__name" style="color:#fbbf24;">Modem Sleep</div>
+          <div class="power-card__ma" style="color:#fbbf24;">3–20</div>
+          <div class="power-card__unit">mA</div>
+          <div class="power-card__desc">CPU ativa, Wi-Fi desabilitado entre beacons. Mantém conexão.</div>
+          <div class="power-card__cpu" style="background:rgba(251,191,36,.1);color:#fbbf24;">CPU: ON · Wi-Fi: intermitente</div>
+        </div>
+
+        <div class="power-card" style="background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.18);">
+          <div class="power-card__name" style="color:#60a5fa;">Light Sleep</div>
+          <div class="power-card__ma" style="color:#60a5fa;">0.8</div>
+          <div class="power-card__unit">mA</div>
+          <div class="power-card__desc">CPU pausada, clock gated. Acorda por timer, GPIO ou UART. RAM preservada.</div>
+          <div class="power-card__cpu" style="background:rgba(96,165,250,.1);color:#60a5fa;">CPU: pausada · RAM: OK</div>
+        </div>
+
+        <div class="power-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.25);">
+          <div class="power-card__name" style="color:var(--teal-400);">Deep Sleep</div>
+          <div class="power-card__ma" style="color:var(--teal-400);">0.010</div>
+          <div class="power-card__unit">mA (10µA)</div>
+          <div class="power-card__desc">Apenas RTC ativo. CPU e RAM desligados. Wake por timer, GPIO ext, touch ou ULP.</div>
+          <div class="power-card__cpu" style="background:rgba(45,212,191,.1);color:var(--teal-400);">CPU: OFF · apenas RTC</div>
+        </div>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>RTC Memory:</strong> no Deep Sleep, você pode preservar até 16KB de RAM no RTC (Real-Time Clock) do ESP32. Use a macro <code style="font-family:'JetBrains Mono',monospace;">RTC_DATA_ATTR</code> antes da declaração de variáveis que devem sobreviver ao sleep — por exemplo, um contador de ciclos: <code style="font-family:'JetBrains Mono',monospace;">RTC_DATA_ATTR int ciclos = 0;</code></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>Ciclo de vida no Deep Sleep — o que acontece em cada etapa</div>
+
+      <div class="cycle-diagram">
+        <div class="cycle-diagram__title">Ciclo Deep Sleep → Wake → Transmissão → Sleep</div>
+        <div class="cy-row" style="flex-wrap:wrap;gap:.5rem;">
+          <div class="cy-block" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;">
+            Boot / Wake<br><span class="cy-time">~600ms · ~80mA</span>
+          </div>
+          <div class="cy-arrow">→</div>
+          <div class="cy-block" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24;">
+            Wi-Fi Connect<br><span class="cy-time">~1–3s · ~120mA</span>
+          </div>
+          <div class="cy-arrow">→</div>
+          <div class="cy-block" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:#60a5fa;">
+            Ler sensor<br><span class="cy-time">~300ms · ~30mA</span>
+          </div>
+          <div class="cy-arrow">→</div>
+          <div class="cy-block" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);color:#fb923c;">
+            MQTT Publish<br><span class="cy-time">~200ms · ~160mA</span>
+          </div>
+          <div class="cy-arrow">→</div>
+          <div class="cy-block" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">
+            Deep Sleep<br><span class="cy-time">~27s · 10µA</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);line-height:1.65;">
+          Total de 1 ciclo: ~4s acordado + 26s dormindo. O tempo acordado domina o consumo — mesmo sendo curto.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calculator"></i>Calculando a vida útil de bateria — passo a passo</div>
+      <p>A <strong>corrente média</strong> é a métrica que importa. Para calcular, pese cada fase do ciclo pelo tempo que dura:</p>
+
+      <div class="battery-calc">
+        <div class="battery-calc__title">Exemplo: ciclo de 30s — bateria 18650 (2500mAh)</div>
+        <div class="bc-row">
+          <span class="bc-label">Boot + Wi-Fi + Sensor + MQTT (~4s · ~100mA médio)</span>
+          <span class="bc-value">4s × 100mA = 400mAs</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Deep Sleep (26s · 0.01mA)</span>
+          <span class="bc-value">26s × 0.01mA = 0.26mAs</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Total de carga por ciclo (30s)</span>
+          <span class="bc-value">~400mAs</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Corrente média = 400mAs ÷ 30s</span>
+          <span class="bc-value">~13.3 mA</span>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">Bateria 18650 = 2500mAh</span>
+          <span class="bc-value">2500mAh ÷ 13.3mA</span>
+        </div>
+        <div class="bc-result">
+          <span class="bc-result__label">Vida estimada da bateria</span>
+          <span class="bc-result__value">~188 horas (~8 dias)</span>
+        </div>
+        <div style="margin-top:.75rem;font-size:.78rem;color:var(--text-muted);line-height:1.65;">
+          <strong style="color:var(--text-secondary);">Com intervalo de 10 minutos</strong> em vez de 30s: tempo acordado permanece 4s, dormindo: 596s. Corrente média ≈ 400÷600 ≈ 0.67mA. Vida: 2500÷0.67 ≈ <strong style="color:var(--teal-400);">3.730h ≈ 155 dias</strong>. O intervalo entre transmissões é o principal alavancador de vida de bateria.
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Dicas práticas para maximizar a vida da bateria:</strong> (1) Reconexão Wi-Fi sem DHCP usando IP estático economiza ~500ms por ciclo. (2) MQTT sem TLS é mais rápido que com TLS — em deep sleep, considere se o TLS vale o custo energético. (3) Desligar o LED embutido (GPIO2) — ele consome alguns mA. (4) Usar Bluetooth em vez de Wi-Fi para distâncias curtas — BLE usa ~1mA vs ~100mA do Wi-Fi.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um sensor precisa enviar 1 leitura por hora e a bateria 18650 (2500mAh) precisa durar pelo menos 6 meses (4380 horas). Qual corrente média máxima o sistema pode ter?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">25 mA — cálculo: 2500mAh ÷ 100h = 25mA</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">0.57 mA — cálculo: 2500mAh ÷ 4380h ≈ 0.57mA corrente média máxima</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">10 mA — valor padrão para sensores IoT a bateria</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">2.5 mA — cálculo: 2500mAh ÷ 1000h = 2.5mA</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Segurança em IoT — camadas, ataques e contramedidas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>As 4 camadas de segurança em IoT</div>
+      <p>Segurança em IoT não é um único recurso — é uma pilha de camadas complementares. Uma vulnerabilidade em qualquer camada compromete o sistema inteiro. O princípio da <strong>defesa em profundidade</strong> diz: nunca depender de uma única camada de proteção.</p>
+
+      <div class="sec-layers">
+        <div class="sec-layer" style="background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.2);">
+          <div class="sec-layer__num" style="background:rgba(45,212,191,.15);color:var(--teal-400);">1</div>
+          <div>
+            <div class="sec-layer__title" style="color:var(--teal-400);">Transporte — TLS/mTLS</div>
+            <div class="sec-layer__desc">Criptografa todos os dados em trânsito. Sem TLS, qualquer dispositivo na mesma rede pode capturar (sniff) ou injetar mensagens MQTT. Porta 8883 (MQTT/TLS) em vez de 1883.</div>
+          </div>
+        </div>
+        <div class="sec-layer" style="background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.18);">
+          <div class="sec-layer__num" style="background:rgba(96,165,250,.15);color:#60a5fa;">2</div>
+          <div>
+            <div class="sec-layer__title" style="color:#60a5fa;">Autenticação — "quem é você?"</div>
+            <div class="sec-layer__desc">Certificados X.509 (AWS IoT, Azure), username/password (Mosquitto com senha), API key (ThingSpeak, Adafruit IO). Garante que apenas dispositivos legítimos se conectam ao broker.</div>
+          </div>
+        </div>
+        <div class="sec-layer" style="background:rgba(251,191,36,.03);border-color:rgba(251,191,36,.15);">
+          <div class="sec-layer__num" style="background:rgba(251,191,36,.15);color:#fbbf24;">3</div>
+          <div>
+            <div class="sec-layer__title" style="color:#fbbf24;">Autorização — "o que você pode fazer?"</div>
+            <div class="sec-layer__desc">Policies no AWS IoT Core, ACLs no Mosquitto. Um sensor de temperatura não deve ter permissão de publicar em tópicos de atuação (ex: abrir válvula). Princípio do menor privilégio.</div>
+          </div>
+        </div>
+        <div class="sec-layer" style="background:rgba(139,92,246,.04);border-color:rgba(139,92,246,.18);">
+          <div class="sec-layer__num" style="background:rgba(139,92,246,.15);color:#c4b5fd;">4</div>
+          <div>
+            <div class="sec-layer__title" style="color:#c4b5fd;">Integridade — "os dados não foram alterados?"</div>
+            <div class="sec-layer__desc">Assinatura de mensagens com HMAC/nonce+timestamp, OTA com verificação de assinatura de firmware, Secure Boot no ESP32. Evita replay attacks e firmware tampering.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user-secret"></i>Ataques comuns em IoT — e como se defender</div>
+
+      <div class="ataques-grid">
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-exchange-alt"></i>Man-in-the-Middle (MITM)</div>
+          <div class="ataque-card__desc">Atacante se posiciona entre o dispositivo e o broker, interceptando e possivelmente modificando as mensagens. Possível em redes Wi-Fi sem TLS.</div>
+          <div class="ataque-card__contra">✅ Contramedida: TLS/mTLS. Verificação do certificado CA da AWS impede MITM — qualquer certificado falso é rejeitado.</div>
+        </div>
+
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-redo"></i>Replay Attack</div>
+          <div class="ataque-card__desc">Atacante captura uma mensagem legítima (ex: "abrir comporta") e a retransmite mais tarde para executar o comando novamente.</div>
+          <div class="ataque-card__contra">✅ Contramedida: incluir timestamp + nonce no payload. Servidor rejeita mensagens com timestamp fora de uma janela (ex: ±30 segundos) ou com nonce já visto.</div>
+        </div>
+
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-microchip"></i>Firmware Tampering</div>
+          <div class="ataque-card__desc">Atacante substitui o firmware por uma versão maliciosa via OTA vulnerável ou acesso físico à porta serial.</div>
+          <div class="ataque-card__contra">✅ Contramedida: Secure Boot (ESP32) + OTA com verificação de assinatura RSA/ECDSA. Habilitar via ESP-IDF ou Arduino com Partition Manager.</div>
+        </div>
+
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-skull"></i>Credential Stuffing / Bruteforce</div>
+          <div class="ataque-card__desc">Atacante testa senhas padrão (admin/admin, 1234) em brokers MQTT expostos na internet. Milhares de brokers com porta 1883 aberta são atacados diariamente.</div>
+          <div class="ataque-card__contra">✅ Contramedida: nunca expor a porta 1883 na internet. Usar TLS + certificados. Em Mosquitto local, configurar autenticação por senha com <code style="font-family:'JetBrains Mono',monospace;">password_file</code>.</div>
+        </div>
+
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-broadcast-tower"></i>Dispositivo Comprometido (Botnet)</div>
+          <div class="ataque-card__desc">Dispositivo IoT sem atualização de firmware vira vetor de ataque. A botnet Mirai infectou milhões de câmeras e roteadores usando credenciais padrão em 2016.</div>
+          <div class="ataque-card__contra">✅ Contramedida: alterar todas as credenciais padrão, OTA automático para patches de segurança, segmentar dispositivos IoT em VLAN separada da rede principal.</div>
+        </div>
+
+        <div class="ataque-card">
+          <div class="ataque-card__title"><i class="fas fa-key"></i>Hardcoded Credentials</div>
+          <div class="ataque-card__desc">Credenciais Wi-Fi, API keys ou senhas embutidas em código-fonte subido no GitHub (ou extraídas do firmware via engenharia reversa).</div>
+          <div class="ataque-card__contra">✅ Contramedida: usar .gitignore para arquivos de config, armazenar segredos no NVS do ESP32 (espressif/arduino-esp32-nvs), nunca em flash diretamente acessível.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-check-double"></i>Checklist de segurança — boas práticas para qualquer projeto IoT</div>
+      <ul class="icon-list">
+        <li><i class="fas fa-check-circle"></i><span><strong>TLS em toda comunicação de rede</strong> — porta 8883 (MQTT), HTTPS. Nunca HTTP ou MQTT sem TLS em produção.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Credenciais únicas por dispositivo</strong> — um certificado ou API key por dispositivo, não compartilhado. Revogação individual possível.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Firmware assinado e OTA seguro</strong> — verificar hash/assinatura antes de aplicar atualização.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Segredos no NVS</strong> — nunca hardcoded no sketch ou subidos ao GitHub. Usar Provisioning ou NVS partição.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Timestamp + nonce</strong> em comandos críticos — evitar replay attacks em atuações.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Segmentação de rede</strong> — dispositivos IoT em VLAN separada. Um dispositivo comprometido não compromete a rede principal.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>LGPD</strong> — dados pessoais coletados por IoT (imagens, localização, dados de saúde) precisam de consentimento, minimização e prazo de retenção definido.</span></li>
+      </ul>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um atacante captura a mensagem MQTT <code style="font-family:'JetBrains Mono',monospace;">{"cmd":"abrir","valvula":1}</code> enviada pelo ESP32 para abrir uma válvula industrial. 10 minutos depois, ele retransmite a mesma mensagem para abrir a válvula novamente sem autorização. Qual mecanismo impede esse ataque?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">TLS — a mensagem está criptografada, o atacante não consegue ler o payload</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div>
+          <span class="quiz-texto">Certificado X.509 — o atacante não tem o certificado do dispositivo legítimo</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div>
+          <span class="quiz-texto">Timestamp + nonce no payload — o servidor rejeita mensagens com timestamp defasado ou nonce já utilizado, tornando a retransmissão inválida</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">QoS 2 do MQTT — garante que cada mensagem seja processada exatamente uma vez</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — Deep Sleep + MQTT: sensor a bateria com vida longa</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: ESP32 acorda por timer a cada 30 segundos, lê o DHT22, publica temperatura e umidade via MQTT (incluindo contagem de ciclos e motivo do wake-up na RTC memory), e retorna ao deep sleep. Calcular a vida estimada com bateria 18650.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Confirmar que o broker MQTT está ativo</div>
+            <div class="lab-step__desc">No PC: <code style="font-family:'JetBrains Mono',monospace;">mosquitto -c mosquitto.conf</code>. Em outro terminal: <code style="font-family:'JetBrains Mono',monospace;">mosquitto_sub -h localhost -t "sensor/#" -v</code> — deixe rodando para ver as mensagens chegando a cada 30 segundos.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código de deep sleep</div>
+            <div class="lab-step__desc">Após o upload, o ESP32 acordará, publicará uma mensagem e voltará a dormir — o Serial Monitor mostrará a sequência completa de inicialização. Note que <strong>cada acordada é como um reboot</strong>: o código começa do setup(), não do loop().</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Medir o consumo real (opcional)</div>
+            <div class="lab-step__desc">Coloque um multímetro em modo mA em série com a alimentação do ESP32. Observe o pico durante o Wi-Fi (~150mA) e o consumo em deep sleep (~10µA — pode não aparecer no multímetro analógico, precisa de µA meter). Registre os valores reais para a calculadora de bateria.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Calcular a vida da bateria</div>
+            <div class="lab-step__desc">Com os tempos medidos de cada fase (boot, Wi-Fi, DHT22, MQTT, sleep), use a fórmula de corrente média para estimar quantos dias uma bateria 18650 de 2500mAh duraria. Compare sua estimativa com a calculadora da Aula 1.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Deep Sleep + DHT22 + MQTT + RTC Memory</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;esp_sleep.h&gt;</span>
+
+<span class="cm">// ── Configurações ──────────────────────────────────────────</span>
+<span class="kw">const char</span><span class="op">*</span> SSID      = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA     = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> BROKER_IP = <span class="str">"192.168.1.100"</span>;
+<span class="pp">#define</span> PINO_DHT        <span class="num">4</span>
+<span class="pp">#define</span> SLEEP_SEG       <span class="num">30</span>         <span class="cm">// acordar a cada 30 segundos</span>
+<span class="pp">#define</span> TOPICO_DADOS    <span class="str">"sensor/dht22/dados"</span>
+<span class="pp">#define</span> TOPICO_STATUS   <span class="str">"sensor/dht22/status"</span>
+
+<span class="cm">// ── RTC Memory — sobrevive ao deep sleep ──────────────────</span>
+RTC_DATA_ATTR <span class="kw">int</span> contadorCiclos = <span class="num">0</span>;
+RTC_DATA_ATTR <span class="kw">float</span> ultimaTemp   = <span class="num">0</span>;
+
+DHT          dht(PINO_DHT, DHT22);
+WiFiClient   wc;
+PubSubClient mqtt(wc);
+
+<span class="kw">void</span> <span class="fn">conectarWifi</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_STA);
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="kw">unsigned long</span> inicio = <span class="fn">millis</span>();
+  <span class="kw">while</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED && <span class="fn">millis</span>()-inicio < <span class="num">10000</span>) {
+    <span class="fn">delay</span>(<span class="num">200</span>);
+  }
+  <span class="kw">if</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Wi-Fi falhou — dormindo novamente"</span>);
+    <span class="fn">esp_deep_sleep</span>((<span class="kw">uint64_t</span>)SLEEP_SEG <span class="op">*</span> <span class="num">1000000ULL</span>);
+  }
+}
+
+<span class="kw">bool</span> <span class="fn">publicarDados</span>(<span class="kw">float</span> t, <span class="kw">float</span> u) {
+  mqtt.<span class="fn">setServer</span>(BROKER_IP, <span class="num">1883</span>);
+  String clientId = <span class="str">"esp32-sensor-"</span> + String(<span class="fn">WiFi</span>.<span class="fn">macAddress</span>());
+
+  <span class="kw">if</span> (!mqtt.<span class="fn">connect</span>(clientId.<span class="fn">c_str</span>())) {
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"MQTT falhou: rc=%d\n"</span>, mqtt.<span class="fn">state</span>());
+    <span class="kw">return false</span>;
+  }
+
+  <span class="cm">// Payload principal com metadados de ciclo</span>
+  StaticJsonDocument<<span class="num">192</span>> doc;
+  doc[<span class="str">"temp"</span>]       = t;
+  doc[<span class="str">"umid"</span>]       = u;
+  doc[<span class="str">"ciclo"</span>]      = contadorCiclos;
+  doc[<span class="str">"delta_temp"</span>]  = t - ultimaTemp;   <span class="cm">// variação desde a última leitura</span>
+  doc[<span class="str">"uptime_ms"</span>]  = <span class="fn">millis</span>();           <span class="cm">// tempo acordado</span>
+
+  <span class="cm">// Motivo do wake-up</span>
+  esp_sleep_wakeup_cause_t causa = <span class="fn">esp_sleep_get_wakeup_cause</span>();
+  doc[<span class="str">"wake_cause"</span>] = (causa == ESP_SLEEP_WAKEUP_TIMER) ? <span class="str">"timer"</span>
+                    : (causa == ESP_SLEEP_WAKEUP_EXT0)  ? <span class="str">"gpio"</span>
+                    : <span class="str">"power_on"</span>;
+
+  <span class="kw">char</span> buf[<span class="num">192</span>]; <span class="fn">serializeJson</span>(doc, buf);
+  <span class="kw">bool</span> ok = mqtt.<span class="fn">publish</span>(TOPICO_DADOS, buf, <span class="kw">false</span>);
+
+  mqtt.<span class="fn">disconnect</span>();
+  <span class="fn">WiFi</span>.<span class="fn">disconnect</span>(<span class="kw">true</span>);
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_OFF);   <span class="cm">// desligar radio antes do sleep</span>
+  <span class="kw">return</span> ok;
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  contadorCiclos<span class="op">++</span>;
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"\n=== Ciclo #%d ===\n"</span>, contadorCiclos);
+
+  <span class="cm">// Aguardar DHT22 estabilizar</span>
+  <span class="fn">delay</span>(<span class="num">300</span>);
+  <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">float</span> u = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+
+  <span class="kw">if</span> (<span class="fn">isnan</span>(t) || <span class="fn">isnan</span>(u)) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"DHT22 falhou — dormindo"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"T=%.1f°C U=%.1f%%\n"</span>, t, u);
+    <span class="fn">conectarWifi</span>();
+    <span class="kw">if</span> (<span class="fn">publicarDados</span>(t, u)) {
+      <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Publicado! Wi-Fi ativo por %lums\n"</span>, <span class="fn">millis</span>());
+      ultimaTemp = t;   <span class="cm">// salvar na RTC memory</span>
+    }
+  }
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Dormindo por %ds...\n"</span>, SLEEP_SEG);
+  <span class="fn">Serial</span>.<span class="fn">flush</span>();   <span class="cm">// garantir que tudo foi enviado pelo serial</span>
+
+  <span class="cm">// Configurar e entrar em deep sleep</span>
+  <span class="fn">esp_sleep_enable_timer_wakeup</span>((<span class="kw">uint64_t</span>)SLEEP_SEG <span class="op">*</span> <span class="num">1000000ULL</span>);
+  <span class="fn">esp_deep_sleep_start</span>();   <span class="cm">// nunca retorna — próxima linha de código: setup() novamente</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Nunca executa — o ESP32 nunca chega aqui em deep sleep cíclico</span>
+}</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Serial.flush() antes do sleep é obrigatório.</strong> O ESP32 tem buffer UART. Sem flush(), a última mensagem pode não aparecer no terminal antes do dispositivo adormecer. Além disso, desligar o Wi-Fi explicitamente com <code style="font-family:'JetBrains Mono',monospace;">WiFi.mode(WIFI_OFF)</code> antes do sleep reduz o consumo — o radio continua ativo por alguns milissegundos se não for explicitamente desligado.</span>
+      </div>
+
+      <div class="destaque">
+        <strong>Wake-up por GPIO (botão):</strong> para acordar por evento externo além do timer, adicione antes do sleep: <code style="font-family:'JetBrains Mono',monospace;">esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, LOW)</code>. O GPIO0 (botão BOOT do DevKit) acorda o ESP32 quando pressionado. Útil para sensores que transmitem apenas quando há atividade (PIR, reed switch).
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Análise</div>
+        <div class="secao-titulo">4 exercícios — de energia a segurança avançada</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Otimizar com IP estático</div>
+      <p>Uma das maiores fontes de demora no ciclo de wake-up é a negociação DHCP (~500ms extras). Modifique o código para usar <strong>IP estático</strong> com <code style="font-family:'JetBrains Mono',monospace;">WiFi.config(ip, gateway, subnet)</code> antes do <code style="font-family:'JetBrains Mono',monospace;">WiFi.begin()</code>. Meça (com <code style="font-family:'JetBrains Mono',monospace;">millis()</code>) o tempo total acordado antes e depois da otimização. Calcule o impacto na vida estimada da bateria com bateria 18650 e ciclos de 30 segundos.</p>
+      <span class="dif-medio">LAB · Otimização</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — IP estático para ESP32</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Definir antes de WiFi.begin()</span>
+IPAddress ip(<span class="num">192</span>, <span class="num">168</span>, <span class="num">1</span>, <span class="num">120</span>);     <span class="cm">// IP fixo escolhido</span>
+IPAddress gateway(<span class="num">192</span>, <span class="num">168</span>, <span class="num">1</span>, <span class="num">1</span>);
+IPAddress subnet(<span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">0</span>);
+IPAddress dns(<span class="num">8</span>, <span class="num">8</span>, <span class="num">8</span>, <span class="num">8</span>);
+
+<span class="fn">WiFi</span>.<span class="fn">config</span>(ip, gateway, subnet, dns);
+<span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+<span class="cm">// Resultado típico: 1.5s (DHCP) → 1.0s (IP fixo) = 33% mais rápido</span>
+<span class="cm">// Impacto na bateria: reduz carga por ciclo em ~50mAs (500ms × 100mA)</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Transmitir apenas quando há variação significativa</div>
+      <p>Modifique o código para que o ESP32 só conecte ao Wi-Fi e publique quando a diferença de temperatura em relação à última leitura for maior que <strong>0.5°C</strong> (use a variável <code style="font-family:'JetBrains Mono',monospace;">ultimaTemp</code> na RTC memory). Nos ciclos sem variação significativa, apenas registre no Serial e volte a dormir sem ligar o Wi-Fi. Calcule quantas vezes esse mecanismo poderia disparar em um ambiente estável e qual o impacto na vida da bateria.</p>
+      <span class="dif-medio">LAB · Smart Transmission</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — transmitir só com variação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> DELTA_MINIMO  <span class="num">0.5f</span>   <span class="cm">// °C</span>
+
+<span class="cm">// Após ler t do DHT22:</span>
+<span class="kw">bool</span> variacaoSignificativa = (<span class="fn">abs</span>(t - ultimaTemp) >= DELTA_MINIMO)
+                           || (contadorCiclos == <span class="num">1</span>);   <span class="cm">// sempre no 1° ciclo</span>
+
+<span class="kw">if</span> (variacaoSignificativa) {
+  <span class="fn">conectarWifi</span>();
+  <span class="fn">publicarDados</span>(t, u);
+  ultimaTemp = t;
+} <span class="kw">else</span> {
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Sem variação (delta=%.2f°C) — skip Wi-Fi\n"</span>, <span class="fn">abs</span>(t - ultimaTemp));
+}
+<span class="cm">// Em ambiente estável, 90% dos ciclos pulam o Wi-Fi</span>
+<span class="cm">// Vida da bateria pode aumentar 5-10× com essa estratégia</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Adicionar timestamp + nonce anti-replay</div>
+      <p>Implemente proteção contra replay attack no payload MQTT. Inclua no JSON publicado: (a) <code style="font-family:'JetBrains Mono',monospace;">"ts"</code> com o valor de <code style="font-family:'JetBrains Mono',monospace;">millis()</code> multiplicado pelo número do ciclo (como timestamp relativo) e (b) <code style="font-family:'JetBrains Mono',monospace;">"nonce"</code> gerado com <code style="font-family:'JetBrains Mono',monospace;">esp_random()</code> (número pseudo-aleatório único por transmissão). No script Python subscriber (Semana 9), adicione lógica que rejeita mensagens com nonce repetido (armazenando os últimos 100 nonces recebidos num set).</p>
+      <span class="dif-desafio">Desafio · Segurança</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho ESP32 + Python subscriber anti-replay</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// ESP32 — adicionar ao publicarDados():</span>
+doc[<span class="str">"nonce"</span>] = (<span class="kw">uint32_t</span>)<span class="fn">esp_random</span>();
+doc[<span class="str">"ts"</span>]    = (<span class="kw">uint32_t</span>)(contadorCiclos * SLEEP_SEG);   <span class="cm">// "tempo" relativo</span>
+
+<span class="cm">// Python subscriber — anti-replay:</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+nonces_vistos = deque(maxlen=<span class="num">100</span>)   <span class="cm"># mantém últimos 100</span>
+
+<span class="kw">def</span> on_message(client, ud, msg):
+    d = json.loads(msg.payload)
+    nonce = d.get(<span class="str">'nonce'</span>)
+    <span class="kw">if</span> nonce <span class="kw">in</span> nonces_vistos:
+        print(f<span class="str">"[REPLAY DETECTADO] nonce={nonce} — mensagem rejeitada"</span>)
+        <span class="kw">return</span>
+    nonces_vistos.append(nonce)
+    print(f<span class="str">"[OK] T={d.get('temp')}°C nonce={nonce}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Análise de projeto final: bateria vs solar</div>
+      <p>Para um sensor agrícola que precisa funcionar por 2 anos sem manutenção em campo aberto (sol disponível), projete a solução de energia: (a) calcule a corrente média necessária para 2 anos com bateria LiPo 10.000mAh, (b) especifique qual tamanho de painel solar (em mW) seria suficiente para manter a bateria carregada com 4 horas de sol por dia, (c) explique qual modo de sleep e qual intervalo de transmissão tornaria essa solução viável, e (d) qual protocolo de comunicação faria mais sentido para um campo de 500 hectares sem cobertura celular.</p>
+      <span class="dif-desafio">Desafio · Projeto completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-solar-panel"></i>Solução de referência</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a) Corrente média máxima:</strong> 10.000mAh ÷ (2 anos × 8760h) = 10.000 ÷ 17.520 ≈ <strong>0.57 mA</strong>. Com deep sleep e ciclos de 10 min, isso é alcançável.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b) Painel solar:</strong> consumo diário = 0.57mA × 24h = 13.7mAh/dia. Painel de 50mW @5V = 10mA. Em 4h de sol: 40mAh gerados. <strong>Painel de 50mW é suficiente</strong> com grande margem — cobriria 2,9× o consumo diário.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(c) Sleep + intervalo:</strong> Deep Sleep, transmissão a cada 10 minutos. Tempo acordado ~3s por ciclo. Corrente média ≈ 300mAs ÷ 600s ≈ <strong>0.5mA</strong> — dentro do target.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(d) Protocolo:</strong> <strong>LoRaWAN</strong> — km de alcance com 1 gateway cobrindo os 500ha, Classe A (wake + tx + sleep), ideal para 1 msg/10min e payload de ~20 bytes de sensor.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 17 · Penúltima aula de conteúdo</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-battery-three-quarters"></i>
+        <strong>Deep Sleep e Energia</strong>
+        <p>Active ~200mA · Deep Sleep ~10µA. RTC_DATA_ATTR preserva variáveis. esp_deep_sleep_start() após Serial.flush(). Corrente média = carga total ÷ período.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-calculator"></i>
+        <strong>Cálculo de bateria</strong>
+        <p>Vida = capacidade(mAh) ÷ corrente_média(mA). Intervalo de transmissão é o principal alavancador. IP estático e transmissão condicional reduzem consumo significativamente.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Segurança IoT</strong>
+        <p>4 camadas: transporte (TLS), autenticação, autorização, integridade. Ataques: MITM, replay, firmware tampering. Timestamp+nonce evita replay. Nunca credenciais hardcoded.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O ESP32 está ciclando entre sleep e transmissão? Você calculou a vida estimada da bateria? Consegue explicar os 4 ataques comuns em IoT e suas contramedidas? Se sim — pronto para a última semana: P3 e revisão final do semestre.</span>
+    </div>
+    <div class="proxima" style="background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);">
+      <div>
+        <div class="proxima-label" style="color:#f87171;">Próxima e última semana</div>
+        <div class="proxima-titulo">Semana 18 — P3 · Revisão Final · Apresentação de Projeto</div>
+      </div>
+      <i class="fas fa-flag-checkered" style="color:#f87171;"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Fórmula direta: vida = capacidade ÷ corrente_média. Para 6 meses: 4380h. Corrente máxima = 2500mAh ÷ 4380h ≈ 0.57mA. Isso é alcançável com deep sleep de 59 minutos e 1 minuto ativo por hora — ou deep sleep de 10 minutos com tempo ativo muito curto (~3s). Com ciclos de 30s e corrente média de 13mA (como calculamos), a bateria duraria só ~8 dias — longe dos 6 meses.'},
+  quiz2:{correct:'C',msg:'✅ Correto! TLS criptografa os dados, então o atacante não consegue ler o payload — mas isso não impede que ele retransmita o payload cifrado inteiro (replay do ciphertext). X.509 autentica o remetente, mas a mensagem capturada já foi autenticada pelo dispositivo legítimo. QoS 2 garante entrega única em nível de transporte, mas não protege contra replay de camada de aplicação. O timestamp + nonce é a solução: o servidor verifica que a mensagem é recente e com nonce único — retransmissão de uma mensagem antiga (mesmo cifrada) seria rejeitada.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

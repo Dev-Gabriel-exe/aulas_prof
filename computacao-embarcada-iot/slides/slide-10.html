@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 10 — BLE, LoRa e Zigbee</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Proto cards 4 colunas ── */
+.proto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.proto-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.proto-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+.proto-card__bg{position:absolute;top:-18px;right:-14px;font-size:4.5rem;opacity:.05;pointer-events:none;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.proto-card__name{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;margin-bottom:.12rem;}
+.proto-card__full{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.8rem;}
+.proto-card__spec{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem;}
+.proto-card__spec:last-of-type{border-bottom:none;}
+.proto-card__spec-label{color:var(--text-muted);}
+.proto-card__spec-value{color:var(--text-primary);font-weight:600;text-align:right;max-width:55%;}
+
+/* ── GATT diagram ── */
+.gatt-wrap{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.gatt-wrap__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.gatt-service{border:1px solid rgba(45,212,191,.25);border-radius:10px;padding:1rem;margin-bottom:.75rem;background:rgba(45,212,191,.04);}
+.gatt-service__name{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--teal-400);margin-bottom:.6rem;}
+.gatt-char{display:flex;align-items:center;gap:10px;padding:.4rem .75rem;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.gatt-char:last-child{margin-bottom:0;}
+.gatt-char__uuid{color:var(--text-muted);flex-shrink:0;}
+.gatt-char__name{color:var(--text-primary);flex:1;}
+.gatt-prop{padding:1px 6px;border-radius:4px;font-size:.65rem;font-weight:700;font-family:'Inter',monospace;}
+.prop-r{background:rgba(45,212,191,.12);color:var(--teal-400);}
+.prop-w{background:rgba(251,191,36,.12);color:#fbbf24;}
+.prop-n{background:rgba(139,92,246,.12);color:#c4b5fd;}
+
+/* ── Alcance visual ── */
+.range-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.range-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.range-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;}
+.range-proto{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;width:70px;flex-shrink:0;}
+.range-bar-wrap{flex:1;position:relative;height:24px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;}
+.range-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.range-label{font-size:.78rem;color:var(--text-muted);width:100px;text-align:right;flex-shrink:0;}
+
+/* ── LoRaWAN arquitetura ── */
+.lorawan-arch{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.lorawan-arch__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.lw-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;}
+.lw-node{border-radius:9px;padding:.55rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;text-align:center;flex-shrink:0;}
+.lw-arrow{color:var(--text-muted);font-size:.75rem;flex-shrink:0;}
+.lw-label{font-size:.7rem;color:var(--text-muted);margin-top:2px;font-family:'Inter',sans-serif;text-align:center;}
+
+/* ── Zigbee mesh ── */
+.mesh-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.mesh-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.mesh-grid{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+.mesh-node{border-radius:9px;padding:.5rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;text-align:center;}
+
+/* ── Cenário cards ── */
+.cenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.cenario-card{border-radius:14px;padding:1.25rem;border:1px solid var(--card-border);background:var(--card-bg);transition:border-color .2s;}
+.cenario-card:hover{border-color:rgba(45,212,191,.22);}
+.cenario-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.cenario-titulo{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.6rem;}
+.cenario-desc{font-size:.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:.75rem;}
+.cenario-resp{padding:.6rem .9rem;border-radius:8px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:8px;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── BLE scan mockup ── */
+.scan-list{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.25rem;margin:.75rem 0;}
+.scan-list__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;}
+.scan-item{display:flex;align-items:center;gap:12px;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.scan-item:last-child{border-bottom:none;}
+.scan-rssi{width:50px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;flex-shrink:0;}
+.scan-bar{width:60px;height:8px;border-radius:4px;flex-shrink:0;}
+.scan-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-primary);}
+.scan-addr{font-size:.72rem;color:var(--text-muted);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+
+@media(max-width:1050px){.proto-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .cenario-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+  .proto-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .cenario-grid,.resumo-grid,.proto-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📡 Teoria + LAB Comparativo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">10</div>
+    <h1 class="capa-titulo">BLE, LoRa<br><em>e Zigbee</em><br>Quando o Wi-Fi não basta</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · O protocolo certo para cada cenário</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fab fa-bluetooth-b"></i></div><span>Bluetooth BLE — GATT, serviços, características, ESP32 como server</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-satellite-dish"></i></div><span>LoRa — modulação, Spreading Factor, alcance vs. taxa de dados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-network-wired"></i></div><span>LoRaWAN — arquitetura, gateway, Network Server, Classes A/B/C</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Zigbee — topologia mesh, Coordinator, Router, End Device</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Comparativo geral — Wi-Fi, MQTT/Wi-Fi, BLE, LoRa, Zigbee</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: BLE Scanner no ESP32 + análise de 3 cenários reais</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>ESP32 faz scan BLE e lista dispositivos próximos com RSSI. Análise técnica em grupos: escolher e justificar o protocolo ideal para três cenários IoT reais distintos.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit (BLE já integrado — sem hardware extra)</li>
+        <li>Smartphone com app "nRF Connect" (Android/iOS) — gratuito</li>
+        <li>Arduino IDE com suporte ao ESP32</li>
+        <li>Fichas de análise de cenário (atividade em grupo)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 7 — I2C, SPI, UART, OLED</li>
+        <li>✅ Sem. 8 — ESP32, Wi-Fi, HTTP</li>
+        <li>✅ Sem. 9 — MQTT: broker, pub/sub, QoS</li>
+        <li>▶ Sem. 10 — BLE, LoRa, Zigbee</li>
+        <li>Sem. 11 — Edge Computing e Edge AI</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>Wi-Fi consome energia demais para sensores a bateria — BLE resolve</li>
+        <li>Wi-Fi não chega a 10km de distância — LoRa chega</li>
+        <li>Zigbee forma redes mesh sem infraestrutura — ideal para automação residencial</li>
+        <li>Escolher o protocolo errado inviabiliza o projeto: custo, energia ou alcance</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Bluetooth BLE — comunicação de curto alcance e baixíssimo consumo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fab fa-bluetooth-b"></i>BT Classic vs BLE — não são a mesma coisa</div>
+      <p>Muita gente confunde Bluetooth Classic (BT) com Bluetooth Low Energy (BLE). São protocolos distintos — mesma frequência (2.4GHz), mas arquiteturas completamente diferentes. O BT Classic foi projetado para streaming de áudio e transferência de arquivos. O <strong>BLE</strong> (Bluetooth 4.0+) foi criado para sensores e dispositivos que precisam funcionar meses ou anos com uma pilha.</p>
+
+      <div class="grid-2" style="margin-top:.75rem;">
+        <div style="background:rgba(96,165,250,.04);border:1px solid rgba(96,165,250,.18);border-radius:12px;padding:1.1rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Bluetooth Classic</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-headphones"></i><span>Streaming de áudio (fones, caixas de som)</span></li>
+            <li><i class="fas fa-file-transfer"></i><span>Transferência de arquivos em alta velocidade</span></li>
+            <li><i class="fas fa-battery-quarter"></i><span>Consumo alto — não adequado para baterias pequenas</span></li>
+            <li><i class="fas fa-link"></i><span>Conexão ponto a ponto (pareamento)</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:1.1rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Bluetooth Low Energy (BLE)</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-heartbeat"></i><span>Sensores de saúde, wearables, beacons</span></li>
+            <li><i class="fas fa-battery-full"></i><span>Consumo ~10× menor — meses/anos com CR2032</span></li>
+            <li><i class="fas fa-broadcast-tower"></i><span>Advertising: transmite sem conexão (beacons)</span></li>
+            <li><i class="fas fa-mobile-alt"></i><span>Conexão com smartphone sem app nativo (Web BLE)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>O ESP32 suporta ambos</strong> — BT Classic e BLE — no mesmo chip. Para projetos IoT com sensores e bateria, use sempre BLE. Para áudio sem fio, use BT Classic. Nunca tente usar os dois simultaneamente no ESP32 sem alocar memória extra; há limitações de coexistência.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>GATT — como os dados são organizados no BLE</div>
+      <p>O BLE usa o protocolo <strong>GATT</strong> (Generic ATTribute Profile) para organizar dados. A hierarquia é: <strong>Perfil → Serviço → Característica → Descritor</strong>. Cada elemento tem um UUID (Identifier) — padrão de 16 bits para perfis oficiais Bluetooth SIG, ou 128 bits para custom.</p>
+
+      <div class="gatt-wrap">
+        <div class="gatt-wrap__title">Estrutura GATT — ESP32 como servidor de sensor ambiental</div>
+
+        <div class="gatt-service">
+          <div class="gatt-service__name">Serviço: Sensor Ambiental · UUID: 0x181A (Environmental Sensing)</div>
+          <div class="gatt-char">
+            <span class="gatt-char__uuid">0x2A6E</span>
+            <span class="gatt-char__name">Temperature</span>
+            <span class="gatt-prop prop-r">READ</span>
+            <span class="gatt-prop prop-n">NOTIFY</span>
+          </div>
+          <div class="gatt-char">
+            <span class="gatt-char__uuid">0x2A6F</span>
+            <span class="gatt-char__name">Humidity</span>
+            <span class="gatt-prop prop-r">READ</span>
+            <span class="gatt-prop prop-n">NOTIFY</span>
+          </div>
+        </div>
+
+        <div class="gatt-service">
+          <div class="gatt-service__name">Serviço: Device Info · UUID: 0x180A</div>
+          <div class="gatt-char">
+            <span class="gatt-char__uuid">0x2A24</span>
+            <span class="gatt-char__name">Model Number</span>
+            <span class="gatt-prop prop-r">READ</span>
+          </div>
+          <div class="gatt-char">
+            <span class="gatt-char__uuid">0xFFFF</span>
+            <span class="gatt-char__name">Custom: Comando (UUID 128-bit)</span>
+            <span class="gatt-prop prop-w">WRITE</span>
+          </div>
+        </div>
+
+        <div style="margin-top:.75rem;font-size:.78rem;color:var(--text-muted);">
+          <span class="gatt-prop prop-r" style="margin-right:4px;">READ</span> cliente lê sob demanda ·
+          <span class="gatt-prop prop-n" style="margin:0 4px;">NOTIFY</span> servidor envia automaticamente quando muda ·
+          <span class="gatt-prop prop-w" style="margin-left:4px;">WRITE</span> cliente escreve no servidor
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>BLE Scanner e BLE Server no ESP32</div>
+      <p>O ESP32 pode atuar como <strong>Peripheral</strong> (server — anuncia serviços e aceita conexões) ou como <strong>Central</strong> (client — faz scan e conecta a outros dispositivos). No LAB de hoje usamos o modo Scanner para listar dispositivos BLE próximos com seus RSSI e nomes.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — BLE Scanner (lista dispositivos próximos)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;BLEDevice.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;BLEScan.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;BLEAdvertisedDevice.h&gt;</span>
+
+<span class="pp">#define</span> DURACAO_SCAN  <span class="num">5</span>    <span class="cm">// segundos por varredura</span>
+
+BLEScan<span class="op">*</span> pScan;
+
+<span class="cm">// Chamada para cada dispositivo encontrado durante o scan</span>
+<span class="kw">class</span> Callbacks : <span class="kw">public</span> BLEAdvertisedDeviceCallbacks {
+  <span class="kw">void</span> <span class="fn">onResult</span>(BLEAdvertisedDevice dev) {
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"  [%4d dBm]  %-30s  %s\n"</span>,
+      dev.<span class="fn">getRSSI</span>(),
+      dev.<span class="fn">haveName</span>() ? dev.<span class="fn">getName</span>().<span class="fn">c_str</span>() : <span class="str">"(sem nome)"</span>,
+      dev.<span class="fn">getAddress</span>().<span class="fn">toString</span>().<span class="fn">c_str</span>());
+  }
+};
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">BLEDevice</span>::<span class="fn">init</span>(<span class="str">""</span>);
+
+  pScan = <span class="fn">BLEDevice</span>::<span class="fn">getScan</span>();
+  pScan-><span class="fn">setAdvertisedDeviceCallbacks</span>(<span class="kw">new</span> Callbacks());
+  pScan-><span class="fn">setActiveScan</span>(<span class="kw">true</span>);   <span class="cm">// solicita SCAN_RSP → mais info</span>
+  pScan-><span class="fn">setInterval</span>(<span class="num">100</span>);
+  pScan-><span class="fn">setWindow</span>(<span class="num">99</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"\n=== Scan BLE (%ds) ===\n"</span>, DURACAO_SCAN);
+  BLEScanResults resultados = pScan-><span class="fn">start</span>(DURACAO_SCAN, <span class="kw">false</span>);
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"%d dispositivo(s) encontrado(s)\n"</span>, resultados.<span class="fn">getCount</span>());
+  pScan-><span class="fn">clearResults</span>();
+  <span class="fn">delay</span>(<span class="num">5000</span>);
+}</code></pre>
+      </div>
+
+      <div class="scan-list">
+        <div class="scan-list__title">Saída típica no Serial Monitor — BLE Scanner</div>
+        <div class="scan-item">
+          <span class="scan-rssi" style="color:var(--teal-400);">-42</span>
+          <div class="scan-bar" style="background:rgba(45,212,191,.6);width:58px;"></div>
+          <span class="scan-name">Mi Smart Band 6</span>
+          <span class="scan-addr">D4:AC:A1:XX:XX:XX</span>
+        </div>
+        <div class="scan-item">
+          <span class="scan-rssi" style="color:#fbbf24;">-67</span>
+          <div class="scan-bar" style="background:rgba(251,191,36,.5);width:35px;"></div>
+          <span class="scan-name">iPhone de João</span>
+          <span class="scan-addr">7E:F2:B3:XX:XX:XX</span>
+        </div>
+        <div class="scan-item">
+          <span class="scan-rssi" style="color:#fbbf24;">-71</span>
+          <div class="scan-bar" style="background:rgba(251,191,36,.4);width:26px;"></div>
+          <span class="scan-name">(sem nome)</span>
+          <span class="scan-addr">AA:BB:CC:XX:XX:XX</span>
+        </div>
+        <div class="scan-item">
+          <span class="scan-rssi" style="color:#f87171;">-84</span>
+          <div class="scan-bar" style="background:rgba(239,68,68,.4);width:12px;"></div>
+          <span class="scan-name">ESP32-sensor-02</span>
+          <span class="scan-addr">24:6F:28:XX:XX:XX</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um sensor de glicose vestível precisa enviar uma leitura a cada 5 minutos para o smartphone do usuário, funcionar por 6 meses com bateria de botão e não precisar de Wi-Fi. Qual protocolo é mais adequado?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div>
+          <span class="quiz-texto">Wi-Fi com MQTT — o smartphone seria o broker e o sensor publicaria a cada 5 minutos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">BLE — baixíssimo consumo, comunicação direta com smartphone, alcance suficiente e padrão já adotado em wearables médicos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">LoRa — o maior alcance garante que a leitura chegue mesmo quando o usuário sai de casa</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">Bluetooth Classic — mais estável que BLE para dados de saúde</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">LoRa, LoRaWAN e Zigbee — longa distância e redes mesh</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-satellite-dish"></i>LoRa — Long Range: como funciona a magia do alcance</div>
+      <p>O <strong>LoRa</strong> (Long Range) é uma tecnologia de modulação de rádio desenvolvida pela Semtech. Usa Chirp Spread Spectrum (CSS) — uma técnica que espalha o sinal em uma banda larga — o que permite receber sinais muito abaixo do nível de ruído. Resultado: alcance de <strong>2 a 15km</strong> em área urbana, e até <strong>50km</strong> em campo aberto, com consumo de energia baixíssimo.</p>
+      <p>A desvantagem é a taxa de dados: de <strong>250bps a 50kbps</strong>, dependendo da configuração. LoRa é ideal para sensores que enviam poucos bytes a cada minuto ou hora — temperatura, nível de água, GPS, leituras de medidores — nunca para streaming de vídeo ou áudio.</p>
+
+      <div class="range-diagram">
+        <div class="range-diagram__title">Alcance comparativo em área urbana (condições típicas)</div>
+        <div class="range-row">
+          <span class="range-proto" style="color:#60a5fa;">BLE</span>
+          <div class="range-bar-wrap">
+            <div class="range-bar" style="width:2%;background:rgba(96,165,250,.5);color:#60a5fa;"></div>
+          </div>
+          <span class="range-label" style="color:#60a5fa;">~10–100m</span>
+        </div>
+        <div class="range-row">
+          <span class="range-proto" style="color:#c4b5fd;">Zigbee</span>
+          <div class="range-bar-wrap">
+            <div class="range-bar" style="width:3%;background:rgba(139,92,246,.5);color:#c4b5fd;"></div>
+          </div>
+          <span class="range-label" style="color:#c4b5fd;">~10–100m*</span>
+        </div>
+        <div class="range-row">
+          <span class="range-proto" style="color:#fbbf24;">Wi-Fi</span>
+          <div class="range-bar-wrap">
+            <div class="range-bar" style="width:4%;background:rgba(251,191,36,.5);color:#fbbf24;"></div>
+          </div>
+          <span class="range-label" style="color:#fbbf24;">~30–150m</span>
+        </div>
+        <div class="range-row">
+          <span class="range-proto" style="color:var(--teal-400);">LoRa</span>
+          <div class="range-bar-wrap">
+            <div class="range-bar" style="width:88%;background:linear-gradient(90deg,rgba(45,212,191,.7),rgba(45,212,191,.3));color:var(--teal-400);">2–15 km</div>
+          </div>
+          <span class="range-label" style="color:var(--teal-400);">até 15km+</span>
+        </div>
+        <div style="margin-top:.75rem;font-size:.76rem;color:var(--text-muted);">* Zigbee mesh pode cobrir áreas maiores por roteamento — cada nó retransmite para o próximo.</div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Parâmetro LoRa</th><th>Opções</th><th>Efeito no sistema</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Spreading Factor (SF)</strong></td><td>SF7 a SF12</td><td>SF12 = maior alcance, menor taxa, mais lento e mais energia</td></tr>
+            <tr><td><strong>Bandwidth (BW)</strong></td><td>125, 250, 500 kHz</td><td>BW maior = mais rápido, menor alcance</td></tr>
+            <tr><td><strong>Coding Rate (CR)</strong></td><td>4/5 a 4/8</td><td>CR maior = mais redundância, mais robusto em ruído</td></tr>
+            <tr><td><strong>Potência TX</strong></td><td>2 a 20 dBm</td><td>Mais potência = mais alcance e mais consumo</td></tr>
+            <tr><td><strong>Frequência</strong></td><td>915 MHz (BR), 868 MHz (EU)</td><td>Banda ISM — sem licença de rádio necessária</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Duty cycle:</strong> na maioria dos países, redes LoRa em banda ISM têm limite de 1% de duty cycle — o dispositivo só pode transmitir 1% do tempo. Isso é suficiente para 1 mensagem de 50 bytes por minuto no SF padrão. Projete o sistema respeitando esse limite ou use LoRaWAN com gerenciamento automático de ADR.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>LoRaWAN — a rede por cima do rádio LoRa</div>
+      <p>LoRa é apenas a camada física (o rádio). <strong>LoRaWAN</strong> é o protocolo de rede que roda sobre ele — define como os dispositivos se autenticam, como os gateways encaminham pacotes, como o Network Server gerencia a rede e como o Application Server entrega os dados.</p>
+
+      <div class="lorawan-arch">
+        <div class="lorawan-arch__title">Arquitetura LoRaWAN — do sensor à aplicação</div>
+        <div class="lw-row" style="margin-bottom:1.25rem;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="lw-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">Sensor A</div>
+            <div class="lw-label">End Node</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="lw-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">Sensor B</div>
+            <div class="lw-label">End Node</div>
+          </div>
+          <div class="lw-arrow">── LoRa RF ──→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="lw-node" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;">Gateway</div>
+            <div class="lw-label">Repassa via IP</div>
+          </div>
+          <div class="lw-arrow">── MQTT/UDP ──→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="lw-node" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;">Network<br>Server</div>
+            <div class="lw-label">TTN / ChirpStack</div>
+          </div>
+          <div class="lw-arrow">──→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div class="lw-node" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;">App<br>Server</div>
+            <div class="lw-label">Dashboard/API</div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);line-height:1.7;">
+          <strong style="color:var(--text-secondary);">Classe A</strong> — transmite quando quiser; janela de downlink logo após TX. Menor consumo. <strong style="color:var(--text-secondary);">Classe B</strong> — janelas de recepção periódicas sincronizadas com o gateway. <strong style="color:var(--text-secondary);">Classe C</strong> — sempre ouvindo; maior consumo, latência mínima de downlink.
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>The Things Network (TTN)</strong> é a maior rede LoRaWAN pública e comunitária — gratuita para uso não-comercial. Basta um gateway LoRa conectado à internet para cobrir um bairro inteiro. No Brasil a cobertura ainda é limitada a capitais, mas empresas como V2COM e Everynet operam redes privadas.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Zigbee — o mesh que se organiza sozinho</div>
+      <p>O <strong>Zigbee</strong> (IEEE 802.15.4) opera em 2.4GHz com alcance de 10 a 100m por nó, mas sua grande sacada é a topologia <strong>mesh</strong>: cada dispositivo intermediário retransmite mensagens para outros, expandindo a cobertura sem infraestrutura adicional. É o protocolo de automação residencial mais usado — presente em lâmpadas Philips Hue, sensores IKEA Tradfri, dispositivos Tuya e Amazon Echo.</p>
+
+      <div class="mesh-diagram">
+        <div class="mesh-diagram__title">Topologia Zigbee — três tipos de nós</div>
+        <div class="mesh-grid">
+          <div class="mesh-node" style="background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24;">
+            Coordinator<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">1 por rede · hub central</span>
+          </div>
+          <span style="color:var(--text-muted);">↔</span>
+          <div class="mesh-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--teal-400);">
+            Router A<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">sempre ligado · retransmite</span>
+          </div>
+          <span style="color:var(--text-muted);">↔</span>
+          <div class="mesh-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--teal-400);">
+            Router B<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">sempre ligado · retransmite</span>
+          </div>
+          <span style="color:var(--text-muted);">↔</span>
+          <div class="mesh-node" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#60a5fa;">
+            End Device<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">bateria · dorme entre envios</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);line-height:1.65;">
+          <strong style="color:var(--text-secondary);">Coordinator:</strong> forma e gerencia a rede (PAN). Único obrigatório.<br>
+          <strong style="color:var(--text-secondary);">Router:</strong> precisa de energia constante (tomada) — retransmite pacotes de outros nós.<br>
+          <strong style="color:var(--text-secondary);">End Device:</strong> fala apenas com o seu "pai" (router ou coordinator) — pode hibernar para economizar bateria.
+        </div>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>Zigbee vs Z-Wave vs Thread:</strong> os três são protocolos mesh para automação residencial em baixa potência. Z-Wave opera em 868/908MHz (menos interferência com Wi-Fi). Thread é o protocolo base do Matter — o novo padrão unificado apoiado por Apple, Google, Amazon e Samsung. O Matter pode rodar sobre Zigbee, Thread ou Wi-Fi.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um agricultor precisa monitorar umidade do solo em 30 pontos espalhados por uma fazenda de 500 hectares, enviando 1 leitura por hora. Os sensores precisam durar 1 ano com bateria. Qual protocolo?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Wi-Fi — instalar roteadores nos pontos de monitoramento</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>
+          <span class="quiz-texto">Zigbee mesh — os sensores se retransmitem entre si cobrindo os 500 hectares</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">BLE — os smartphones dos funcionários fariam relay das mensagens</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'D')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">D</div>
+          <span class="quiz-texto">LoRaWAN — km de alcance com 1 gateway, 1 mensagem/hora cabe no duty cycle, bateria de 1 ano com Classe A</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — BLE Scanner + Comparativo técnico: 3 cenários reais</div>
+      </div>
+    </div>
+
+    <!-- Tabela comparativa geral -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Comparativo geral — todos os protocolos vistos no curso</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Protocolo</th><th>Alcance</th><th>Taxa de dados</th><th>Consumo</th><th>Infraestrutura</th><th>Melhor para</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Wi-Fi + MQTT</strong></td>
+              <td>30–150m</td>
+              <td>Mbps</td>
+              <td>Alto (100–300mA TX)</td>
+              <td>Roteador Wi-Fi</td>
+              <td>Gateways, câmeras, dados pesados</td>
+            </tr>
+            <tr>
+              <td><strong>BLE</strong></td>
+              <td>10–100m</td>
+              <td>125kbps–2Mbps</td>
+              <td>Muito baixo (~1mA médio)</td>
+              <td>Smartphone ou hub</td>
+              <td>Wearables, beacons, sensores a bateria</td>
+            </tr>
+            <tr>
+              <td><strong>LoRa / LoRaWAN</strong></td>
+              <td>2–15km</td>
+              <td>250bps–50kbps</td>
+              <td>Baixo durante TX, sleep profundo</td>
+              <td>Gateway LoRa + servidor</td>
+              <td>Sensores rurais, cidades inteligentes</td>
+            </tr>
+            <tr>
+              <td><strong>Zigbee</strong></td>
+              <td>10–100m por salto</td>
+              <td>250kbps</td>
+              <td>Baixo (end device hiberna)</td>
+              <td>Coordinator + routers</td>
+              <td>Automação residencial, redes mesh densas</td>
+            </tr>
+            <tr>
+              <td><strong>MQTT sem Wi-Fi</strong></td>
+              <td colspan="5" style="color:var(--text-muted);font-style:italic;">MQTT é um protocolo de aplicação — roda sobre qualquer rede IP (Wi-Fi, Ethernet, celular). Não é um protocolo de rádio.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LAB steps -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo — BLE Scanner + análise de cenários</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o BLE Scanner no ESP32</div>
+            <div class="lab-step__desc">Use o código da Aula 1. Abra o Serial Monitor a 115200. Você verá os dispositivos BLE próximos listados com RSSI e endereço MAC. Observe que smartphones aparecem com endereços aleatórios (randômicos) que mudam — isso é uma proteção de privacidade.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Inspecionar com nRF Connect</div>
+            <div class="lab-step__desc">Instale o app <strong>nRF Connect for Mobile</strong> (Nordic Semiconductor — gratuito). Escaneie a sala. Encontre o ESP32 de outro colega. Clique em "Connect" e explore os serviços disponíveis. Observe o UUID de cada serviço e característica listada.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Análise de cenários em grupo</div>
+            <div class="lab-step__desc">Dividam-se em grupos de 3. Cada grupo recebe um cenário abaixo e deve escolher o protocolo ideal, justificando: alcance necessário, consumo, infraestrutura disponível, taxa de dados e custo. Ao final, cada grupo apresenta em 2 minutos.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Discussão e compilação das respostas</div>
+            <div class="lab-step__desc">O professor mostra os gabaritos comentados. Para cada cenário, discutam os trade-offs: nenhuma resposta é única — o contexto define. Registrem os critérios de decisão para a prova.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cenários -->
+      <div class="cenario-grid">
+        <div class="cenario-card">
+          <div class="cenario-num">Cenário A</div>
+          <div class="cenario-titulo">Rastreador de ativos em porto</div>
+          <div class="cenario-desc">500 contêineres em um porto de 3km² precisam ser localizados. Cada contêiner envia posição GPS a cada 30 minutos. Os contêineres ficam meses no porto — bateria longa. Nenhuma infra de rede no pátio.</div>
+          <div class="cenario-resp" style="background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);color:var(--teal-400);">
+            <i class="fas fa-question"></i> Qual protocolo você escolheria?
+          </div>
+        </div>
+        <div class="cenario-card">
+          <div class="cenario-num">Cenário B</div>
+          <div class="cenario-titulo">Automação de academia</div>
+          <div class="cenario-desc">40 equipamentos de musculação numa academia de 800m² precisam enviar estatísticas de uso (repetições, carga) em tempo real para um servidor local. Os equipamentos têm tomada elétrica. O gerente quer um dashboard ao vivo.</div>
+          <div class="cenario-resp" style="background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);color:var(--teal-400);">
+            <i class="fas fa-question"></i> Qual protocolo você escolheria?
+          </div>
+        </div>
+        <div class="cenario-card">
+          <div class="cenario-num">Cenário C</div>
+          <div class="cenario-titulo">Pulseira de monitoramento infantil</div>
+          <div class="cenario-desc">Crianças na escola usam uma pulseira com sensor de frequência cardíaca e temperatura. Os pais visualizam os dados em tempo real pelo smartphone. A pulseira deve durar 3 dias com bateria pequena. Não há Wi-Fi na área.</div>
+          <div class="cenario-resp" style="background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);color:var(--teal-400);">
+            <i class="fas fa-question"></i> Qual protocolo você escolheria?
+          </div>
+        </div>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-users"></i>
+        <span><strong>Gabaritos comentados (revelar após a discussão):</strong> <strong>A = LoRaWAN</strong> — km de cobertura, bateria longa, 1 gateway cobre o porto. <strong>B = Wi-Fi + MQTT</strong> — equipamentos na tomada, rede local disponível, dados em tempo real para dashboard. <strong>C = BLE</strong> — comunicação direta com smartphone dos pais, consumo mínimo para 3 dias de bateria, padrão de wearables de saúde.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · Conceito + LAB</div>
+        <div class="secao-titulo">4 exercícios — análise, código e projeto</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Filtro por RSSI no Scanner</div>
+      <p>Modifique o código BLE Scanner para exibir apenas dispositivos com RSSI acima de -70 dBm (sinal razoável ou melhor). Para cada dispositivo filtrado, classifique o sinal textualmente: "Excelente" (acima de -50), "Bom" (-50 a -70). Ordene a saída do mais forte ao mais fraco usando um array de structs antes de imprimir.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — Scanner com filtro e ordenação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#include</span> <span class="str">&lt;BLEDevice.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;BLEScan.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;algorithm&gt;</span>
+
+<span class="kw">struct</span> Dispositivo {
+  String nome;
+  String addr;
+  <span class="kw">int</span>    rssi;
+};
+
+BLEScan<span class="op">*</span> pScan;
+std::vector&lt;Dispositivo&gt; encontrados;
+
+<span class="kw">class</span> CB : <span class="kw">public</span> BLEAdvertisedDeviceCallbacks {
+  <span class="kw">void</span> <span class="fn">onResult</span>(BLEAdvertisedDevice d) {
+    <span class="kw">if</span> (d.<span class="fn">getRSSI</span>() >= <span class="num">-70</span>) {
+      encontrados.<span class="fn">push_back</span>({
+        d.<span class="fn">haveName</span>() ? d.<span class="fn">getName</span>().<span class="fn">c_str</span>() : <span class="str">"(sem nome)"</span>,
+        d.<span class="fn">getAddress</span>().<span class="fn">toString</span>().<span class="fn">c_str</span>(),
+        d.<span class="fn">getRSSI</span>()
+      });
+    }
+  }
+};
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">BLEDevice</span>::<span class="fn">init</span>(<span class="str">""</span>);
+  pScan = <span class="fn">BLEDevice</span>::<span class="fn">getScan</span>();
+  pScan-><span class="fn">setAdvertisedDeviceCallbacks</span>(<span class="kw">new</span> CB());
+  pScan-><span class="fn">setActiveScan</span>(<span class="kw">true</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  encontrados.<span class="fn">clear</span>();
+  pScan-><span class="fn">start</span>(<span class="num">5</span>, <span class="kw">false</span>);
+  pScan-><span class="fn">clearResults</span>();
+
+  <span class="cm">// Ordenar por RSSI decrescente</span>
+  std::<span class="fn">sort</span>(encontrados.<span class="fn">begin</span>(), encontrados.<span class="fn">end</span>(),
+    [](<span class="kw">const</span> Dispositivo& a, <span class="kw">const</span> Dispositivo& b){ <span class="kw">return</span> a.rssi > b.rssi; });
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"\n%d dispositivo(s) com sinal ≥ -70 dBm:\n"</span>, encontrados.<span class="fn">size</span>());
+  <span class="kw">for</span> (<span class="kw">auto</span>& d : encontrados) {
+    String qual = (d.rssi > <span class="num">-50</span>) ? <span class="str">"Excelente"</span> : <span class="str">"Bom"</span>;
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"  [%4d dBm] %-10s %-28s %s\n"</span>,
+      d.rssi, qual.<span class="fn">c_str</span>(), d.nome.<span class="fn">c_str</span>(), d.addr.<span class="fn">c_str</span>());
+  }
+  <span class="fn">delay</span>(<span class="num">5000</span>);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — BLE Advertising Beacon</div>
+      <p>Configure o ESP32 como um <strong>beacon BLE</strong> que anuncia (advertises) o nome "ESP32-SALA" e um dado custom no payload: a leitura atual de temperatura do DHT22 codificada em 2 bytes (multiplique por 100 para preservar 2 casas decimais — ex: 27.30°C → 2730 = 0x0AAA). Sem estabelecer conexão — apenas advertising contínuo. Verifique no nRF Connect que o beacon aparece com o nome correto e o Manufacturer Data visível.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — BLE Beacon com temperatura no payload</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#include</span> <span class="str">&lt;BLEDevice.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;BLEAdvertising.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+DHT dht(<span class="num">4</span>, DHT22);
+BLEAdvertising<span class="op">*</span> pAdv;
+
+<span class="kw">void</span> <span class="fn">atualizarBeacon</span>(<span class="kw">float</span> temp) {
+  <span class="kw">uint16_t</span> t100 = (<span class="kw">uint16_t</span>)(temp <span class="op">*</span> <span class="num">100</span>);
+
+  BLEAdvertisementData advData;
+  advData.<span class="fn">setName</span>(<span class="str">"ESP32-SALA"</span>);
+
+  <span class="cm">// Manufacturer Data: Company ID (0xFFFF custom) + 2 bytes de temp</span>
+  String mfr = <span class="str">"\xFF\xFF"</span>;      <span class="cm">// company ID (little-endian)</span>
+  mfr += (char)(t100 & 0xFF);   <span class="cm">// byte baixo</span>
+  mfr += (char)(t100 >> 8);     <span class="cm">// byte alto</span>
+  advData.<span class="fn">setManufacturerData</span>(mfr);
+
+  pAdv-><span class="fn">stop</span>();
+  pAdv-><span class="fn">setAdvertisementData</span>(advData);
+  pAdv-><span class="fn">start</span>();
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">BLEDevice</span>::<span class="fn">init</span>(<span class="str">"ESP32-SALA"</span>);
+  pAdv = <span class="fn">BLEDevice</span>::<span class="fn">getAdvertising</span>();
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+  <span class="fn">atualizarBeacon</span>(<span class="fn">dht</span>.<span class="fn">readTemperature</span>());
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">if</span> (!<span class="fn">isnan</span>(t)) { <span class="fn">atualizarBeacon</span>(t); <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Beacon: %.1f°C\n"</span>, t); }
+  <span class="fn">delay</span>(<span class="num">30000</span>);   <span class="cm">// atualiza a cada 30s</span>
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Tabela de decisão pessoal</div>
+      <p>Crie uma tabela de decisão de protocolos IoT com 5 critérios que você considera mais importantes para projetos reais (ex: autonomia de bateria, alcance, custo do módulo, complexidade de implementação, disponibilidade de infraestrutura). Para cada critério, pontue Wi-Fi+MQTT, BLE, LoRaWAN e Zigbee de 1 a 5. Some os pontos ponderados e justifique qual seria seu protocolo padrão de partida para um novo projeto IoT genérico — e quando você o trocaria por outro.</p>
+      <span class="dif-basico">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-lightbulb"></i>Referência — não há resposta única</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>A maioria dos projetos de lab e prototipagem começa com <strong>Wi-Fi + MQTT</strong> pelo ecossistema maduro, facilidade de debug e infraestrutura já presente (roteador).</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A troca para <strong>BLE</strong> é motivada por restrição de energia: sensor a bateria que precisa durar semanas ou meses.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A troca para <strong>LoRaWAN</strong> é motivada por alcance: quando o sensor está longe de qualquer rede Wi-Fi.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A troca para <strong>Zigbee</strong> é motivada por densidade de nós em espaço limitado com infraestrutura própria (automação residencial ou industrial).</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: gateway BLE → MQTT</div>
+      <p>Implemente um <strong>gateway BLE-MQTT</strong>: um ESP32 (gateway) faz scan BLE continuamente e, para cada dispositivo encontrado com RSSI &gt; -75 dBm, publica no broker MQTT (via Wi-Fi) no tópico <code style="font-family:'JetBrains Mono',monospace;">gateway/ble/ENDERECO_MAC</code> um JSON com <code style="font-family:'JetBrains Mono',monospace;">{"rssi": -62, "nome": "ESP32-SALA", "ts": 1234567}</code> onde ts é o valor de <code style="font-family:'JetBrains Mono',monospace;">millis()</code>. Isso simula um gateway IoT real que coleta dados BLE e os publica na infraestrutura de nuvem via MQTT.</p>
+      <span class="dif-desafio">Desafio · Integração</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — gateway BLE → MQTT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#include</span> <span class="str">&lt;BLEDevice.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;BLEScan.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> SSID = <span class="str">"Rede"</span>; <span class="kw">const char</span><span class="op">*</span> SENHA = <span class="str">"senha"</span>;
+<span class="kw">const char</span><span class="op">*</span> BROKER = <span class="str">"192.168.1.100"</span>;
+
+WiFiClient wifi; PubSubClient mqtt(wifi); BLEScan<span class="op">*</span> scan;
+
+<span class="kw">class</span> CB : <span class="kw">public</span> BLEAdvertisedDeviceCallbacks {
+  <span class="kw">void</span> <span class="fn">onResult</span>(BLEAdvertisedDevice d) {
+    <span class="kw">if</span> (d.<span class="fn">getRSSI</span>() < <span class="num">-75</span>) <span class="kw">return</span>;
+    <span class="kw">if</span> (!mqtt.<span class="fn">connected</span>()) <span class="kw">return</span>;
+
+    String addr = d.<span class="fn">getAddress</span>().<span class="fn">toString</span>().<span class="fn">c_str</span>();
+    addr.<span class="fn">replace</span>(<span class="str">":"</span>, <span class="str">""</span>);   <span class="cm">// remove : para usar no tópico</span>
+
+    StaticJsonDocument<<span class="num">128</span>> doc;
+    doc[<span class="str">"rssi"</span>] = d.<span class="fn">getRSSI</span>();
+    doc[<span class="str">"nome"</span>] = d.<span class="fn">haveName</span>() ? d.<span class="fn">getName</span>().<span class="fn">c_str</span>() : <span class="str">"?"</span>;
+    doc[<span class="str">"ts"</span>]   = (<span class="kw">unsigned long</span>)<span class="fn">millis</span>();
+
+    <span class="kw">char</span> buf[<span class="num">128</span>], topico[<span class="num">64</span>];
+    <span class="fn">serializeJson</span>(doc, buf);
+    <span class="fn">snprintf</span>(topico, <span class="kw">sizeof</span>(topico), <span class="str">"gateway/ble/%s"</span>, addr.<span class="fn">c_str</span>());
+    mqtt.<span class="fn">publish</span>(topico, buf);
+  }
+};
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="kw">while</span>(<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) <span class="fn">delay</span>(<span class="num">300</span>);
+  mqtt.<span class="fn">setServer</span>(BROKER, <span class="num">1883</span>);
+  <span class="kw">while</span>(!mqtt.<span class="fn">connect</span>(<span class="str">"ble-gateway"</span>)) <span class="fn">delay</span>(<span class="num">1000</span>);
+  <span class="fn">BLEDevice</span>::<span class="fn">init</span>(<span class="str">""</span>);
+  scan = <span class="fn">BLEDevice</span>::<span class="fn">getScan</span>();
+  scan-><span class="fn">setAdvertisedDeviceCallbacks</span>(<span class="kw">new</span> CB(), <span class="kw">true</span>);
+  scan-><span class="fn">setActiveScan</span>(<span class="kw">true</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span>(!mqtt.<span class="fn">connected</span>()) mqtt.<span class="fn">connect</span>(<span class="str">"ble-gateway"</span>);
+  mqtt.<span class="fn">loop</span>();
+  scan-><span class="fn">start</span>(<span class="num">3</span>, <span class="kw">false</span>);
+  scan-><span class="fn">clearResults</span>();
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 10</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fab fa-bluetooth-b"></i>
+        <strong>BLE</strong>
+        <p>GATT: Serviço → Característica. ESP32 como Peripheral ou Central. Advertising sem conexão = beacon. Meses de bateria.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-satellite-dish"></i>
+        <strong>LoRa / LoRaWAN</strong>
+        <p>CSS permite km de alcance. SF, BW e CR controlam trade-off alcance/velocidade. Gateway + Network Server = LoRaWAN. Duty cycle 1%.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>Zigbee e decisão</strong>
+        <p>Mesh com Coordinator, Router e End Device. End Device hiberna. Escolha: Wi-Fi=pesado, BLE=bateria/próximo, LoRa=longe, Zigbee=mesh denso.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> Você sabe justificar a escolha de protocolo para os 3 cenários do lab? Entende a diferença entre LoRa (rádio) e LoRaWAN (protocolo de rede)? Sabe o que é GATT no BLE? Se sim — pronto para a Semana 11: Edge Computing e Edge AI.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 11 — Edge Computing e Edge AI: latência, privacidade, processamento local vs. nuvem</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! BLE é o padrão da indústria para wearables médicos exatamente por essa combinação: consumo médio de ~1mA permite anos de bateria, comunicação direta com smartphone sem app complexo (Web BLE ou perfis GATT padrão como Health Thermometer), e alcance de 10m suficiente. Wi-Fi consome 100× mais energia. LoRa alcança mais longe, mas não se comunica diretamente com smartphones.'},
+  quiz2:{correct:'D',msg:'✅ Correto! LoRaWAN é a escolha certa: cobertura de km com 1 único gateway, 1 mensagem de GPS a cada 30min cabe perfeitamente no duty cycle de 1%, bateria de 1 ano é viável com Classe A (deep sleep entre transmissões). Zigbee mesh precisaria de dezenas de routers com alimentação constante espalhados pelos 500ha. Wi-Fi é inviável pela distância. BLE não chega a 100m por salto.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

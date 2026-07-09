@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 03 — Computação Embarcada e IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Tipos de dados cards ── */
+.tipo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:.75rem 0;}
+.tipo-card{border-radius:12px;padding:1rem 1.1rem;border:1px solid;}
+.tipo-card__name{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700;margin-bottom:.25rem;}
+.tipo-card__size{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;opacity:.7;}
+.tipo-card__range{font-family:'JetBrains Mono',monospace;font-size:.75rem;margin-bottom:.4rem;}
+.tipo-card__use{font-size:.78rem;color:var(--text-secondary);line-height:1.4;}
+
+/* ── PWM visual ── */
+.pwm-demo{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.pwm-demo__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.pwm-wave-wrap{display:flex;flex-direction:column;gap:1rem;}
+.pwm-wave{display:flex;align-items:center;gap:.75rem;}
+.pwm-wave__label{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);width:70px;flex-shrink:0;text-align:right;}
+.pwm-wave__track{flex:1;height:24px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;position:relative;}
+.pwm-wave__fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal-400),var(--teal-300));transition:width .4s ease;}
+.pwm-wave__val{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--teal-400);width:40px;text-align:right;}
+.pwm-slider-wrap{margin-top:1.25rem;display:flex;align-items:center;gap:1rem;}
+.pwm-slider{flex:1;accent-color:var(--teal-400);height:4px;cursor:pointer;}
+.pwm-slider-label{font-size:.8rem;color:var(--text-secondary);}
+
+/* ── Diagrama botão ── */
+.btn-diagram{display:flex;flex-direction:column;gap:.75rem;margin:.75rem 0;}
+.btn-state{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-radius:12px;border:1px solid;}
+.btn-state__icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.btn-state__info{}
+.btn-state__title{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:2px;}
+.btn-state__desc{font-size:.82rem;color:var(--text-secondary);line-height:1.5;}
+.btn-state__val{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;margin-left:auto;flex-shrink:0;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;position:relative;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Serial monitor mockup ── */
+.serial-mock{background:#0a0f0e;border:1px solid rgba(45,212,191,.2);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.serial-mock__header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.06);border-bottom:1px solid rgba(45,212,191,.15);}
+.serial-mock__title{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-400);}
+.serial-mock__speed{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-muted);}
+.serial-mock__body{padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.8;color:#a7f3d0;min-height:120px;}
+.serial-mock__line{display:block;}
+.serial-mock__line.dim{color:rgba(167,243,208,.35);}
+.serial-mock__line.bright{color:#fff;}
+.serial-mock__cursor{display:inline-block;width:8px;height:14px;background:var(--teal-400);animation:blink .8s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;cursor:pointer;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid{grid-template-columns:1fr;}
+  .tipo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){.tipo-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">03</div>
+    <h1 class="capa-titulo">Programação<br><em>Arduino</em>:<br>Pinos, PWM e Botões</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do tipo de dado ao LED com brilho controlado</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-memory"></i></div><span>Tipos de dados no Arduino — int, float, bool, String</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-toggle-on"></i></div><span>Portas digitais — INPUT, OUTPUT, INPUT_PULLUP</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wave-square"></i></div><span>Portas analógicas — ADC, analogRead e a escala 0–1023</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sliders-h"></i></div><span>PWM — simular sinal analógico com pulsos digitais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-hand-pointer"></i></div><span>Leitura de botão — debounce e INPUT_PULLUP</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>LAB: controlar brilho do LED e ler estado do botão</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Controlar brilho de LED com PWM via potenciômetro, ler botão com debounce e imprimir estado no Serial Monitor.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>Arduino Uno + cabo USB</li>
+        <li>LED + resistor 220Ω ou 330Ω</li>
+        <li>Potenciômetro 10kΩ (se disponível)</li>
+        <li>Botão tátil (push button)</li>
+        <li>Jumpers + protoboard</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Semana 1 — Conceitos, IoT, Edge AI</li>
+        <li>✅ Semana 2 — MCUs, pinout, Hello World</li>
+        <li>▶ Semana 3 — Programação, PWM, botão</li>
+        <li>Semana 4 — Sensores: DHT22, HC-SR04</li>
+        <li>Semana 5 — Atuadores: servo, relé, motor DC</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>O que muda hoje</div>
+      <ul class="info-lista">
+        <li>Na Semana 2 o Arduino só escrevia — hoje ele também lê</li>
+        <li>Primeiro contato com entrada de dados do mundo físico</li>
+        <li>PWM é o fundamento de servos, motores e dimmer</li>
+        <li>Debounce é a primeira vez que o software corrige imperfeição do hardware</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Tipos de dados e portas digitais</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-memory"></i>Tipos de dados no Arduino — por que isso importa num MCU</div>
+      <p>Em um computador com 16 GB de RAM você raramente precisa se preocupar com o tipo de dado. No Arduino Uno você tem <strong>2 KB de SRAM</strong>. Cada variável mal escolhida desperdiça memória que não tem substituto. Escolher o tipo certo não é pedantismo — é necessidade.</p>
+      <div class="tipo-grid">
+        <div class="tipo-card" style="background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.2);">
+          <div class="tipo-card__name" style="color:#60a5fa;">int</div>
+          <div class="tipo-card__size" style="color:#93c5fd;">2 bytes · 16 bits</div>
+          <div class="tipo-card__range" style="color:#93c5fd;">−32.768 a 32.767</div>
+          <div class="tipo-card__use">Contadores, pinos, valores inteiros genéricos. Tipo padrão do Arduino.</div>
+        </div>
+        <div class="tipo-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <div class="tipo-card__name" style="color:var(--teal-400);">unsigned int</div>
+          <div class="tipo-card__size" style="color:var(--teal-300);">2 bytes · 16 bits</div>
+          <div class="tipo-card__range" style="color:var(--teal-300);">0 a 65.535</div>
+          <div class="tipo-card__use">Quando o valor nunca é negativo. Dobra o alcance positivo do int.</div>
+        </div>
+        <div class="tipo-card" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.18);">
+          <div class="tipo-card__name" style="color:#fbbf24;">long</div>
+          <div class="tipo-card__size" style="color:#fde68a;">4 bytes · 32 bits</div>
+          <div class="tipo-card__range" style="color:#fde68a;">−2.1bi a 2.1bi</div>
+          <div class="tipo-card__use">millis() retorna long. Contadores de tempo e eventos longos.</div>
+        </div>
+        <div class="tipo-card" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.2);">
+          <div class="tipo-card__name" style="color:#c4b5fd;">float</div>
+          <div class="tipo-card__size" style="color:#ddd6fe;">4 bytes · 32 bits</div>
+          <div class="tipo-card__range" style="color:#ddd6fe;">±3.4 × 10³⁸</div>
+          <div class="tipo-card__use">Temperatura, tensão, valores com casas decimais. Operações lentas no MCU.</div>
+        </div>
+        <div class="tipo-card" style="background:rgba(34,197,94,.05);border-color:rgba(34,197,94,.2);">
+          <div class="tipo-card__name" style="color:#4ade80;">bool</div>
+          <div class="tipo-card__size" style="color:#86efac;">1 byte</div>
+          <div class="tipo-card__range" style="color:#86efac;">true / false</div>
+          <div class="tipo-card__use">Estado de pino, flags de controle, botões pressionados ou não.</div>
+        </div>
+        <div class="tipo-card" style="background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.18);">
+          <div class="tipo-card__name" style="color:#f87171;">byte</div>
+          <div class="tipo-card__size" style="color:#fca5a5;">1 byte · 8 bits</div>
+          <div class="tipo-card__range" style="color:#fca5a5;">0 a 255</div>
+          <div class="tipo-card__use">Valor PWM (0–255), dados de protocolo serial, economiza memória.</div>
+        </div>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Armadilha clássica:</strong> <code style="font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:3px;">int tempo = millis();</code> — isso vai estourar o int (máx 32.767) em apenas 32 segundos. Use sempre <code style="font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:3px;">unsigned long</code> para millis().</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-toggle-on"></i>Portas digitais — três modos, três comportamentos</div>
+      <p>Um pino digital só conhece dois estados: <strong>HIGH</strong> (5V no Uno) e <strong>LOW</strong> (0V). Mas o mesmo pino pode ser configurado de três formas diferentes, e a escolha errada causa bugs difíceis de debugar.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Modo</th><th>Função pinMode()</th><th>Uso típico</th><th>Detalhe importante</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Saída</strong></td>
+              <td><span class="badge">OUTPUT</span></td>
+              <td>Controlar LED, relé, buzzer</td>
+              <td>O Arduino <em>fornece</em> corrente. Máx 40mA por pino — sempre use resistor com LED.</td>
+            </tr>
+            <tr>
+              <td><strong>Entrada</strong></td>
+              <td><span class="badge">INPUT</span></td>
+              <td>Ler sensor digital, botão com resistor externo</td>
+              <td>Pino "flutuante" quando nada está conectado — leituras instáveis. Evite sem resistor externo.</td>
+            </tr>
+            <tr>
+              <td><strong>Entrada com pull-up</strong></td>
+              <td><span class="badge">INPUT_PULLUP</span></td>
+              <td>Ler botão sem resistor externo</td>
+              <td>Ativa resistor interno de ~20–50kΩ para 5V. Lógica invertida: pino lê HIGH quando botão solto, LOW quando pressionado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — modos de pino</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Configuração dos modos</span>
+<span class="fn">pinMode</span>(<span class="num">13</span>, OUTPUT);        <span class="cm">// pino 13 como saída (LED)</span>
+<span class="fn">pinMode</span>(<span class="num">7</span>,  INPUT);          <span class="cm">// pino 7 como entrada (precisa de resistor externo)</span>
+<span class="fn">pinMode</span>(<span class="num">2</span>,  INPUT_PULLUP);   <span class="cm">// pino 2 com pull-up interno (botão sem resistor)</span>
+
+<span class="cm">// Escrita digital</span>
+<span class="fn">digitalWrite</span>(<span class="num">13</span>, HIGH);       <span class="cm">// acende LED</span>
+<span class="fn">digitalWrite</span>(<span class="num">13</span>, LOW);        <span class="cm">// apaga LED</span>
+
+<span class="cm">// Leitura digital</span>
+<span class="kw">int</span> estado = <span class="fn">digitalRead</span>(<span class="num">2</span>);  <span class="cm">// HIGH ou LOW</span>
+
+<span class="cm">// Com INPUT_PULLUP: lógica INVERTIDA
+// Botão solto  → pino lê HIGH (pull-up mantém em 5V)
+// Botão apertado → pino lê LOW (botão conecta ao GND)</span>
+<span class="kw">if</span> (estado == LOW) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Botão pressionado!"</span>);
+}</code></pre>
+      </div>
+      <div class="destaque">
+        <strong>Por que INPUT_PULLUP?</strong> Sem ele, um pino INPUT desconectado "flutua" — oscila aleatoriamente entre HIGH e LOW por interferência elétrica. O pull-up interno garante um nível estável de referência. É a forma mais simples e comum de ler botões no Arduino.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Você liga o Arduino e o pino 2 configurado como INPUT lê HIGH e LOW aleatoriamente sem nada conectado. Qual é a causa?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O código está errado — digitalRead() foi chamado antes do pinMode()</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">O pino está queimado e precisa ser substituído</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Pino flutuante — sem resistor de pull-up ou pull-down, o pino capta ruído elétrico</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O Arduino Uno não suporta leitura digital no pino 2</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Analógico, PWM e o mundo contínuo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wave-square"></i>analogRead() — lendo o mundo analógico</div>
+      <p>O mundo físico é analógico: temperatura varia de 18.3°C a 18.4°C a 18.5°C — não pula de 18 para 19. O Arduino Uno tem um <strong>Conversor Analógico-Digital (ADC)</strong> de 10 bits nos pinos A0–A5 que converte tensão (0–5V) em um número inteiro (0–1023).</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">A matemática por baixo</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-equals"></i><span>ADC de 10 bits → 2¹⁰ = <strong>1024 valores possíveis</strong> (0 a 1023)</span></li>
+            <li><i class="fas fa-equals"></i><span>Resolução: 5V ÷ 1024 ≈ <strong>4,9 mV por passo</strong></span></li>
+            <li><i class="fas fa-equals"></i><span>0V → analogRead() = <strong>0</strong></span></li>
+            <li><i class="fas fa-equals"></i><span>2,5V → analogRead() ≈ <strong>512</strong></span></li>
+            <li><i class="fas fa-equals"></i><span>5V → analogRead() = <strong>1023</strong></span></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Convertendo para tensão real</p>
+          <div class="code-block" style="margin:0;">
+            <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+            <pre><code><span class="kw">int</span> leitura = <span class="fn">analogRead</span>(A0);
+
+<span class="cm">// Converter para tensão em volts</span>
+<span class="kw">float</span> tensao = leitura <span class="op">*</span> (<span class="num">5.0</span> / <span class="num">1023.0</span>);
+
+<span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Leitura: "</span>);
+<span class="fn">Serial</span>.<span class="fn">print</span>(leitura);
+<span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">" | Tensão: "</span>);
+<span class="fn">Serial</span>.<span class="fn">print</span>(tensao);
+<span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"V"</span>);</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>map() — remapeando escalas:</strong> a função <code style="font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:3px;">map(valor, deMin, deMax, paraMin, paraMax)</code> converte de uma escala para outra. Exemplo: <code style="font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:3px;">map(leitura, 0, 1023, 0, 255)</code> converte a leitura do potenciômetro para a escala PWM. Você vai usar isso hoje no LAB.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sliders-h"></i>PWM — simular analógico com digital</div>
+      <p>O Arduino Uno é um chip digital — seus pinos só sabem HIGH ou LOW. Mas às vezes você precisa de algo no meio: 50% de brilho num LED, 30% de velocidade num motor. A solução é o <strong>PWM (Pulse Width Modulation)</strong>.</p>
+      <p>A ideia é simples: ao invés de ligar ou desligar, o pino fica <strong>ligando e desligando muito rápido</strong> — tão rápido (490–980 Hz) que o LED parece ter brilho intermediário e o motor parece ter velocidade intermediária. O que você controla é o <strong>duty cycle</strong>: a porcentagem do tempo que o pino fica em HIGH.</p>
+
+      <!-- PWM demo interativo -->
+      <div class="pwm-demo">
+        <div class="pwm-demo__title">Visualização PWM — arraste o slider</div>
+        <div class="pwm-wave-wrap">
+          <div class="pwm-wave">
+            <span class="pwm-wave__label">Duty cycle</span>
+            <div class="pwm-wave__track"><div class="pwm-wave__fill" id="pwmBar" style="width:50%;"></div></div>
+            <span class="pwm-wave__val" id="pwmPct">50%</span>
+          </div>
+          <div class="pwm-wave">
+            <span class="pwm-wave__label">analogWrite</span>
+            <div class="pwm-wave__track"><div class="pwm-wave__fill" id="pwmBar2" style="width:50%;background:linear-gradient(90deg,#c4b5fd,#8b5cf6);"></div></div>
+            <span class="pwm-wave__val" id="pwmVal">127</span>
+          </div>
+          <div class="pwm-wave">
+            <span class="pwm-wave__label">LED 💡</span>
+            <div class="pwm-wave__track" style="height:28px;">
+              <div id="ledBar" style="width:50%;height:100%;background:linear-gradient(90deg,#fde68a,#fbbf24);border-radius:4px;transition:width .4s ease;"></div>
+            </div>
+            <span class="pwm-wave__val" id="ledBrightness">50%</span>
+          </div>
+        </div>
+        <div class="pwm-slider-wrap">
+          <span class="pwm-slider-label">0%</span>
+          <input type="range" min="0" max="255" value="127" class="pwm-slider" id="pwmSlider" oninput="updatePWM(this.value)">
+          <span class="pwm-slider-label">100%</span>
+        </div>
+        <div style="margin-top:.75rem;font-size:.78rem;color:var(--text-muted);">
+          <i class="fas fa-info-circle" style="color:var(--teal-400);"></i>
+          analogWrite(<strong>pino</strong>, <strong id="pwmValInline">127</strong>) — duty cycle: <strong id="pwmPctInline">50%</strong>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — PWM básico</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// analogWrite funciona APENAS nos pinos com ~ no Uno:
+// 3, 5, 6, 9, 10, 11</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(<span class="num">9</span>, OUTPUT);   <span class="cm">// pino 9 suporta PWM (~)</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Fade in: aumenta brilho do 0 ao máximo</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;=</span> <span class="num">255</span>; i<span class="op">++</span>) {
+    <span class="fn">analogWrite</span>(<span class="num">9</span>, i);   <span class="cm">// 0 = apagado, 255 = brilho máximo</span>
+    <span class="fn">delay</span>(<span class="num">10</span>);
+  }
+  <span class="cm">// Fade out: diminui brilho do máximo a 0</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i <span class="op">=</span> <span class="num">255</span>; i <span class="op">&gt;=</span> <span class="num">0</span>; i<span class="op">--</span>) {
+    <span class="fn">analogWrite</span>(<span class="num">9</span>, i);
+    <span class="fn">delay</span>(<span class="num">10</span>);
+  }
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — potenciômetro controla LED via PWM</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Potenciômetro no A0 controla brilho do LED no pino 9
+// map() converte a escala ADC (0–1023) para PWM (0–255)</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(<span class="num">9</span>, OUTPUT);   <span class="cm">// sem pinMode para entrada analógica</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> pot    = <span class="fn">analogRead</span>(A0);              <span class="cm">// 0–1023</span>
+  <span class="kw">int</span> brilho = <span class="fn">map</span>(pot, <span class="num">0</span>, <span class="num">1023</span>, <span class="num">0</span>, <span class="num">255</span>);  <span class="cm">// remapeia para 0–255</span>
+  <span class="fn">analogWrite</span>(<span class="num">9</span>, brilho);
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Pot: "</span>);   <span class="fn">Serial</span>.<span class="fn">print</span>(pot);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">" | PWM: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(brilho);
+  <span class="fn">delay</span>(<span class="num">50</span>);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Você quer 75% de brilho num LED via PWM. Qual valor passa para analogWrite()?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">75</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">150</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">191</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">255</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">Leitura de botão, debounce e Serial Monitor avançado</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hand-pointer"></i>O problema do bounce — quando o hardware mente</div>
+      <p>Você pressiona um botão uma vez. O Arduino detecta 47 pressionamentos. Bem-vindo ao <strong>bounce</strong>.</p>
+      <p>Quando você aperta um botão físico, os contatos metálicos internos não fecham de forma limpa — eles vibram mecanicamente por 5–20ms, abrindo e fechando dezenas de vezes antes de estabilizar. Para o Arduino rodando a 16 MHz, cada uma dessas oscilações é um evento distinto.</p>
+
+      <!-- Diagrama de estado do botão -->
+      <div class="btn-diagram">
+        <div class="btn-state" style="background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.2);">
+          <div class="btn-state__icon" style="background:rgba(34,197,94,.12);color:#4ade80;">🔓</div>
+          <div class="btn-state__info">
+            <div class="btn-state__title" style="color:#4ade80;">Botão SOLTO — INPUT_PULLUP</div>
+            <div class="btn-state__desc">Resistor interno puxa o pino para 5V. digitalRead() retorna HIGH. Estado de repouso.</div>
+          </div>
+          <div class="btn-state__val" style="color:#4ade80;">HIGH = 1</div>
+        </div>
+        <div class="btn-state" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.18);">
+          <div class="btn-state__icon" style="background:rgba(251,191,36,.12);color:#fbbf24;">⚡</div>
+          <div class="btn-state__info">
+            <div class="btn-state__title" style="color:#fbbf24;">Bounce — transição instável (~5–20ms)</div>
+            <div class="btn-state__desc">Contatos oscilam rapidamente. digitalRead() alterna HIGH/LOW dezenas de vezes. Software precisa ignorar essa janela.</div>
+          </div>
+          <div class="btn-state__val" style="color:#fbbf24;">? ? ?</div>
+        </div>
+        <div class="btn-state" style="background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);">
+          <div class="btn-state__icon" style="background:rgba(239,68,68,.12);color:#f87171;">🔒</div>
+          <div class="btn-state__info">
+            <div class="btn-state__title" style="color:#f87171;">Botão PRESSIONADO — estabilizado</div>
+            <div class="btn-state__desc">Contato fecha, pino vai para GND (0V). digitalRead() retorna LOW estável. Lógica INVERTIDA com INPUT_PULLUP.</div>
+          </div>
+          <div class="btn-state__val" style="color:#f87171;">LOW = 0</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — debounce por software com millis()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#define</span> PINO_BTN     <span class="num">2</span>
+<span class="pp">#define</span> DEBOUNCE_MS  <span class="num">50</span>   <span class="cm">// aguarda 50ms de estabilidade</span>
+
+<span class="kw">int</span>           estadoAnterior  = HIGH;
+<span class="kw">int</span>           estadoAtual     = HIGH;
+<span class="kw">unsigned long</span> ultimaMudanca   = <span class="num">0</span>;
+<span class="kw">int</span>           contadorCliques = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(PINO_BTN, INPUT_PULLUP);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> leitura = <span class="fn">digitalRead</span>(PINO_BTN);
+
+  <span class="cm">// Mudança detectada — reinicia o timer</span>
+  <span class="kw">if</span> (leitura != estadoAnterior) {
+    ultimaMudanca = <span class="fn">millis</span>();
+  }
+
+  <span class="cm">// Só processa se ficou estável por DEBOUNCE_MS</span>
+  <span class="kw">if</span> (<span class="fn">millis</span>() <span class="op">-</span> ultimaMudanca > DEBOUNCE_MS) {
+    <span class="kw">if</span> (leitura != estadoAtual) {
+      estadoAtual = leitura;
+
+      <span class="kw">if</span> (estadoAtual == LOW) {     <span class="cm">// LOW = pressionado (INPUT_PULLUP)</span>
+        contadorCliques<span class="op">++</span>;
+        <span class="fn">digitalWrite</span>(LED_BUILTIN, <span class="op">!</span><span class="fn">digitalRead</span>(LED_BUILTIN)); <span class="cm">// toggle</span>
+        <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Clique #"</span>);
+        <span class="fn">Serial</span>.<span class="fn">println</span>(contadorCliques);
+      }
+    }
+  }
+  estadoAnterior = leitura;
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Serial Monitor — além do println()</div>
+      <p>O Serial Monitor não serve só para imprimir texto. É a sua interface de debug, de monitoramento em tempo real e — com Serial.read() — de receber comandos do computador. Dominar o Serial é dominar o debug embarcado.</p>
+
+      <div class="serial-mock">
+        <div class="serial-mock__header">
+          <span class="serial-mock__title">Serial Monitor — 9600 baud</span>
+          <span class="serial-mock__speed">COM3 · Arduino Uno</span>
+        </div>
+        <div class="serial-mock__body">
+          <span class="serial-mock__line dim">Arduino iniciado! Aguardando interações...</span>
+          <span class="serial-mock__line">Pot: 0    | PWM: 0   | LED: APAGADO</span>
+          <span class="serial-mock__line">Pot: 312  | PWM: 77  | LED: 30% brilho</span>
+          <span class="serial-mock__line">Pot: 678  | PWM: 169 | LED: 66% brilho</span>
+          <span class="serial-mock__line dim">Clique #1 detectado</span>
+          <span class="serial-mock__line bright">Pot: 1023 | PWM: 255 | LED: MÁXIMO</span>
+          <span class="serial-mock__line">Clique #2 detectado</span>
+          <span class="serial-mock__cursor"></span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Serial avançado: recebendo comandos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Envie '1' ou '0' pelo Serial Monitor para ligar/desligar o LED</span>
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Digite 1 para ligar, 0 para desligar"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">Serial</span>.<span class="fn">available</span>() > <span class="num">0</span>) {     <span class="cm">// tem dado esperando?</span>
+    <span class="kw">char</span> cmd = <span class="fn">Serial</span>.<span class="fn">read</span>();         <span class="cm">// lê 1 byte</span>
+
+    <span class="kw">if</span> (cmd == <span class="str">'1'</span>) {
+      <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH);
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"LED LIGADO"</span>);
+    }
+    <span class="kw">else if</span> (cmd == <span class="str">'0'</span>) {
+      <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"LED DESLIGADO"</span>);
+    }
+  }
+}</code></pre>
+      </div>
+
+      <div class="card-titulo" style="margin-top:1rem;"><i class="fas fa-list-ol"></i>Passo a passo do LAB de hoje</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Montar o circuito do LED externo</div>
+            <div class="lab-step__desc">Conecte o pino 9 → resistor 220Ω → LED (lado longo = anodo) → GND. Diferente do LED embutido no pino 13, esse LED permite controle de brilho por PWM.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Montar o circuito do botão</div>
+            <div class="lab-step__desc">Conecte um lado do botão ao pino 2 e o outro lado ao GND. Isso é tudo — o resistor pull-up interno cuida do resto. Não precisa de resistor externo quando usar INPUT_PULLUP.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código de controle PWM</div>
+            <div class="lab-step__desc">Use o código de potenciômetro + PWM. Se não tiver potenciômetro, substitua por um fade automático no loop(). Observe o brilho variando suavemente.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Integrar botão com debounce</div>
+            <div class="lab-step__desc">Adicione o código de debounce. A cada clique no botão, o LED deve alternar entre ligado e desligado (toggle). Abra o Serial Monitor — confirme que cada pressionamento aparece uma única vez.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Desafio: combinar tudo</div>
+            <div class="lab-step__desc">Em um único programa: o botão alterna entre dois modos (fade automático vs brilho fixo no máximo). O Serial Monitor imprime qual modo está ativo a cada mudança. Sem delay() — use millis().</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <!-- ── EXERCÍCIOS ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Código</div>
+        <div class="secao-titulo">4 exercícios — do tipo de dado ao sistema completo</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-info-circle"></i>
+      <span>Os exercícios 1 e 2 são de código/análise. Os exercícios 3 e 4 requerem hardware. O gabarito mostra uma solução possível — outras implementações corretas existem.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Qual tipo de dado?</div>
+      <p>Para cada variável abaixo, justifique qual tipo de dado você usaria no Arduino e por quê:<br><br>
+      (a) O resultado de millis() — valor em milissegundos desde o boot<br>
+      (b) O valor lido por analogRead(A0) — entre 0 e 1023<br>
+      (c) A temperatura calculada de um sensor — ex: 23.7°C<br>
+      (d) O estado de um LED (ligado ou desligado)<br>
+      (e) Um valor PWM para enviar a um servo (0 a 255)</p>
+      <span class="dif-basico">Conceitual</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a) unsigned long</strong> — millis() retorna unsigned long. Um int estouraria em 32 segundos.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b) int</strong> — 0 a 1023 cabe num int (máx 32.767). Ou unsigned int para ser preciso.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(c) float</strong> — temperatura tem casas decimais. float é o único tipo nativo que as suporta no Arduino.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(d) bool</strong> — estado binário: true/false ou HIGH/LOW. Gasta apenas 1 byte.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(e) byte</strong> — 0 a 255 cabe exatamente num byte (1 byte, sem desperdício). int usaria 2 bytes para a mesma informação.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Encontre o bug</div>
+      <p>O código abaixo deveria piscar o LED a cada 2 segundos usando millis(), mas não funciona corretamente após alguns minutos. Identifique o bug e corrija-o.</p>
+      <div class="code-block" style="margin:.5rem 0;">
+        <div class="code-header"><span class="code-lang">Arduino C — com bug</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">int</span> ultimoToggle = <span class="num">0</span>;   <span class="cm">// ← bug aqui</span>
+<span class="kw">bool</span> estado = <span class="kw">false</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() { <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT); }
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimoToggle >= <span class="num">2000</span>) {
+    ultimoToggle = <span class="fn">millis</span>();
+    estado = <span class="op">!</span>estado;
+    <span class="fn">digitalWrite</span>(LED_BUILTIN, estado);
+  }
+}</code></pre>
+      </div>
+      <span class="dif-medio">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <p><strong>Bug:</strong> <code style="font-family:'JetBrains Mono',monospace;">int ultimoToggle</code> — int tem máximo de 32.767. millis() chega a 32.767 em apenas ~32 segundos. Depois disso, int faz overflow e o comportamento fica indefinido.</p>
+          <p style="margin-top:.5rem;"><strong>Correção:</strong> trocar <code style="font-family:'JetBrains Mono',monospace;">int</code> por <code style="font-family:'JetBrains Mono',monospace;">unsigned long</code> — que aguenta até ~49 dias sem overflow.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Corrigido</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+            <pre><code><span class="kw">unsigned long</span> ultimoToggle = <span class="num">0</span>;  <span class="cm">// ✅ correto</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Dimmer com 3 níveis</div>
+      <p>Implemente um dimmer de 3 níveis controlado por um botão: cada pressionamento avança para o próximo nível (25% → 50% → 100% → 25% → ...). Use debounce, PWM no pino 9 e imprima o nível atual no Serial Monitor a cada mudança.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> PINO_BTN   <span class="num">2</span>
+<span class="pp">#define</span> PINO_LED   <span class="num">9</span>
+<span class="pp">#define</span> DEBOUNCE   <span class="num">50</span>
+
+<span class="kw">const byte</span> niveis[]    = {<span class="num">64</span>, <span class="num">127</span>, <span class="num">255</span>};   <span class="cm">// 25%, 50%, 100%</span>
+<span class="kw">const char</span><span class="op">*</span> nomeNivel[] = {<span class="str">"25%"</span>, <span class="str">"50%"</span>, <span class="str">"100%"</span>};
+<span class="kw">int</span>           nivelAtual    = <span class="num">0</span>;
+<span class="kw">int</span>           estadoAnt     = HIGH;
+<span class="kw">int</span>           estadoAtual_  = HIGH;
+<span class="kw">unsigned long</span> ultimaMudanca = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(PINO_BTN, INPUT_PULLUP);
+  <span class="fn">pinMode</span>(PINO_LED, OUTPUT);
+  <span class="fn">analogWrite</span>(PINO_LED, niveis[nivelAtual]);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Nível inicial: 25%"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> leitura = <span class="fn">digitalRead</span>(PINO_BTN);
+  <span class="kw">if</span> (leitura != estadoAnt) ultimaMudanca = <span class="fn">millis</span>();
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimaMudanca > DEBOUNCE) {
+    <span class="kw">if</span> (leitura != estadoAtual_) {
+      estadoAtual_ = leitura;
+      <span class="kw">if</span> (estadoAtual_ == LOW) {
+        nivelAtual = (nivelAtual + <span class="num">1</span>) % <span class="num">3</span>;
+        <span class="fn">analogWrite</span>(PINO_LED, niveis[nivelAtual]);
+        <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Nível: "</span>);
+        <span class="fn">Serial</span>.<span class="fn">println</span>(nomeNivel[nivelAtual]);
+      }
+    }
+  }
+  estadoAnt = leitura;
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: Semáforo não-bloqueante</div>
+      <p>Implemente um semáforo com 3 LEDs (vermelho, amarelo, verde) nos pinos 11, 10 e 9. Ciclo: <strong>verde 5s → amarelo 2s → vermelho 5s</strong>. Restrições: <strong>sem delay()</strong> em nenhuma linha — use apenas millis(). O Serial Monitor deve imprimir a cor atual e o tempo restante a cada segundo.</p>
+      <span class="dif-desafio">Desafio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — Semáforo com millis()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> PIN_VERDE    <span class="num">9</span>
+<span class="pp">#define</span> PIN_AMARELO <span class="num">10</span>
+<span class="pp">#define</span> PIN_VERMELHO <span class="num">11</span>
+
+<span class="kw">const unsigned long</span> duracoes[] = {<span class="num">5000</span>, <span class="num">2000</span>, <span class="num">5000</span>};
+<span class="kw">const char</span><span class="op">*</span> nomes[]             = {<span class="str">"VERDE"</span>, <span class="str">"AMARELO"</span>, <span class="str">"VERMELHO"</span>};
+<span class="kw">const int</span>  pinos[]              = {PIN_VERDE, PIN_AMARELO, PIN_VERMELHO};
+
+<span class="kw">int</span>           fase           = <span class="num">0</span>;
+<span class="kw">unsigned long</span> inicioFase     = <span class="num">0</span>;
+<span class="kw">unsigned long</span> ultimoSegundo  = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">ativarFase</span>(<span class="kw">int</span> f) {
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">3</span>; i++) <span class="fn">digitalWrite</span>(pinos[i], i == f ? HIGH : LOW);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"FASE: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(nomes[f]);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">3</span>; i++) <span class="fn">pinMode</span>(pinos[i], OUTPUT);
+  <span class="fn">ativarFase</span>(fase);
+  inicioFase = <span class="fn">millis</span>();
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">unsigned long</span> agora = <span class="fn">millis</span>();
+
+  <span class="cm">// Avança fase quando duração expirar</span>
+  <span class="kw">if</span> (agora - inicioFase >= duracoes[fase]) {
+    fase = (fase + <span class="num">1</span>) % <span class="num">3</span>;
+    inicioFase = agora;
+    <span class="fn">ativarFase</span>(fase);
+  }
+
+  <span class="cm">// Imprime tempo restante a cada segundo</span>
+  <span class="kw">if</span> (agora - ultimoSegundo >= <span class="num">1000</span>) {
+    ultimoSegundo = agora;
+    <span class="kw">unsigned long</span> restante = (duracoes[fase] - (agora - inicioFase)) / <span class="num">1000</span>;
+    <span class="fn">Serial</span>.<span class="fn">print</span>(nomes[fase]);
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">": "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(restante); <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"s restantes"</span>);
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 3</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-memory"></i>
+        <strong>Tipos de dados</strong>
+        <p>unsigned long para millis(), float para decimais, byte para valores 0–255. Tipo errado = bug silencioso.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sliders-h"></i>
+        <strong>PWM</strong>
+        <p>analogWrite(pino, 0–255) em pinos ~. 255 = 100% duty cycle. map() converte entre escalas.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-hand-pointer"></i>
+        <strong>Botão + Debounce</strong>
+        <p>INPUT_PULLUP: lógica invertida, HIGH = solto. Debounce com millis(): ignora oscilações por 50ms.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> Seu LED acende com brilho variável? Seu botão registra exatamente um clique por pressionamento? Você entende por que <code style="font-family:'JetBrains Mono',monospace;">int</code> é errado para millis()? Se sim para os três — você está pronto para a Semana 4: sensores reais de temperatura e ultrassônico.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 4 — Sensores digitais e analógicos: DHT11/22, HC-SR04, leitura e calibração</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+function updatePWM(v){
+  const pct=Math.round((v/255)*100);
+  document.getElementById('pwmBar').style.width=pct+'%';
+  document.getElementById('pwmBar2').style.width=pct+'%';
+  document.getElementById('ledBar').style.width=pct+'%';
+  document.getElementById('pwmPct').textContent=pct+'%';
+  document.getElementById('pwmVal').textContent=v;
+  document.getElementById('ledBrightness').textContent=pct+'%';
+  document.getElementById('pwmValInline').textContent=v;
+  document.getElementById('pwmPctInline').textContent=pct+'%';
+}
+const quizData={
+  quiz1:{correct:'C',msg:'✅ Correto! Pino flutuante é o problema clássico de INPUT sem pull-up. Sem referência de tensão, o pino "capta" interferências eletromagnéticas do ambiente e oscila entre HIGH e LOW aleatoriamente. Solução: INPUT_PULLUP ou resistor externo de pull-up/pull-down.'},
+  quiz2:{correct:'C',msg:'✅ Correto! 75% de 255 = 191,25 → arredondado para 191. A fórmula é: analogWrite = round(percentual / 100 × 255). Para 25% = 64, para 50% = 127, para 100% = 255.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

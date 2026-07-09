@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 15 — AWS IoT Core</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-orange{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+
+/* ── AWS arch diagram ── */
+.arch-wrap{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.arch-wrap__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.5rem;}
+.arch-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.arch-node{border-radius:10px;padding:.65rem 1rem;font-size:.8rem;font-weight:700;text-align:center;flex-shrink:0;}
+.arch-arrow{color:var(--text-muted);font-size:.75rem;flex-shrink:0;}
+.arch-label{font-size:.68rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+
+/* ── Shadow JSON ── */
+.shadow-box{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.shadow-box__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.shadow-section{margin-bottom:1rem;}
+.shadow-section__label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;}
+
+/* ── Rules engine ── */
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.rule-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.rule-card__icon{font-size:1.25rem;margin-bottom:.4rem;display:block;}
+.rule-card__name{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.25rem;}
+.rule-card__sql{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.4rem .65rem;border-radius:6px;margin-bottom:.4rem;line-height:1.5;}
+.rule-card__desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* ── TLS cert visual ── */
+.cert-flow{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.cert-flow__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.cert-step{display:flex;align-items:flex-start;gap:1rem;margin-bottom:.85rem;}
+.cert-step:last-child{margin-bottom:0;}
+.cert-step__icon{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.cert-step__body{flex:1;}
+.cert-step__title{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.15rem;}
+.cert-step__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.resumo-grid,.rules-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .rules-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">☁️ LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">15</div>
+    <h1 class="capa-titulo">Integração<br><em>AWS IoT Core</em><br>na Nuvem</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do ESP32 à nuvem com segurança real</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fab fa-aws"></i></div><span>AWS IoT Core — arquitetura, endpoints, Things e políticas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-lock"></i></div><span>TLS mútuo e certificados X.509 — segurança em produção</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ghost"></i></div><span>Device Shadow — desired vs reported, controle remoto assíncrono</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code-branch"></i></div><span>Rules Engine — roteamento para S3, DynamoDB e Lambda</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-line"></i></div><span>Comparativo: AWS IoT Core vs Azure IoT Hub vs Google Cloud IoT</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: ESP32 + DHT22 → AWS IoT Core via MQTT/TLS + visualização</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Provisionar um Thing no AWS IoT Core, gerar certificados X.509, conectar o ESP32 via MQTT over TLS e visualizar leituras do DHT22 no MQTT Test Client do console AWS. Bônus: usar o Device Shadow para ligar/desligar um LED remotamente.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit + DHT22 + LED (pino 2)</li>
+        <li>Conta AWS (free tier — nenhum custo para este lab)</li>
+        <li>Biblioteca Arduino: <strong>PubSubClient</strong> + <strong>WiFiClientSecure</strong></li>
+        <li>Arquivos de certificado fornecidos pelo professor (ou gerados no console)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 9 — MQTT local com Mosquitto</li>
+        <li>✅ Sem. 14 — TinyML: anomalia + MQTT</li>
+        <li>▶ Sem. 15 — MQTT sobre TLS na nuvem AWS</li>
+        <li>Sem. 16 — Plataformas IoT: Node-RED e ThingSpeak</li>
+        <li>Sem. 17 — Eficiência energética e segurança em IoT</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>MQTT sem TLS em produção é inaceitável — qualquer um na rede lê seus dados</li>
+        <li>AWS IoT Core é o destino final de dados em projetos reais — S3, DynamoDB, Lambda, Timestream</li>
+        <li>Device Shadow resolve o problema mais difícil de IoT: controlar um dispositivo que pode estar offline</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">AWS IoT Core — arquitetura, Things e Device Shadow</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>O que muda ao sair do Mosquitto local para a nuvem</div>
+      <p>O Mosquitto que usamos na Semana 9 é excelente para laboratório: sem autenticação, sem criptografia, IP local fixo. Em produção, esses três pontos são problemas sérios — qualquer dispositivo na mesma rede consegue publicar ou assinar seus tópicos, e os dados trafegam em texto puro.</p>
+      <p>O <strong>AWS IoT Core</strong> é um broker MQTT gerenciado que resolve esses problemas: suporta milhões de dispositivos simultâneos, exige autenticação mútua via certificados X.509, criptografa toda comunicação com TLS 1.2+, e conecta nativamente a todos os serviços AWS. A diferença no código do ESP32 é menor do que parece — a mudança principal é usar <strong>WiFiClientSecure</strong> em vez de WiFiClient.</p>
+
+      <div class="arch-wrap">
+        <div class="arch-wrap__title">Arquitetura AWS IoT Core — do sensor ao serviço</div>
+        <div class="arch-row">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="arch-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">ESP32<br><span style="font-size:.65rem;opacity:.7;">DHT22</span></div>
+          </div>
+          <div class="arch-arrow">── MQTT/TLS 8883 ──→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="arch-node" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:#fb923c;">AWS IoT<br>Core</div>
+          </div>
+          <div class="arch-arrow">→ Rules Engine →</div>
+          <div style="display:flex;flex-direction:column;gap:.5rem;">
+            <div class="arch-node" style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#60a5fa;font-size:.75rem;">S3<br><span style="font-size:.62rem;opacity:.6;">histórico</span></div>
+            <div class="arch-node" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:#c4b5fd;font-size:.75rem;">DynamoDB<br><span style="font-size:.62rem;opacity:.6;">tempo real</span></div>
+            <div class="arch-node" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:.75rem;">Lambda<br><span style="font-size:.62rem;opacity:.6;">alertas</span></div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);line-height:1.7;">
+          <strong style="color:var(--text-secondary);">Porta 8883</strong> — MQTT sobre TLS (diferente da 1883 do Mosquitto sem TLS). O ESP32 usa <strong>WiFiClientSecure</strong> e carrega os 3 arquivos de certificado: CA raiz AWS, certificado do dispositivo e chave privada.
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito AWS IoT</th><th>O que é</th><th>Equivalente no Mosquitto local</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Thing</strong></td><td>Registro do dispositivo na AWS — nome, atributos, certificado associado</td><td>Não existe — Mosquitto não registra dispositivos</td></tr>
+            <tr><td><strong>Certificate</strong></td><td>Certificado X.509 que autentica o Thing — unique por dispositivo</td><td>Não existe — Mosquitto local sem autenticação</td></tr>
+            <tr><td><strong>Policy</strong></td><td>Define quais tópicos o dispositivo pode publicar/assinar</td><td>Não existe — Mosquitto permite tudo por padrão</td></tr>
+            <tr><td><strong>Endpoint</strong></td><td>URL do broker: <code style="font-family:'JetBrains Mono',monospace;font-size:.8em;">xxxxx.iot.us-east-1.amazonaws.com</code></td><td>IP local: <code style="font-family:'JetBrains Mono',monospace;font-size:.8em;">192.168.1.100</code></td></tr>
+            <tr><td><strong>Rules Engine</strong></td><td>Roteamento SQL-like de mensagens para outros serviços AWS</td><td>Não existe no Mosquitto básico</td></tr>
+            <tr><td><strong>Device Shadow</strong></td><td>Representação JSON do estado do dispositivo na nuvem</td><td>Não existe — precisa implementar manualmente</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ghost"></i>Device Shadow — sincronizando estado com dispositivos offline</div>
+      <p>O Device Shadow é um dos recursos mais poderosos do AWS IoT Core — e resolve o problema mais difícil de IoT: <strong>como enviar um comando a um dispositivo que pode estar offline no momento do envio?</strong></p>
+      <p>O Shadow é um documento JSON persistido na nuvem com duas seções: <strong>desired</strong> (o que a aplicação quer que o dispositivo faça) e <strong>reported</strong> (o que o dispositivo reportou como estado atual). O ESP32 assina o tópico de delta e aplica as mudanças ao reconectar — sem perder comandos enviados quando estava offline.</p>
+
+      <div class="shadow-box">
+        <div class="shadow-box__title">Documento Shadow — controle de LED remoto</div>
+        <div class="grid-2" style="margin:0;">
+          <div>
+            <div class="shadow-section__label" style="color:#60a5fa;">Desired — o que a app quer</div>
+            <div class="code-block" style="margin:0;">
+              <div class="code-header"><span class="code-lang">JSON</span></div>
+              <pre><code>{
+  <span class="str">"state"</span>: {
+    <span class="str">"desired"</span>: {
+      <span class="str">"led"</span>: <span class="str">"ON"</span>,
+      <span class="str">"intervalo"</span>: <span class="num">10</span>
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div>
+            <div class="shadow-section__label" style="color:var(--teal-400);">Reported — o que o ESP32 diz</div>
+            <div class="code-block" style="margin:0;">
+              <div class="code-header"><span class="code-lang">JSON</span></div>
+              <pre><code>{
+  <span class="str">"state"</span>: {
+    <span class="str">"reported"</span>: {
+      <span class="str">"led"</span>: <span class="str">"OFF"</span>,
+      <span class="str">"temp"</span>: <span class="num">27.3</span>,
+      <span class="str">"umid"</span>: <span class="num">64.8</span>
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);line-height:1.65;">
+          Quando desired ≠ reported, o IoT Core gera automaticamente um documento <strong>delta</strong> e o publica no tópico <code style="font-family:'JetBrains Mono',monospace;color:var(--teal-400);">$aws/things/NOME/shadow/update/delta</code>. O ESP32 assina esse tópico, aplica o delta e publica o novo reported. Se estiver offline, recebe o delta ao reconectar.
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Tópicos reservados do Shadow:</strong><br>
+        Publicar update: <code style="font-family:'JetBrains Mono',monospace;">$aws/things/NOME/shadow/update</code><br>
+        Receber delta: <code style="font-family:'JetBrains Mono',monospace;">$aws/things/NOME/shadow/update/delta</code><br>
+        Buscar estado atual: <code style="font-family:'JetBrains Mono',monospace;">$aws/things/NOME/shadow/get</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Comparativo: AWS IoT Core vs Azure IoT Hub vs Google Cloud IoT</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>AWS IoT Core</th><th>Azure IoT Hub</th><th>Google Cloud IoT</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Protocolo</strong></td><td>MQTT, HTTP, WebSocket</td><td>MQTT, AMQP, HTTP</td><td>MQTT, HTTP</td></tr>
+            <tr><td><strong>Autenticação</strong></td><td>X.509, SigV4</td><td>X.509, SAS token</td><td>JWT + RS256</td></tr>
+            <tr><td><strong>Device Twin/Shadow</strong></td><td>Device Shadow</td><td>Device Twin</td><td>Device Config</td></tr>
+            <tr><td><strong>Rules/Routing</strong></td><td>Rules Engine (SQL)</td><td>Message Routing</td><td>Pub/Sub nativo</td></tr>
+            <tr><td><strong>Free tier</strong></td><td>250k mensagens/mês</td><td>8.000 msg/dia</td><td><span style="color:#f87171;">Encerrado em 2023</span></td></tr>
+            <tr><td><strong>Ecossistema</strong></td><td>S3, DynamoDB, Lambda, Timestream</td><td>Cosmos DB, Stream Analytics, Functions</td><td>BigQuery, Cloud Functions, Firestore</td></tr>
+            <tr><td><strong>Uso do lab</strong></td><td><span class="badge">✅ Esta semana</span></td><td>Alternativa válida</td><td>Descontinuado — evitar</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 O aplicativo envia um comando via Device Shadow para ligar o LED do ESP32, mas o dispositivo está sem Wi-Fi naquele momento. O que acontece quando o ESP32 reconectar?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(239,68,68,.15);color:#f87171;">A</div>
+          <span class="quiz-texto">O comando é perdido — o Shadow só funciona com o dispositivo online</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">O IoT Core mantém o documento desired. Ao reconectar, o ESP32 recebe o delta (desired ≠ reported) e executa o comando pendente</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">O aplicativo recebe uma notificação de falha e deve reenviar o comando manualmente</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O Shadow expira em 30 segundos — o comando só seria executado se o ESP32 reconectasse antes disso</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">TLS mútuo, certificados X.509 e Rules Engine</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-lock"></i>TLS mútuo — por que é diferente do HTTPS comum</div>
+      <p>No HTTPS comum (banco, e-commerce), apenas o servidor apresenta um certificado — você verifica que está falando com o banco certo. Em IoT de produção, isso não é suficiente: o servidor também precisa verificar <strong>quem é o dispositivo</strong> que está se conectando. Isso é a autenticação mútua (mTLS — mutual TLS).</p>
+      <p>No AWS IoT Core, cada dispositivo tem seu próprio certificado X.509, assinado pela CA da AWS. O ESP32 apresenta esse certificado ao conectar, e a AWS verifica que ele pertence a um Thing registrado com a política correta. Sem certificado válido: conexão recusada, sem exceção.</p>
+
+      <div class="cert-flow">
+        <div class="cert-flow__title">Os 3 arquivos de certificado — o que cada um faz</div>
+        <div class="cert-step">
+          <div class="cert-step__icon" style="background:rgba(251,191,36,.12);color:#fbbf24;">🏛️</div>
+          <div class="cert-step__body">
+            <div class="cert-step__title">CA Root — AmazonRootCA1.pem</div>
+            <div class="cert-step__desc">Certificado da Autoridade Certificadora da Amazon. O ESP32 usa para verificar que está falando com um servidor legítimo da AWS — evita ataques man-in-the-middle. Mesmo para todos os dispositivos. Baixar em: <code style="font-family:'JetBrains Mono',monospace;font-size:.82em;">https://www.amazontrust.com/repository/AmazonRootCA1.pem</code></div>
+          </div>
+        </div>
+        <div class="cert-step">
+          <div class="cert-step__icon" style="background:rgba(45,212,191,.12);color:var(--teal-400);">📜</div>
+          <div class="cert-step__body">
+            <div class="cert-step__title">Device Certificate — xxxxx-certificate.pem.crt</div>
+            <div class="cert-step__desc">Certificado único do dispositivo, gerado no console AWS ou programaticamente. O ESP32 apresenta isso para provar sua identidade à AWS. <strong>Um certificado diferente por dispositivo.</strong> Associar ao Thing e à Policy no console.</div>
+          </div>
+        </div>
+        <div class="cert-step">
+          <div class="cert-step__icon" style="background:rgba(239,68,68,.12);color:#f87171;">🔑</div>
+          <div class="cert-step__body">
+            <div class="cert-step__title">Private Key — xxxxx-private.pem.key</div>
+            <div class="cert-step__desc">Chave privada RSA do dispositivo — par criptográfico do certificado. <strong>Nunca sai do dispositivo.</strong> Se vazar, revogar o certificado imediatamente no console. Não existe cópia na AWS.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>NUNCA commite certificados e chaves privadas no GitHub.</strong> Adicione os arquivos .pem ao .gitignore antes de criar o primeiro commit. Em projetos reais use AWS Secrets Manager ou variáveis de ambiente seguras. A chave privada comprometida dá acesso total ao dispositivo na nuvem.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code-branch"></i>Rules Engine — roteando mensagens para o ecossistema AWS</div>
+      <p>O Rules Engine do AWS IoT Core usa uma <strong>linguagem SQL-like</strong> para selecionar e transformar mensagens MQTT e enviá-las para outros serviços. Uma regra define: (1) de qual tópico selecionar, (2) quais campos do JSON pegar, (3) para qual serviço enviar.</p>
+
+      <div class="rules-grid">
+        <div class="rule-card" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);">
+          <span class="rule-card__icon">🗄️</span>
+          <div class="rule-card__name" style="color:#fbbf24;">→ S3</div>
+          <div class="rule-card__sql" style="background:rgba(251,191,36,.08);color:#fde68a;">SELECT * FROM<br>'sensor/dados'</div>
+          <div class="rule-card__desc">Salva cada mensagem como objeto JSON no S3. Ideal para histórico bruto, data lake, análise posterior com Athena.</div>
+        </div>
+        <div class="rule-card" style="background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.18);">
+          <span class="rule-card__icon">📊</span>
+          <div class="rule-card__name" style="color:#60a5fa;">→ DynamoDB</div>
+          <div class="rule-card__sql" style="background:rgba(96,165,250,.08);color:#93c5fd;">SELECT temp, umid,<br>timestamp() as ts<br>FROM 'sensor/dados'</div>
+          <div class="rule-card__desc">Insere campos específicos em tabela DynamoDB. Leitura em tempo real por aplicações web/mobile.</div>
+        </div>
+        <div class="rule-card" style="background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.18);">
+          <span class="rule-card__icon">⚡</span>
+          <div class="rule-card__name" style="color:#f87171;">→ Lambda</div>
+          <div class="rule-card__sql" style="background:rgba(239,68,68,.08);color:#fca5a5;">SELECT * FROM<br>'sensor/dados'<br>WHERE temp > 35</div>
+          <div class="rule-card__desc">Aciona função Lambda apenas quando temperatura ultrapassa 35°C. Lambda pode enviar e-mail, SMS ou notificação push.</div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Timestream</strong> é o serviço AWS otimizado para séries temporais IoT — escalável, com retenção configurável e integração nativa com Grafana. Para projetos IoT em produção que precisam de dashboards de time-series, Timestream + Grafana é a combinação padrão da indústria.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shield-alt"></i>Policy IoT — o que o dispositivo pode e não pode fazer</div>
+      <p>A política (Policy) é um documento JSON que define exatamente quais ações o certificado pode executar — publicar, assinar, conectar — e em quais tópicos. Princípio do menor privilégio: um sensor de temperatura não precisa de permissão para publicar em tópicos de outro dispositivo.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">JSON — Policy IoT mínima para ESP32 sensor</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>{
+  <span class="str">"Version"</span>: <span class="str">"2012-10-17"</span>,
+  <span class="str">"Statement"</span>: [
+    {
+      <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="str">"Action"</span>: <span class="str">"iot:Connect"</span>,
+      <span class="str">"Resource"</span>: <span class="str">"arn:aws:iot:*:*:client/esp32-sensor-*"</span>
+    },
+    {
+      <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="str">"Action"</span>: <span class="str">"iot:Publish"</span>,
+      <span class="str">"Resource"</span>: [
+        <span class="str">"arn:aws:iot:*:*:topic/sensor/dados"</span>,
+        <span class="str">"arn:aws:iot:*:*:topic/$aws/things/*/shadow/update"</span>
+      ]
+    },
+    {
+      <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="str">"Action"</span>: <span class="str">"iot:Subscribe"</span>,
+      <span class="str">"Resource"</span>: <span class="str">"arn:aws:iot:*:*:topicfilter/$aws/things/*/shadow/update/delta"</span>
+    },
+    {
+      <span class="str">"Effect"</span>: <span class="str">"Allow"</span>,
+      <span class="str">"Action"</span>: <span class="str">"iot:Receive"</span>,
+      <span class="str">"Resource"</span>: <span class="str">"arn:aws:iot:*:*:topic/$aws/things/*/shadow/update/delta"</span>
+    }
+  ]
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Por que o AWS IoT Core usa autenticação mútua (mTLS) em vez de apenas usuário e senha como o Mosquitto local?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div>
+          <span class="quiz-texto">Porque a AWS não suporta MQTT com usuário e senha — é uma limitação técnica da plataforma</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Porque senha pode ser interceptada ou vazada; o certificado X.509 + chave privada garante que só o dispositivo legítimo com a chave correta consegue autenticar — mesmo que o certificado seja copiado, sem a chave privada não serve</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">Para que a AWS possa cobrar por dispositivo — o certificado serve como sistema de billing por Thing</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">Porque em redes IoT o ESP32 não tem memória suficiente para armazenar uma senha longa</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — ESP32 → AWS IoT Core via MQTT/TLS + Device Shadow</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: provisionar um Thing no console AWS, gerar os certificados, carregar no ESP32 e conectar via MQTT over TLS. O ESP32 publica leituras do DHT22 a cada 10 segundos e assina o Shadow para controlar um LED remotamente pelo console AWS.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo — console AWS + Arduino IDE</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Criar o Thing no console AWS IoT</div>
+            <div class="lab-step__desc">Console AWS → IoT Core → Manage → Things → Create Things → Single thing. Nome: <code style="font-family:'JetBrains Mono',monospace;">esp32-lab</code>. Na etapa de certificado: <strong>Auto-generate a new certificate</strong>. Baixe os 4 arquivos (certificate, private key, public key e root CA). Crie e associe uma Policy com as permissões do exemplo da Aula 2. Anote o <strong>endpoint</strong> em IoT Core → Settings.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Preparar os certificados para o ESP32</div>
+            <div class="lab-step__desc">Abra cada arquivo .pem em um editor de texto. Cole o conteúdo nas variáveis do código Arduino entre aspas, preservando as quebras de linha com <code style="font-family:'JetBrains Mono',monospace;">\n</code>. O professor pode fornecer os arquivos já formatados. Nunca commite esses valores no GitHub — use variáveis de ambiente ou arquivo separado no .gitignore.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar e testar a conexão</div>
+            <div class="lab-step__desc">Faça upload do código abaixo. Serial Monitor a 115200. Você deve ver "Conectado ao AWS IoT Core!" após alguns segundos. No console AWS → IoT Core → MQTT Test Client, assine <code style="font-family:'JetBrains Mono',monospace;">sensor/#</code> para ver as mensagens chegando.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar o Device Shadow — controlar o LED</div>
+            <div class="lab-step__desc">No MQTT Test Client, publique em <code style="font-family:'JetBrains Mono',monospace;">$aws/things/esp32-lab/shadow/update</code> o JSON: <code style="font-family:'JetBrains Mono',monospace;">{"state":{"desired":{"led":"ON"}}}</code>. Observe o LED do ESP32 acender. Publique com <code style="font-family:'JetBrains Mono',monospace;">"OFF"</code> para apagar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 + DHT22 → AWS IoT Core via MQTT/TLS + Device Shadow</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;WiFiClientSecure.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="cm">// ── Configurações ──────────────────────────────────────────</span>
+<span class="kw">const char</span><span class="op">*</span> SSID       = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA      = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> AWS_ENDPOINT= <span class="str">"xxxxx.iot.us-east-1.amazonaws.com"</span>;
+<span class="kw">const char</span><span class="op">*</span> THING_NAME = <span class="str">"esp32-lab"</span>;
+<span class="pp">#define</span> PINO_DHT  <span class="num">4</span>
+<span class="pp">#define</span> PINO_LED  <span class="num">2</span>
+<span class="pp">#define</span> INTERVALO <span class="num">10000UL</span>
+
+<span class="cm">// ── Certificados — substituir pelo conteúdo real ───────────</span>
+<span class="kw">const char</span> CA_CERT[] PROGMEM = R<span class="str">"EOF(
+-----BEGIN CERTIFICATE-----
+... cole o conteúdo do AmazonRootCA1.pem aqui ...
+-----END CERTIFICATE-----
+)EOF"</span>;
+
+<span class="kw">const char</span> DEVICE_CERT[] PROGMEM = R<span class="str">"EOF(
+-----BEGIN CERTIFICATE-----
+... cole o conteúdo do xxxxx-certificate.pem.crt aqui ...
+-----END CERTIFICATE-----
+)EOF"</span>;
+
+<span class="kw">const char</span> PRIVATE_KEY[] PROGMEM = R<span class="str">"EOF(
+-----BEGIN RSA PRIVATE KEY-----
+... cole o conteúdo do xxxxx-private.pem.key aqui ...
+-----END RSA PRIVATE KEY-----
+)EOF"</span>;
+
+<span class="cm">// ── Tópicos ────────────────────────────────────────────────</span>
+<span class="kw">char</span> TOP_DADOS[<span class="num">64</span>], TOP_SHADOW_UPDATE[<span class="num">80</span>], TOP_SHADOW_DELTA[<span class="num">80</span>];
+
+DHT           dht(PINO_DHT, DHT22);
+WiFiClientSecure wifiSecure;
+PubSubClient  mqtt(wifiSecure);
+<span class="kw">unsigned long</span> ultimoEnvio = <span class="num">0</span>;
+<span class="kw">bool</span>          ledLigado   = <span class="kw">false</span>;
+
+<span class="cm">// ── Callback — Shadow delta recebido ──────────────────────</span>
+<span class="kw">void</span> <span class="fn">callbackMQTT</span>(<span class="kw">char</span><span class="op">*</span> topico, <span class="kw">byte</span><span class="op">*</span> payload, <span class="kw">unsigned int</span> tam) {
+  String msg = <span class="str">""</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;(<span class="kw">int</span>)tam;i++) msg+=(<span class="kw">char</span>)payload[i];
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[DELTA] %s\n"</span>, msg.<span class="fn">c_str</span>());
+
+  StaticJsonDocument<<span class="num">256</span>> doc;
+  <span class="kw">if</span> (!<span class="fn">deserializeJson</span>(doc, msg)) {
+    <span class="kw">const char</span><span class="op">*</span> ledVal = doc[<span class="str">"state"</span>][<span class="str">"led"</span>] | <span class="str">""</span>;
+    <span class="kw">if</span> (String(ledVal) == <span class="str">"ON"</span>)  { ledLigado=<span class="kw">true</span>;  <span class="fn">digitalWrite</span>(PINO_LED, HIGH); }
+    <span class="kw">if</span> (String(ledVal) == <span class="str">"OFF"</span>) { ledLigado=<span class="kw">false</span>; <span class="fn">digitalWrite</span>(PINO_LED, LOW);  }
+
+    <span class="cm">// Reportar novo estado ao Shadow</span>
+    StaticJsonDocument<<span class="num">128</span>> rep;
+    rep[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"led"</span>] = ledLigado ? <span class="str">"ON"</span> : <span class="str">"OFF"</span>;
+    <span class="kw">char</span> buf[<span class="num">128</span>]; <span class="fn">serializeJson</span>(rep, buf);
+    mqtt.<span class="fn">publish</span>(TOP_SHADOW_UPDATE, buf);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">conectar</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Wi-Fi"</span>);
+  <span class="kw">while</span>(<span class="fn">WiFi</span>.<span class="fn">status</span>()!=WL_CONNECTED){<span class="fn">delay</span>(<span class="num">400</span>);<span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>);}
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" OK"</span>);
+
+  wifiSecure.<span class="fn">setCACert</span>(CA_CERT);
+  wifiSecure.<span class="fn">setCertificate</span>(DEVICE_CERT);
+  wifiSecure.<span class="fn">setPrivateKey</span>(PRIVATE_KEY);
+
+  mqtt.<span class="fn">setServer</span>(AWS_ENDPOINT, <span class="num">8883</span>);
+  mqtt.<span class="fn">setCallback</span>(callbackMQTT);
+  mqtt.<span class="fn">setBufferSize</span>(<span class="num">1024</span>);   <span class="cm">// Shadow JSONs podem ser grandes</span>
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"AWS IoT"</span>);
+  <span class="kw">while</span> (!mqtt.<span class="fn">connect</span>(THING_NAME)) {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>); <span class="fn">delay</span>(<span class="num">1000</span>);
+  }
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" Conectado!"</span>);
+  mqtt.<span class="fn">subscribe</span>(TOP_SHADOW_DELTA);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">pinMode</span>(PINO_LED, OUTPUT);
+  <span class="fn">snprintf</span>(TOP_DADOS,          <span class="kw">sizeof</span>(TOP_DADOS),         <span class="str">"sensor/dados"</span>);
+  <span class="fn">snprintf</span>(TOP_SHADOW_UPDATE,  <span class="kw">sizeof</span>(TOP_SHADOW_UPDATE),  <span class="str">"$aws/things/%s/shadow/update"</span>,       THING_NAME);
+  <span class="fn">snprintf</span>(TOP_SHADOW_DELTA,   <span class="kw">sizeof</span>(TOP_SHADOW_DELTA),   <span class="str">"$aws/things/%s/shadow/update/delta"</span>,  THING_NAME);
+  <span class="fn">conectar</span>();
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span>(!mqtt.<span class="fn">connected</span>()) <span class="fn">conectar</span>();
+  mqtt.<span class="fn">loop</span>();
+
+  <span class="kw">if</span>(<span class="fn">millis</span>() - ultimoEnvio >= INTERVALO) {
+    ultimoEnvio = <span class="fn">millis</span>();
+    <span class="kw">float</span> t=<span class="fn">dht</span>.<span class="fn">readTemperature</span>(), u=<span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+    <span class="kw">if</span>(<span class="fn">isnan</span>(t)||<span class="fn">isnan</span>(u)) <span class="kw">return</span>;
+
+    <span class="cm">// Publicar dados do sensor</span>
+    StaticJsonDocument<<span class="num">128</span>> dados;
+    dados[<span class="str">"temp"</span>]=t; dados[<span class="str">"umid"</span>]=u; dados[<span class="str">"dispositivo"</span>]=THING_NAME;
+    <span class="kw">char</span> buf[<span class="num">128</span>]; <span class="fn">serializeJson</span>(dados, buf);
+    mqtt.<span class="fn">publish</span>(TOP_DADOS, buf);
+
+    <span class="cm">// Reportar estado no Shadow</span>
+    StaticJsonDocument<<span class="num">128</span>> shadow;
+    shadow[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"temp"</span>]=t;
+    shadow[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"umid"</span>]=u;
+    shadow[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"led"</span>]=ledLigado?<span class="str">"ON"</span>:<span class="str">"OFF"</span>;
+    <span class="fn">serializeJson</span>(shadow, buf);
+    mqtt.<span class="fn">publish</span>(TOP_SHADOW_UPDATE, buf);
+
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Publicado: T=%.1f U=%.1f LED=%s\n"</span>,t,u,ledLigado?<span class="str">"ON"</span>:<span class="str">"OFF"</span>);
+  }
+}</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-clock"></i>
+        <span><strong>A primeira conexão TLS pode levar 5–15 segundos</strong> no ESP32 — a handshake mTLS exige troca de certificados e geração de chaves de sessão, que são operações pesadas para um MCU a 240MHz. Conexões subsequentes (reconexão) são mais rápidas. Aumente o timeout do PubSubClient se necessário: <code style="font-family:'JetBrains Mono',monospace;">mqtt.setSocketTimeout(30)</code>.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Conceito</div>
+        <div class="secao-titulo">4 exercícios — do console ao pipeline completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Criar uma Rule para S3</div>
+      <p>No console AWS IoT Core, crie uma Rule que salva cada mensagem publicada em <code style="font-family:'JetBrains Mono',monospace;">sensor/dados</code> como um objeto JSON no S3. O nome do objeto deve incluir o timestamp: use a função SQL <code style="font-family:'JetBrains Mono',monospace;">timestamp()</code> na projeção. Verifique no S3 que os objetos estão chegando após 2 ciclos de publicação do ESP32. Qual seria o custo mensal estimado no free tier para 1 dispositivo publicando a cada 10 segundos por 30 dias?</p>
+      <span class="dif-basico">Console AWS + Cálculo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-calculator"></i>Cálculo de custo</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>1 mensagem a cada 10s × 60s × 60min × 24h × 30 dias = <strong>259.200 mensagens/mês</strong>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>AWS IoT Core free tier: <strong>250.000 mensagens/mês</strong>. Excesso: ~9.200 × $0,000001 = ~$0,009. Custo praticamente zero.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>S3: cada objeto ~100 bytes. 259.200 × 100B ≈ 26MB. Free tier S3: 5GB. <strong>Custo S3 = $0</strong>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>SQL da Rule: <code style="font-family:'JetBrains Mono',monospace;">SELECT *, timestamp() AS ts FROM 'sensor/dados'</code>. Action: S3, bucket configurado, key: <code style="font-family:'JetBrains Mono',monospace;">dados/${timestamp()}.json</code>.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Shadow para múltiplos parâmetros de configuração</div>
+      <p>Expanda o Device Shadow para controlar dois parâmetros remotamente via <strong>desired</strong>: (a) <code style="font-family:'JetBrains Mono',monospace;">led</code> (ON/OFF) e (b) <code style="font-family:'JetBrains Mono',monospace;">intervalo</code> (número de segundos entre publicações, de 5 a 3600). O ESP32 deve aplicar ambos os deltas ao reconectar e reportar o estado atual de ambos no <strong>reported</strong>. Teste publicando <code style="font-family:'JetBrains Mono',monospace;">{"state":{"desired":{"led":"ON","intervalo":5}}}</code> no MQTT Test Client e verifique o comportamento.</p>
+      <span class="dif-medio">LAB · Shadow</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — processar delta com intervalo configurável</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">unsigned long</span> intervaloAtual = <span class="num">10000UL</span>;  <span class="cm">// global</span>
+
+<span class="cm">// No callbackMQTT(), após processar LED:</span>
+<span class="kw">if</span> (doc[<span class="str">"state"</span>].<span class="fn">containsKey</span>(<span class="str">"intervalo"</span>)) {
+  <span class="kw">int</span> seg = doc[<span class="str">"state"</span>][<span class="str">"intervalo"</span>] | <span class="num">10</span>;
+  seg = <span class="fn">constrain</span>(seg, <span class="num">5</span>, <span class="num">3600</span>);
+  intervaloAtual = (<span class="kw">unsigned long</span>)seg <span class="op">*</span> <span class="num">1000UL</span>;
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Intervalo: %ds\n"</span>, seg);
+}
+
+<span class="cm">// Reported atualizado com ambos os campos:</span>
+shadow[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"led"</span>]      = ledLigado ? <span class="str">"ON"</span> : <span class="str">"OFF"</span>;
+shadow[<span class="str">"state"</span>][<span class="str">"reported"</span>][<span class="str">"intervalo"</span>] = (<span class="kw">int</span>)(intervaloAtual/<span class="num">1000</span>);
+
+<span class="cm">// No loop(), usar intervaloAtual:</span>
+<span class="kw">if</span>(<span class="fn">millis</span>() - ultimoEnvio >= intervaloAtual) { ... }</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Rule com filtro e Lambda simulado</div>
+      <p>Crie uma segunda Rule no AWS IoT que filtra apenas mensagens com temperatura acima de 30°C: <code style="font-family:'JetBrains Mono',monospace;">SELECT temp, umid FROM 'sensor/dados' WHERE temp > 30</code>. Configure a ação para republicar em um novo tópico <code style="font-family:'JetBrains Mono',monospace;">alertas/temperatura</code>. No MQTT Test Client, assine <code style="font-family:'JetBrains Mono',monospace;">alertas/#</code> e confirme que apenas as leituras acima do threshold chegam nesse tópico. Aquece o DHT22 com a mão para disparar o alerta.</p>
+      <span class="dif-medio">Console AWS · Rules Engine</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-info-circle"></i>Configuração da Rule no console</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Rule query statement:</strong> <code style="font-family:'JetBrains Mono',monospace;">SELECT temp, umid, timestamp() AS ts FROM 'sensor/dados' WHERE temp > 30</code></span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Action:</strong> Republish → tópico: <code style="font-family:'JetBrains Mono',monospace;">alertas/temperatura</code> · QoS 0</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Criar uma IAM Role para que o IoT Core tenha permissão de publicar no tópico destino (o console cria automaticamente).</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Resultado: para temperatura de 28°C, nenhuma mensagem em alertas/. Para 31°C, mensagem chega imediatamente com apenas os campos temp, umid e ts.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: visualizar no Grafana com Amazon Timestream</div>
+      <p>Crie uma Rule que envia dados do DHT22 para uma tabela no <strong>Amazon Timestream</strong> (free tier: 1GB armazenamento, 3 meses gratuitos). Instale o <strong>Grafana</strong> localmente (ou use Grafana Cloud gratuito), adicione o datasource Timestream e crie um painel com gráfico de linha de temperatura ao longo do tempo. Esse é o stack padrão de visualização IoT em produção da AWS. Documente com um print do painel funcionando.</p>
+      <span class="dif-desafio">Desafio · Stack completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-route"></i>Roteiro do desafio</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Timestream:</strong> AWS Console → Timestream → Create database (Standard) → Create table (ex: sensores_iot). Configurar retention: in-memory 1h, magnetic 7 dias.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Rule Timestream:</strong> <code style="font-family:'JetBrains Mono',monospace;">SELECT temp, umid FROM 'sensor/dados'</code> → Action: Timestream → database/table configurados → Dimensions: <code style="font-family:'JetBrains Mono',monospace;">dispositivo=${dispositivo}</code>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Grafana datasource:</strong> instalar plugin Amazon Timestream → configurar com credenciais IAM → criar query: <code style="font-family:'JetBrains Mono',monospace;">SELECT time, measure_value::double FROM sensores_iot.sensores_iot WHERE measure_name='temp' ORDER BY time DESC LIMIT 100</code>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>IAM: criar usuário com policy AmazonTimestreamFullAccess (ou ReadOnlyAccess para Grafana).</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 15</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fab fa-aws"></i>
+        <strong>AWS IoT Core</strong>
+        <p>Thing + Certificate + Policy = dispositivo autenticado. Porta 8883 com TLS. WiFiClientSecure + PubSubClient no ESP32. Endpoint único por conta.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-ghost"></i>
+        <strong>Device Shadow</strong>
+        <p>desired = o que a app quer. reported = o que o device está. delta = diferença. Dispositivo offline recebe delta ao reconectar — nenhum comando perdido.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-code-branch"></i>
+        <strong>Rules Engine + Segurança</strong>
+        <p>SQL-like filtra e roteia mensagens para S3, DynamoDB, Lambda. mTLS com X.509: CA Root + Device Cert + Private Key. Chave privada nunca sai do device.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O ESP32 está conectado ao AWS IoT Core e as mensagens aparecem no MQTT Test Client? O Device Shadow está controlando o LED? Você entende a diferença entre desired e reported? Se sim — pronto para a Semana 16: Node-RED e plataformas IoT visuais.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 16 — Plataformas IoT: ThingSpeak, Adafruit IO, Node-RED · dashboards em tempo real · automação visual</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Esse é o poder central do Device Shadow. O documento desired persiste na nuvem indefinidamente. Quando o ESP32 reconectar, o IoT Core automaticamente publica o delta (desired ≠ reported) no tópico de delta, e o dispositivo aplica o comando pendente. Nenhum comando é perdido — é por isso que o Shadow existe.'},
+  quiz2:{correct:'B',msg:'✅ Correto! A segurança do X.509 está no par criptográfico: o certificado (público) + a chave privada. Mesmo que alguém copie o certificado, sem a chave privada correspondente não consegue completar o handshake TLS. Com senha, qualquer um que intercepte ou adivinhe a senha tem acesso. A chave privada nunca sai do dispositivo e nunca transita pela rede.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

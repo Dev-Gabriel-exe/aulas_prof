@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 11 — Edge Computing e Edge AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Arquitetura cloud/fog/edge ── */
+.arch-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.arch-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.5rem;}
+.arch-layer{border-radius:12px;padding:1rem 1.25rem;margin-bottom:.75rem;border:1px solid;display:flex;align-items:center;gap:1.25rem;}
+.arch-layer:last-child{margin-bottom:0;}
+.arch-layer__icon{font-size:1.5rem;flex-shrink:0;width:40px;text-align:center;}
+.arch-layer__body{flex:1;}
+.arch-layer__name{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;margin-bottom:.2rem;}
+.arch-layer__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.arch-layer__tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem;}
+.arch-layer__latency{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;flex-shrink:0;text-align:right;}
+
+/* ── Drivers cards ── */
+.drivers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.driver-card{border-radius:12px;padding:1.1rem;border:1px solid;text-align:center;transition:transform .2s;}
+.driver-card:hover{transform:translateY(-2px);}
+.driver-card i{font-size:1.5rem;margin-bottom:.5rem;display:block;}
+.driver-card__title{font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:.4rem;}
+.driver-card__desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* ── Pipeline treino/inferência ── */
+.pipeline{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.pipeline__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.pipe-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.pipe-node{border-radius:9px;padding:.6rem 1rem;font-size:.8rem;font-weight:700;text-align:center;flex-shrink:0;}
+.pipe-arrow{color:var(--text-muted);font-size:.8rem;flex-shrink:0;}
+.pipe-label{font-size:.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+
+/* ── Quant visual ── */
+.quant-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.quant-box{border-radius:12px;padding:1.1rem;border:1px solid;}
+.quant-box__title{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;}
+.quant-bar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;}
+.quant-bar-label{font-size:.75rem;color:var(--text-muted);width:80px;flex-shrink:0;}
+.quant-bar-wrap{flex:1;height:18px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden;}
+.quant-bar{height:100%;border-radius:5px;display:flex;align-items:center;padding:0 6px;font-size:.65rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* ── Decisão framework ── */
+.decision-tree{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.decision-tree__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.dt-question{background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);border-radius:10px;padding:.85rem 1.1rem;margin-bottom:.6rem;font-size:.88rem;color:var(--text-primary);font-weight:600;}
+.dt-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+.dt-yes{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.2);border-radius:9px;padding:.75rem;font-size:.82rem;}
+.dt-no{background:rgba(96,165,250,.05);border:1px solid rgba(96,165,250,.18);border-radius:9px;padding:.75rem;font-size:.82rem;}
+.dt-result{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:6px;font-size:.75rem;font-weight:700;margin-top:.4rem;}
+.dt-edge{background:rgba(45,212,191,.15);color:var(--teal-400);border:1px solid rgba(45,212,191,.3);}
+.dt-cloud{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25);}
+.dt-hybrid{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.25);}
+
+/* ── Caso de uso cards ── */
+.caso-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.caso-card{border-radius:14px;padding:1.25rem;border:1px solid var(--card-border);background:var(--card-bg);}
+.caso-card__icon{font-size:1.4rem;margin-bottom:.5rem;display:block;}
+.caso-card__title{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.4rem;}
+.caso-card__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.55;margin-bottom:.6rem;}
+.caso-card__verdict{font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:6px;}
+
+/* ── Ferramentas grid ── */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.tool-card{border-radius:12px;padding:1rem;border:1px solid;background:rgba(255,255,255,.02);}
+.tool-card__name{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.25rem;}
+.tool-card__by{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.5rem;}
+.tool-card__desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.tool-card__targets{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:1000px){.drivers-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.caso-grid,.resumo-grid,.tools-grid,.quant-compare{grid-template-columns:1fr 1fr;}
+  .dt-row{grid-template-columns:1fr;}
+}
+@media(max-width:520px){
+  .caso-grid,.resumo-grid,.tools-grid,.drivers-grid,.quant-compare{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">💡 Teoria + Discussão</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">11</div>
+    <h1 class="capa-titulo">Edge Computing<br><em>e Edge AI</em><br>A inteligência na borda</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Quando processar aqui é melhor do que lá</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud"></i></div><span>Cloud vs Edge vs Fog — arquitetura em camadas e trade-offs</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Os 4 drivers do Edge: latência, privacidade, offline e banda</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Edge AI — treinar na nuvem, inferir na borda</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-compress-arrows-alt"></i></div><span>Quantização e compressão — modelos que cabem no microcontrolador</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tools"></i></div><span>Ferramentas: TFLite, ONNX Runtime, Edge Impulse, OpenVINO</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-users"></i></div><span>Discussão: framework de decisão borda vs nuvem · 6 casos reais</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade · Discussão em grupo</div>
+      <p>Grupos recebem casos de uso reais e aplicam o framework de decisão para justificar onde cada processamento deve ocorrer — na borda, na nuvem ou em arquitetura híbrida.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar hoje</div>
+      <ul class="info-lista">
+        <li>Nenhum hardware extra — aula conceitual e analítica</li>
+        <li>Fichas de casos de uso (atividade em grupo)</li>
+        <li>Exemplos visuais de pipelines de Edge AI</li>
+        <li>Referência: Edge Impulse Studio (demo online gratuito)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 8–9 — ESP32, Wi-Fi, HTTP, MQTT</li>
+        <li>✅ Sem. 10 — BLE, LoRa, Zigbee</li>
+        <li>▶ Sem. 11 — Edge Computing e Edge AI</li>
+        <li>Sem. 12 — TinyML: TFLite no ESP32</li>
+        <li>Sem. 13 — P2 (conteúdo Sem. 7 a 12)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>Semana que vem você vai rodar um modelo de ML no ESP32 — esta semana explica o porquê de fazer isso</li>
+        <li>A escolha entre borda e nuvem define custo, latência e privacidade do sistema inteiro</li>
+        <li>Edge AI é uma das áreas de maior crescimento em IoT industrial — dominar o conceito diferencia o profissional</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Edge Computing — a arquitetura em camadas e os 4 drivers</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>O problema que Edge Computing resolve</div>
+      <p>Por anos o modelo dominante foi simples: sensores coletam dados, enviam tudo para a nuvem, a nuvem processa e responde. Funciona bem quando a conexão é estável, a latência não importa e privacidade não é problema. Mas esse modelo quebra em um número crescente de cenários reais.</p>
+      <p>Imagine uma câmera de segurança industrial que precisa detectar um operador sem capacete e travar uma máquina em <strong>menos de 100ms</strong>. Nesse tempo, um pacote não vai à AWS, é processado e volta — a física não permite. Ou um veículo autônomo que não pode depender de conexão 4G para decidir se freia. Ou um hospital que não pode enviar imagens médicas de pacientes para servidores externos por questões de LGPD. Nesses casos, o processamento precisa acontecer <strong>na borda</strong> — no próprio dispositivo ou numa máquina próxima.</p>
+
+      <div class="arch-diagram">
+        <div class="arch-diagram__title">Arquitetura em 3 camadas — do sensor à nuvem</div>
+
+        <div class="arch-layer" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.25);">
+          <div class="arch-layer__icon" style="color:var(--teal-400);">🔌</div>
+          <div class="arch-layer__body">
+            <div class="arch-layer__name" style="color:var(--teal-400);">Edge (Borda)</div>
+            <div class="arch-layer__desc">O dispositivo em si — ESP32, Raspberry Pi, câmera inteligente, gateway industrial. Processa dados localmente, toma decisões em tempo real, armazena apenas o necessário.</div>
+            <div class="arch-layer__tags">
+              <span class="badge">ESP32</span><span class="badge">Raspberry Pi</span><span class="badge">NVIDIA Jetson</span><span class="badge">Arduino</span>
+            </div>
+          </div>
+          <div class="arch-layer__latency" style="color:var(--teal-400);">&lt;10ms</div>
+        </div>
+
+        <div style="text-align:center;color:var(--text-muted);font-size:.75rem;margin:.25rem 0;">↕ dados filtrados / eventos relevantes</div>
+
+        <div class="arch-layer" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);">
+          <div class="arch-layer__icon" style="color:#fbbf24;">🏭</div>
+          <div class="arch-layer__body">
+            <div class="arch-layer__name" style="color:#fbbf24;">Fog (névoa)</div>
+            <div class="arch-layer__desc">Servidor local ou gateway intermediário — numa fábrica, num prédio, numa subestação. Agrega dados de múltiplos dispositivos de borda, aplica lógica regional, faz buffer antes da nuvem.</div>
+            <div class="arch-layer__tags">
+              <span class="badge-yellow">Gateway MQTT</span><span class="badge-yellow">Servidor local</span><span class="badge-yellow">NUC / mini-PC</span>
+            </div>
+          </div>
+          <div class="arch-layer__latency" style="color:#fbbf24;">1–100ms</div>
+        </div>
+
+        <div style="text-align:center;color:var(--text-muted);font-size:.75rem;margin:.25rem 0;">↕ dados consolidados / relatórios / modelos treinados</div>
+
+        <div class="arch-layer" style="background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.2);">
+          <div class="arch-layer__icon" style="color:#60a5fa;">☁️</div>
+          <div class="arch-layer__body">
+            <div class="arch-layer__name" style="color:#60a5fa;">Cloud (Nuvem)</div>
+            <div class="arch-layer__desc">AWS, Azure, GCP — armazenamento ilimitado, poder de processamento elástico, treinamento de modelos, dashboards globais, integrações. Latência alta, mas capacidade ilimitada.</div>
+            <div class="arch-layer__tags">
+              <span class="badge-blue">AWS IoT</span><span class="badge-blue">Azure IoT Hub</span><span class="badge-blue">Google Cloud IoT</span>
+            </div>
+          </div>
+          <div class="arch-layer__latency" style="color:#60a5fa;">100ms–2s</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th-large"></i>Os 4 drivers — por que mover processamento para a borda</div>
+      <p>A decisão entre processar na borda ou na nuvem é sempre um trade-off. Quatro fatores técnicos definem quando a borda vence:</p>
+
+      <div class="drivers-grid">
+        <div class="driver-card" style="background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2);">
+          <i class="fas fa-tachometer-alt" style="color:#f87171;"></i>
+          <div class="driver-card__title" style="color:#f87171;">Latência</div>
+          <div class="driver-card__desc">Quando a decisão precisa acontecer em milissegundos. A física da rede não permite ir à nuvem e voltar nesse tempo.</div>
+        </div>
+        <div class="driver-card" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.2);">
+          <i class="fas fa-user-shield" style="color:#c4b5fd;"></i>
+          <div class="driver-card__title" style="color:#c4b5fd;">Privacidade</div>
+          <div class="driver-card__desc">Dados sensíveis — imagens médicas, biometria, dados pessoais — não podem sair do perímetro por regulação (LGPD, HIPAA) ou contrato.</div>
+        </div>
+        <div class="driver-card" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.2);">
+          <i class="fas fa-wifi" style="color:#fbbf24;"></i>
+          <div class="driver-card__title" style="color:#fbbf24;">Resiliência offline</div>
+          <div class="driver-card__desc">O sistema precisa funcionar mesmo sem internet — minas, plataformas offshore, veículos em área rural, fábricas com rede própria.</div>
+        </div>
+        <div class="driver-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <i class="fas fa-database" style="color:var(--teal-400);"></i>
+          <div class="driver-card__title" style="color:var(--teal-400);">Largura de banda</div>
+          <div class="driver-card__desc">Câmeras 4K, sensores de vibração a 10kHz — enviar tudo para a nuvem custa caro e satura a rede. Processar na borda e enviar só eventos reduz 100× o tráfego.</div>
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Cenário</th><th>Driver principal</th><th>Onde processar</th><th>Justificativa</th></tr></thead>
+          <tbody>
+            <tr><td>Frear carro autônomo</td><td><strong>Latência</strong></td><td><span class="badge">Borda</span></td><td>&lt;10ms — nuvem é fisicamente impossível</td></tr>
+            <tr><td>Diagnóstico por imagem em hospital</td><td><strong>Privacidade</strong></td><td><span class="badge">Borda / Fog</span></td><td>LGPD proíbe dados de saúde em nuvem pública</td></tr>
+            <tr><td>Sensor em mineradora subterrânea</td><td><strong>Offline</strong></td><td><span class="badge">Borda</span></td><td>Sem cobertura de rede na mina</td></tr>
+            <tr><td>Câmera de tráfego 4K, 30fps</td><td><strong>Banda</strong></td><td><span class="badge">Borda + Fog</span></td><td>Detectar veículos na borda, enviar só contagem</td></tr>
+            <tr><td>Análise histórica de consumo energético</td><td><em>Nenhum driver edge</em></td><td><span class="badge-blue">Nuvem</span></td><td>Dados históricos, latência não importa, precisa de poder de processamento</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Uma fábrica usa câmeras para detectar peças defeituosas na linha de produção em tempo real e rejeitar automaticamente as peças ruins. O sistema atual envia cada frame para a nuvem e recebe o resultado. O principal problema é:</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">A</div>
+          <span class="quiz-texto">Privacidade — imagens da fábrica não podem sair para a nuvem por questões industriais</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Latência e banda — o round-trip para a nuvem é muito lento para rejeitar peças em linha de produção rápida, e o volume de frames satura a rede</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">Resiliência offline — a fábrica pode ficar sem internet e o sistema para de funcionar</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">Custo — o armazenamento de imagens na nuvem é caro demais para uma fábrica pequena</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Edge AI — inferência na borda, quantização e ferramentas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Edge AI — o que muda quando o modelo vai para a borda</div>
+      <p>Em Machine Learning clássico, o modelo roda em um servidor com GPUs, memória abundante e energia ilimitada. Em Edge AI, o modelo roda em um ESP32 com <strong>520KB de RAM</strong>, sem sistema operacional completo, alimentado por bateria. Isso muda tudo — não em termos de teoria, mas de prática de engenharia.</p>
+      <p>O pipeline não muda de ponta a ponta: você ainda coleta dados, treina, avalia e itera. O que muda é a etapa de <strong>deployment</strong>: antes de carregar no dispositivo, o modelo precisa ser comprimido, convertido e otimizado para o hardware-alvo.</p>
+
+      <div class="pipeline">
+        <div class="pipeline__title">Pipeline Edge AI — da coleta ao dispositivo</div>
+        <div class="pipe-row">
+          <div class="pipe-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--teal-400);">Coleta<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">sensor/lab</span></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-node" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:#60a5fa;">Treino<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">nuvem/PC</span></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-node" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:#fbbf24;">Conversão<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">TFLite/ONNX</span></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-node" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#c4b5fd;">Quantização<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">int8 / float16</span></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">Deploy<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">ESP32 / Jetson</span></div>
+          <div class="pipe-arrow">→</div>
+          <div class="pipe-node" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#f87171;">Inferência<br><span style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;">local, offline</span></div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-top:.5rem;">
+          O modelo treinado na nuvem (float32, centenas de MB) precisa ser convertido e comprimido para caber na memória flash do dispositivo de borda (dezenas de KB).
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compress-arrows-alt"></i>Quantização — o que é e por que é essencial</div>
+      <p>Redes neurais treinadas em float32 (4 bytes por peso) são grandes demais para microcontroladores. A <strong>quantização</strong> converte os pesos para int8 (1 byte) ou int16, reduzindo o tamanho do modelo em <strong>4×</strong> e acelerando a inferência em hardware sem FPU — sem perda significativa de acurácia na maioria dos casos.</p>
+
+      <div class="quant-compare">
+        <div class="quant-box" style="border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.03);">
+          <div class="quant-box__title" style="color:#fbbf24;">Modelo float32 (sem quantização)</div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Tamanho</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:100%;background:rgba(251,191,36,.5);color:#fbbf24;">4.2 MB</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">RAM usada</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:100%;background:rgba(251,191,36,.4);color:#fbbf24;">1.8 MB</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Latência</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:100%;background:rgba(251,191,36,.3);color:#fbbf24;">480ms</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Acurácia</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:92%;background:rgba(251,191,36,.6);color:#fbbf24;">92.4%</div>
+            </div>
+          </div>
+        </div>
+        <div class="quant-box" style="border-color:rgba(45,212,191,.25);background:rgba(45,212,191,.04);">
+          <div class="quant-box__title" style="color:var(--teal-400);">Modelo int8 (quantizado)</div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Tamanho</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:25%;background:rgba(45,212,191,.6);color:var(--teal-400);">1.1 MB</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">RAM usada</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:24%;background:rgba(45,212,191,.5);color:var(--teal-400);">440 KB</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Latência</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:25%;background:rgba(45,212,191,.4);color:var(--teal-400);">120ms</div>
+            </div>
+          </div>
+          <div class="quant-bar-row">
+            <span class="quant-bar-label">Acurácia</span>
+            <div class="quant-bar-wrap">
+              <div class="quant-bar" style="width:91%;background:rgba(45,212,191,.6);color:var(--teal-400);">91.8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Regra prática:</strong> quantização int8 reduz tamanho e latência em ~4× com perda de acurácia menor que 1–2% na maioria dos modelos de classificação e detecção de anomalias. Para ESP32 (sem unidade de ponto flutuante dedicada), int8 é 10× mais rápido que float32 em operações matriciais.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tools"></i>Ferramentas do ecossistema Edge AI</div>
+      <p>O ecossistema de ferramentas para Edge AI amadureceu muito nos últimos anos. Para o próximo lab (Semana 12) usaremos TensorFlow Lite, mas é importante conhecer o panorama completo:</p>
+
+      <div class="tools-grid">
+        <div class="tool-card" style="border-color:rgba(251,146,60,.25);">
+          <div class="tool-card__name" style="color:#fb923c;">TensorFlow Lite</div>
+          <div class="tool-card__by" style="color:#fed7aa;">Google</div>
+          <div class="tool-card__desc">Runtime leve para inferência em dispositivos móveis e microcontroladores. TFLite Micro é a versão para MCUs sem SO.</div>
+          <div class="tool-card__targets"><span class="badge" style="background:rgba(251,146,60,.1);color:#fb923c;border-color:rgba(251,146,60,.2);">ESP32</span><span class="badge" style="background:rgba(251,146,60,.1);color:#fb923c;border-color:rgba(251,146,60,.2);">Android</span><span class="badge" style="background:rgba(251,146,60,.1);color:#fb923c;border-color:rgba(251,146,60,.2);">Raspberry Pi</span></div>
+        </div>
+        <div class="tool-card" style="border-color:rgba(45,212,191,.2);">
+          <div class="tool-card__name" style="color:var(--teal-400);">Edge Impulse</div>
+          <div class="tool-card__by" style="color:var(--teal-300);">Edge Impulse Inc.</div>
+          <div class="tool-card__desc">Plataforma end-to-end: coleta de dados, treino, deploy em um clique. Gratuita para projetos não-comerciais. Suporta ESP32, Arduino Nano 33.</div>
+          <div class="tool-card__targets"><span class="badge">ESP32</span><span class="badge">Arduino</span><span class="badge">Jetson</span></div>
+        </div>
+        <div class="tool-card" style="border-color:rgba(96,165,250,.2);">
+          <div class="tool-card__name" style="color:#60a5fa;">ONNX Runtime</div>
+          <div class="tool-card__by" style="color:#93c5fd;">Microsoft</div>
+          <div class="tool-card__desc">Runtime para modelos ONNX (formato aberto). Suporta PyTorch, sklearn, TF exportados. Ideal para gateways Linux e Raspberry Pi.</div>
+          <div class="tool-card__targets"><span class="badge-blue">Linux</span><span class="badge-blue">Raspberry Pi</span><span class="badge-blue">Windows</span></div>
+        </div>
+        <div class="tool-card" style="border-color:rgba(139,92,246,.2);">
+          <div class="tool-card__name" style="color:#c4b5fd;">OpenVINO</div>
+          <div class="tool-card__by" style="color:#ddd6fe;">Intel</div>
+          <div class="tool-card__desc">Otimizado para hardware Intel — CPUs, VPUs (Movidius), FPGAs. Excelente para câmeras inteligentes industriais.</div>
+          <div class="tool-card__targets"><span class="badge-purple">Intel NUC</span><span class="badge-purple">Movidius</span><span class="badge-purple">FPGA</span></div>
+        </div>
+        <div class="tool-card" style="border-color:rgba(239,68,68,.2);">
+          <div class="tool-card__name" style="color:#f87171;">TensorRT</div>
+          <div class="tool-card__by" style="color:#fca5a5;">NVIDIA</div>
+          <div class="tool-card__desc">Otimizador e runtime para GPUs NVIDIA. Usado em Jetson Nano/Orin para visão computacional embarcada de alta performance.</div>
+          <div class="tool-card__targets"><span class="badge-red">Jetson Nano</span><span class="badge-red">Jetson Orin</span></div>
+        </div>
+        <div class="tool-card" style="border-color:rgba(251,191,36,.2);">
+          <div class="tool-card__name" style="color:#fbbf24;">ExecuTorch</div>
+          <div class="tool-card__by" style="color:#fde68a;">Meta (PyTorch)</div>
+          <div class="tool-card__desc">Framework de deploy para modelos PyTorch em dispositivos móveis e embarcados. Alternativa moderna ao TFLite para quem treina em PyTorch.</div>
+          <div class="tool-card__targets"><span class="badge-yellow">Android</span><span class="badge-yellow">iOS</span><span class="badge-yellow">MCU</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ul"></i>Casos de uso típicos de Edge AI por categoria</div>
+      <div class="caso-grid">
+        <div class="caso-card">
+          <span class="caso-card__icon">🎤</span>
+          <div class="caso-card__title">Keyword Spotting</div>
+          <div class="caso-card__desc">Detectar palavras-chave em áudio continuamente ("Hey Siri", "Ok Google", "alerta"). Precisa funcionar 24/7 com bateria — roda no MCU, acorda o sistema apenas quando a palavra é detectada.</div>
+          <div class="caso-card__verdict"><span class="badge">Borda pura</span> — privacidade + energia + latência</div>
+        </div>
+        <div class="caso-card">
+          <span class="caso-card__icon">📳</span>
+          <div class="caso-card__title">Detecção de anomalias em vibração</div>
+          <div class="caso-card__desc">Motor industrial com acelerômetro a 1kHz. Classificar "normal" vs "falha iminente" em tempo real. Enviar alerta apenas quando anomalia detectada — de GB/dia para bytes/dia na rede.</div>
+          <div class="caso-card__verdict"><span class="badge">Borda</span> — banda + latência + offline</div>
+        </div>
+        <div class="caso-card">
+          <span class="caso-card__icon">📷</span>
+          <div class="caso-card__title">Visão computacional industrial</div>
+          <div class="caso-card__desc">Inspeção de qualidade em linha de produção a 30fps. Classificar peças OK/NOK em tempo real. Câmera com processamento embarcado (Jetson, OpenVINO) — sem latência de rede.</div>
+          <div class="caso-card__verdict"><span class="badge">Fog/Borda</span> — latência + banda + privacidade</div>
+        </div>
+        <div class="caso-card">
+          <span class="caso-card__icon">🌱</span>
+          <div class="caso-card__title">Irrigação inteligente</div>
+          <div class="caso-card__desc">Classificar tipo de solo e condições climáticas para decidir quando irrigar. Roda modelo simples no ESP32 com sensores de umidade, temperatura e luz.</div>
+          <div class="caso-card__verdict"><span class="badge">Borda</span> — offline + energia</div>
+        </div>
+        <div class="caso-card">
+          <span class="caso-card__icon">🏥</span>
+          <div class="caso-card__title">Triagem por imagem médica</div>
+          <div class="caso-card__desc">Pré-triagem de raio-X para detectar achados suspeitos. Modelo na borda hospitalar (privacidade LGPD), envia apenas metadados anonimizados para análise estatística na nuvem.</div>
+          <div class="caso-card__verdict"><span class="dt-result dt-hybrid">Híbrido</span> — inferência na borda, histórico na nuvem</div>
+        </div>
+        <div class="caso-card">
+          <span class="caso-card__icon">📊</span>
+          <div class="caso-card__title">Recomendação de produtos</div>
+          <div class="caso-card__desc">E-commerce com dados de milhões de usuários. Modelo de recomendação requer histórico completo, não há restrição de latência (usuário espera 2s) e precisa de poder computacional elevado.</div>
+          <div class="caso-card__verdict"><span class="dt-result dt-cloud">Nuvem</span> — sem driver edge válido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um modelo de detecção de gestos treinado em float32 ocupa 3.2MB. O ESP32 tem 4MB de flash e 520KB de RAM. Qual é a abordagem correta para fazer esse modelo rodar no ESP32?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Não é possível — modelos de ML são incompatíveis com microcontroladores por limitação de arquitetura</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div>
+          <span class="quiz-texto">Carregar o modelo diretamente na flash — 3.2MB cabe nos 4MB disponíveis</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div>
+          <span class="quiz-texto">Converter para TFLite e quantizar para int8 — reduz para ~800KB na flash e ~200KB de RAM, dentro dos limites do ESP32</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">Aumentar a flash do ESP32 com um chip externo — é possível expandir para 16MB e carregar o modelo float32 completo</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Discussão</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · Discussão em grupo · ~50 minutos</div>
+        <div class="secao-titulo">Framework de decisão e análise de cenários reais</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Framework de decisão — 5 perguntas que definem onde processar</div>
+      <p>Antes de qualquer decisão de arquitetura, responda estas cinco perguntas em ordem. A primeira que gerar uma resposta definitiva determina onde o processamento deve ocorrer.</p>
+
+      <div class="decision-tree">
+        <div class="decision-tree__title">Fluxo de decisão — borda vs nuvem</div>
+
+        <div class="dt-question">1. A latência da decisão é menor que ~100ms?</div>
+        <div class="dt-row">
+          <div class="dt-yes"><strong style="color:var(--teal-400);">SIM →</strong> Processamento na borda obrigatório. A nuvem não atende fisicamente.<br><span class="dt-result dt-edge">▶ Borda</span></div>
+          <div class="dt-no"><strong style="color:#60a5fa;">NÃO →</strong> Continue para a próxima pergunta.</div>
+        </div>
+
+        <div class="dt-question">2. Os dados contêm informações pessoais ou sensíveis sujeitas a LGPD/HIPAA?</div>
+        <div class="dt-row">
+          <div class="dt-yes"><strong style="color:var(--teal-400);">SIM →</strong> Processar na borda ou fog privada. Enviar apenas agregados anonimizados.<br><span class="dt-result dt-edge">▶ Borda / Fog</span></div>
+          <div class="dt-no"><strong style="color:#60a5fa;">NÃO →</strong> Continue.</div>
+        </div>
+
+        <div class="dt-question">3. O sistema precisa funcionar sem conexão com a internet?</div>
+        <div class="dt-row">
+          <div class="dt-yes"><strong style="color:var(--teal-400);">SIM →</strong> Lógica crítica na borda; sincronizar com nuvem quando conectar.<br><span class="dt-result dt-edge">▶ Borda + sync</span></div>
+          <div class="dt-no"><strong style="color:#60a5fa;">NÃO →</strong> Continue.</div>
+        </div>
+
+        <div class="dt-question">4. O volume de dados brutos torna o envio para a nuvem inviável por custo ou banda?</div>
+        <div class="dt-row">
+          <div class="dt-yes"><strong style="color:var(--teal-400);">SIM →</strong> Processar/filtrar na borda, enviar apenas eventos relevantes ou agregados.<br><span class="dt-result dt-hybrid">▶ Híbrido</span></div>
+          <div class="dt-no"><strong style="color:#60a5fa;">NÃO →</strong> Continue.</div>
+        </div>
+
+        <div class="dt-question">5. Nenhuma das anteriores se aplica?</div>
+        <div class="dt-row">
+          <div class="dt-yes"><strong style="color:#60a5fa;">→</strong> A nuvem é a escolha padrão: elasticidade, manutenção zero de infraestrutura, modelos atualizados centralmente.<br><span class="dt-result dt-cloud">▶ Nuvem</span></div>
+          <div class="dt-no" style="background:rgba(45,212,191,.03);">Requisitos conflitantes? Avalie arquitetura híbrida:<br><span class="dt-result dt-hybrid">▶ Híbrido</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-users"></i>Atividade em grupo — 6 cenários para aplicar o framework</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Formação dos grupos e distribuição</div>
+            <div class="lab-step__desc">Dividam-se em 6 grupos (um por cenário). Cada grupo tem 8 minutos para analisar o cenário, aplicar o framework de decisão e preparar uma justificativa técnica de 2 minutos.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Análise com o framework</div>
+            <div class="lab-step__desc">Para cada cenário: (a) identifique os drivers presentes, (b) responda as 5 perguntas do framework em ordem, (c) justifique qual dado vai para onde e por quê.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Apresentação e debate</div>
+            <div class="lab-step__desc">Cada grupo apresenta em 2 minutos. Os outros grupos podem desafiar a decisão com contra-argumentos técnicos. O professor media e revela o gabarito comentado após cada apresentação.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aviso-teal" style="margin-top:1.25rem;">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>Cenários para discussão</strong> — leia o seu e aplique o framework antes de ver os gabaritos abaixo.</span>
+      </div>
+
+      <div class="tabela-wrap" style="margin-top:.75rem;">
+        <table>
+          <thead><tr><th>#</th><th>Cenário</th><th>Dados gerados</th><th>Requisito crítico</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A</strong></td><td>Medidor inteligente de energia elétrica residencial — leitura de consumo a cada 15 min</td><td>288 leituras/dia · ~10KB/dia</td><td>Dados disponíveis para a concessionária; custo de conectividade mínimo</td></tr>
+            <tr><td><strong>B</strong></td><td>Capacete de minerador com sensor de CO₂ — alarme de gás tóxico</td><td>1 leitura/s · sensor analógico</td><td>Alarme em &lt;500ms; ambiente subterrâneo sem rede</td></tr>
+            <tr><td><strong>C</strong></td><td>Câmera de creche — detecção de choro de bebê para notificar pais</td><td>Áudio contínuo 24/7 · 8kHz</td><td>Privacidade: áudio de crianças não pode sair do estabelecimento</td></tr>
+            <tr><td><strong>D</strong></td><td>Drone agrícola — identificar pragas em imagens de plantio durante o voo</td><td>Imagens 12MP a cada 2s</td><td>Sem cobertura celular no campo; decisão de rota em tempo real</td></tr>
+            <tr><td><strong>E</strong></td><td>Plataforma de e-learning — recomendar próximo conteúdo para 50k usuários</td><td>Logs de navegação · histórico completo</td><td>Personalização precisa; sem urgência de latência</td></tr>
+            <tr><td><strong>F</strong></td><td>Robô cirúrgico — classificar tecido saudável vs tumoral durante operação</td><td>Imagens de câmera endoscópica · 60fps</td><td>Latência &lt;50ms; dados médicos sigilosos; ambiente sem internet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · Análise e Projeto</div>
+        <div class="secao-titulo">4 exercícios — do conceito ao esboço de arquitetura</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Gabaritos dos cenários</div>
+      <p>Após a discussão em grupo, anote a decisão que você considera correta para cada um dos 6 cenários (A–F) e os principais argumentos técnicos. Para os cenários onde você discordou do gabarito, escreva qual argumento mudaria sua resposta e qual requisito você não havia considerado inicialmente.</p>
+      <span class="dif-basico">Conceito · Registro</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-check-double"></i>Gabaritos comentados</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>A — Híbrido:</strong> lógica de tarifa e cálculo local no medidor (fog/borda), envio diário para servidor da concessionária (nuvem). Latência não importa; privacidade moderada; volume pequeno.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>B — Borda pura:</strong> latência crítica (&lt;500ms) + offline subterrâneo. Regra simples de threshold no ESP32 — não precisa de ML. Nunca depender de rede para salvar vida.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>C — Borda:</strong> driver de privacidade. Áudio de crianças não pode sair do estabelecimento. Modelo TinyML de keyword spotting (choro) roda no ESP32 ou Raspberry Pi local. Envia apenas evento "choro detectado" para os pais.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>D — Borda:</strong> offline no campo + latência para correção de rota + volume de imagens. Modelo de visão embarcado (Jetson ou similar) no drone. Sincroniza dados com servidor ao retornar.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>E — Nuvem:</strong> nenhum driver edge válido. Recomendação precisa de histórico de todos os usuários, sem restrição de latência, sem problema de privacidade não-resolvível. Nuvem é a arquitetura óbvia.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>F — Borda pura obrigatória:</strong> tripla combinação — latência &lt;50ms (impossível via nuvem), privacidade de dados médicos (LGPD/CFM), ambiente sem internet (centro cirúrgico). Hardware dedicado com GPU embarcada (Jetson Orin ou similar).</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Calculando viabilidade de banda</div>
+      <p>Uma câmera de inspeção industrial gera frames de 1280×720 pixels em RGB (3 bytes/pixel) a 15fps. (a) Calcule o volume de dados brutos por hora em GB. (b) Supondo que a detecção de defeitos na borda reduz o envio para apenas os frames com defeito detectado, e que 2% das peças têm defeito, calcule o volume por hora após o filtro. (c) Qual é a redução percentual? Justifique por que essa redução torna a arquitetura Edge+Cloud viável onde Cloud-only não seria.</p>
+      <span class="dif-medio">Cálculo + Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-calculator"></i>Resolução</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a) Bruto:</strong> 1280 × 720 × 3 bytes = 2.764.800 bytes/frame ≈ 2.76 MB/frame. A 15fps: 2.76 × 15 = 41.4 MB/s = 149 GB/hora. Para 24h = 3.574 GB/dia por câmera. Inviável.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b) Com filtro edge (2% defeitos):</strong> 149 GB × 0,02 = 2,98 GB/hora = 71,6 GB/dia. Ainda alto, mas 50× menor.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(c) Redução:</strong> 98%. Mas o real ganho é maior — na prática não se envia o frame inteiro, apenas a região de interesse (bounding box) e metadados: pode chegar a 99,9% de redução. Uma linha de 1Gbps suporta centenas de câmeras com o modelo edge.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Na arquitetura Cloud-only com 1Gbps de uplink: 149 GB/hora = ~333 Mbps — saturaria uma linha de 1Gbps com apenas 3 câmeras. Com edge filtering, 1Gbps comporta centenas de câmeras.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Esboçando uma arquitetura híbrida</div>
+      <p>Projete a arquitetura de um sistema de monitoramento de qualidade do ar para uma cidade de médio porte com 50 sensores espalhados. Cada sensor mede CO₂, PM2.5, temperatura e umidade a cada 1 minuto. Os requisitos são: (a) alerta local imediato se CO₂ ultrapassar 1000ppm; (b) dashboard público online com dados em tempo real; (c) histórico de 2 anos para análise epidemiológica; (d) os dados são públicos — sem restrição de privacidade. Descreva quais tarefas ocorrem na borda (sensor), na fog (servidor municipal) e na nuvem.</p>
+      <span class="dif-medio">Projeto de Arquitetura</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-sitemap"></i>Arquitetura sugerida</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-microchip" style="color:var(--teal-400);"></i><span><strong>Borda (sensor ESP32):</strong> leitura dos sensores, threshold de CO₂ &gt;1000ppm → LED/buzzer local imediato (latência &lt;100ms), publicação via MQTT a cada 60s para o servidor municipal.</span></li>
+            <li><i class="fas fa-building" style="color:#fbbf24;"></i><span><strong>Fog (servidor municipal):</strong> broker MQTT local, agrega dados dos 50 sensores, persiste últimas 24h em banco local (resiliência se internet cair), calcula índice de qualidade do ar por zona, repassa para nuvem via HTTPS a cada 5 min.</span></li>
+            <li><i class="fas fa-cloud" style="color:#60a5fa;"></i><span><strong>Nuvem:</strong> banco de dados time-series (InfluxDB/TimescaleDB), API pública REST, dashboard Grafana, histórico de 2 anos, modelos de ML para previsão de qualidade do ar.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>O driver de latência exige borda (alerta imediato). O volume pequeno (50 sensores × 4 variáveis) permite nuvem sem filtro. A resiliência justifica o fog como buffer intermediário.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: detectar anomalia no ESP32</div>
+      <p>Implemente no ESP32 um detector de anomalias simples usando <strong>z-score</strong> (sem modelo de ML): leia o DHT22 a cada 5 segundos e mantenha uma janela deslizante das últimas 10 leituras de temperatura. Calcule a média e o desvio padrão da janela. Se a leitura atual estiver a mais de 2 desvios padrões da média, classifique como "ANOMALIA" e publique via MQTT no tópico <code style="font-family:'JetBrains Mono',monospace;">borda/anomalia</code> com um JSON contendo o valor, a média e o z-score. Isso simula o padrão básico de Edge AI para detecção de anomalias em sensores industriais.</p>
+      <span class="dif-desafio">Desafio · Implementação</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — z-score anomaly detection no ESP32</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;math.h&gt;</span>
+
+<span class="pp">#define</span> JANELA     <span class="num">10</span>
+<span class="pp">#define</span> Z_THRESH   <span class="num">2.0f</span>
+<span class="pp">#define</span> PINO_DHT   <span class="num">4</span>
+
+DHT dht(PINO_DHT, DHT22);
+WiFiClient wc; PubSubClient mqtt(wc);
+<span class="kw">float</span> janela[JANELA]; <span class="kw">int</span> idx = <span class="num">0</span>; <span class="kw">bool</span> cheia = <span class="kw">false</span>;
+
+<span class="kw">float</span> <span class="fn">media</span>() {
+  <span class="kw">int</span> n = cheia ? JANELA : idx;
+  <span class="kw">float</span> s = <span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;n;i++) s += janela[i];
+  <span class="kw">return</span> n ? s/n : <span class="num">0</span>;
+}
+
+<span class="kw">float</span> <span class="fn">desvio</span>(<span class="kw">float</span> m) {
+  <span class="kw">int</span> n = cheia ? JANELA : idx;
+  <span class="kw">if</span>(n &lt; <span class="num">2</span>) <span class="kw">return</span> <span class="num">0</span>;
+  <span class="kw">float</span> var = <span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;n;i++) var += (janela[i]-m)*(janela[i]-m);
+  <span class="kw">return</span> <span class="fn">sqrt</span>(var/n);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="cm">// conectar Wi-Fi e MQTT conforme semanas anteriores...</span>
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  mqtt.<span class="fn">loop</span>();
+  <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">if</span>(<span class="fn">isnan</span>(t)) { <span class="fn">delay</span>(<span class="num">5000</span>); <span class="kw">return</span>; }
+
+  <span class="cm">// Insere na janela deslizante</span>
+  janela[idx] = t;
+  idx = (idx + <span class="num">1</span>) % JANELA;
+  <span class="kw">if</span>(idx == <span class="num">0</span>) cheia = <span class="kw">true</span>;
+  <span class="kw">if</span>(!cheia) { <span class="fn">delay</span>(<span class="num">5000</span>); <span class="kw">return</span>; }
+
+  <span class="kw">float</span> m = <span class="fn">media</span>();
+  <span class="kw">float</span> s = <span class="fn">desvio</span>(m);
+  <span class="kw">float</span> z = (s > <span class="num">0</span>) ? <span class="fn">abs</span>(t - m) / s : <span class="num">0</span>;
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"T=%.1f M=%.1f S=%.2f Z=%.2f %s\n"</span>,
+    t, m, s, z, z > Z_THRESH ? <span class="str">"*** ANOMALIA ***"</span> : <span class="str">"normal"</span>);
+
+  <span class="kw">if</span>(z > Z_THRESH && mqtt.<span class="fn">connected</span>()) {
+    StaticJsonDocument<<span class="num">128</span>> doc;
+    doc[<span class="str">"valor"</span>] = t; doc[<span class="str">"media"</span>] = m; doc[<span class="str">"zscore"</span>] = z;
+    <span class="kw">char</span> buf[<span class="num">128</span>]; <span class="fn">serializeJson</span>(doc, buf);
+    mqtt.<span class="fn">publish</span>(<span class="str">"borda/anomalia"</span>, buf);
+  }
+  <span class="fn">delay</span>(<span class="num">5000</span>);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 11</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Arquitetura em camadas</strong>
+        <p>Edge &lt;10ms · Fog 1–100ms · Cloud 100ms–2s. Cada camada tem papel distinto — não é redundância, é divisão de responsabilidades.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-th-large"></i>
+        <strong>Os 4 drivers</strong>
+        <p>Latência, privacidade, offline e banda. Qualquer um deles pode tornar a borda obrigatória. Sem nenhum deles, a nuvem é mais simples e barata.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-compress-arrows-alt"></i>
+        <strong>Edge AI na prática</strong>
+        <p>Treinar na nuvem, deployar na borda. Quantização int8 reduz 4× sem perder acurácia. TFLite Micro roda no ESP32 — você vai ver isso na Semana 12.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> Você consegue aplicar o framework de decisão a um cenário novo em menos de 2 minutos? Sabe o que é quantização e por que é necessária para MCUs? Entende a diferença entre Edge, Fog e Cloud? Se sim — pronto para a Semana 12: TinyML com TensorFlow Lite no ESP32.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 12 — TinyML: TensorFlow Lite for Microcontrollers, quantização na prática e inferência no ESP32</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Em uma linha de produção rápida, o round-trip à nuvem (mínimo 100–200ms em condições ideais) é lento demais para rejeitar peças em movimento. Além disso, câmeras em 30fps geram dezenas de GB por hora — saturaria qualquer link de internet. Latência e banda são os dois drivers simultâneos aqui. A privacidade e o offline são drivers secundários reais mas não os principais neste cenário.'},
+  quiz2:{correct:'C',msg:'✅ Correto! Float32 com 3.2MB não cabe na RAM do ESP32 (520KB), mesmo que caiba na flash. A quantização para int8 reduz o modelo para ~800KB na flash e ~200KB de RAM durante a inferência — dentro dos limites. Simplesmente colocar o float32 na flash não funciona porque o runtime precisa carregar tensores na RAM. Expandir a flash com chip externo não resolve o problema de RAM.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

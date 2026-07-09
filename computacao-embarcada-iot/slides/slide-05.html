@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 05 — Computação Embarcada e IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+.badge-orange{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+
+/* ── Atuador cards ── */
+.atu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.atu-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.atu-card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,.5);}
+.atu-card__icon{font-size:2rem;margin-bottom:.75rem;display:block;}
+.atu-card__name{font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:.15rem;}
+.atu-card__sub{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;opacity:.65;margin-bottom:.75rem;}
+.atu-card__item{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;}
+.atu-card__item:last-of-type{border-bottom:none;}
+.atu-card__item-label{color:var(--text-muted);}
+.atu-card__item-value{color:var(--text-primary);font-weight:600;text-align:right;}
+
+/* ── Servo demo ── */
+.servo-demo{background:rgba(45,212,191,.03);border:1px solid rgba(45,212,191,.15);border-radius:14px;padding:1.5rem;margin:.75rem 0;}
+.servo-demo__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.servo-visual{display:flex;align-items:center;justify-content:center;gap:2rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.servo-body{width:80px;height:56px;background:rgba(45,212,191,.1);border:2px solid rgba(45,212,191,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
+.servo-arm-wrap{position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center;}
+.servo-pivot{width:16px;height:16px;background:var(--teal-400);border-radius:50%;position:absolute;z-index:2;}
+.servo-arm{width:60px;height:6px;background:linear-gradient(90deg,var(--teal-400),var(--teal-300));border-radius:3px;position:absolute;transform-origin:0% 50%;left:8px;transition:transform .4s ease;}
+.servo-info{text-align:center;}
+.servo-angle{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--teal-400);line-height:1;}
+.servo-angle-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;}
+.servo-slider-wrap{display:flex;align-items:center;gap:.75rem;}
+.servo-slider-wrap label{font-size:.78rem;color:var(--text-secondary);}
+.servo-slider-wrap input{flex:1;accent-color:var(--teal-400);}
+.servo-presets{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;}
+.servo-preset{padding:5px 12px;border-radius:7px;border:1px solid rgba(45,212,191,.2);background:rgba(45,212,191,.06);color:var(--teal-400);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.servo-preset:hover{background:rgba(45,212,191,.14);}
+
+/* ── Relé diagrama ── */
+.rele-diagram{display:grid;grid-template-columns:1fr auto 1fr;gap:0;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;margin:.75rem 0;}
+.rele-col{padding:1.25rem;}
+.rele-col:first-child{border-right:1px solid rgba(45,212,191,.1);}
+.rele-col:last-child{border-left:1px solid rgba(45,212,191,.1);}
+.rele-mid{display:flex;align-items:center;justify-content:center;padding:0 .75rem;font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:800;color:rgba(45,212,191,.4);writing-mode:vertical-rl;}
+.rele-title{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;}
+.rele-item{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--text-secondary);margin-bottom:.4rem;line-height:1.5;}
+.rele-item::before{content:'▸';color:var(--teal-400);font-size:.65rem;margin-top:4px;flex-shrink:0;}
+
+/* ── H-Bridge visual ── */
+.hbridge{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.hbridge__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.hbridge-states{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.hbridge-state{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:.75rem;text-align:center;}
+.hbridge-state__label{font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;}
+.hbridge-state__pins{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);line-height:1.6;margin-bottom:.4rem;}
+.hbridge-state__result{font-size:.78rem;font-weight:700;}
+
+/* ── Sistema ventilação ── */
+.vent-system{background:linear-gradient(135deg,#071033,#0f1729);border:1px solid rgba(45,212,191,.15);border-radius:16px;padding:1.75rem;margin:.75rem 0;}
+.vent-system__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.vent-nodes{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:1.5rem;}
+.vent-node{display:flex;flex-direction:column;align-items:center;gap:6px;padding:.9rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;min-width:100px;text-align:center;}
+.vent-node__icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.vent-node__label{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:#f8fafc;}
+.vent-node__sub{font-size:.65rem;color:var(--text-muted);}
+.vent-arrow{display:flex;align-items:center;padding:0 .35rem;color:rgba(45,212,191,.4);font-size:1rem;}
+.vent-states{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;}
+.vent-state{border-radius:12px;padding:1rem;border:1px solid;}
+.vent-state__temp{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;}
+.vent-state__label{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;}
+.vent-state__actions{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;cursor:pointer;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.atu-grid,.resumo-grid,.hbridge-states,.vent-states{grid-template-columns:1fr 1fr;}
+  .rele-diagram{grid-template-columns:1fr;}
+  .rele-mid{writing-mode:horizontal-tb;padding:.5rem 0;}
+  .rele-col:first-child,.rele-col:last-child{border:none;}
+}
+@media(max-width:520px){
+  .atu-grid,.hbridge-states,.vent-states{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">05</div>
+    <h1 class="capa-titulo">Atuadores:<br><em>Servo, Motor DC</em><br>e Relé</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · O Arduino age sobre o mundo físico</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>Sensores vs atuadores — a diferença fundamental</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sync-alt"></i></div><span>Servo motor — controle preciso de ângulo por PWM</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-fan"></i></div><span>Motor DC — ponte H (L298N) e controle de velocidade</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-toggle-on"></i></div><span>Relé — chave eletrônica para cargas de alta tensão</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Fechando o ciclo: sensor → lógica → atuador</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wind"></i></div><span>LAB: ventilação automática por temperatura (DHT22 + relé)</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Sistema de ventilação automática: DHT22 lê temperatura → Arduino decide → relé liga ou desliga o ventilador. 3 níveis de temperatura, Serial Monitor como painel de controle.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>Servo motor SG90 (ou similar)</li>
+        <li>Módulo ponte H L298N + motor DC 5V</li>
+        <li>Módulo relé 5V (1 canal)</li>
+        <li>DHT22 (da semana passada)</li>
+        <li>Jumpers, protoboard, fonte externa se necessário</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 1–4 — Conceitos, MCUs, programação, sensores</li>
+        <li>▶ Sem. 5 — Atuadores e fechamento do ciclo IoT</li>
+        <li>Sem. 6 — P1: avaliação das semanas 1–5</li>
+        <li>Sem. 7 — Comunicação serial: I2C, SPI, UART</li>
+        <li>Sem. 8 — ESP32: Wi-Fi e HTTP</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>A virada desta semana</div>
+      <ul class="info-lista">
+        <li>Até aqui o Arduino só percebia o mundo — agora ele age</li>
+        <li>O ciclo completo: Sensor → Processamento → Atuação</li>
+        <li>Primeiro sistema autônomo real: sem intervenção humana</li>
+        <li>Base para automação predial, robótica e controle industrial</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Atuadores e o Servo Motor</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>Sensores vs Atuadores — a diferença que fecha o ciclo</div>
+      <p>Nas últimas semanas trabalhamos com <strong>sensores</strong>: dispositivos que convertem grandezas físicas do mundo em sinais elétricos que o Arduino lê. Hoje trabalhamos com <strong>atuadores</strong>: o caminho inverso — o Arduino converte decisões em ação física.</p>
+      <div class="atu-grid">
+        <div class="atu-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <span class="atu-card__icon">⚙️</span>
+          <div class="atu-card__name" style="color:var(--teal-400);">Servo Motor</div>
+          <div class="atu-card__sub" style="color:var(--teal-300);">Posição precisa</div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Controle</span><span class="atu-card__item-value">PWM 50Hz</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Ângulo</span><span class="atu-card__item-value">0° a 180°</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Torque SG90</span><span class="atu-card__item-value">1.8 kg·cm</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Alimentação</span><span class="atu-card__item-value">4.8–6V</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Corrente pico</span><span class="atu-card__item-value">~700mA</span></div>
+          <div style="margin-top:.75rem;"><span class="badge">Válvulas, câmeras, braços robóticos</span></div>
+        </div>
+        <div class="atu-card" style="background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.2);">
+          <span class="atu-card__icon">💨</span>
+          <div class="atu-card__name" style="color:#60a5fa;">Motor DC</div>
+          <div class="atu-card__sub" style="color:#93c5fd;">Rotação contínua</div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Controle</span><span class="atu-card__item-value">PWM + Ponte H</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Direção</span><span class="atu-card__item-value">Horário / anti-horário</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Velocidade</span><span class="atu-card__item-value">0–100% PWM</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Driver típico</span><span class="atu-card__item-value">L298N</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Corrente motor</span><span class="atu-card__item-value">Até 2A por canal</span></div>
+          <div style="margin-top:.75rem;"><span class="badge-blue">Ventiladores, rodas, esteiras</span></div>
+        </div>
+        <div class="atu-card" style="background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.2);">
+          <span class="atu-card__icon">🔌</span>
+          <div class="atu-card__name" style="color:#fb923c;">Relé</div>
+          <div class="atu-card__sub" style="color:#fed7aa;">Chave eletrônica</div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Controle</span><span class="atu-card__item-value">Digital HIGH/LOW</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Carga máx.</span><span class="atu-card__item-value">250VAC / 10A</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Isolação</span><span class="atu-card__item-value">Óptica + bobina</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Corrente bobina</span><span class="atu-card__item-value">~70mA em 5V</span></div>
+          <div class="atu-card__item"><span class="atu-card__item-label">Tipos</span><span class="atu-card__item-value">NO / NC / COM</span></div>
+          <div style="margin-top:.75rem;"><span class="badge-orange">Ar-condicionado, lâmpadas, bombas</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>Servo Motor — controle de ângulo por PWM</div>
+      <p>O servo motor é um atuador que mantém uma <strong>posição angular precisa</strong>. Diferente do motor DC que gira livremente, o servo tem feedback interno e circuito de controle embutido — você envia o ângulo desejado, ele vai lá e fica.</p>
+      <p>O controle é feito por PWM a <strong>50Hz</strong> (período de 20ms). A largura do pulso determina o ângulo:</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Largura do pulso</th><th>Ângulo</th><th>analogWrite()?</th></tr></thead>
+          <tbody>
+            <tr><td><strong>~0.5 ms</strong> (pulse 544µs)</td><td>0°</td><td rowspan="3" style="vertical-align:middle;text-align:center;color:#f87171;">❌ Não use<br><span style="font-size:.78rem;">Use a biblioteca Servo</span></td></tr>
+            <tr><td><strong>~1.5 ms</strong> (pulse 1472µs)</td><td>90° (centro)</td></tr>
+            <tr><td><strong>~2.5 ms</strong> (pulse 2400µs)</td><td>180°</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Demo interativo do servo -->
+      <div class="servo-demo">
+        <div class="servo-demo__title">🎛 Controle interativo do servo — arraste o slider</div>
+        <div class="servo-visual">
+          <div style="text-align:center;">
+            <div class="servo-body"><i class="fas fa-cog" style="color:var(--teal-400);font-size:1.4rem;"></i></div>
+            <div style="font-size:.7rem;color:var(--text-muted);margin-top:.4rem;">Servo SG90</div>
+          </div>
+          <div class="servo-arm-wrap">
+            <div class="servo-pivot"></div>
+            <div class="servo-arm" id="servoArm"></div>
+          </div>
+          <div class="servo-info">
+            <div class="servo-angle" id="servoAngle">90</div>
+            <div class="servo-angle-label">graus</div>
+          </div>
+        </div>
+        <div class="servo-slider-wrap">
+          <label>0°</label>
+          <input type="range" min="0" max="180" value="90" id="servoSlider" oninput="updateServo(this.value)">
+          <label>180°</label>
+        </div>
+        <div class="servo-presets">
+          <button class="servo-preset" onclick="setServo(0)">0° — fechado</button>
+          <button class="servo-preset" onclick="setServo(45)">45°</button>
+          <button class="servo-preset" onclick="setServo(90)">90° — centro</button>
+          <button class="servo-preset" onclick="setServo(135)">135°</button>
+          <button class="servo-preset" onclick="setServo(180)">180° — aberto</button>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Servo com biblioteca</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;Servo.h&gt;</span>   <span class="cm">// biblioteca nativa — não precisa instalar</span>
+
+Servo <span class="fn">meuServo</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">meuServo</span>.<span class="fn">attach</span>(<span class="num">9</span>);   <span class="cm">// pino de sinal do servo no pino 9</span>
+  <span class="fn">meuServo</span>.<span class="fn">write</span>(<span class="num">90</span>);   <span class="cm">// posição inicial: centro (90°)</span>
+  <span class="fn">delay</span>(<span class="num">500</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Varredura suave: 0° → 180° → 0°</span>
+  <span class="kw">for</span> (<span class="kw">int</span> ang = <span class="num">0</span>; ang <= <span class="num">180</span>; ang += <span class="num">2</span>) {
+    <span class="fn">meuServo</span>.<span class="fn">write</span>(ang);
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Ângulo: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(ang);
+    <span class="fn">delay</span>(<span class="num">20</span>);
+  }
+  <span class="kw">for</span> (<span class="kw">int</span> ang = <span class="num">180</span>; ang >= <span class="num">0</span>; ang -= <span class="num">2</span>) {
+    <span class="fn">meuServo</span>.<span class="fn">write</span>(ang);
+    <span class="fn">delay</span>(<span class="num">20</span>);
+  }
+}</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Pico de corrente no servo.</strong> O SG90 pode consumir até 700mA durante o movimento. O pino 5V do Arduino Uno suporta apenas ~500mA total. Para servos maiores ou múltiplos servos, use <strong>fonte externa</strong> de 5–6V com GND comum ao Arduino. Nunca alimente servo pesado direto pelo pino 5V da placa.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Você quer abrir uma válvula de irrigação pela metade (90° de uma válvula que vai de 0° a 180°). Qual comando você usa?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">analogWrite(9, 127)</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">meuServo.write(90)</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">digitalWrite(9, HIGH)</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">meuServo.write(127)</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Motor DC com Ponte H e Relé</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-fan"></i>Motor DC e a Ponte H (L298N)</div>
+      <p>Um motor DC gira quando passa corrente. Inverta a corrente — ele gira no sentido contrário. Simples na teoria, mas o Arduino não consegue fornecer corrente suficiente para um motor direto nos pinos GPIO (máx 40mA por pino). A solução é o <strong>driver de ponte H</strong>.</p>
+      <p>O <strong>L298N</strong> é o driver mais comum: aceita 5–35V na entrada do motor, até 2A por canal, e é controlado por sinais digitais do Arduino. Ele funciona como um interruptor de alta corrente acionado por sinal fraco.</p>
+
+      <!-- Estados da ponte H -->
+      <div class="hbridge">
+        <div class="hbridge__title">Estados da Ponte H — como controlar direção e velocidade</div>
+        <div class="hbridge-states">
+          <div class="hbridge-state">
+            <div class="hbridge-state__label" style="color:#4ade80;">Frente</div>
+            <div class="hbridge-state__pins">IN1: HIGH<br>IN2: LOW<br>ENA: PWM</div>
+            <div class="hbridge-state__result" style="color:#4ade80;">→ Motor horário</div>
+          </div>
+          <div class="hbridge-state">
+            <div class="hbridge-state__label" style="color:#60a5fa;">Ré</div>
+            <div class="hbridge-state__pins">IN1: LOW<br>IN2: HIGH<br>ENA: PWM</div>
+            <div class="hbridge-state__result" style="color:#60a5fa;">→ Anti-horário</div>
+          </div>
+          <div class="hbridge-state">
+            <div class="hbridge-state__label" style="color:#f87171;">Freio</div>
+            <div class="hbridge-state__pins">IN1: HIGH<br>IN2: HIGH<br>ENA: qualquer</div>
+            <div class="hbridge-state__result" style="color:#f87171;">→ Freio elétrico</div>
+          </div>
+          <div class="hbridge-state">
+            <div class="hbridge-state__label" style="color:#94a3b8;">Parado</div>
+            <div class="hbridge-state__pins">IN1: LOW<br>IN2: LOW<br>ENA: LOW</div>
+            <div class="hbridge-state__result" style="color:#94a3b8;">→ Motor livre</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Motor DC com L298N</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#define</span> ENA   <span class="num">6</span>   <span class="cm">// PWM — controla velocidade (pino ~ )</span>
+<span class="pp">#define</span> IN1   <span class="num">4</span>   <span class="cm">// direção 1</span>
+<span class="pp">#define</span> IN2   <span class="num">5</span>   <span class="cm">// direção 2</span>
+
+<span class="kw">void</span> <span class="fn">motorFrente</span>(<span class="kw">int</span> velocidade) {   <span class="cm">// velocidade: 0–255</span>
+  <span class="fn">digitalWrite</span>(IN1, HIGH);
+  <span class="fn">digitalWrite</span>(IN2, LOW);
+  <span class="fn">analogWrite</span>(ENA, velocidade);
+}
+
+<span class="kw">void</span> <span class="fn">motorRe</span>(<span class="kw">int</span> velocidade) {
+  <span class="fn">digitalWrite</span>(IN1, LOW);
+  <span class="fn">digitalWrite</span>(IN2, HIGH);
+  <span class="fn">analogWrite</span>(ENA, velocidade);
+}
+
+<span class="kw">void</span> <span class="fn">motorParar</span>() {
+  <span class="fn">digitalWrite</span>(IN1, LOW);
+  <span class="fn">digitalWrite</span>(IN2, LOW);
+  <span class="fn">analogWrite</span>(ENA, <span class="num">0</span>);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(ENA, OUTPUT);
+  <span class="fn">pinMode</span>(IN1, OUTPUT);
+  <span class="fn">pinMode</span>(IN2, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Frente — velocidade 50%"</span>);
+  <span class="fn">motorFrente</span>(<span class="num">127</span>);   <span class="fn">delay</span>(<span class="num">3000</span>);
+
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Parando..."</span>);
+  <span class="fn">motorParar</span>();       <span class="fn">delay</span>(<span class="num">1000</span>);
+
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Ré — velocidade 75%"</span>);
+  <span class="fn">motorRe</span>(<span class="num">191</span>);       <span class="fn">delay</span>(<span class="num">3000</span>);
+
+  <span class="fn">motorParar</span>();       <span class="fn">delay</span>(<span class="num">1000</span>);
+}</code></pre>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Diodo de proteção.</strong> Motores DC geram tensão reversa quando desligados (back-EMF). Módulos L298N prontos já incluem diodos de proteção. Se montar uma ponte H discreta, adicione diodos 1N4007 em todos os MOSFETs/transistores — sem eles, a tensão reversa pode queimar o driver e o Arduino.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-toggle-on"></i>Relé — a chave que separa mundos</div>
+      <p>O relé é o componente que permite ao Arduino (<strong>mundo de 5V, miliamperes</strong>) controlar cargas de alta potência como ventiladores, lâmpadas e bombas (<strong>mundo de 110–220V, amperes</strong>). A isolação elétrica entre os dois mundos é fundamental por segurança.</p>
+
+      <div class="rele-diagram">
+        <div class="rele-col">
+          <div class="rele-title">Lado de controle (5V — Arduino)</div>
+          <div class="rele-item">Pino VCC → 5V Arduino</div>
+          <div class="rele-item">Pino GND → GND Arduino</div>
+          <div class="rele-item">Pino IN → Pino digital Arduino</div>
+          <div class="rele-item">Lógica: HIGH desliga, LOW liga (maioria dos módulos é ativo-baixo)</div>
+          <div class="rele-item">Corrente: ~70mA — use transistor se pino não suportar</div>
+        </div>
+        <div class="rele-mid">ISOLAÇÃO</div>
+        <div class="rele-col">
+          <div class="rele-title">Lado de carga (110–220V — ventilador, lâmpada)</div>
+          <div class="rele-item"><strong>COM</strong> — pino comum da chave</div>
+          <div class="rele-item"><strong>NO</strong> — normalmente aberto: liga quando relé ativa</div>
+          <div class="rele-item"><strong>NC</strong> — normalmente fechado: desliga quando relé ativa</div>
+          <div class="rele-item">Para ligar algo quando Arduino ativa: use COM + NO</div>
+          <div class="rele-item">⚠ Nunca toque nos terminais de alta tensão com o circuito ligado</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Relé básico (lógica ativo-baixo)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#define</span> PINO_RELE  <span class="num">7</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(PINO_RELE, OUTPUT);
+
+  <span class="cm">// IMPORTANTE: ao iniciar, garante relé desligado
+  // Módulos ativo-baixo: HIGH = relé DESLIGADO</span>
+  <span class="fn">digitalWrite</span>(PINO_RELE, HIGH);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Relé iniciado — DESLIGADO"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">ligarRele</span>() {
+  <span class="fn">digitalWrite</span>(PINO_RELE, LOW);   <span class="cm">// LOW = relé LIGADO (ativo-baixo)</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Relé: LIGADO"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">desligarRele</span>() {
+  <span class="fn">digitalWrite</span>(PINO_RELE, HIGH);  <span class="cm">// HIGH = relé DESLIGADO</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Relé: DESLIGADO"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">ligarRele</span>();   <span class="fn">delay</span>(<span class="num">5000</span>);   <span class="cm">// ligado por 5s</span>
+  <span class="fn">desligarRele</span>(); <span class="fn">delay</span>(<span class="num">5000</span>);  <span class="cm">// desligado por 5s</span>
+}</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Ativo-baixo vs ativo-alto.</strong> A maioria dos módulos relé de Arduino é <strong>ativo-baixo</strong>: LOW no pino de controle ativa o relé, HIGH desativa. Isso é contraintuitivo mas comum — verifique a serigrafia do módulo. Se escrever HIGH no setup() para garantir o estado inicial "desligado", você está usando lógica ativo-baixo corretamente.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Você conectou um relé ativo-baixo e escreveu digitalWrite(RELE, HIGH) no setup(). O que acontece com a carga (ventilador) ao ligar o Arduino?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O ventilador fica desligado — comportamento correto e seguro</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">O ventilador liga imediatamente e não desliga</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">O relé queima por receber HIGH antes da inicialização</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">Depende — HIGH pode ligar ou desligar, é imprevisível</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">Sistema de Ventilação Automática — fechando o ciclo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>O ciclo completo: Sensor → Lógica → Atuador</div>
+      <p>Este é o momento em que tudo se conecta. Um sistema embarcado útil não apenas lê dados — ele toma decisões e age. O sistema de ventilação automática é o primeiro projeto completamente autônomo do semestre.</p>
+
+      <!-- Sistema de ventilação visual -->
+      <div class="vent-system">
+        <div class="vent-system__title">Arquitetura do sistema de ventilação automática</div>
+        <div class="vent-nodes">
+          <div class="vent-node">
+            <div class="vent-node__icon" style="background:rgba(45,212,191,.12);color:var(--teal-400);"><i class="fas fa-thermometer-half"></i></div>
+            <div class="vent-node__label">DHT22</div>
+            <div class="vent-node__sub">Lê temp. e umidade</div>
+          </div>
+          <div class="vent-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="vent-node">
+            <div class="vent-node__icon" style="background:rgba(96,165,250,.12);color:#60a5fa;"><i class="fas fa-microchip"></i></div>
+            <div class="vent-node__label">Arduino</div>
+            <div class="vent-node__sub">Decide com if/else</div>
+          </div>
+          <div class="vent-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="vent-node">
+            <div class="vent-node__icon" style="background:rgba(251,146,60,.12);color:#fb923c;"><i class="fas fa-toggle-on"></i></div>
+            <div class="vent-node__label">Relé</div>
+            <div class="vent-node__sub">Liga ou desliga</div>
+          </div>
+          <div class="vent-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="vent-node">
+            <div class="vent-node__icon" style="background:rgba(139,92,246,.12);color:#c4b5fd;"><i class="fas fa-wind"></i></div>
+            <div class="vent-node__label">Ventilador</div>
+            <div class="vent-node__sub">Resfria o ambiente</div>
+          </div>
+          <div class="vent-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="vent-node">
+            <div class="vent-node__icon" style="background:rgba(34,197,94,.12);color:#4ade80;"><i class="fas fa-terminal"></i></div>
+            <div class="vent-node__label">Serial Monitor</div>
+            <div class="vent-node__sub">Painel de controle</div>
+          </div>
+        </div>
+
+        <div class="vent-states">
+          <div class="vent-state" style="background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.2);">
+            <div class="vent-state__temp" style="color:#4ade80;">&lt; 25°C</div>
+            <div class="vent-state__label" style="color:#4ade80;">🟢 Frio</div>
+            <div class="vent-state__actions">Ventilador: DESLIGADO<br>LED verde (pino 2): aceso<br>Serial: "Temp OK"</div>
+          </div>
+          <div class="vent-state" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.18);">
+            <div class="vent-state__temp" style="color:#fbbf24;">25–30°C</div>
+            <div class="vent-state__label" style="color:#fbbf24;">🟡 Morno</div>
+            <div class="vent-state__actions">Ventilador: BAIXA (50%)<br>LED amarelo (pino 3): aceso<br>Serial: "Ventilação baixa"</div>
+          </div>
+          <div class="vent-state" style="background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);">
+            <div class="vent-state__temp" style="color:#f87171;">&gt; 30°C</div>
+            <div class="vent-state__label" style="color:#f87171;">🔴 Quente</div>
+            <div class="vent-state__actions">Ventilador: MÁXIMA<br>LED vermelho (pino 4): aceso<br>Serial: "⚠ ALERTA TÉRMICO"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo do LAB</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Montar o circuito completo</div>
+            <div class="lab-step__desc">DHT22: pino DATA no 8. Relé: IN no pino 7, VCC em 5V, GND em GND. Motor DC ou ventilador conectado aos terminais COM e NO do relé. LEDs indicadores nos pinos 2, 3 e 4 com resistores 220Ω.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar cada parte separadamente</div>
+            <div class="lab-step__desc">Primeiro: confirme que o DHT22 lê temperatura corretamente. Depois: teste o relé sozinho — ligar/desligar via código simples. Só então combine os dois.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código integrado</div>
+            <div class="lab-step__desc">Use o código completo abaixo. Abra o Serial Monitor (9600 baud). Observe o sistema reagindo automaticamente à temperatura do ambiente.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Simular calor</div>
+            <div class="lab-step__desc">Coloque a mão ou uma lâmpada próxima ao sensor DHT22 para elevar a temperatura e observe o sistema mudar de estado automaticamente. O Serial Monitor deve mostrar as transições em tempo real.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Ajustar os limiares</div>
+            <div class="lab-step__desc">Modifique os valores de temperatura nos #define para adequar ao ambiente da sala. Compile e faça upload — observe como o comportamento muda.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Sistema de ventilação automática completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="pp">#define</span> PINO_DHT    <span class="num">8</span>
+<span class="pp">#define</span> TIPO_DHT    DHT22
+<span class="pp">#define</span> PINO_RELE   <span class="num">7</span>
+<span class="pp">#define</span> LED_VERDE   <span class="num">2</span>
+<span class="pp">#define</span> LED_AMARELO <span class="num">3</span>
+<span class="pp">#define</span> LED_VERMELHO <span class="num">4</span>
+
+<span class="cm">// Limiares de temperatura — ajuste conforme o ambiente</span>
+<span class="pp">#define</span> TEMP_MORNO   <span class="num">25.0</span>   <span class="cm">// °C — inicia ventilação baixa</span>
+<span class="pp">#define</span> TEMP_QUENTE  <span class="num">30.0</span>   <span class="cm">// °C — ventilação máxima</span>
+
+DHT <span class="fn">dht</span>(PINO_DHT, TIPO_DHT);
+<span class="kw">unsigned long</span> ultimaLeitura = <span class="num">0</span>;
+<span class="kw">int</span> estadoAnterior = <span class="num">-1</span>;    <span class="cm">// evita imprimir o mesmo estado repetido</span>
+
+<span class="kw">void</span> <span class="fn">definirEstado</span>(<span class="kw">int</span> estado) {
+  <span class="kw">if</span> (estado == estadoAnterior) <span class="kw">return</span>;  <span class="cm">// sem mudança</span>
+  estadoAnterior = estado;
+
+  <span class="cm">// Desliga todos os LEDs primeiro</span>
+  <span class="fn">digitalWrite</span>(LED_VERDE,    LOW);
+  <span class="fn">digitalWrite</span>(LED_AMARELO,  LOW);
+  <span class="fn">digitalWrite</span>(LED_VERMELHO, LOW);
+
+  <span class="kw">if</span> (estado == <span class="num">0</span>) {
+    <span class="fn">digitalWrite</span>(PINO_RELE, HIGH);     <span class="cm">// relé DESLIGADO (ativo-baixo)</span>
+    <span class="fn">digitalWrite</span>(LED_VERDE, HIGH);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"🟢 Temp OK — ventilação DESLIGADA"</span>);
+  }
+  <span class="kw">else if</span> (estado == <span class="num">1</span>) {
+    <span class="fn">digitalWrite</span>(PINO_RELE, LOW);      <span class="cm">// relé LIGADO</span>
+    <span class="fn">digitalWrite</span>(LED_AMARELO, HIGH);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"🟡 Temperatura elevada — ventilação BAIXA"</span>);
+  }
+  <span class="kw">else if</span> (estado == <span class="num">2</span>) {
+    <span class="fn">digitalWrite</span>(PINO_RELE, LOW);      <span class="cm">// relé LIGADO (máxima)</span>
+    <span class="fn">digitalWrite</span>(LED_VERMELHO, HIGH);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"🔴 ⚠ ALERTA TÉRMICO — ventilação MÁXIMA"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">pinMode</span>(PINO_RELE,    OUTPUT);
+  <span class="fn">pinMode</span>(LED_VERDE,    OUTPUT);
+  <span class="fn">pinMode</span>(LED_AMARELO,  OUTPUT);
+  <span class="fn">pinMode</span>(LED_VERMELHO, OUTPUT);
+  <span class="fn">digitalWrite</span>(PINO_RELE, HIGH);        <span class="cm">// inicia desligado</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"=== Sistema de Ventilação Automática ==="</span>);
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimaLeitura >= <span class="num">3000</span>) {
+    ultimaLeitura = <span class="fn">millis</span>();
+
+    <span class="kw">float</span> temp = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+    <span class="kw">float</span> umid = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+
+    <span class="kw">if</span> (<span class="fn">isnan</span>(temp)) {
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"ERRO: falha no DHT22 — verifique ligação"</span>);
+      <span class="kw">return</span>;
+    }
+
+    <span class="cm">// Imprime telemetria</span>
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Temp: "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(temp, <span class="num">1</span>);
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"°C | Umid: "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(umid, <span class="num">1</span>);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"%"</span>);
+
+    <span class="cm">// Decide estado com histerese (+0.5°C para evitar oscilação)</span>
+    <span class="kw">if</span>      (temp >= TEMP_QUENTE + <span class="num">0.5</span>) <span class="fn">definirEstado</span>(<span class="num">2</span>);
+    <span class="kw">else if</span> (temp >= TEMP_MORNO  + <span class="num">0.5</span>) <span class="fn">definirEstado</span>(<span class="num">1</span>);
+    <span class="kw">else if</span> (temp < TEMP_MORNO   - <span class="num">0.5</span>) <span class="fn">definirEstado</span>(<span class="num">0</span>);
+    <span class="cm">// Na zona de histerese: mantém estado atual</span>
+  }
+}</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Histerese — evitando oscilação.</strong> Sem histerese, se a temperatura fica exatamente em 25.0°C, o relé liga e desliga dezenas de vezes por segundo. Com histerese de ±0.5°C: só liga acima de 25.5°C e só desliga abaixo de 24.5°C. Esse padrão é universal em termostatos, sistemas de ar-condicionado e qualquer controle on/off.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Projeto</div>
+        <div class="secao-titulo">4 exercícios — do servo ao sistema autônomo completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Servo como indicador de temperatura</div>
+      <p>Use o servo motor como um "termômetro visual": mapeie a temperatura lida pelo DHT22 (faixa 15–40°C) para o ângulo do servo (0°–180°). Quanto mais quente, mais aberto. Imprima no Serial Monitor a temperatura e o ângulo correspondente a cada leitura.</p>
+      <span class="dif-basico">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;Servo.h&gt;</span>
+DHT <span class="fn">dht</span>(<span class="num">8</span>, DHT22);
+Servo <span class="fn">sv</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>(){
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">sv</span>.<span class="fn">attach</span>(<span class="num">9</span>);
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>(){
+  <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">if</span>(<span class="fn">isnan</span>(t)){ <span class="fn">delay</span>(<span class="num">2000</span>); <span class="kw">return</span>; }
+
+  <span class="kw">int</span> ang = <span class="fn">map</span>((<span class="kw">int</span>)(t*<span class="num">10</span>), <span class="num">150</span>, <span class="num">400</span>, <span class="num">0</span>, <span class="num">180</span>);
+  ang = <span class="fn">constrain</span>(ang, <span class="num">0</span>, <span class="num">180</span>);
+  <span class="fn">sv</span>.<span class="fn">write</span>(ang);
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Temp: "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(t,<span class="num">1</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"°C → Servo: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(ang); <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"°"</span>);
+  <span class="fn">delay</span>(<span class="num">3000</span>);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Motor DC com controle de velocidade</div>
+      <p>Conecte um potenciômetro no pino A0. Mapeie a leitura (0–1023) para a velocidade do motor DC (0–255). Ao girar o potenciômetro, a velocidade do motor deve aumentar ou diminuir suavemente. Adicione um botão no pino 2 que inverta a direção do motor quando pressionado (com debounce).</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> ENA <span class="num">6</span>
+<span class="pp">#define</span> IN1 <span class="num">4</span>
+<span class="pp">#define</span> IN2 <span class="num">5</span>
+<span class="pp">#define</span> BTN <span class="num">2</span>
+<span class="kw">bool</span> direcao = <span class="kw">true</span>;
+<span class="kw">int</span>  estadoAnt = HIGH;
+<span class="kw">unsigned long</span> tBtn = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>(){
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(ENA,OUTPUT); <span class="fn">pinMode</span>(IN1,OUTPUT); <span class="fn">pinMode</span>(IN2,OUTPUT);
+  <span class="fn">pinMode</span>(BTN, INPUT_PULLUP);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>(){
+  <span class="cm">// Botão — debounce</span>
+  <span class="kw">int</span> lei = <span class="fn">digitalRead</span>(BTN);
+  <span class="kw">if</span>(lei != estadoAnt) tBtn = <span class="fn">millis</span>();
+  <span class="kw">if</span>(<span class="fn">millis</span>()-tBtn>50 && lei==LOW && estadoAnt==HIGH){
+    direcao = !direcao;
+    <span class="fn">Serial</span>.<span class="fn">println</span>(direcao ? <span class="str">"→ Frente"</span> : <span class="str">"← Ré"</span>);
+  }
+  estadoAnt = lei;
+
+  <span class="cm">// Potenciômetro → velocidade</span>
+  <span class="kw">int</span> vel = <span class="fn">map</span>(<span class="fn">analogRead</span>(A0), <span class="num">0</span>, <span class="num">1023</span>, <span class="num">0</span>, <span class="num">255</span>);
+  <span class="fn">digitalWrite</span>(IN1, direcao ? HIGH : LOW);
+  <span class="fn">digitalWrite</span>(IN2, direcao ? LOW  : HIGH);
+  <span class="fn">analogWrite</span>(ENA, vel);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Temporizador de relé</div>
+      <p>Implemente um sistema onde o relé liga por um tempo definido e desliga automaticamente. Ao pressionar o botão no pino 2, o relé liga por <strong>10 segundos</strong> e depois desliga. Durante o tempo ativo, o Serial Monitor deve exibir a contagem regressiva (10, 9, 8...). Pressionar o botão novamente antes do tempo expirar <strong>reinicia</strong> o contador.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> RELE <span class="num">7</span>
+<span class="pp">#define</span> BTN  <span class="num">2</span>
+<span class="pp">#define</span> DURACAO_S <span class="num">10</span>
+
+<span class="kw">unsigned long</span> tRele=<span class="num">0</span>, tSegundo=<span class="num">0</span>, tBtn=<span class="num">0</span>;
+<span class="kw">bool</span> releLigado=<span class="kw">false</span>;
+<span class="kw">int</span> contador=<span class="num">0</span>, estadoAnt=HIGH;
+
+<span class="kw">void</span> <span class="fn">ligar</span>(){
+  <span class="fn">digitalWrite</span>(RELE, LOW);
+  releLigado=<span class="kw">true</span>;
+  tRele=<span class="fn">millis</span>(); tSegundo=<span class="fn">millis</span>();
+  contador=DURACAO_S;
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Relé LIGADO — contagem iniciada"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">desligar</span>(){
+  <span class="fn">digitalWrite</span>(RELE, HIGH);
+  releLigado=<span class="kw">false</span>;
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Relé DESLIGADO"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>(){
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(RELE,OUTPUT); <span class="fn">digitalWrite</span>(RELE,HIGH);
+  <span class="fn">pinMode</span>(BTN, INPUT_PULLUP);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>(){
+  <span class="kw">unsigned long</span> ag=<span class="fn">millis</span>();
+  <span class="kw">int</span> lei=<span class="fn">digitalRead</span>(BTN);
+  <span class="kw">if</span>(lei!=estadoAnt) tBtn=ag;
+  <span class="kw">if</span>(ag-tBtn>50 && lei==LOW && estadoAnt==HIGH) <span class="fn">ligar</span>();
+  estadoAnt=lei;
+
+  <span class="kw">if</span>(releLigado){
+    <span class="kw">if</span>(ag-tSegundo>=<span class="num">1000</span>){ tSegundo=ag; contador--;
+      <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Desligando em: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(contador);
+    }
+    <span class="kw">if</span>(contador<=<span class="num">0</span>) <span class="fn">desligar</span>();
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: Sistema completo de controle ambiental</div>
+      <p>Integre <strong>DHT22 + relé + servo + LEDs</strong> num único sistema:</p>
+      <p>• Relé controla o ventilador automaticamente por temperatura (como no LAB)<br>
+      • Servo abre uma "janela virtual" proporcionalmente à temperatura (0°=fechada, 180°=aberta)<br>
+      • 3 LEDs indicam o estado (verde/amarelo/vermelho)<br>
+      • Serial Monitor exibe todas as leituras e estados a cada 3s, formatado como painel:<br>
+      <code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">Temp: 27.3°C | Umid: 65% | Janela: 45° | Fan: ON | Estado: MORNO</code></p>
+      <span class="dif-desafio">Projeto integrador</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver estrutura</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-lightbulb"></i>Estrutura sugerida — implemente você mesmo</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Pinos: DHT22=8, Relé=7, Servo=9, LED_V=2, LED_A=3, LED_R=4</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Loop principal sem delay() — use millis() para DHT (3s) e Serial (3s)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Função <code style="font-family:'JetBrains Mono',monospace;">definirEstado(int estado)</code> atualiza relé, servo e LEDs de uma vez</span></li>
+            <li><i class="fas fa-check-circle"></i><span>map(temp*10, 250, 400, 0, 180) para ângulo do servo (25–40°C → 0–180°)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>constrain() para limitar ângulo e velocidade a faixas válidas</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Histerese de ±0.5°C nas transições de estado</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Serial.print() formatado em linha única com separadores | para facilitar leitura</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 5 — e do primeiro bloco</div>
+        <div class="secao-titulo">O ciclo está completo</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-sync-alt"></i>
+        <strong>Servo Motor</strong>
+        <p>Biblioteca Servo, write(0–180). PWM 50Hz interno. Posição precisa. Fonte externa para servos maiores.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-fan"></i>
+        <strong>Motor DC + L298N</strong>
+        <p>IN1/IN2 definem direção. ENA com PWM define velocidade. Freio elétrico = IN1=IN2=HIGH. Diodos contra back-EMF.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-toggle-on"></i>
+        <strong>Relé + Histerese</strong>
+        <p>Ativo-baixo: HIGH=desligado. COM+NO para ligar quando ativa. Histerese ±0.5°C evita oscilação no limiar.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-flag-checkered"></i>
+      <span><strong>Semana 6 é a P1.</strong> Revise os conceitos das semanas 1–5: tipos de MCU, pinout, tipos de dados, PWM, sensores DHT22 e HC-SR04, e atuadores. O sistema de ventilação automática é um bom estudo de caso para revisar o ciclo completo Sensor → Lógica → Atuador.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Semana 6</div>
+        <div class="proxima-titulo">P1 — Avaliação das Semanas 1 a 5 · Prova teórica e demonstração prática em laboratório</div>
+      </div>
+      <i class="fas fa-clipboard-check"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+
+/* Servo demo */
+function updateServo(v){
+  v=parseInt(v);
+  document.getElementById('servoAngle').textContent=v;
+  document.getElementById('servoArm').style.transform='rotate('+(v-90)+'deg)';
+  document.getElementById('servoSlider').value=v;
+}
+function setServo(v){updateServo(v);}
+updateServo(90);
+
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! A biblioteca Servo abstrai o PWM de 50Hz internamente. meuServo.write(90) posiciona o servo em 90° (centro). analogWrite() não funciona para servos pois usa frequência diferente (490–980Hz vs 50Hz necessários). O parâmetro de write() é o ângulo em graus (0–180), não um valor PWM de 0–255.'},
+  quiz2:{correct:'A',msg:'✅ Correto! Módulos relé ativo-baixo: HIGH desativa o relé. Então escrever HIGH no setup() garante que o relé começa DESLIGADO — comportamento correto e seguro. Se fosse ativo-alto, HIGH ligaria o relé na inicialização, o que poderia ser perigoso dependendo da carga conectada.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 08 — ESP32 e Wi-Fi</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Comparativo cards ── */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.comp-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+.comp-card__bg{position:absolute;top:-20px;right:-20px;font-size:5rem;opacity:.04;pointer-events:none;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.comp-card__name{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.15rem;}
+.comp-card__full{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.9rem;}
+.comp-card__spec{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;}
+.comp-card__spec:last-of-type{border-bottom:none;}
+.comp-card__spec-label{color:var(--text-muted);}
+.comp-card__spec-value{color:var(--text-primary);font-weight:600;text-align:right;}
+
+/* ── Pinout visual ── */
+.pinout-wrap{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.pinout-wrap__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.pin-group{margin-bottom:1rem;}
+.pin-group__label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);font-weight:600;margin-bottom:.5rem;}
+.pin-row{display:flex;flex-wrap:wrap;gap:.5rem;}
+.pin-chip{display:inline-flex;align-items:center;gap:6px;padding:.35rem .7rem;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;border:1px solid;}
+
+/* ── HTTP flow ── */
+.http-flow{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.http-flow__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.http-step{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;flex-wrap:wrap;}
+.http-node{padding:.45rem 1rem;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;flex-shrink:0;}
+.http-arrow{color:var(--text-muted);font-size:.8rem;flex-shrink:0;}
+.http-label{font-size:.78rem;color:var(--text-secondary);}
+.http-method{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-right:4px;}
+.method-get{background:rgba(45,212,191,.15);color:var(--teal-400);border:1px solid rgba(45,212,191,.3);}
+.method-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
+.status-ok{background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.25);}
+.status-err{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+
+/* ── Wi-Fi status mockup ── */
+.wifi-demo{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;max-width:400px;}
+.wifi-demo__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.wifi-line{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;display:flex;align-items:center;gap:8px;}
+.wifi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.wifi-dot.connecting{background:#fbbf24;animation:pulse 1s ease-in-out infinite;}
+.wifi-dot.connected{background:var(--teal-400);}
+.wifi-dot.error{background:#f87171;}
+
+/* ── Wiring ── */
+.wiring{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.25rem;margin:.75rem 0;}
+.wiring__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;}
+.wiring__table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.wiring__table th{text-align:left;padding:.4rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.06);}
+.wiring__table td{padding:.45rem .75rem;border-bottom:1px solid rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.wiring__table tr:last-child td{border-bottom:none;}
+.wire-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;cursor:pointer;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.comp-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .comp-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">08</div>
+    <h1 class="capa-titulo">ESP32 e<br><em>Wi-Fi &amp; HTTP</em><br>Conectando à Rede</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do sensor à internet</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-microchip"></i></div><span>ESP32 vs Arduino — hardware, memória, dual-core e Wi-Fi integrado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wifi"></i></div><span>Conectando ao Wi-Fi — WiFi.h, modos de operação, reconexão</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exchange-alt"></i></div><span>Protocolo HTTP — métodos, status codes, headers e body</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-download"></i></div><span>HTTPClient GET — consumindo dados de uma API REST</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-upload"></i></div><span>HTTPClient POST — enviando JSON para um servidor</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: ESP32 lê DHT22 e envia dados para API REST local</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>ESP32 lê temperatura e umidade do DHT22 a cada 10 segundos e envia um JSON via HTTP POST para um servidor local (Python Flask), que armazena e exibe os dados recebidos.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit V1 (ou similar) + cabo USB</li>
+        <li>DHT22 (da semana 4) com pull-up 10kΩ</li>
+        <li>Jumpers + protoboard</li>
+        <li>PC com Python 3 instalado (para o servidor Flask)</li>
+        <li>Rede Wi-Fi de laboratório com credenciais</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 1–5 — Hardware, programação, sensores, atuadores</li>
+        <li>✅ Sem. 6 — P1</li>
+        <li>✅ Sem. 7 — I2C, SPI, UART, display OLED</li>
+        <li>▶ Sem. 8 — ESP32: Wi-Fi e HTTP</li>
+        <li>Sem. 9 — MQTT: protocolo IoT</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>O ESP32 é o chip mais usado em projetos IoT reais — Wi-Fi incluso no silicon</li>
+        <li>HTTP é o protocolo da web — qualquer servidor, qualquer linguagem, qualquer nuvem</li>
+        <li>Saber enviar dados via POST é o passo que transforma um sensor isolado em parte de um sistema</li>
+        <li>Sem isso, o dado fica preso no Serial Monitor — com isso, ele vai para onde precisar</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">ESP32 — o microcontrolador IoT e a conexão Wi-Fi</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-microchip"></i>Por que o ESP32 — além do Wi-Fi</div>
+      <p>O Arduino Uno é excelente para aprender, mas tem limitações claras: 2KB de RAM, sem conectividade e um único núcleo a 16MHz. O <strong>ESP32</strong>, lançado pela Espressif em 2016, resolveu todos esses pontos de uma vez — e se tornou o hardware padrão de projetos IoT do mundo todo.</p>
+      <p>Não é só o Wi-Fi que diferencia: o ESP32 tem <strong>dois núcleos</strong> (você pode rodar a lógica de rede em um núcleo e a leitura de sensores no outro), <strong>520KB de RAM</strong>, ADC de 12 bits, DAC, touchpads, motor PWM dedicado, e suporte a <strong>BLE 4.2</strong> além do Wi-Fi 802.11 b/g/n. Tudo isso num chip que custa menos que uma coxinha.</p>
+
+      <div class="comp-grid">
+        <div class="comp-card" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);">
+          <div class="comp-card__bg">UNO</div>
+          <div class="comp-card__name" style="color:#fbbf24;">Arduino Uno</div>
+          <div class="comp-card__full" style="color:#fde68a;">ATmega328P · 5V</div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">CPU</span><span class="comp-card__spec-value">1 core · 16 MHz</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">RAM</span><span class="comp-card__spec-value">2 KB SRAM</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Flash</span><span class="comp-card__spec-value">32 KB</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">ADC</span><span class="comp-card__spec-value">10 bits · 6 canais</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Wi-Fi</span><span class="comp-card__spec-value">❌ Não</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Bluetooth</span><span class="comp-card__spec-value">❌ Não</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Tensão I/O</span><span class="comp-card__spec-value">5V (tolerante)</span></div>
+          <div style="margin-top:.75rem;"><span class="badge-yellow">Aprendizado, GPIO simples, shields</span></div>
+        </div>
+
+        <div class="comp-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <div class="comp-card__bg">32</div>
+          <div class="comp-card__name" style="color:var(--teal-400);">ESP32</div>
+          <div class="comp-card__full" style="color:var(--teal-300);">Xtensa LX6 · 3.3V</div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">CPU</span><span class="comp-card__spec-value">2 cores · 240 MHz</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">RAM</span><span class="comp-card__spec-value">520 KB SRAM</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Flash</span><span class="comp-card__spec-value">4 MB (típico)</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">ADC</span><span class="comp-card__spec-value">12 bits · 18 canais</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Wi-Fi</span><span class="comp-card__spec-value">✅ 802.11 b/g/n</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Bluetooth</span><span class="comp-card__spec-value">✅ BT 4.2 + BLE</span></div>
+          <div class="comp-card__spec"><span class="comp-card__spec-label">Tensão I/O</span><span class="comp-card__spec-value">3.3V (NÃO 5V tolerante)</span></div>
+          <div style="margin-top:.75rem;"><span class="badge">IoT, Wi-Fi, MQTT, TinyML, BLE</span></div>
+        </div>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>ATENÇÃO — tensão dos pinos:</strong> os GPIOs do ESP32 operam em <strong>3.3V</strong> e <strong>não são tolerantes a 5V</strong>. Ligar um pino do Arduino Uno (5V) diretamente num GPIO do ESP32 pode danificar o chip permanentemente. Use divisores de tensão ou level shifters quando necessário. O DHT22 funciona em 3.3V — sem problemas.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>Pinos principais do ESP32 DevKit V1</div>
+      <p>O ESP32 DevKit tem 38 pinos. Nem todos são livres para uso geral — alguns têm restrições importantes que causam comportamentos inesperados se ignorados.</p>
+
+      <div class="pinout-wrap">
+        <div class="pinout-wrap__title">Mapa de pinos por função — ESP32 DevKit V1</div>
+        <div class="pin-group">
+          <div class="pin-group__label">Uso geral seguro (GPIO)</div>
+          <div class="pin-row">
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 4</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 16</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 17</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 18</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 19</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 21</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 22</span>
+            <span class="pin-chip" style="background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.3);color:var(--teal-400);">GPIO 23</span>
+          </div>
+        </div>
+        <div class="pin-group">
+          <div class="pin-group__label">I2C padrão (Wire.h)</div>
+          <div class="pin-row">
+            <span class="pin-chip" style="background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3);color:#60a5fa;">SDA = GPIO 21</span>
+            <span class="pin-chip" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#c4b5fd;">SCL = GPIO 22</span>
+          </div>
+        </div>
+        <div class="pin-group">
+          <div class="pin-group__label">UART padrão (Serial)</div>
+          <div class="pin-row">
+            <span class="pin-chip" style="background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.3);color:#fb923c;">TX0 = GPIO 1</span>
+            <span class="pin-chip" style="background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.3);color:#fb923c;">RX0 = GPIO 3</span>
+          </div>
+        </div>
+        <div class="pin-group">
+          <div class="pin-group__label">⚠ Pinos com restrição — evitar para I/O geral</div>
+          <div class="pin-row">
+            <span class="pin-chip" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#f87171;">GPIO 0 (boot)</span>
+            <span class="pin-chip" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#f87171;">GPIO 6–11 (flash SPI)</span>
+            <span class="pin-chip" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25);color:#f87171;">GPIO 34–39 (só entrada)</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);">
+          GPIO 6–11 estão conectados ao flash interno — usá-los como I/O trava o ESP32 permanentemente.
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Arduino IDE para ESP32:</strong> instale o suporte em <strong>Arquivo → Preferências → URLs adicionais</strong> e adicione <code style="font-family:'JetBrains Mono',monospace;">https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</code>. Depois vá em <strong>Ferramentas → Placa → Gerenciador de Placas</strong> e instale "esp32 by Espressif".
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wifi"></i>Conectando ao Wi-Fi — WiFi.h por dentro</div>
+      <p>A biblioteca <strong>WiFi.h</strong> já vem inclusa no pacote ESP32 para Arduino. A conexão básica envolve três passos: fornecer SSID e senha, aguardar o status <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">WL_CONNECTED</code> e depois usar o IP obtido.</p>
+
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;margin:.75rem 0;">
+        <div class="wifi-demo">
+          <div class="wifi-demo__title">Serial Monitor — sequência de conexão</div>
+          <div class="wifi-line"><span class="wifi-dot connecting"></span><span style="color:var(--text-muted);">Conectando a "LabIoT"</span></div>
+          <div class="wifi-line"><span style="color:#fbbf24;font-family:'JetBrains Mono',monospace;">........</span></div>
+          <div class="wifi-line"><span class="wifi-dot connected"></span><span style="color:var(--teal-400);">Conectado!</span></div>
+          <div class="wifi-line" style="margin-top:.25rem;"><span style="color:var(--text-muted);">IP: </span><span style="color:var(--text-primary);font-family:'JetBrains Mono',monospace;">192.168.1.47</span></div>
+          <div class="wifi-line"><span style="color:var(--text-muted);">RSSI: </span><span style="color:var(--teal-400);font-family:'JetBrains Mono',monospace;">-58 dBm</span></div>
+        </div>
+        <div style="flex:1;min-width:260px;">
+          <div class="destaque" style="margin-top:0;">
+            <strong>Modos Wi-Fi do ESP32:</strong><br>
+            <strong>STA</strong> (Station) — conecta a um roteador existente. É o modo que usamos hoje.<br>
+            <strong>AP</strong> (Access Point) — o ESP32 vira o roteador, outros dispositivos conectam nele.<br>
+            <strong>AP+STA</strong> — os dois ao mesmo tempo. Útil para configuração remota.
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Conexão Wi-Fi com reconexão automática</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> SSID     = <span class="str">"NomeDaRede"</span>;    <span class="cm">// substitua</span>
+<span class="kw">const char</span><span class="op">*</span> SENHA    = <span class="str">"SenhaDaRede"</span>;   <span class="cm">// substitua</span>
+
+<span class="kw">void</span> <span class="fn">conectarWifi</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_STA);               <span class="cm">// modo Station (cliente)</span>
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Conectando a \""</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(SSID); <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"\""</span>);
+
+  <span class="kw">while</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">delay</span>(<span class="num">500</span>);
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>);
+  }
+
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"\nConectado!"</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"IP: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="fn">WiFi</span>.<span class="fn">localIP</span>());
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"RSSI: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="fn">WiFi</span>.<span class="fn">RSSI</span>()); <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" dBm"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">conectarWifi</span>();
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Reconecta automaticamente se cair a conexão</span>
+  <span class="kw">if</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Wi-Fi perdido. Reconectando..."</span>);
+    <span class="fn">conectarWifi</span>();
+  }
+  <span class="fn">delay</span>(<span class="num">10000</span>);
+}</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Nunca suba credenciais Wi-Fi no GitHub.</strong> Use um arquivo separado <code style="font-family:'JetBrains Mono',monospace;">config.h</code> listado no <code style="font-family:'JetBrains Mono',monospace;">.gitignore</code>, ou variáveis de ambiente. Em produção, use o mecanismo de provisioning do ESP32 (SmartConfig ou Wi-Fi Manager).</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Qual é a diferença mais crítica ao migrar código do Arduino Uno para o ESP32?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O ESP32 não suporta a biblioteca Wire.h — é preciso usar outra para I2C</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">B</div>
+          <span class="quiz-texto">O ESP32 usa delay() diferente — os valores precisam ser convertidos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div>
+          <span class="quiz-texto">Os GPIOs do ESP32 operam em 3.3V e não são tolerantes a 5V — conectar saídas de 5V diretamente pode danificar o chip</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O ESP32 tem apenas 1 núcleo, por isso o loop() roda mais lento que no Arduino</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Protocolo HTTP — GET, POST e ArduinoJson</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-globe"></i>HTTP por dentro — o protocolo que move a web</div>
+      <p>HTTP (HyperText Transfer Protocol) é o protocolo de comunicação da web. Toda vez que seu navegador abre um site, ele manda uma requisição HTTP para um servidor e recebe uma resposta. No ESP32, faremos exatamente isso — só que quem "abre o site" é o microcontrolador.</p>
+      <p>O HTTP funciona em modelo <strong>request-response</strong>: o cliente (ESP32) sempre inicia, o servidor sempre responde. Cada resposta tem um <strong>código de status</strong> que indica o resultado, e um <strong>body</strong> com o conteúdo.</p>
+
+      <div class="http-flow">
+        <div class="http-flow__title">Fluxo de uma requisição HTTP completa</div>
+
+        <div class="http-step">
+          <div class="http-node" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">ESP32</div>
+          <div class="http-arrow">──→</div>
+          <span class="http-method method-post">POST</span>
+          <div class="http-label">/sensor/dados · Content-Type: application/json · Body: {"temp":27.3,"umid":64.8}</div>
+        </div>
+
+        <div class="http-step">
+          <div class="http-node" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;">Servidor</div>
+          <div class="http-arrow">──→</div>
+          <span class="http-method status-ok">200 OK</span>
+          <div class="http-label">Body: {"status":"salvo","id":42}</div>
+        </div>
+
+        <div style="margin-top:1.25rem;">
+          <div class="http-step" style="margin-bottom:.4rem;">
+            <span class="http-method method-get">GET</span>
+            <div class="http-label">Busca dados do servidor · sem body na requisição</div>
+          </div>
+          <div class="http-step" style="margin-bottom:.4rem;">
+            <span class="http-method method-post">POST</span>
+            <div class="http-label">Envia dados ao servidor · body com os dados (JSON, form)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Código</th><th>Significado</th><th>Quando ocorre</th></tr></thead>
+          <tbody>
+            <tr><td><strong>200</strong></td><td>OK</td><td>Requisição processada com sucesso</td></tr>
+            <tr><td><strong>201</strong></td><td>Created</td><td>Recurso criado (resposta típica de POST)</td></tr>
+            <tr><td><strong>400</strong></td><td>Bad Request</td><td>Requisição malformada (JSON inválido, campo faltando)</td></tr>
+            <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Falta autenticação (token, API key)</td></tr>
+            <tr><td><strong>404</strong></td><td>Not Found</td><td>Rota não existe no servidor</td></tr>
+            <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Erro no lado do servidor</td></tr>
+            <tr><td><strong>-1</strong></td><td>Connection failed</td><td>ESP32 não conseguiu conectar ao servidor (HTTP_CODE_ERROR)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-download"></i>HTTPClient GET — buscando dados de uma API</div>
+      <p>A classe <strong>HTTPClient</strong> abstrai todo o HTTP no ESP32 — abertura de conexão, envio dos headers, leitura da resposta. Para um GET simples, você fornece a URL e lê o response body como String.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — HTTP GET para API pública</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;HTTPClient.h&gt;</span>
+
+<span class="cm">// Após conectarWifi() no setup()...</span>
+
+<span class="kw">void</span> <span class="fn">fazerGet</span>() {
+  HTTPClient http;
+
+  <span class="cm">// Inicia a conexão com a URL alvo</span>
+  http.<span class="fn">begin</span>(<span class="str">"http://192.168.1.100:5000/api/status"</span>);
+
+  <span class="kw">int</span> httpCode = http.<span class="fn">GET</span>();   <span class="cm">// envia a requisição</span>
+
+  <span class="kw">if</span> (httpCode > <span class="num">0</span>) {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Código HTTP: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(httpCode);
+
+    <span class="kw">if</span> (httpCode == HTTP_CODE_OK) {          <span class="cm">// 200</span>
+      String payload = http.<span class="fn">getString</span>();   <span class="cm">// lê o body</span>
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Resposta: "</span> + payload);
+    }
+  } <span class="kw">else</span> {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Erro na requisição: "</span>);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(http.<span class="fn">errorToString</span>(httpCode));
+  }
+
+  http.<span class="fn">end</span>();   <span class="cm">// SEMPRE liberar a conexão</span>
+}</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>http.end() é obrigatório.</strong> Se você não chamar, a conexão fica aberta e o ESP32 esgota os sockets disponíveis após algumas requisições — causando falhas silenciosas. Sempre coloque em um bloco que garanta a execução, mesmo em caso de erro.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-upload"></i>HTTPClient POST com JSON — ArduinoJson</div>
+      <p>Para enviar dados de sensores, precisamos montar um JSON e enviá-lo no body do POST. A biblioteca <strong>ArduinoJson</strong> (instalar via Gerenciador de Bibliotecas: "ArduinoJson by Benoit Blanchon") torna isso seguro e eficiente — sem concatenação manual de strings que vaza memória.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — HTTP POST com JSON (ArduinoJson)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;HTTPClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> URL_SERVIDOR = <span class="str">"http://192.168.1.100:5000/api/dados"</span>;
+
+<span class="kw">bool</span> <span class="fn">enviarDados</span>(<span class="kw">float</span> temperatura, <span class="kw">float</span> umidade) {
+  <span class="kw">if</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Wi-Fi desconectado — abortando POST"</span>);
+    <span class="kw">return false</span>;
+  }
+
+  <span class="cm">// Monta o JSON com ArduinoJson</span>
+  StaticJsonDocument<<span class="num">128</span>> doc;
+  doc[<span class="str">"temperatura"</span>] = temperatura;
+  doc[<span class="str">"umidade"</span>]     = umidade;
+  doc[<span class="str">"dispositivo"</span>]  = <span class="str">"esp32-lab"</span>;
+
+  <span class="kw">char</span> jsonBuffer[<span class="num">128</span>];
+  <span class="fn">serializeJson</span>(doc, jsonBuffer);
+  <span class="cm">// jsonBuffer agora contém: {"temperatura":27.3,"umidade":64.8,"dispositivo":"esp32-lab"}</span>
+
+  HTTPClient http;
+  http.<span class="fn">begin</span>(URL_SERVIDOR);
+  http.<span class="fn">addHeader</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>);
+
+  <span class="kw">int</span> httpCode = http.<span class="fn">POST</span>(jsonBuffer);
+
+  <span class="kw">bool</span> sucesso = <span class="kw">false</span>;
+  <span class="kw">if</span> (httpCode == HTTP_CODE_OK || httpCode == <span class="num">201</span>) {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Enviado! HTTP "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(httpCode);
+    sucesso = <span class="kw">true</span>;
+  } <span class="kw">else</span> {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Erro HTTP: "</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(httpCode);
+  }
+
+  http.<span class="fn">end</span>();
+  <span class="kw">return</span> sucesso;
+}</code></pre>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-hand-paper"></i>
+        <span><strong>Pergunta para a turma:</strong> A função <code style="font-family:'JetBrains Mono',monospace;">enviarDados()</code> retorna um bool indicando sucesso. Como você usaria isso no <code style="font-family:'JetBrains Mono',monospace;">loop()</code> para tentar novamente em caso de falha — sem bloquear o programa com delay()?</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 O ESP32 executa o POST mas o servidor nunca recebe nada. O Serial Monitor mostra "Erro HTTP: -1". Qual é a causa mais provável?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O JSON está malformado — o servidor rejeita o body</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">O ESP32 não conseguiu conectar ao servidor — IP/porta errado, servidor não está rodando, ou estão em redes diferentes</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">A biblioteca HTTPClient não suporta POST — use apenas GET com parâmetros na URL</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O código HTTP -1 significa que o servidor respondeu 401 Unauthorized</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — ESP32 + DHT22 enviando para API REST local</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: ESP32 lê temperatura e umidade do DHT22 a cada 10 segundos e envia um POST JSON para um servidor Python Flask rodando no computador do professor (ou do aluno). O servidor imprime os dados recebidos no terminal.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-network-wired"></i>Circuito — DHT22 no ESP32</div>
+      <div class="wiring">
+        <div class="wiring__title">Ligação DHT22 → ESP32 DevKit · 3.3V</div>
+        <table class="wiring__table">
+          <thead><tr><th>Pino DHT22</th><th>Conectar em</th><th>Obs.</th></tr></thead>
+          <tbody>
+            <tr><td><span class="wire-dot" style="background:#ef4444;"></span>VCC (pino 1)</td><td style="color:var(--teal-400);">3.3V</td><td>ESP32 não é 5V — usar 3.3V aqui</td></tr>
+            <tr><td><span class="wire-dot" style="background:#a7f3d0;"></span>DATA (pino 2)</td><td style="color:var(--teal-400);">GPIO 4</td><td>Resistor 10kΩ entre DATA e 3.3V</td></tr>
+            <tr><td><span class="wire-dot" style="background:#374151;border:1px solid #4b5563;"></span>NC (pino 3)</td><td style="color:var(--text-muted);">—</td><td>Não conectar</td></tr>
+            <tr><td><span class="wire-dot" style="background:#1f2937;border:1px solid #374151;"></span>GND (pino 4)</td><td style="color:var(--teal-400);">GND</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo do LAB</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Preparar o servidor Python Flask</div>
+            <div class="lab-step__desc">No computador, instale Flask (<code style="font-family:'JetBrains Mono',monospace;">pip install flask</code>), execute o servidor abaixo e anote o IP da máquina na rede (comando <code style="font-family:'JetBrains Mono',monospace;">ipconfig</code> no Windows ou <code style="font-family:'JetBrains Mono',monospace;">ip a</code> no Linux). O servidor ficará ouvindo na porta 5000.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Montar o circuito DHT22 no ESP32</div>
+            <div class="lab-step__desc">Siga a tabela de ligação acima. Confira que o resistor pull-up de 10kΩ está presente entre o pino DATA e o 3.3V. Sem ele, o DHT22 não responde corretamente.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Instalar as bibliotecas no Arduino IDE</div>
+            <div class="lab-step__desc">Bibliotecas necessárias (Gerenciador de Bibliotecas): <strong>DHT sensor library</strong> by Adafruit, <strong>ArduinoJson</strong> by Benoit Blanchon. O suporte ao ESP32 já deve estar instalado da semana anterior.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Configurar credenciais e IP no código ESP32</div>
+            <div class="lab-step__desc">No código abaixo, substitua <code style="font-family:'JetBrains Mono',monospace;">NomeDaRede</code>, <code style="font-family:'JetBrains Mono',monospace;">SenhaDaRede</code> e o IP do servidor pelo endereço anotado no passo 1. O ESP32 e o computador devem estar na mesma rede.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar e monitorar</div>
+            <div class="lab-step__desc">Faça upload para o ESP32. Abra o Serial Monitor (115200 baud). Você deve ver "Conectado!" seguido de "Enviado! HTTP 200" a cada 10 segundos. Veja os dados chegando no terminal do servidor simultaneamente.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Servidor Flask -->
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Servidor Flask (executar no computador)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># servidor_iot.py — executar no computador com: python servidor_iot.py</span>
+<span class="cm"># pip install flask</span>
+
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, request, jsonify
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+app = Flask(__name__)
+leituras = []   <span class="cm"># armazena os dados recebidos em memória</span>
+
+<span class="pp">@app.route</span>(<span class="str">'/api/dados'</span>, methods=[<span class="str">'POST'</span>])
+<span class="kw">def</span> <span class="fn">receber_dados</span>():
+    dados = request.get_json()
+    <span class="kw">if not</span> dados:
+        <span class="kw">return</span> jsonify({<span class="str">'erro'</span>: <span class="str">'JSON inválido'</span>}), <span class="num">400</span>
+
+    dados[<span class="str">'timestamp'</span>] = datetime.now().strftime(<span class="str">'%H:%M:%S'</span>)
+    leituras.append(dados)
+
+    print(f<span class="str">"[{dados['timestamp']}] T={dados.get('temperatura','?')}°C  "</span>
+          f<span class="str">"U={dados.get('umidade','?')}%  de={dados.get('dispositivo','?')}"</span>)
+
+    <span class="kw">return</span> jsonify({<span class="str">'status'</span>: <span class="str">'salvo'</span>, <span class="str">'total'</span>: len(leituras)}), <span class="num">200</span>
+
+<span class="pp">@app.route</span>(<span class="str">'/api/dados'</span>, methods=[<span class="str">'GET'</span>])
+<span class="kw">def</span> <span class="fn">listar_dados</span>():
+    <span class="kw">return</span> jsonify(leituras)
+
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    print(<span class="str">"Servidor IoT rodando em http://0.0.0.0:5000"</span>)
+    app.run(host=<span class="str">'0.0.0.0'</span>, port=<span class="num">5000</span>, debug=<span class="kw">True</span>)</code></pre>
+      </div>
+
+      <!-- Código ESP32 completo -->
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 + DHT22 → API REST completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;HTTPClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="cm">// ── Configurações ── substitua antes de compilar</span>
+<span class="kw">const char</span><span class="op">*</span> SSID        = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA       = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> URL_SERVIDOR = <span class="str">"http://192.168.1.100:5000/api/dados"</span>;
+
+<span class="pp">#define</span> PINO_DHT   <span class="num">4</span>
+<span class="pp">#define</span> TIPO_DHT   DHT22
+<span class="pp">#define</span> INTERVALO  <span class="num">10000UL</span>   <span class="cm">// 10 segundos em ms</span>
+
+DHT <span class="fn">dht</span>(PINO_DHT, TIPO_DHT);
+<span class="kw">unsigned long</span> ultimoEnvio = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">conectarWifi</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_STA);
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Conectando ao Wi-Fi"</span>);
+  <span class="kw">while</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">delay</span>(<span class="num">500</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>);
+  }
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"\nConectado! IP: "</span> + <span class="fn">WiFi</span>.<span class="fn">localIP</span>().<span class="fn">toString</span>());
+}
+
+<span class="kw">bool</span> <span class="fn">enviarDados</span>(<span class="kw">float</span> t, <span class="kw">float</span> u) {
+  HTTPClient http;
+  http.<span class="fn">begin</span>(URL_SERVIDOR);
+  http.<span class="fn">addHeader</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>);
+  http.<span class="fn">setTimeout</span>(<span class="num">5000</span>);   <span class="cm">// 5s timeout — não trava para sempre</span>
+
+  StaticJsonDocument<<span class="num">128</span>> doc;
+  doc[<span class="str">"temperatura"</span>] = t;
+  doc[<span class="str">"umidade"</span>]     = u;
+  doc[<span class="str">"dispositivo"</span>]  = <span class="str">"esp32-lab"</span>;
+
+  <span class="kw">char</span> buf[<span class="num">128</span>];
+  <span class="fn">serializeJson</span>(doc, buf);
+
+  <span class="kw">int</span> code = http.<span class="fn">POST</span>(buf);
+  http.<span class="fn">end</span>();
+
+  <span class="kw">if</span> (code == HTTP_CODE_OK || code == <span class="num">201</span>) {
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[OK] T=%.1f°C U=%.1f%% → HTTP %d\n"</span>, t, u, code);
+    <span class="kw">return true</span>;
+  }
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[ERRO] HTTP %d\n"</span>, code);
+  <span class="kw">return false</span>;
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">conectarWifi</span>();
+  <span class="fn">delay</span>(<span class="num">2000</span>);   <span class="cm">// estabilizar o DHT22</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Reconexão automática</span>
+  <span class="kw">if</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Wi-Fi perdido — reconectando..."</span>);
+    <span class="fn">conectarWifi</span>();
+  }
+
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimoEnvio >= INTERVALO) {
+    ultimoEnvio = <span class="fn">millis</span>();
+
+    <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+    <span class="kw">float</span> u = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+
+    <span class="kw">if</span> (<span class="fn">isnan</span>(t) || <span class="fn">isnan</span>(u)) {
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"[ERRO] Falha na leitura do DHT22"</span>);
+      <span class="kw">return</span>;
+    }
+
+    <span class="fn">enviarDados</span>(t, u);
+  }
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Conceito</div>
+        <div class="secao-titulo">4 exercícios — da conexão ao sistema completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Diagnóstico de Wi-Fi</div>
+      <p>Adicione ao código da conexão Wi-Fi um diagnóstico completo que imprime no Serial Monitor: (a) o SSID ao qual está conectado, (b) o endereço IP local, (c) o RSSI em dBm com uma classificação textual ("Excelente" acima de -50, "Bom" até -70, "Fraco" abaixo de -70). Use <code style="font-family:'JetBrains Mono',monospace;">WiFi.SSID()</code>, <code style="font-family:'JetBrains Mono',monospace;">WiFi.localIP()</code> e <code style="font-family:'JetBrains Mono',monospace;">WiFi.RSSI()</code>.</p>
+      <span class="dif-basico">Conceito + LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — diagnóstico de Wi-Fi</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">void</span> <span class="fn">diagnosticoWifi</span>() {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"=== Diagnóstico Wi-Fi ==="</span>);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"SSID: "</span>);  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="fn">WiFi</span>.<span class="fn">SSID</span>());
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"IP:   "</span>);  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="fn">WiFi</span>.<span class="fn">localIP</span>());
+
+  <span class="kw">int</span> rssi = <span class="fn">WiFi</span>.<span class="fn">RSSI</span>();
+  String qualidade;
+  <span class="kw">if</span>      (rssi > <span class="num">-50</span>) qualidade = <span class="str">"Excelente"</span>;
+  <span class="kw">else if</span> (rssi > <span class="num">-70</span>) qualidade = <span class="str">"Bom"</span>;
+  <span class="kw">else</span>                 qualidade = <span class="str">"Fraco"</span>;
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"RSSI: %d dBm (%s)\n"</span>, rssi, qualidade.<span class="fn">c_str</span>());
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Contador de falhas de envio</div>
+      <p>Modifique a função <code style="font-family:'JetBrains Mono',monospace;">enviarDados()</code> para manter um contador global de falhas consecutivas. Se o POST falhar 3 vezes seguidas, o ESP32 deve se desconectar do Wi-Fi com <code style="font-family:'JetBrains Mono',monospace;">WiFi.disconnect()</code> e reconectar. Se o POST for bem-sucedido, o contador deve ser zerado. Isso simula uma estratégia básica de recuperação de falhas em campo.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — contador de falhas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">int</span> falhasConsecutivas = <span class="num">0</span>;
+
+<span class="cm">// No loop(), ao chamar enviarDados():</span>
+<span class="kw">if</span> (<span class="fn">enviarDados</span>(t, u)) {
+  falhasConsecutivas = <span class="num">0</span>;   <span class="cm">// sucesso — zera</span>
+} <span class="kw">else</span> {
+  falhasConsecutivas<span class="op">++</span>;
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Falhas consecutivas: %d\n"</span>, falhasConsecutivas);
+
+  <span class="kw">if</span> (falhasConsecutivas >= <span class="num">3</span>) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"3 falhas — resetando Wi-Fi..."</span>);
+    <span class="fn">WiFi</span>.<span class="fn">disconnect</span>();
+    <span class="fn">delay</span>(<span class="num">1000</span>);
+    <span class="fn">conectarWifi</span>();
+    falhasConsecutivas = <span class="num">0</span>;
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Resposta do servidor no Serial Monitor</div>
+      <p>No código do ESP32, após um POST bem-sucedido (HTTP 200), leia o body da resposta com <code style="font-family:'JetBrains Mono',monospace;">http.getString()</code> e extraia com ArduinoJson o campo <code style="font-family:'JetBrains Mono',monospace;">"total"</code> (número de leituras armazenadas pelo servidor). Imprima no Serial Monitor: <code style="font-family:'JetBrains Mono',monospace;">"Total de leituras no servidor: X"</code>. Isso cria um loop de confirmação — o ESP32 sabe que os dados chegaram.</p>
+      <span class="dif-medio">Integração</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — lendo resposta do servidor</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Dentro de enviarDados(), após verificar httpCode == 200:</span>
+<span class="kw">if</span> (code == HTTP_CODE_OK) {
+  String resposta = http.<span class="fn">getString</span>();
+
+  StaticJsonDocument<<span class="num">64</span>> resp;
+  DeserializationError err = <span class="fn">deserializeJson</span>(resp, resposta);
+
+  <span class="kw">if</span> (!err) {
+    <span class="kw">int</span> total = resp[<span class="str">"total"</span>] | <span class="num">0</span>;   <span class="cm">// | 0 = valor padrão se campo ausente</span>
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Total de leituras no servidor: %d\n"</span>, total);
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: endpoint GET para consulta</div>
+      <p>No servidor Flask, já existe o endpoint GET <code style="font-family:'JetBrains Mono',monospace;">/api/dados</code> que retorna todas as leituras. Implemente no ESP32 uma função <code style="font-family:'JetBrains Mono',monospace;">consultarUltima()</code> que faz um GET para esse endpoint, faz parse do JSON de resposta e imprime apenas a última leitura recebida (temperatura, umidade e timestamp). Execute ela uma vez no <code style="font-family:'JetBrains Mono',monospace;">setup()</code>, após conectar ao Wi-Fi, para mostrar os dados mais recentes disponíveis antes de começar a enviar.</p>
+      <span class="dif-desafio">Desafio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — GET + parse do array de leituras</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">void</span> <span class="fn">consultarUltima</span>() {
+  HTTPClient http;
+  http.<span class="fn">begin</span>(URL_SERVIDOR);
+  http.<span class="fn">setTimeout</span>(<span class="num">5000</span>);
+
+  <span class="kw">int</span> code = http.<span class="fn">GET</span>();
+  <span class="kw">if</span> (code != HTTP_CODE_OK) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"GET falhou ou servidor vazio"</span>);
+    http.<span class="fn">end</span>(); <span class="kw">return</span>;
+  }
+
+  String payload = http.<span class="fn">getString</span>();
+  http.<span class="fn">end</span>();
+
+  <span class="cm">// Array de objetos — tamanho dinâmico; estimativa conservadora</span>
+  DynamicJsonDocument doc(<span class="num">2048</span>);
+  DeserializationError err = <span class="fn">deserializeJson</span>(doc, payload);
+
+  <span class="kw">if</span> (err || doc.<span class="fn">size</span>() == <span class="num">0</span>) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Nenhum dado no servidor ainda."</span>); <span class="kw">return</span>;
+  }
+
+  <span class="cm">// Pega o último elemento do array</span>
+  JsonObject ultima = doc[doc.<span class="fn">size</span>() - <span class="num">1</span>];
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Última leitura → T=%.1f°C U=%.1f%% @ %s\n"</span>,
+    (<span class="kw">float</span>)ultima[<span class="str">"temperatura"</span>],
+    (<span class="kw">float</span>)ultima[<span class="str">"umidade"</span>],
+    (<span class="kw">const char</span><span class="op">*</span>)ultima[<span class="str">"timestamp"</span>]);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 8</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-microchip"></i>
+        <strong>ESP32</strong>
+        <p>Dual-core 240MHz, 520KB RAM, Wi-Fi + BLE. GPIOs em 3.3V — não tolerantes a 5V. GPIO 6–11 reservados ao flash.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-wifi"></i>
+        <strong>Wi-Fi + HTTP</strong>
+        <p>WiFi.begin() + loop WL_CONNECTED. HTTPClient.GET() e .POST() com Content-Type JSON. http.end() obrigatório.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>ArduinoJson</strong>
+        <p>StaticJsonDocument para montar e serializar JSON de envio. deserializeJson() para parsear respostas do servidor.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O ESP32 está enviando leituras reais do DHT22 para o servidor Flask? Você entende por que o http.end() é obrigatório? Você sabe a diferença entre GET e POST? Se sim — pronto para a Semana 9: MQTT, o protocolo nativo de IoT.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 9 — MQTT: broker, tópicos, QoS, publish/subscribe com Mosquitto e Python</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+
+const quizData={
+  quiz1:{correct:'C',msg:'✅ Correto! A diferença mais crítica e irreversível é a tensão dos GPIOs. O ESP32 opera em 3.3V e não é tolerante a 5V — conectar pinos do Arduino Uno (5V) diretamente pode queimar o chip na hora. A biblioteca Wire.h funciona normalmente no ESP32, e delay() funciona igual. O ESP32 tem dois núcleos, não um.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O código -1 (HTTP_CODE_ERROR) significa que a conexão TCP nem chegou a ser estabelecida — o ESP32 não encontrou o servidor. Causas típicas: IP errado, porta bloqueada pelo firewall do computador, servidor não está rodando, ou os dois dispositivos estão em redes diferentes. JSON malformado causaria HTTP 400, não -1.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

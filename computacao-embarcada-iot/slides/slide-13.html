@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 13 — P2 · Revisão e Simulado</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7f1d1d;top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:#1c1917;bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:#991b1b;top:38%;left:42%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:#f87171;border:1px solid rgba(239,68,68,.3);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:#f87171;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:#f87171;}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:#f87171;border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.18);color:#f87171;display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:#f87171;font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.2);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:#f87171;font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(239,68,68,.18);background:rgba(239,68,68,.03);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.08);}
+th{padding:.6rem 1rem;text-align:left;color:#f87171;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.15);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Semana flash cards ── */
+.semanas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.semana-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;}
+.semana-card__num{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;opacity:.12;position:absolute;top:.5rem;right:.75rem;line-height:1;}
+.semana-card__titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.6rem;}
+.semana-card__itens{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.semana-card__itens li{font-size:.78rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:6px;line-height:1.45;}
+.semana-card__itens li::before{content:'▸';font-size:.65rem;margin-top:2px;flex-shrink:0;}
+.semana-card__check{margin-top:.75rem;display:flex;gap:.4rem;flex-wrap:wrap;}
+
+/* ── Checklist interativo ── */
+.checklist{display:flex;flex-direction:column;gap:.4rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:.55rem .9rem;border-radius:9px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .2s;user-select:none;}
+.check-item:hover{background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.15);}
+.check-item.done{background:rgba(45,212,191,.07);border-color:rgba(45,212,191,.25);}
+.check-item.done .ci-text{color:var(--text-muted);text-decoration:line-through;}
+.ci-box{width:20px;height:20px;border-radius:5px;border:2px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;margin-top:1px;}
+.check-item.done .ci-box{background:var(--teal-400);border-color:var(--teal-400);color:#012a25;}
+.ci-text{font-size:.85rem;color:var(--text-secondary);line-height:1.5;flex:1;}
+.ci-sem{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-muted);flex-shrink:0;margin-top:2px;}
+.checklist-progress{display:flex;align-items:center;gap:.75rem;margin:.75rem 0;}
+.cp-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.cp-fill{height:100%;background:var(--teal-400);border-radius:4px;transition:width .4s ease;}
+.cp-label{font-size:.78rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;width:50px;text-align:right;}
+
+/* ── Simulado quiz ── */
+.simulado-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;}
+.simulado-score{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;color:var(--teal-400);}
+.sim-q{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.sim-q__header{display:flex;align-items:center;gap:12px;margin-bottom:.75rem;}
+.sim-q__num{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;}
+.sim-q__sem{font-size:.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.sim-q__texto{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;line-height:1.45;}
+.sim-ops{display:flex;flex-direction:column;gap:.45rem;}
+.sim-op{display:flex;align-items:flex-start;gap:10px;padding:.55rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.sim-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.sim-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.sim-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.sim-op.revelado{pointer-events:none;}
+.sim-letra{width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:1px;}
+.sim-texto{font-size:.84rem;color:var(--text-secondary);line-height:1.5;}
+.sim-feedback{display:none;margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;font-size:.82rem;line-height:1.55;}
+.sim-feedback.show{display:block;}
+
+/* ── Resumo conceitual cards ── */
+.conceito-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.conceito-card{border-radius:12px;padding:1.1rem;border:1px solid var(--card-border);background:var(--card-bg);}
+.conceito-card__title{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.conceito-card__body{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Gabarito ── */
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.1);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── Próxima ── */
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .semanas-grid,.conceito-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .semanas-grid,.conceito-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📝 Avaliação</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">13</div>
+    <h1 class="capa-titulo"><em>P2</em><br>Revisão &amp;<br>Simulado</h1>
+    <p class="capa-sub">Conteúdo das Semanas 7 a 12 · Prova teórica e/ou demonstração prática</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-network-wired"></i></div><span>Sem. 7 — I2C, SPI, UART e display OLED SSD1306</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wifi"></i></div><span>Sem. 8 — ESP32, Wi-Fi, HTTP GET/POST, ArduinoJson</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-broadcast-tower"></i></div><span>Sem. 9 — MQTT: broker, tópicos, QoS, Retain, LWT</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-satellite-dish"></i></div><span>Sem. 10 — BLE, LoRa/LoRaWAN e Zigbee</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud"></i></div><span>Sem. 11 — Edge Computing e Edge AI: os 4 drivers</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Sem. 12 — TinyML: TFLite Micro, quantização, inferência</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Formato da P2</div>
+      <ul class="info-lista">
+        <li>Prova teórica escrita — múltipla escolha e dissertativa</li>
+        <li>E/ou demonstração prática em laboratório com o ESP32</li>
+        <li>Duração: conforme definição do professor</li>
+        <li>Consulta: verificar com o professor se é aberta ou fechada</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-circle"></i>Pontos mais cobrados</div>
+      <ul class="info-lista">
+        <li>Diferença entre I2C, SPI e UART — quando usar cada um</li>
+        <li>Modelo pub/sub MQTT: broker, tópicos, QoS, retain</li>
+        <li>Escolha de protocolo IoT para cenários reais</li>
+        <li>Os 4 drivers de Edge Computing (latência, privacidade, offline, banda)</li>
+        <li>Pipeline TinyML: quantização int8 e tensor arena</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Como usar esta página</div>
+      <ul class="info-lista">
+        <li>Marque os conceitos dominados no checklist interativo</li>
+        <li>Responda o simulado de 12 questões e veja o placar</li>
+        <li>Use as tabelas-resumo como cola de revisão rápida</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para a revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── FLASH CARDS ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão rápida</div>
+        <div class="secao-titulo">6 semanas em 6 cartões — conceitos-chave de cada aula</div>
+      </div>
+    </div>
+
+    <div class="semanas-grid">
+      <div class="semana-card" style="background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.2);">
+        <div class="semana-card__num" style="color:#60a5fa;">07</div>
+        <div class="semana-card__titulo" style="color:#60a5fa;"><i class="fas fa-network-wired"></i> I2C · SPI · UART</div>
+        <ul class="semana-card__itens" style="--c:rgba(96,165,250,.6)">
+          <li style="--before-color:#60a5fa">I2C: 2 fios (SDA+SCL), endereço 7-bit, pull-ups 4.7kΩ. Uno: A4=SDA, A5=SCL. ESP32: GPIO21/22.</li>
+          <li>SPI: 4 fios (MOSI, MISO, SCK, CS), 1 CS por slave, full-duplex, até 80MHz.</li>
+          <li>UART: 2 fios (TX→RX cruzado), assíncrono, mesmo baud rate obrigatório.</li>
+          <li>OLED SSD1306: endereço 0x3C, biblioteca Adafruit. <strong>display.display()</strong> é obrigatório para enviar o buffer.</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge-blue">Scanner I2C</span><span class="badge-blue">OLED buffer</span></div>
+      </div>
+
+      <div class="semana-card" style="background:rgba(251,191,36,.03);border-color:rgba(251,191,36,.18);">
+        <div class="semana-card__num" style="color:#fbbf24;">08</div>
+        <div class="semana-card__titulo" style="color:#fbbf24;"><i class="fas fa-wifi"></i> ESP32 · Wi-Fi · HTTP</div>
+        <ul class="semana-card__itens">
+          <li>ESP32: 2 cores 240MHz, 520KB RAM, GPIOs em <strong>3.3V — não 5V tolerante</strong>. GPIO 6–11 reservados.</li>
+          <li>WiFi.begin() → loop WL_CONNECTED → WiFi.localIP().</li>
+          <li>HTTPClient: GET busca dados, POST envia. <strong>http.end() obrigatório</strong> sempre.</li>
+          <li>ArduinoJson: StaticJsonDocument + serializeJson para montar JSON; deserializeJson para parsear.</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge-yellow">3.3V</span><span class="badge-yellow">http.end()</span></div>
+      </div>
+
+      <div class="semana-card" style="background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.2);">
+        <div class="semana-card__num" style="color:var(--teal-400);">09</div>
+        <div class="semana-card__titulo" style="color:var(--teal-400);"><i class="fas fa-broadcast-tower"></i> MQTT</div>
+        <ul class="semana-card__itens">
+          <li>Pub/Sub: Publisher e Subscriber não se conhecem — o Broker roteia. Mosquitto porta 1883.</li>
+          <li>Tópicos hierárquicos: <code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">casa/sala/temp</code>. Wildcards: <strong>+</strong> (1 nível), <strong>#</strong> (todos abaixo).</li>
+          <li>QoS 0=dispara/esquece · QoS 1=pelo menos 1x · QoS 2=exatamente 1x.</li>
+          <li><strong>Retain</strong>: broker guarda última mensagem. <strong>LWT</strong>: broker publica "offline" se cair. <strong>mqtt.loop()</strong> obrigatório.</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge">mqtt.loop()</span><span class="badge">retain/LWT</span></div>
+      </div>
+
+      <div class="semana-card" style="background:rgba(139,92,246,.04);border-color:rgba(139,92,246,.18);">
+        <div class="semana-card__num" style="color:#c4b5fd;">10</div>
+        <div class="semana-card__titulo" style="color:#c4b5fd;"><i class="fas fa-satellite-dish"></i> BLE · LoRa · Zigbee</div>
+        <ul class="semana-card__itens">
+          <li><strong>BLE</strong>: GATT (Serviço→Característica), meses de bateria, 10–100m. Advertising = beacon sem conexão.</li>
+          <li><strong>LoRa</strong>: CSS, 2–15km, 250bps–50kbps. SF↑=mais alcance/menos taxa. Duty cycle 1%.</li>
+          <li><strong>LoRaWAN</strong>: LoRa + rede. End Node → Gateway → Network Server → App. Classes A/B/C.</li>
+          <li><strong>Zigbee</strong>: mesh 2.4GHz. Coordinator + Router (sempre ligado) + End Device (bateria).</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge-purple">GATT</span><span class="badge-purple">LoRaWAN arch</span></div>
+      </div>
+
+      <div class="semana-card" style="background:rgba(239,68,68,.03);border-color:rgba(239,68,68,.15);">
+        <div class="semana-card__num" style="color:#f87171;">11</div>
+        <div class="semana-card__titulo" style="color:#f87171;"><i class="fas fa-cloud"></i> Edge AI</div>
+        <ul class="semana-card__itens">
+          <li>3 camadas: <strong>Edge</strong> (&lt;10ms) · <strong>Fog</strong> (1–100ms) · <strong>Cloud</strong> (100ms–2s).</li>
+          <li>4 drivers para processar na borda: <strong>latência</strong>, <strong>privacidade</strong>, <strong>offline</strong>, <strong>banda</strong>.</li>
+          <li>Pipeline Edge AI: treinar na nuvem (float32) → converter → quantizar int8 → deploy no MCU.</li>
+          <li>Quantização int8: modelo 4× menor, inferência 4–10× mais rápida, perda &lt;2% de acurácia.</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge-red">4 drivers</span><span class="badge-red">int8</span></div>
+      </div>
+
+      <div class="semana-card" style="background:rgba(251,146,60,.03);border-color:rgba(251,146,60,.18);">
+        <div class="semana-card__num" style="color:#fb923c;">12</div>
+        <div class="semana-card__titulo" style="color:#fb923c;"><i class="fas fa-brain"></i> TinyML</div>
+        <ul class="semana-card__itens">
+          <li>TFLite Micro: sem OS, sem heap dinâmico, RAM mínima ~20KB. Modelo fica na flash como array .h.</li>
+          <li><strong>Tensor Arena</strong>: bloco de RAM estático para tensores. AllocateTensors() falha se pequeno demais.</li>
+          <li>Ciclo: GetModel → Interpreter → AllocateTensors (setup). Input → Invoke → Output (loop).</li>
+          <li>Quantização: <code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">int8 = round(float / scale) + zero_point</code>. <strong>alignas(8)</strong> no array do modelo.</li>
+        </ul>
+        <div class="semana-card__check"><span class="badge" style="background:rgba(251,146,60,.12);color:#fb923c;border-color:rgba(251,146,60,.22);">arena_size</span><span class="badge" style="background:rgba(251,146,60,.12);color:#fb923c;border-color:rgba(251,146,60,.22);">scale/zp</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist de conceitos</span></div>
+
+  <!-- ── CHECKLIST ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Autoavaliação</div>
+        <div class="secao-titulo">Marque o que você domina — clique para marcar/desmarcar</div>
+      </div>
+    </div>
+
+    <div class="checklist-progress">
+      <div class="cp-bar"><div class="cp-fill" id="progressBar" style="width:0%"></div></div>
+      <span class="cp-label" id="progressLabel">0 / 24</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-network-wired"></i>Semana 7 — Protocolos Seriais</div>
+      <div class="checklist" id="cl7">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei diferenciar I2C, SPI e UART pelos critérios: número de fios, velocidade, topologia e caso de uso</span><span class="ci-sem">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei por que os pull-ups são obrigatórios no I2C e o que acontece sem eles</span><span class="ci-sem">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo o scanner I2C — como ele funciona e o que 0x3C significa</span><span class="ci-sem">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei por que display.display() é obrigatório no OLED e o que é o "buffer"</span><span class="ci-sem">Sem 7</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wifi"></i>Semana 8 — ESP32 e HTTP</div>
+      <div class="checklist" id="cl8">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei as diferenças técnicas entre ESP32 e Arduino Uno (memória, velocidade, Wi-Fi, tensão)</span><span class="ci-sem">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo por que os pinos do ESP32 são 3.3V e o que acontece ao conectar 5V</span><span class="ci-sem">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei implementar HTTP GET e POST com ArduinoJson, incluindo http.end() correto</span><span class="ci-sem">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Consigo interpretar códigos HTTP (200, 400, 404, 500, -1) e saber o que causou cada um</span><span class="ci-sem">Sem 8</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-broadcast-tower"></i>Semana 9 — MQTT</div>
+      <div class="checklist" id="cl9">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei explicar o modelo pub/sub e por que o broker desacopla publisher e subscriber</span><span class="ci-sem">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei projetar hierarquias de tópicos e usar wildcards + e # corretamente</span><span class="ci-sem">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo QoS 0, 1 e 2 — diferença, quando usar cada um e o que é PUBACK</span><span class="ci-sem">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei o que é Retain e LWT e consigo dar um caso de uso prático para cada um</span><span class="ci-sem">Sem 9</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-satellite-dish"></i>Semana 10 — BLE, LoRa, Zigbee</div>
+      <div class="checklist" id="cl10">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei a diferença entre BT Classic e BLE e por que BLE é usado em wearables</span><span class="ci-sem">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo a hierarquia GATT (Serviço → Característica) e as propriedades READ/WRITE/NOTIFY</span><span class="ci-sem">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei como o LoRa consegue km de alcance (CSS) e o trade-off SF vs taxa de dados</span><span class="ci-sem">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Consigo escolher e justificar o protocolo certo (Wi-Fi, BLE, LoRa, Zigbee) para um cenário dado</span><span class="ci-sem">Sem 10</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>Semana 11 — Edge Computing</div>
+      <div class="checklist" id="cl11">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei descrever Edge, Fog e Cloud com latências típicas e exemplos de hardware em cada camada</span><span class="ci-sem">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei aplicar os 4 drivers (latência, privacidade, offline, banda) para decidir onde processar</span><span class="ci-sem">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo por que quantização int8 é necessária e qual é o impacto em tamanho e acurácia</span><span class="ci-sem">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Consigo classificar um caso de uso como Edge, Cloud ou Híbrido e justificar</span><span class="ci-sem">Sem 11</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Semana 12 — TinyML</div>
+      <div class="checklist" id="cl12">
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei a diferença entre TensorFlow, TFLite e TFLite Micro — hardware-alvo de cada um</span><span class="ci-sem">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Entendo o que é a tensor arena, por que AllocateTensors() falha e como corrigir</span><span class="ci-sem">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei o ciclo completo de inferência: GetModel → Interpreter → AllocateTensors → Input → Invoke → Output</span><span class="ci-sem">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="ci-box"></div><span class="ci-text">Sei aplicar a fórmula de quantização: int8 = round(float / scale) + zero_point</span><span class="ci-sem">Sem 12</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado P2 · 12 questões</span></div>
+
+  <!-- ── SIMULADO ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado interativo</div>
+        <div class="secao-titulo">12 questões no estilo P2 — clique para responder</div>
+      </div>
+    </div>
+
+    <div class="simulado-header">
+      <span class="simulado-score">Placar: <span id="placar">0</span> / <span id="totalQ">0</span> respondidas · <span id="acertos">0</span> corretas</span>
+      <button onclick="resetarSimulado()" style="background:none;border:1px solid rgba(239,68,68,.3);color:#f87171;padding:6px 14px;border-radius:8px;font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif;">Resetar</button>
+    </div>
+
+    <!-- Q1 -->
+    <div class="sim-q" id="q1">
+      <div class="sim-q__header"><span class="sim-q__num">Q1</span><span class="sim-q__sem">Semana 7</span></div>
+      <div class="sim-q__texto">Você conecta dois módulos OLED SSD1306 idênticos no mesmo barramento I2C sem alterar nenhuma configuração. O que acontece?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q1',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">Ambos funcionam normalmente — o Arduino alterna entre os dois automaticamente</span></div>
+        <div class="sim-op" onclick="simResponder('q1',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">Conflito de barramento — ambos respondem em 0x3C simultaneamente corrompendo os dados; nenhum funciona corretamente</span></div>
+        <div class="sim-op" onclick="simResponder('q1',this,false,'C')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="sim-texto">O segundo OLED ignora os comandos pois o I2C só suporta um dispositivo por barramento</span></div>
+        <div class="sim-op" onclick="simResponder('q1',this,false,'D')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="sim-texto">O Arduino detecta automaticamente o conflito e usa SPI em vez de I2C</span></div>
+      </div>
+      <div class="sim-feedback" id="q1-fb">✅ <strong>Dois dispositivos com o mesmo endereço I2C causam conflito.</strong> Ambos respondem quando o master chama 0x3C, gerando colisão no barramento. Para usar dois OLEDs iguais, um deles precisa ter o endereço alterado para 0x3D via pino SA0.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="sim-q" id="q2">
+      <div class="sim-q__header"><span class="sim-q__num">Q2</span><span class="sim-q__sem">Semana 7</span></div>
+      <div class="sim-q__texto">No protocolo UART, qual é a consequência de configurar baud rates diferentes nos dois dispositivos (ex: 9600 de um lado e 115200 do outro)?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q2',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">A comunicação fica mais lenta, usando o menor dos dois baud rates</span></div>
+        <div class="sim-op" onclick="simResponder('q2',this,false,'B')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div><span class="sim-texto">Um erro é gerado e a transmissão para automaticamente</span></div>
+        <div class="sim-op" onclick="simResponder('q2',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">Os dados recebidos ficam corrompidos — caracteres aleatórios, pois o receptor amostra os bits no tempo errado</span></div>
+        <div class="sim-op" onclick="simResponder('q2',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">Nada — UART é assíncrono e não depende de clock, portanto o baud rate não importa</span></div>
+      </div>
+      <div class="sim-feedback" id="q2-fb">✅ <strong>UART é assíncrono — sem clock compartilhado.</strong> A sincronização depende de ambos os lados usarem exatamente o mesmo baud rate. Com baud rates diferentes, o receptor amostra os bits nos momentos errados, resultando em dados completamente corrompidos — típico sintoma: lixo no Serial Monitor.</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="sim-q" id="q3">
+      <div class="sim-q__header"><span class="sim-q__num">Q3</span><span class="sim-q__sem">Semana 8</span></div>
+      <div class="sim-q__texto">Um aluno conecta a saída de 5V de um Arduino Uno diretamente ao GPIO4 de um ESP32 para enviar um sinal digital. O que provavelmente acontecerá?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q3',this,false,'A')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div><span class="sim-texto">Funciona normalmente — o ESP32 detecta 5V como HIGH sem problema</span></div>
+        <div class="sim-op" onclick="simResponder('q3',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">O GPIO do ESP32 pode ser danificado permanentemente — os pinos operam em 3.3V e não são tolerantes a 5V</span></div>
+        <div class="sim-op" onclick="simResponder('q3',this,false,'C')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div><span class="sim-texto">O ESP32 converte automaticamente 5V para 3.3V internamente</span></div>
+        <div class="sim-op" onclick="simResponder('q3',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">O sinal é ignorado — o ESP32 só aceita sinais de outros ESP32</span></div>
+      </div>
+      <div class="sim-feedback" id="q3-fb">✅ <strong>Os GPIOs do ESP32 operam em 3.3V e NÃO são tolerantes a 5V.</strong> Aplicar 5V diretamente pode ultrapassar a tensão máxima do pino e causar dano permanente ao chip. Para comunicação entre Arduino (5V) e ESP32 (3.3V), use um divisor de tensão ou level shifter.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="sim-q" id="q4">
+      <div class="sim-q__header"><span class="sim-q__num">Q4</span><span class="sim-q__sem">Semana 8</span></div>
+      <div class="sim-q__texto">O HTTPClient retorna código -1 ao tentar fazer um POST para <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;">http://192.168.1.50:5000/dados</code>. O Wi-Fi está conectado. Qual NÃO é uma causa possível?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q4',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">O servidor Flask não está em execução no endereço 192.168.1.50</span></div>
+        <div class="sim-op" onclick="simResponder('q4',this,false,'B')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div><span class="sim-texto">O firewall do PC está bloqueando a porta 5000</span></div>
+        <div class="sim-op" onclick="simResponder('q4',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">O JSON enviado no body está malformado</span></div>
+        <div class="sim-op" onclick="simResponder('q4',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">O ESP32 e o PC estão em redes diferentes (ESP32 no hotspot do celular, PC no Wi-Fi da sala)</span></div>
+      </div>
+      <div class="sim-feedback" id="q4-fb">✅ <strong>JSON malformado não causa código -1.</strong> O código -1 (HTTP_CODE_ERROR) significa que a conexão TCP nem chegou a ser estabelecida — o ESP32 não encontrou o servidor. JSON malformado causaria HTTP 400 (Bad Request), pois o servidor recebe a requisição mas rejeita o conteúdo. As opções A, B e D impedem a conexão TCP.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="sim-q" id="q5">
+      <div class="sim-q__header"><span class="sim-q__num">Q5</span><span class="sim-q__sem">Semana 9</span></div>
+      <div class="sim-q__texto">Um dashboard IoT conecta ao broker MQTT e assina o tópico <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;">sensor/+/temperatura</code>. Quais mensagens ele receberá?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q5',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">Apenas sensor/sala/temperatura — o + só substitui "sala"</span></div>
+        <div class="sim-op" onclick="simResponder('q5',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">sensor/sala/temperatura, sensor/quarto/temperatura, sensor/jardim/temperatura — qualquer tópico com exatamente 3 níveis em que o 3° é "temperatura"</span></div>
+        <div class="sim-op" onclick="simResponder('q5',this,false,'C')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="sim-texto">Todos os tópicos que começam com "sensor/" — o + substitui tudo que vem depois</span></div>
+        <div class="sim-op" onclick="simResponder('q5',this,false,'D')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="sim-texto">sensor/sala/temperatura e sensor/sala/sub/temperatura — o + aceita múltiplos níveis</span></div>
+      </div>
+      <div class="sim-feedback" id="q5-fb">✅ <strong>O wildcard + substitui exatamente um nível.</strong> sensor/+/temperatura recebe qualquer tópico com 3 níveis onde o primeiro é "sensor" e o terceiro é "temperatura". NÃO recebe sensor/sala/sub/temperatura (que tem 4 níveis). Para múltiplos níveis use # (mas sempre no final).</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="sim-q" id="q6">
+      <div class="sim-q__header"><span class="sim-q__num">Q6</span><span class="sim-q__sem">Semana 9</span></div>
+      <div class="sim-q__texto">Um sensor publica a cada 60 segundos com <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;">retain=true</code>. Um novo cliente assina o tópico 30 segundos após a última publicação. O que ele recebe imediatamente?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q6',this,false,'A')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div><span class="sim-texto">Nada — precisa esperar a próxima publicação do sensor</span></div>
+        <div class="sim-op" onclick="simResponder('q6',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">A última mensagem publicada com retain=true — o broker entrega imediatamente ao novo assinante</span></div>
+        <div class="sim-op" onclick="simResponder('q6',this,false,'C')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div><span class="sim-texto">O histórico completo de todas as mensagens publicadas até agora</span></div>
+        <div class="sim-op" onclick="simResponder('q6',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">Uma mensagem de erro informando que o tópico está vazio</span></div>
+      </div>
+      <div class="sim-feedback" id="q6-fb">✅ <strong>Retained message: o broker armazena a ÚLTIMA mensagem de um tópico com retain=true.</strong> Todo novo assinante recebe essa última mensagem imediatamente ao se inscrever, sem esperar a próxima publicação. Isso não é um histórico completo — apenas a última mensagem.</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="sim-q" id="q7">
+      <div class="sim-q__header"><span class="sim-q__num">Q7</span><span class="sim-q__sem">Semana 10</span></div>
+      <div class="sim-q__texto">Um engenheiro precisa instalar 200 sensores de temperatura em uma fazenda de 800 hectares. Cada sensor envia 1 leitura por hora, alimentado por bateria, sem infraestrutura de rede disponível. Qual protocolo é mais adequado?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q7',this,false,'A')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div><span class="sim-texto">Wi-Fi — instalar roteadores nos pontos mais altos da fazenda</span></div>
+        <div class="sim-op" onclick="simResponder('q7',this,false,'B')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">B</div><span class="sim-texto">BLE — os sensores fazem relay entre si cobrindo a fazenda toda</span></div>
+        <div class="sim-op" onclick="simResponder('q7',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">LoRaWAN — km de alcance com 1 gateway, 1 mensagem/hora cabe no duty cycle de 1%, bateria de anos com Classe A</span></div>
+        <div class="sim-op" onclick="simResponder('q7',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">Zigbee mesh — os sensores formam a rede entre si sem gateway</span></div>
+      </div>
+      <div class="sim-feedback" id="q7-fb">✅ <strong>LoRaWAN é a escolha correta.</strong> O alcance de km cobre a fazenda com 1 ou poucos gateways. 1 mensagem/hora × 200 sensores está dentro do duty cycle. Bateria de anos com deep sleep entre transmissões (Classe A). BLE alcança 100m por salto e Zigbee precisa de Routers com alimentação constante. Wi-Fi consome energia demais.</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="sim-q" id="q8">
+      <div class="sim-q__header"><span class="sim-q__num">Q8</span><span class="sim-q__sem">Semana 10</span></div>
+      <div class="sim-q__texto">Qual é a diferença fundamental entre LoRa e LoRaWAN?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q8',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">LoRa é mais rápido, LoRaWAN é mais lento — a diferença é apenas de velocidade</span></div>
+        <div class="sim-op" onclick="simResponder('q8',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">LoRa é a camada física (modulação de rádio). LoRaWAN é o protocolo de rede que roda sobre LoRa — define autenticação, gateways, network server e classes de dispositivo</span></div>
+        <div class="sim-op" onclick="simResponder('q8',this,false,'C')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="sim-texto">LoRaWAN é o nome europeu para LoRa — são a mesma tecnologia com nomes regionais diferentes</span></div>
+        <div class="sim-op" onclick="simResponder('q8',this,false,'D')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="sim-texto">LoRa usa 915MHz, LoRaWAN usa 868MHz — a diferença é apenas de frequência</span></div>
+      </div>
+      <div class="sim-feedback" id="q8-fb">✅ <strong>LoRa é a tecnologia de rádio (camada física), LoRaWAN é a rede.</strong> Analogia: LoRa é como o cabo Ethernet (meio físico), LoRaWAN é o protocolo TCP/IP que roda sobre ele. Você pode usar LoRa sem LoRaWAN (ponto a ponto), mas LoRaWAN sempre requer LoRa como camada física.</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="sim-q" id="q9">
+      <div class="sim-q__header"><span class="sim-q__num">Q9</span><span class="sim-q__sem">Semana 11</span></div>
+      <div class="sim-q__texto">Um hospital quer usar visão computacional para pré-triagem de raio-X de pacientes. Os dados são imagens médicas sigilosas (LGPD). A rede do hospital cai frequentemente. Onde o processamento deve ocorrer?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q9',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">Nuvem pública (AWS/Azure) — mais poder de processamento e modelos mais precisos</span></div>
+        <div class="sim-op" onclick="simResponder('q9',this,true,'B')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="sim-texto">Borda/Fog local — dois drivers forçam a borda: privacidade (LGPD proíbe dados médicos em nuvem pública) e resiliência offline (rede instável)</span></div>
+        <div class="sim-op" onclick="simResponder('q9',this,false,'C')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="sim-texto">Nuvem privada — desde que seja privada, LGPD não se aplica</span></div>
+        <div class="sim-op" onclick="simResponder('q9',this,false,'D')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="sim-texto">Não é viável — visão computacional requer GPU e não pode rodar na borda</span></div>
+      </div>
+      <div class="sim-feedback" id="q9-fb">✅ <strong>Dois drivers forçam processamento na borda:</strong> privacidade (imagens de saúde não podem sair do perímetro hospitalar segundo LGPD/CFM) e resiliência offline (rede instável). Hardware como NVIDIA Jetson Orin permite inferência de visão computacional de alto desempenho na borda sem internet.</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="sim-q" id="q10">
+      <div class="sim-q__header"><span class="sim-q__num">Q10</span><span class="sim-q__sem">Semana 11</span></div>
+      <div class="sim-q__texto">Por que a quantização int8 é essencial para rodar modelos de ML em microcontroladores como o ESP32?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q10',this,false,'A')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div><span class="sim-texto">Porque int8 é mais preciso que float32 para dados de sensores</span></div>
+        <div class="sim-op" onclick="simResponder('q10',this,false,'B')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">B</div><span class="sim-texto">Porque a biblioteca TFLite Micro só aceita o tipo int8 — float32 não é suportado</span></div>
+        <div class="sim-op" onclick="simResponder('q10',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">Reduz o modelo ~4× (1 byte vs 4 bytes por peso), cabe na RAM limitada do MCU e acelera a inferência em hardware sem FPU — com perda de acurácia geralmente menor que 2%</span></div>
+        <div class="sim-op" onclick="simResponder('q10',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">Para reduzir o consumo de energia — int8 gasta menos energia por operação que float32</span></div>
+      </div>
+      <div class="sim-feedback" id="q10-fb">✅ <strong>Quantização int8 resolve os dois principais gargalos do MCU: memória e velocidade.</strong> Float32 usa 4 bytes por peso, int8 usa 1 byte — redução de 4×. No ESP32 sem FPU dedicada, operações inteiras são muito mais rápidas que ponto flutuante. A perda de acurácia é geralmente &lt;2% para modelos de classificação.</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="sim-q" id="q11">
+      <div class="sim-q__header"><span class="sim-q__num">Q11</span><span class="sim-q__sem">Semana 12</span></div>
+      <div class="sim-q__texto">O código chama <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;">interpreter->AllocateTensors()</code> e recebe kTfLiteError. Qual é a causa mais provável e como corrigir?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q11',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">O modelo .tflite está corrompido — exportar novamente do Python</span></div>
+        <div class="sim-op" onclick="simResponder('q11',this,false,'B')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div><span class="sim-texto">A versão do esquema TFLite é incompatível — atualizar a biblioteca</span></div>
+        <div class="sim-op" onclick="simResponder('q11',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">A tensor arena é pequena demais — aumentar o valor de ARENA_SIZE até que AllocateTensors() retorne kTfLiteOk</span></div>
+        <div class="sim-op" onclick="simResponder('q11',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">O ESP32 não tem RAM suficiente para TFLite Micro — usar Raspberry Pi</span></div>
+      </div>
+      <div class="sim-feedback" id="q11-fb">✅ <strong>AllocateTensors() falha quando a tensor arena é insuficiente.</strong> O TFLM precisa alocar todos os tensores (entrada, intermediários, saída) dentro da arena. Aumente ARENA_SIZE gradualmente (4096 → 8192 → 16384). Para calibrar: após uma inferência bem-sucedida, imprima <code style="font-family:'JetBrains Mono',monospace;">interpreter->arena_used_bytes()</code> e use esse valor + margem como ARENA_SIZE mínimo.</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="sim-q" id="q12">
+      <div class="sim-q__header"><span class="sim-q__num">Q12</span><span class="sim-q__sem">Semana 12</span></div>
+      <div class="sim-q__texto">Um valor float normalizado de -0.5 precisa ser quantizado para int8. O tensor de entrada tem scale=0.004 e zero_point=0. Qual é o valor int8 correto?</div>
+      <div class="sim-ops">
+        <div class="sim-op" onclick="simResponder('q12',this,false,'A')"><div class="sim-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="sim-texto">-50 — multiplicar por 100</span></div>
+        <div class="sim-op" onclick="simResponder('q12',this,false,'B')"><div class="sim-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">B</div><span class="sim-texto">0 — valores negativos normalizados mapeiam para 0 em int8</span></div>
+        <div class="sim-op" onclick="simResponder('q12',this,true,'C')"><div class="sim-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div><span class="sim-texto">-125 — fórmula: round(-0.5 / 0.004) + 0 = round(-125) = -125, dentro do range int8 [-128, 127]</span></div>
+        <div class="sim-op" onclick="simResponder('q12',this,false,'D')"><div class="sim-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div><span class="sim-texto">-128 — todos os valores negativos mapeiam para -128</span></div>
+      </div>
+      <div class="sim-feedback" id="q12-fb">✅ <strong>Fórmula: int8 = round(float_value / scale) + zero_point.</strong> round(-0.5 / 0.004) + 0 = round(-125.0) + 0 = -125. Com zero_point=0, o mapeamento é linear e centrado. -125 está dentro do range int8 válido [-128, 127]. A operação inversa (desquantização): float = (int8_val - zero_point) × scale = (-125 - 0) × 0.004 = -0.5 ✓</div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Tabelas de referência rápida</span></div>
+
+  <!-- ── TABELAS RÁPIDAS ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Referência</div>
+        <div class="secao-titulo">Tabelas comparativas para consulta na revisão</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-network-wired"></i>Protocolos seriais — comparativo rápido</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Protocolo</th><th>Fios</th><th>Velocidade</th><th>Dispositivos</th><th>Arduino Uno</th><th>ESP32</th></tr></thead>
+          <tbody>
+            <tr><td><strong>I2C</strong></td><td>2 (SDA+SCL)</td><td>100k–3.4MHz</td><td>Até 127</td><td>A4=SDA · A5=SCL</td><td>GPIO21=SDA · GPIO22=SCL</td></tr>
+            <tr><td><strong>SPI</strong></td><td>4 (+1 CS/slave)</td><td>Até 80MHz</td><td>N (1 CS cada)</td><td>11=MOSI 12=MISO 13=SCK</td><td>GPIO23/19/18 (padrão)</td></tr>
+            <tr><td><strong>UART</strong></td><td>2 (TX+RX cruzados)</td><td>300–4Mbps</td><td>2 (ponto a ponto)</td><td>0=RX · 1=TX</td><td>GPIO1=TX · GPIO3=RX</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-satellite-dish"></i>Protocolos IoT sem fio — quando usar cada um</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Protocolo</th><th>Alcance</th><th>Consumo</th><th>Infraestrutura</th><th>Use quando…</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Wi-Fi + MQTT</strong></td><td>30–150m</td><td>Alto</td><td>Roteador Wi-Fi</td><td>Gateway, câmera, dados pesados, tomada disponível</td></tr>
+            <tr><td><strong>BLE</strong></td><td>10–100m</td><td>Muito baixo</td><td>Smartphone / hub</td><td>Wearable, beacon, sensor a bateria, curta distância</td></tr>
+            <tr><td><strong>LoRaWAN</strong></td><td>2–15 km</td><td>Baixo (sleep)</td><td>Gateway + servidor</td><td>Sensor rural, cidade inteligente, sem infraestrutura de rede</td></tr>
+            <tr><td><strong>Zigbee</strong></td><td>10–100m/salto</td><td>Baixo (end device)</td><td>Coordinator + routers</td><td>Automação residencial, rede mesh densa, tomada nos roteadores</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>Edge vs Cloud — critérios de decisão</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Driver</th><th>Condição</th><th>Decisão</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Latência</strong></td><td>Decisão &lt;100ms</td><td><span class="badge">Borda obrigatória</span></td><td>Freio autônomo, rejeição de peça industrial</td></tr>
+            <tr><td><strong>Privacidade</strong></td><td>Dados sigilosos (LGPD)</td><td><span class="badge">Borda / Fog</span></td><td>Imagem médica, biometria, dados pessoais</td></tr>
+            <tr><td><strong>Offline</strong></td><td>Sem internet garantida</td><td><span class="badge">Borda + sync</span></td><td>Mineradora subterrânea, drone agrícola</td></tr>
+            <tr><td><strong>Banda</strong></td><td>Volume inviável para enviar</td><td><span class="badge">Híbrido</span></td><td>Câmera 4K: detectar na borda, enviar só eventos</td></tr>
+            <tr><td><em>Nenhum</em></td><td>—</td><td><span class="badge-blue">Nuvem</span></td><td>Recomendação e-commerce, análise histórica</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>TFLite Micro — erros comuns e soluções</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Sintoma</th><th>Causa provável</th><th>Solução</th></tr></thead>
+          <tbody>
+            <tr><td><strong>AllocateTensors() falhou</strong></td><td>Tensor arena pequena demais</td><td>Aumentar ARENA_SIZE; imprimir arena_used_bytes() para calibrar</td></tr>
+            <tr><td><strong>Fault / crash na inicialização</strong></td><td>Array do modelo sem alignas(8)</td><td>Adicionar <code style="font-family:'JetBrains Mono',monospace;">alignas(8)</code> antes do array no .h</td></tr>
+            <tr><td><strong>Resultados absurdos na inferência</strong></td><td>Normalização errada ou scale/zero_point ignorados</td><td>Verificar que usa os mesmos parâmetros do treino; aplicar quantização correta</td></tr>
+            <tr><td><strong>ESP32 trava ao ativar Wi-Fi + TFLite</strong></td><td>Wi-Fi consome ~100KB de RAM, esgota o disponível</td><td>Separar inferência e transmissão Wi-Fi no tempo; não rodar simultaneamente</td></tr>
+            <tr><td><strong>Versão do schema incompatível</strong></td><td>Modelo gerado com versão diferente do runtime</td><td>Atualizar biblioteca TFLite Micro ou reconverter o modelo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Boa prova</span></div>
+
+  <section class="secao" style="text-align:center;">
+    <div style="background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:14px;padding:2.5rem 2rem;">
+      <i class="fas fa-graduation-cap" style="font-size:2.5rem;color:var(--teal-400);display:block;margin-bottom:1rem;"></i>
+      <h2 style="font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:800;color:var(--white);margin-bottom:.6rem;">Boa prova!</h2>
+      <p style="font-size:.9rem;color:var(--text-secondary);max-width:520px;margin:0 auto 1.5rem;">Se você dominou os conceitos das 6 semanas, o checklist está verde e o simulado com boa pontuação — você está pronto. Confie no que você praticou.</p>
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
+        <span class="badge">I2C · SPI · UART</span>
+        <span class="badge-blue">ESP32 · HTTP · MQTT</span>
+        <span class="badge-purple">BLE · LoRa · Zigbee</span>
+        <span class="badge-red">Edge AI</span>
+        <span class="badge-yellow">TinyML</span>
+      </div>
+    </div>
+    <div class="proxima" style="margin-top:2rem;">
+      <div>
+        <div class="proxima-label">Após a P2</div>
+        <div class="proxima-titulo">Semana 14 — TinyML aplicações: wake word, detecção de anomalias em sensores, classificação de gestos</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ── Checklist ── */
+const TOTAL = 24;
+function toggle(el){
+  el.classList.toggle('done');
+  el.querySelector('.ci-box').innerHTML = el.classList.contains('done') ? '<i class="fas fa-check"></i>' : '';
+  atualizarProgress();
+}
+function atualizarProgress(){
+  const done = document.querySelectorAll('.check-item.done').length;
+  const pct = Math.round(done/TOTAL*100);
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = done+' / '+TOTAL;
+}
+
+/* ── Simulado ── */
+let respondidas = 0, corretas = 0;
+const feedbacks = {
+  q1:{ok:'B',txt:''},q2:{ok:'C',txt:''},q3:{ok:'B',txt:''},q4:{ok:'C',txt:''},
+  q5:{ok:'B',txt:''},q6:{ok:'B',txt:''},q7:{ok:'C',txt:''},q8:{ok:'B',txt:''},
+  q9:{ok:'B',txt:''},q10:{ok:'C',txt:''},q11:{ok:'C',txt:''},q12:{ok:'C',txt:''}
+};
+
+function simResponder(qid, el, ok, letra){
+  const ops = el.closest('.sim-ops');
+  if(ops.dataset.answered) return;
+  ops.dataset.answered = '1';
+  respondidas++;
+  if(ok) corretas++;
+
+  ops.querySelectorAll('.sim-op').forEach(op=>{
+    op.classList.add('revelado');
+    if(op.querySelector('.sim-letra').textContent.trim() === feedbacks[qid].ok)
+      op.classList.add('correto');
+  });
+  if(!ok) el.classList.add('errado');
+
+  const fb = document.getElementById(qid+'-fb');
+  fb.style.background = ok ? 'rgba(45,212,191,.08)' : 'rgba(239,68,68,.08)';
+  fb.style.border = ok ? '1px solid rgba(45,212,191,.25)' : '1px solid rgba(239,68,68,.25)';
+  fb.style.color = ok ? 'var(--teal-300)' : '#fca5a5';
+  fb.style.padding = '.75rem 1rem';
+  fb.style.borderRadius = '8px';
+  fb.classList.add('show');
+
+  document.getElementById('placar').textContent = respondidas;
+  document.getElementById('totalQ').textContent = respondidas;
+  document.getElementById('acertos').textContent = corretas;
+}
+
+function resetarSimulado(){
+  respondidas = 0; corretas = 0;
+  document.getElementById('placar').textContent = 0;
+  document.getElementById('totalQ').textContent = 0;
+  document.getElementById('acertos').textContent = 0;
+  document.querySelectorAll('.sim-ops').forEach(ops=>{
+    delete ops.dataset.answered;
+    ops.querySelectorAll('.sim-op').forEach(op=>{
+      op.classList.remove('correto','errado','revelado');
+    });
+  });
+  document.querySelectorAll('.sim-feedback').forEach(fb=>{
+    fb.classList.remove('show');
+  });
+}
+
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar'
+    :'<i class="fas fa-eye"></i> ver';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 01 — Computação Embarcada e IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;
+  --teal-900:#0d3330;
+  --teal-800:#134e4a;
+  --teal-700:#0f766e;
+  --teal-500:#14b8a6;
+  --teal-400:#2dd4bf;
+  --teal-300:#5eead4;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;
+  --code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--teal-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════════════
+   CAPA
+═══════════════════════════════════════════ */
+.capa{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  position:relative;
+  overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--teal-500);top:40%;left:40%;opacity:.12;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(45,212,191,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);
+  border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--teal-400);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(45,212,191,.18);color:var(--teal-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--teal-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;
+}
+.scroll-hint i{font-size:1rem;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══════════════════════════════════════════
+   CONTEÚDO
+═══════════════════════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;
+}
+.destaque strong{color:var(--teal-400);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-teal{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);
+  font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+
+/* tabela */
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;
+   font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+
+/* código */
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(45,212,191,.07);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.dir{color:#2dd4bf;}
+
+/* icon list */
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+/* badge */
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  font-size:.72rem;font-weight:600;letter-spacing:.04em;
+  background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);
+}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* Diagrama de comparação */
+.comp-grid{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:0;
+  background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;
+  overflow:hidden;margin:.75rem 0;
+}
+.comp-col{padding:1.25rem;}
+.comp-col:first-child{border-right:1px solid rgba(45,212,191,.1);}
+.comp-col:last-child{border-left:1px solid rgba(45,212,191,.1);}
+.comp-vs{
+  display:flex;align-items:center;justify-content:center;
+  padding:0 .5rem;
+  font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;
+  color:rgba(45,212,191,.4);letter-spacing:.06em;writing-mode:vertical-rl;
+}
+.comp-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;
+  color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;
+}
+.comp-item{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:.82rem;color:var(--text-secondary);margin-bottom:.5rem;line-height:1.5;
+}
+.comp-item::before{content:'▸';color:var(--teal-400);font-size:.65rem;margin-top:4px;flex-shrink:0;}
+
+/* Arquitetura IoT */
+.arq-flow{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;flex-wrap:wrap;margin:1rem 0;
+}
+.arq-node{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:1rem 1.25rem;
+  background:rgba(45,212,191,.06);
+  border:1px solid rgba(45,212,191,.15);border-radius:12px;
+  min-width:110px;text-align:center;
+}
+.arq-node__icon{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(45,212,191,.12);color:var(--teal-400);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+}
+.arq-node__label{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:var(--white);}
+.arq-node__sub{font-size:.7rem;color:var(--text-muted);}
+.arq-arrow{
+  display:flex;align-items:center;padding:0 .5rem;
+  color:rgba(45,212,191,.35);font-size:1.2rem;
+}
+
+/* Exercícios */
+.exercicio{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.25rem;margin-bottom:.85rem;
+}
+.exercicio-num{
+  font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;
+  color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;
+}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;background:none;
+  border:1px solid rgba(45,212,191,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.1rem;text-align:center;
+}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+
+/* Próxima */
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;cursor:pointer;
+}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+
+/* Separador */
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* Quiz inline */
+.quiz-box{
+  background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);
+  border-radius:12px;padding:1.25rem;margin:1rem 0;
+}
+.quiz-pergunta{
+  font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;
+  color:var(--white);margin-bottom:1rem;
+}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+.quiz-op{
+  display:flex;align-items:center;gap:10px;padding:.6rem .9rem;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);
+  border-radius:9px;cursor:pointer;transition:all .2s;
+}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);color:var(--teal-300);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.quiz-letra{
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:800;
+}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{
+  display:none;padding:.75rem 1rem;border-radius:8px;
+  font-size:.83rem;line-height:1.55;margin-top:.5rem;
+}
+.quiz-feedback.show{display:block;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .comp-grid{grid-template-columns:1fr;}
+  .comp-vs{writing-mode:horizontal-tb;padding:.5rem 0;border:none !important;}
+  .comp-col:first-child,.comp-col:last-child{border:none;}
+  .arq-flow{gap:.5rem;}
+  .arq-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     CAPA
+══════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">01</div>
+    <h1 class="capa-titulo">Introdução à<br><em>Computação Embarcada</em><br>e IoT</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do microcontrolador à borda da IA</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-rocket"></i></div><span>Apresentação da disciplina e do semestre</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-microchip"></i></div><span>O que é computação embarcada — conceito e exemplos reais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-desktop"></i></div><span>Propósito geral vs. sistema embarcado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wifi"></i></div><span>IoT — arquitetura, mercado e protocolos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Edge AI — por que rodar IA na borda?</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-search"></i></div><span>Atividade: levantamento de dispositivos no cotidiano</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Levantamento e mapeamento de dispositivos embarcados no cotidiano dos alunos — discussão guiada em sala.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do semestre</div>
+      <ul class="info-lista">
+        <li>P1 — Semana 6 · Conteúdo das semanas 1–5</li>
+        <li>P2 — Semana 13 · Conteúdo das semanas 7–12</li>
+        <li>P3 — Semana 18 · Conteúdo das semanas 14–17</li>
+        <li>P4 Final — Semana 19 · Projeto integrador completo</li>
+        <li>Segunda Chamada — Semana 20</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Trilha do semestre</div>
+      <ul class="info-lista">
+        <li>Microcontroladores: Arduino, ESP32, Raspberry Pi Pico</li>
+        <li>Sensores, atuadores e comunicação (I2C, SPI, UART)</li>
+        <li>Protocolos IoT: MQTT, Wi-Fi, BLE, LoRa</li>
+        <li>Edge Computing e TinyML — IA na borda</li>
+        <li>Integração com nuvem: AWS IoT, Node-RED, dashboards</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que você vai precisar</div>
+      <ul class="info-lista">
+        <li>Arduino IDE instalado (arduino.cc/en/software)</li>
+        <li>Kit Arduino Uno ou acesso ao laboratório</li>
+        <li>Curiosidade — esse semestre tem hardware de verdade</li>
+        <li>Pré-requisito: nenhum (primeiro contato com embarcados)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CONTEÚDO
+══════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Apresentação ──────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Apresentação da Disciplina</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Onde você está pisando</div>
+      <p>Você está no terceiro período de um curso de Inteligência Artificial. Até agora viu programação, banco de dados, fundamentos. Este semestre é diferente — vamos sair do software puro e entrar no mundo físico.</p>
+      <p><strong>Computação Embarcada e IoT</strong> é a disciplina que conecta código com hardware. Ao final do semestre você vai ter programado um microcontrolador real, lido sensores físicos, transmitido dados via Wi-Fi e MQTT, e colocado um modelo de IA para rodar dentro de um chip com memória de poucos kilobytes.</p>
+      <div class="destaque">
+        <strong>Por que isso importa para IA?</strong> A maioria dos dados que alimentam modelos de ML vêm de sensores no mundo real — câmeras, acelerômetros, termômetros, microfones. Entender como esses dispositivos funcionam é entender de onde vêm os dados antes do pipeline.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-road"></i>Trilha das 20 semanas</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 1–5:</strong> Hardware, sensores, comunicação serial, Wi-Fi, MQTT</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 7–12:</strong> Protocolos IoT, Edge AI, TinyML no ESP32</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 14–17:</strong> Nuvem, plataformas IoT, segurança, eficiência energética</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 19:</strong> Projeto final: sistema IoT completo com sensores + IA</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-clipboard-list"></i>Avaliações</div>
+        <div class="tabela-wrap">
+          <table>
+            <thead><tr><th>Prova</th><th>Semana</th><th>Formato</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge">P1</span></td><td>6</td><td>Teórica + demo lab</td></tr>
+              <tr><td><span class="badge">P2</span></td><td>13</td><td>Teórica + demo lab</td></tr>
+              <tr><td><span class="badge">P3</span></td><td>18</td><td>Teórica + demo lab</td></tr>
+              <tr><td><span class="badge">P4 Final</span></td><td>19</td><td>Projeto integrador</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-laptop"></i>
+      <span><strong>Instale agora:</strong> Baixe o Arduino IDE em <strong>arduino.cc/en/software</strong>. Durante a instalação, aceite os drivers USB. Se tiver dúvida, levanta a mão — resolvemos nos próximos 10 minutos antes de avançar.</span>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> Sem pesquisar — quantos dispositivos com algum tipo de processador vocês têm no bolso, na mochila ou em casa agora? Tente listar mentalmente antes de avançar.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Conceitos ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">O que é Computação Embarcada — e por que é diferente</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-microchip"></i>Definição objetiva</div>
+      <p>Um <strong>sistema embarcado</strong> é um sistema computacional projetado para executar <strong>uma função específica</strong>, embutido dentro de um dispositivo maior. Ele tem recursos limitados — memória em KB ou MB, processador em MHz — e geralmente opera em tempo real, muitas vezes sem sistema operacional completo.</p>
+      <p>A palavra-chave é <strong>dedicado</strong>. O microcontrolador do airbag do seu carro faz uma coisa: detectar impacto e disparar o airbag. Não tem browser. Não tem planilha. Tem um loop que roda para sempre verificando um sensor de aceleração.</p>
+      <div class="destaque">
+        <strong>Definição da IEEE:</strong> "Um sistema embarcado é qualquer dispositivo que inclua um computador programável, mas que não seja, por si só, um computador de propósito geral."
+      </div>
+    </div>
+
+    <!-- Comparação PC vs Embarcado -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Propósito geral vs. sistema embarcado</div>
+      <div class="comp-grid">
+        <div class="comp-col">
+          <div class="comp-titulo">💻 Computador de Propósito Geral</div>
+          <div class="comp-item">Executa qualquer software — navegador, editor, jogos, IA</div>
+          <div class="comp-item">RAM: 8–64 GB · Armazenamento: centenas de GB</div>
+          <div class="comp-item">Processador: 2–4 GHz, múltiplos núcleos</div>
+          <div class="comp-item">Sistema operacional completo (Windows, Linux, macOS)</div>
+          <div class="comp-item">Consumo: 15–300 W · Custo: centenas a milhares de reais</div>
+          <div class="comp-item">Exemplos: notebook, PC, servidor</div>
+        </div>
+        <div class="comp-vs">VS</div>
+        <div class="comp-col">
+          <div class="comp-titulo">🔌 Sistema Embarcado</div>
+          <div class="comp-item">Executa uma função específica e imutável (ou quase)</div>
+          <div class="comp-item">RAM: 2 KB–512 MB · Flash: 32 KB–16 MB</div>
+          <div class="comp-item">Processador: 16 MHz–240 MHz, 1–2 núcleos</div>
+          <div class="comp-item">RTOS ou bare-metal (sem SO, apenas o código)</div>
+          <div class="comp-item">Consumo: µW–mW · Custo: R$ 5–200</div>
+          <div class="comp-item">Exemplos: Arduino, ESP32, Raspberry Pi Pico</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-alt"></i>Exemplos reais — onde eles estão</div>
+      <div class="grid-3">
+        <div style="background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.1);border-radius:12px;padding:1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);margin-bottom:.6rem;">🚗 Automotivo</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span>ECU do motor — controle de injeção</span></li>
+            <li><i class="fas fa-caret-right"></i><span>ABS — anti-bloqueio de freios</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Airbag — detecção de impacto em &lt;1ms</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Painel digital — clusters ARM</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.1);border-radius:12px;padding:1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);margin-bottom:.6rem;">🏥 Médico</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span>Marca-passo — ARM Cortex-M, bateria 10 anos</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Bomba de insulina — ESP32 + sensor glicemia</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Oxímetro — STM32 + sensor infravermelho</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Ressonância — controladores dedicados</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.1);border-radius:12px;padding:1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);margin-bottom:.6rem;">🏠 Casa / Cotidiano</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span>Micro-ondas — PIC, teclado, timer</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Roteador Wi-Fi — MIPS/ARM, Linux embarcado</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Smart TV — ARM Cortex-A, Android/Tizen</span></li>
+            <li><i class="fas fa-caret-right"></i><span>Smartwatch — ARM Cortex-M, sensores bio</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="aviso-teal" style="margin-top:.75rem;">
+        <i class="fas fa-hand-paper"></i>
+        <span><strong>Pergunta para a turma:</strong> O seu celular é um sistema embarcado? Justifique. (Spoiler: a resposta não é tão simples quanto parece.)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>O loop que nunca termina</div>
+      <p>Todo sistema embarcado tem uma estrutura fundamental: um <strong>setup</strong> (executa uma vez, inicializa tudo) e um <strong>loop</strong> (executa para sempre, verifica sensores, executa lógica, controla atuadores).</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Estrutura básica</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// setup(): executa UMA VEZ ao ligar ou resetar</span>
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);        <span class="cm">// inicia comunicação serial</span>
+  <span class="fn">pinMode</span>(<span class="num">13</span>, OUTPUT);     <span class="cm">// configura pino 13 como saída (LED)</span>
+  <span class="cm">// inicializa sensores, displays, módulos Wi-Fi...</span>
+}
+
+<span class="cm">// loop(): executa PARA SEMPRE (dezenas de vezes por segundo)</span>
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">digitalWrite</span>(<span class="num">13</span>, HIGH);   <span class="cm">// liga LED</span>
+  <span class="fn">delay</span>(<span class="num">1000</span>);               <span class="cm">// aguarda 1 segundo</span>
+  <span class="fn">digitalWrite</span>(<span class="num">13</span>, LOW);    <span class="cm">// desliga LED</span>
+  <span class="fn">delay</span>(<span class="num">1000</span>);               <span class="cm">// aguarda 1 segundo</span>
+  <span class="cm">// → esse é o "Hello World" do mundo embarcado: o Blink</span>
+}</code></pre>
+      </div>
+      <p>Esse código é o <strong>Blink</strong> — o Hello World do Arduino. Na Semana 2 você vai escrever e rodar isso no hardware real.</p>
+    </div>
+
+    <!-- Quiz interativo -->
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz rápido — qual desses NÃO é um sistema embarcado?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Marca-passo cardíaco</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>
+          <span class="quiz-texto">Controlador do ABS de um carro</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Servidor web de e-commerce</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>
+          <span class="quiz-texto">Termostato inteligente com ESP32</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Aula 3 · IoT e Edge AI</span></div>
+
+  <!-- ── AULA 3: IoT + Edge AI ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">IoT e Edge AI — quando o dispositivo pensa por conta própria</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wifi"></i>O que é IoT — além do buzzword</div>
+      <p>IoT (<em>Internet of Things</em> — Internet das Coisas) é a conexão de objetos físicos à internet para coletar, transmitir e agir sobre dados. Mas a definição técnica vai além: é a integração de <strong>sensores</strong>, <strong>processamento</strong>, <strong>comunicação</strong> e <strong>atuação</strong> em objetos do mundo real.</p>
+      <p>O mercado IoT tem previsão de <strong>29 bilhões de dispositivos conectados até 2030</strong>. Geladeiras que pedem reposição de estoque. Lavouras que ativam irrigação automaticamente. Fábricas que detectam falha de equipamento antes de acontecer. Tudo isso começa num microcontrolador.</p>
+    </div>
+
+    <!-- Arquitetura IoT -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Arquitetura de um sistema IoT</div>
+      <div class="arq-flow">
+        <div class="arq-node">
+          <div class="arq-node__icon"><i class="fas fa-thermometer-half"></i></div>
+          <div class="arq-node__label">Sensor</div>
+          <div class="arq-node__sub">Coleta dados do mundo físico</div>
+        </div>
+        <div class="arq-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="arq-node">
+          <div class="arq-node__icon"><i class="fas fa-microchip"></i></div>
+          <div class="arq-node__label">MCU / Borda</div>
+          <div class="arq-node__sub">Lê, filtra, processa localmente</div>
+        </div>
+        <div class="arq-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="arq-node">
+          <div class="arq-node__icon"><i class="fas fa-exchange-alt"></i></div>
+          <div class="arq-node__label">Gateway</div>
+          <div class="arq-node__sub">Protocolo → MQTT / HTTP</div>
+        </div>
+        <div class="arq-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="arq-node">
+          <div class="arq-node__icon"><i class="fas fa-cloud"></i></div>
+          <div class="arq-node__label">Nuvem</div>
+          <div class="arq-node__sub">Armazena, analisa, modelos ML</div>
+        </div>
+        <div class="arq-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="arq-node">
+          <div class="arq-node__icon"><i class="fas fa-tachometer-alt"></i></div>
+          <div class="arq-node__label">Dashboard</div>
+          <div class="arq-node__sub">Visualização e alertas</div>
+        </div>
+      </div>
+      <p style="margin-top:1rem;">Cada etapa pode ser mapeada para ferramentas que você vai usar no semestre: <span class="badge">DHT22</span> (sensor), <span class="badge">ESP32</span> (MCU), <span class="badge">MQTT</span> (protocolo), <span class="badge">AWS IoT Core</span> (nuvem), <span class="badge">Node-RED</span> (dashboard).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-broadcast-tower"></i>Protocolos IoT — a língua dos dispositivos</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Protocolo</th><th>Alcance</th><th>Consumo</th><th>Caso de uso típico</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge">MQTT</span></td>
+              <td>Via rede/internet</td>
+              <td>Baixo</td>
+              <td>Telemetria IoT, sensores enviando dados para servidor</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Wi-Fi</span></td>
+              <td>~50m indoor</td>
+              <td>Médio-alto</td>
+              <td>ESP32 conectado ao roteador doméstico ou corporativo</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Bluetooth BLE</span></td>
+              <td>~10m</td>
+              <td>Muito baixo</td>
+              <td>Smartwatch, sensores fitness, beacons</td>
+            </tr>
+            <tr>
+              <td><span class="badge-purple">LoRa / LoRaWAN</span></td>
+              <td>2–15 km</td>
+              <td>Muito baixo</td>
+              <td>Agricultura, rastreamento, cidades inteligentes</td>
+            </tr>
+            <tr>
+              <td><span class="badge-yellow">Zigbee</span></td>
+              <td>~100m (mesh)</td>
+              <td>Baixo</td>
+              <td>Automação residencial, lâmpadas inteligentes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Escolha do protocolo:</strong> não existe protocolo "melhor". Existe o protocolo certo para o caso de uso. Alcance, consumo de energia, latência e custo determinam a escolha. Nas semanas 10 e 11 vamos explorar cada um em profundidade.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Edge AI — quando o chip pensa</div>
+      <p>Tradicionalmente, um dispositivo IoT coleta dados e manda para a nuvem processar. O modelo de ML fica na nuvem, a inferência acontece lá, a resposta volta para o dispositivo. Isso funciona — mas tem problemas:</p>
+      <ul class="icon-list" style="margin-bottom:1rem;">
+        <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Latência:</strong> ida e volta para a nuvem leva 100ms–2s. Um carro autônomo não pode esperar 2 segundos para decidir frear.</span></li>
+        <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Conectividade:</strong> e se não tiver internet? Um sistema industrial não pode parar por queda de rede.</span></li>
+        <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Privacidade:</strong> imagem de câmera de segurança subindo para nuvem de terceiros — problema legal e ético.</span></li>
+        <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Custo:</strong> enviar gigabytes de dados de sensores para a nuvem todo dia tem custo alto de banda e armazenamento.</span></li>
+      </ul>
+      <p>A solução é <strong>Edge AI</strong>: colocar o modelo dentro do dispositivo. A inferência acontece localmente — sem internet, sem latência, sem exposição de dados.</p>
+      <div class="destaque">
+        <strong>TinyML:</strong> subárea do Edge AI focada em rodar modelos de ML em microcontroladores com &lt;1 MB de RAM. Você vai fazer isso na Semana 12 — carregar um modelo treinado no Google Colab e rodar dentro de um ESP32 com 520 KB de RAM.
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — por que Edge AI é preferível à nuvem em sistemas de segurança?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Porque a nuvem é cara demais para qualquer uso</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>
+          <span class="quiz-texto">Porque latência + privacidade + disponibilidade offline são críticos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Porque a borda tem mais capacidade computacional que a nuvem</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>
+          <span class="quiz-texto">Porque não existe conectividade Wi-Fi em ambientes industriais</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── ATIVIDADE ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Discussão guiada em sala</div>
+        <div class="secao-titulo">Mapeamento de dispositivos embarcados no cotidiano</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-info-circle"></i>
+      <span>Esta atividade é feita em sala, em duplas ou trios. Não precisa de computador — apenas raciocínio e discussão. Ao final, cada grupo compartilha seus achados com a turma.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 1 — Levantamento individual</div>
+      <p>Liste pelo menos <strong>5 dispositivos embarcados</strong> que você usa ou encontra no seu cotidiano. Para cada um, identifique: (a) qual é a função principal, (b) qual tipo de processador provavelmente usa (MCU simples, ARM, MIPS), (c) qual protocolo de comunicação usa (Wi-Fi, BLE, nenhum).</p>
+      <span class="dificuldade dif-basico">Reflexão</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 2 — Discussão em dupla</div>
+      <p>Troque sua lista com o colega. Para cada dispositivo na lista do colega, tente responder: <strong>"qual seria o maior risco de falha?"</strong> — falha de hardware, falha de software, falha de segurança ou falha de comunicação? Justifique.</p>
+      <span class="dificuldade dif-medio">Análise crítica</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 3 — Desafio de projeto</div>
+      <p>Escolha um problema do cotidiano que poderia ser resolvido com um sistema IoT. Descreva: <strong>(a)</strong> qual dado seria coletado, <strong>(b)</strong> qual sensor coletaria, <strong>(c)</strong> onde o processamento aconteceria (borda ou nuvem), <strong>(d)</strong> qual ação seria tomada, <strong>(e)</strong> qual protocolo de comunicação usaria. Seja específico — "monitorar temperatura" é vago; "avisar o professor quando a sala atingir 28°C e ligar automaticamente o ar-condicionado via relé" é um projeto.</p>
+      <span class="dificuldade dif-desafio">Projeto</span>
+      <div class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver exemplo de projeto resolvido</div>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-seedling"></i>Exemplo: Irrigação automática em horta urbana</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Dado coletado:</strong> Umidade do solo (0–100%)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Sensor:</strong> Sensor capacitivo de umidade de solo (analógico, ~R$8)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Processamento:</strong> Na borda — ESP32 decide localmente se o solo está seco (&lt;30% de umidade)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Ação:</strong> Ativa relé que liga bomba de água por 30 segundos</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Protocolo:</strong> MQTT — ESP32 publica dados no broker; Node-RED exibe no dashboard; alerta WhatsApp via Twilio se umidade crítica</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ─────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 1</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-microchip"></i>
+        <strong>Sistema Embarcado</strong>
+        <p>Computador dedicado a uma função específica. Recursos limitados. Opera em tempo real. Sem SO completo na maioria dos casos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-wifi"></i>
+        <strong>IoT</strong>
+        <p>Objetos físicos conectados. Arquitetura: Sensor → MCU → Gateway → Nuvem → Dashboard. Cada protocolo tem seu caso de uso.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-brain"></i>
+        <strong>Edge AI</strong>
+        <p>IA rodando no dispositivo, não na nuvem. Vantagens: latência zero, offline, privacidade. TinyML: modelos em &lt;1 MB de RAM.</p>
+      </div>
+    </div>
+
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue explicar em uma frase a diferença entre um PC e um sistema embarcado? Você sabe o que o setup() e o loop() fazem no Arduino? Você entende por que Edge AI é relevante? Se sim para os três — você está pronto para a Semana 2.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-02-iot.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 2 — Microcontroladores: Arduino, ESP32 e Raspberry Pi Pico · Hello World embarcado</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c = btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML = c.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar exemplo'
+    : '<i class="fas fa-lightbulb"></i> ver exemplo de projeto resolvido';
+}
+
+function copiar(btn){
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+
+const quizFeedbacks = {
+  quiz1: {
+    correct: 'C',
+    msg: '✅ Correto! Um servidor web é um computador de propósito geral — pode rodar qualquer software. Os outros três são sistemas dedicados a funções específicas, com hardware e software projetados para uma única tarefa.'
+  },
+  quiz2: {
+    correct: 'B',
+    msg: '✅ Correto! Em sistemas de segurança, os três fatores são críticos em conjunto: latência (a decisão precisa ser imediata), privacidade (imagens não devem sair do local) e disponibilidade offline (não pode depender de internet).'
+  }
+};
+
+function responder(quizId, el, isCorrect, letra){
+  const ops = document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered) return;
+  ops.dataset.answered = '1';
+
+  const correta = quizFeedbacks[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op => {
+    op.style.pointerEvents = 'none';
+    const l = op.querySelector('.quiz-letra').textContent.trim();
+    if(l === correta) op.classList.add('correto');
+  });
+  if(letra !== correta) el.classList.add('errado');
+
+  const fb = document.getElementById(quizId+'-feedback');
+  fb.textContent = quizFeedbacks[quizId].msg;
+  fb.style.background = isCorrect ? 'rgba(45,212,191,.08)' : 'rgba(239,68,68,.08)';
+  fb.style.border = isCorrect ? '1px solid rgba(45,212,191,.25)' : '1px solid rgba(239,68,68,.25)';
+  fb.style.color = isCorrect ? 'var(--teal-300)' : '#fca5a5';
+  fb.style.padding = '.75rem 1rem';
+  fb.style.borderRadius = '8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 12 — TinyML no ESP32</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+
+/* ── Stack comparison ── */
+.stack-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:.75rem 0;}
+.stack-card{border-radius:12px;padding:1.1rem;border:1px solid;position:relative;}
+.stack-card__name{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;margin-bottom:.15rem;}
+.stack-card__sub{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.7rem;}
+.stack-card__row{display:flex;justify-content:space-between;padding:.22rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.79rem;}
+.stack-card__row:last-of-type{border-bottom:none;}
+.stack-card__k{color:var(--text-muted);}
+.stack-card__v{color:var(--text-primary);font-weight:600;}
+
+/* ── Memory map ── */
+.memmap{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.memmap__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.mem-row{display:flex;align-items:stretch;gap:.75rem;margin-bottom:.6rem;}
+.mem-label{width:100px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;display:flex;align-items:center;}
+.mem-bar-wrap{flex:1;border-radius:7px;overflow:hidden;height:32px;display:flex;}
+.mem-seg{height:100%;display:flex;align-items:center;padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;white-space:nowrap;overflow:hidden;}
+.mem-size{width:80px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;justify-content:flex-end;}
+
+/* ── Pipeline steps ── */
+.pipeline-h{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.pipeline-h__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.pip-steps{display:flex;align-items:flex-start;gap:.5rem;flex-wrap:wrap;}
+.pip-step{border-radius:10px;padding:.7rem 1rem;border:1px solid;min-width:110px;text-align:center;flex-shrink:0;}
+.pip-step__num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-bottom:.3rem;}
+.pip-step__name{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;margin-bottom:.2rem;}
+.pip-step__tool{font-size:.7rem;opacity:.65;font-family:'JetBrains Mono',monospace;}
+.pip-arrow{color:var(--text-muted);font-size:.8rem;padding-top:22px;flex-shrink:0;}
+
+/* ── Inference flow ── */
+.infer-flow{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.infer-flow__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.if-step{display:flex;gap:1rem;align-items:flex-start;margin-bottom:.9rem;}
+.if-step:last-child{margin-bottom:0;}
+.if-num{width:26px;height:26px;border-radius:50%;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.if-body{flex:1;}
+.if-name{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.2rem;}
+.if-desc{font-size:.8rem;color:var(--text-secondary);line-height:1.55;}
+
+/* ── Edge Impulse visual ── */
+.ei-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin:.75rem 0;}
+.ei-step{border-radius:10px;padding:.85rem .75rem;border:1px solid rgba(45,212,191,.18);background:rgba(45,212,191,.04);text-align:center;}
+.ei-step i{font-size:1.2rem;color:var(--teal-400);margin-bottom:.4rem;display:block;}
+.ei-step__name{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--white);margin-bottom:.2rem;}
+.ei-step__desc{font-size:.7rem;color:var(--text-muted);line-height:1.4;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── Serial output mockup ── */
+.serial-out{background:#000;border:1px solid rgba(45,212,191,.3);border-radius:10px;padding:1.1rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;}
+.serial-out__bar{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;border-bottom:1px solid rgba(45,212,191,.1);padding-bottom:.5rem;}
+.so-line{font-size:.8rem;line-height:1.9;}
+.so-info{color:rgba(167,243,208,.65);}
+.so-ok{color:var(--teal-400);}
+.so-label{color:#fbbf24;}
+.so-val{color:#f8fafc;font-weight:700;}
+.so-dim{color:rgba(255,255,255,.25);}
+
+@media(max-width:950px){.stack-grid{grid-template-columns:1fr 1fr;}.ei-steps{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:580px){
+  .stack-grid,.ei-steps,.resumo-grid{grid-template-columns:1fr;}
+  .pip-steps{flex-direction:column;}.pip-arrow{padding-top:0;padding-left:22px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">12</div>
+    <h1 class="capa-titulo">TinyML<br><em>TFLite Micro</em><br>Inferência no ESP32</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Um modelo de ML rodando dentro do microcontrolador</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-microchip"></i></div><span>TinyML vs TFLite vs TF — as três camadas do ecossistema</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-memory"></i></div><span>Limitações de memória — flash, RAM, tensor arena e FlatBuffer</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-route"></i></div><span>Pipeline completo — do dataset ao modelo .h em C</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Inferência no ESP32 — Interpreter, input tensor, invoke, output</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-graduation-cap"></i></div><span>Edge Impulse — plataforma end-to-end sem escrever Python</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: classificador de condição climática com DHT22 no ESP32</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Carregar um modelo TFLite pré-treinado no ESP32 que classifica leituras de temperatura e umidade em 3 categorias: Frio, Confortável e Quente/Úmido. Resultado impresso no Serial Monitor e publicado via MQTT.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit + DHT22 (das semanas anteriores)</li>
+        <li>Biblioteca: <strong>TensorFlowLite_ESP32</strong> (Kaggle/Arduino Library Manager)</li>
+        <li>Arquivo <code style="font-family:'JetBrains Mono',monospace;">modelo_clima.h</code> fornecido pelo professor</li>
+        <li>Opcional: conta gratuita no Edge Impulse Studio</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 11 — Edge Computing e Edge AI: conceitos</li>
+        <li>▶ Sem. 12 — TinyML: TFLite no ESP32 (último lab antes da P2)</li>
+        <li>🔴 Sem. 13 — P2 (conteúdo Semanas 7 a 12)</li>
+        <li>Sem. 14 — TinyML aplicações (pós-P2)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>Você vai ver um modelo de ML tomar uma decisão dentro de um chip de R$20 — sem nuvem, sem internet</li>
+        <li>TinyML é o que diferencia um sensor comum de um sensor inteligente</li>
+        <li>O pipeline desta semana é o mesmo usado em produtos reais — desde termostatos até wearables médicos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">TinyML — o ecossistema, as limitações e o que cabe no ESP32</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>TF vs TFLite vs TFLite Micro — três runtimes, três mundos</div>
+      <p>O ecossistema TensorFlow tem três runtimes distintos, cada um otimizado para um nível diferente de hardware. Entender onde cada um roda e por que é a primeira peça para trabalhar com TinyML.</p>
+
+      <div class="stack-grid">
+        <div class="stack-card" style="background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.2);">
+          <div class="stack-card__name" style="color:#fb923c;">TensorFlow</div>
+          <div class="stack-card__sub" style="color:#fed7aa;">Treino e pesquisa</div>
+          <div class="stack-card__row"><span class="stack-card__k">Hardware</span><span class="stack-card__v">GPU / TPU / CPU</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">RAM mínima</span><span class="stack-card__v">Vários GB</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">OS</span><span class="stack-card__v">Linux / Windows</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Precisão</span><span class="stack-card__v">float32</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Uso</span><span class="stack-card__v">Treino do modelo</span></div>
+        </div>
+        <div class="stack-card" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);">
+          <div class="stack-card__name" style="color:#fbbf24;">TFLite</div>
+          <div class="stack-card__sub" style="color:#fde68a;">Inferência mobile</div>
+          <div class="stack-card__row"><span class="stack-card__k">Hardware</span><span class="stack-card__v">ARM Cortex-A</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">RAM mínima</span><span class="stack-card__v">~1 MB</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">OS</span><span class="stack-card__v">Android / iOS</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Precisão</span><span class="stack-card__v">float32 / int8</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Uso</span><span class="stack-card__v">Smartphone / Rpi</span></div>
+        </div>
+        <div class="stack-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.25);">
+          <div class="stack-card__name" style="color:var(--teal-400);">TFLite Micro</div>
+          <div class="stack-card__sub" style="color:var(--teal-300);">Inferência em MCU</div>
+          <div class="stack-card__row"><span class="stack-card__k">Hardware</span><span class="stack-card__v">ARM Cortex-M / Xtensa</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">RAM mínima</span><span class="stack-card__v"><strong style="color:var(--teal-400);">~20 KB</strong></span></div>
+          <div class="stack-card__row"><span class="stack-card__k">OS</span><span class="stack-card__v"><strong style="color:var(--teal-400);">Bare metal (sem OS)</strong></span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Precisão</span><span class="stack-card__v">int8 (ideal)</span></div>
+          <div class="stack-card__row"><span class="stack-card__k">Uso</span><span class="stack-card__v"><strong style="color:var(--teal-400);">ESP32 / Arduino</strong></span></div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>TFLite Micro (TFLM)</strong> não tem alocação dinâmica de memória, não usa STL C++ completo, não depende de sistema operacional e não faz chamadas ao sistema. Ele roda em qualquer microcontrolador que tenha um compilador C++ — incluindo o ESP32, que tem hardware relativamente generoso para um MCU.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-memory"></i>Mapa de memória — o que cabe onde no ESP32</div>
+      <p>O ESP32 tem <strong>4MB de flash</strong> (onde fica o firmware e o modelo) e <strong>520KB de RAM</strong> (onde ficam as variáveis, a tensor arena e os buffers de inferência). O modelo quantizado fica na flash como um array de bytes em C. Durante a inferência, o runtime usa uma região de RAM chamada <strong>tensor arena</strong> para alocar tensores intermediários.</p>
+
+      <div class="memmap">
+        <div class="memmap__title">Flash (4MB) — layout típico de firmware TinyML</div>
+        <div class="mem-row">
+          <span class="mem-label" style="color:#60a5fa;">Flash</span>
+          <div class="mem-bar-wrap">
+            <div class="mem-seg" style="width:20%;background:rgba(96,165,250,.3);color:#93c5fd;">Bootloader</div>
+            <div class="mem-seg" style="width:35%;background:rgba(45,212,191,.35);color:var(--teal-400);">Firmware + libs</div>
+            <div class="mem-seg" style="width:22%;background:rgba(251,191,36,.35);color:#fbbf24;">modelo .tflite</div>
+            <div class="mem-seg" style="width:23%;background:rgba(255,255,255,.07);color:var(--text-muted);">livre</div>
+          </div>
+          <span class="mem-size">4 MB</span>
+        </div>
+        <div class="mem-row" style="margin-top:.75rem;">
+          <span class="mem-label" style="color:var(--teal-400);">RAM</span>
+          <div class="mem-bar-wrap">
+            <div class="mem-seg" style="width:18%;background:rgba(244,114,182,.3);color:#f472b6;">Stack/Heap</div>
+            <div class="mem-seg" style="width:22%;background:rgba(96,165,250,.3);color:#60a5fa;">WiFi/BT</div>
+            <div class="mem-seg" style="width:25%;background:rgba(251,191,36,.35);color:#fbbf24;">Tensor Arena</div>
+            <div class="mem-seg" style="width:15%;background:rgba(45,212,191,.25);color:var(--teal-400);">Variáveis</div>
+            <div class="mem-seg" style="width:20%;background:rgba(255,255,255,.06);color:var(--text-muted);">livre</div>
+          </div>
+          <span class="mem-size">520 KB</span>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);line-height:1.65;">
+          <strong style="color:var(--text-secondary);">Tensor Arena:</strong> bloco de RAM alocado estaticamente que o TFLM usa como "rascunho" durante a inferência — tensores de entrada, saída e intermediários. Você define o tamanho. Muito pequeno → erro de alocação. Muito grande → menos RAM para o resto do firmware.
+        </div>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Wi-Fi e TFLite Micro não convivem facilmente.</strong> O driver Wi-Fi do ESP32 usa ~100KB de RAM. Se você ativar Wi-Fi + MQTT + TFLite ao mesmo tempo, pode ficar sem RAM para a tensor arena. Estratégia: fazer a inferência, depois publicar o resultado via MQTT — nunca os dois simultaneamente no mesmo loop.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>O modelo no ESP32 — FlatBuffer e o arquivo .h</div>
+      <p>Um modelo TFLite é serializado no formato <strong>FlatBuffer</strong> — uma representação binária compacta e zero-copy (pode ser lida diretamente da flash sem deserialização). No Arduino/ESP32, o modelo é convertido para um array de bytes em C e salvo como um arquivo <code style="font-family:'JetBrains Mono',monospace;">.h</code> incluído no sketch.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — converter .tflite para array C (.h)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Converte um arquivo .tflite para um array de bytes C</span>
+<span class="cm"># Execute no PC após treinar e exportar o modelo</span>
+
+<span class="kw">def</span> <span class="fn">tflite_para_c</span>(arquivo_tflite, nome_variavel=<span class="str">"modelo_clima"</span>):
+    <span class="kw">with</span> <span class="fn">open</span>(arquivo_tflite, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+        dados = f.<span class="fn">read</span>()
+
+    linhas = [f<span class="str">"// Gerado automaticamente — não editar"</span>]
+    linhas.<span class="fn">append</span>(f<span class="str">"#pragma once"</span>)
+    linhas.<span class="fn">append</span>(f<span class="str">"#include &lt;stdint.h&gt;"</span>)
+    linhas.<span class="fn">append</span>(<span class="str">""</span>)
+    linhas.<span class="fn">append</span>(f<span class="str">"const unsigned int {nome_variavel}_len = {len(dados)};"</span>)
+    linhas.<span class="fn">append</span>(f<span class="str">"alignas(8) const uint8_t {nome_variavel}[] = {{"</span>)
+
+    hex_vals = [f<span class="str">"0x{b:02x}"</span> <span class="kw">for</span> b <span class="kw">in</span> dados]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="fn">len</span>(hex_vals), <span class="num">12</span>):
+        linha = <span class="str">"  "</span> + <span class="str">", "</span>.<span class="fn">join</span>(hex_vals[i:i+<span class="num">12</span>]) + <span class="str">","</span>
+        linhas.<span class="fn">append</span>(linha)
+
+    linhas.<span class="fn">append</span>(<span class="str">"};"</span>)
+
+    saida = arquivo_tflite.<span class="fn">replace</span>(<span class="str">".tflite"</span>, <span class="str">".h"</span>)
+    <span class="kw">with</span> <span class="fn">open</span>(saida, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        f.<span class="fn">write</span>(<span class="str">"\n"</span>.<span class="fn">join</span>(linhas))
+    print(f<span class="str">"Gerado: {saida} ({len(dados)} bytes)"</span>)
+
+<span class="fn">tflite_para_c</span>(<span class="str">"modelo_clima.tflite"</span>)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>alignas(8)</strong> é obrigatório no array do modelo. O FlatBuffer exige alinhamento de 8 bytes para leitura correta. Sem isso, o ESP32 gera erros de alinhamento (fault) na inicialização do modelo, difíceis de diagnosticar.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 O código carrega o modelo mas o ESP32 trava com "AllocateTensors() failed" logo no início. Qual é a causa mais provável?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">O modelo .tflite está corrompido — é necessário exportá-lo novamente</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">A tensor arena é pequena demais — o TFLM não conseguiu alocar memória suficiente para os tensores</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">O ESP32 não suporta int8 — é necessário usar um modelo float32</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">A biblioteca TFLite Micro não está instalada corretamente no Arduino IDE</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline completo e inferência no ESP32</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-route"></i>Pipeline do modelo — do dataset ao ESP32</div>
+
+      <div class="pipeline-h">
+        <div class="pipeline-h__title">6 etapas — do dado bruto ao chip</div>
+        <div class="pip-steps">
+          <div class="pip-step" style="background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.25);">
+            <div class="pip-step__num" style="color:var(--teal-400);">01</div>
+            <div class="pip-step__name" style="color:var(--teal-400);">Dataset</div>
+            <div class="pip-step__tool">CSV / sensor logs</div>
+          </div>
+          <div class="pip-arrow">→</div>
+          <div class="pip-step" style="background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.2);">
+            <div class="pip-step__num" style="color:#60a5fa;">02</div>
+            <div class="pip-step__name" style="color:#60a5fa;">Treino</div>
+            <div class="pip-step__tool">Keras / sklearn</div>
+          </div>
+          <div class="pip-arrow">→</div>
+          <div class="pip-step" style="background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.2);">
+            <div class="pip-step__num" style="color:#fb923c;">03</div>
+            <div class="pip-step__name" style="color:#fb923c;">Conversão</div>
+            <div class="pip-step__tool">TFLiteConverter</div>
+          </div>
+          <div class="pip-arrow">→</div>
+          <div class="pip-step" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.2);">
+            <div class="pip-step__num" style="color:#c4b5fd;">04</div>
+            <div class="pip-step__name" style="color:#c4b5fd;">Quantização</div>
+            <div class="pip-step__tool">int8 / rep. dataset</div>
+          </div>
+          <div class="pip-arrow">→</div>
+          <div class="pip-step" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.2);">
+            <div class="pip-step__num" style="color:#fbbf24;">05</div>
+            <div class="pip-step__name" style="color:#fbbf24;">Exportar .h</div>
+            <div class="pip-step__tool">xxd / script Python</div>
+          </div>
+          <div class="pip-arrow">→</div>
+          <div class="pip-step" style="background:rgba(45,212,191,.08);border-color:rgba(45,212,191,.3);">
+            <div class="pip-step__num" style="color:var(--teal-400);">06</div>
+            <div class="pip-step__name" style="color:var(--teal-400);">Deploy</div>
+            <div class="pip-step__tool">Arduino IDE + ESP32</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — treinar e quantizar modelo de clima (Keras)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+
+<span class="cm"># Dataset sintético — [temperatura, umidade] → classe</span>
+<span class="cm"># 0=Frio (<18°C)  1=Confortável (18–28°C, <70%)  2=Quente/Úmido</span>
+X = np.<span class="fn">array</span>([
+  [<span class="num">12.0</span>, <span class="num">55.0</span>], [<span class="num">15.5</span>, <span class="num">60.0</span>], [<span class="num">10.0</span>, <span class="num">45.0</span>],   <span class="cm"># Frio</span>
+  [<span class="num">22.0</span>, <span class="num">50.0</span>], [<span class="num">25.0</span>, <span class="num">55.0</span>], [<span class="num">20.0</span>, <span class="num">48.0</span>],   <span class="cm"># Confortável</span>
+  [<span class="num">32.0</span>, <span class="num">80.0</span>], [<span class="num">35.0</span>, <span class="num">85.0</span>], [<span class="num">28.0</span>, <span class="num">75.0</span>],   <span class="cm"># Quente/Úmido</span>
+], dtype=np.float32)
+y = np.<span class="fn">array</span>([<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>, <span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>, <span class="num">2</span>,<span class="num">2</span>,<span class="num">2</span>])
+
+<span class="cm"># Normalização — importante! Aplicar os mesmos valores no ESP32</span>
+X_mean = X.<span class="fn">mean</span>(axis=<span class="num">0</span>); X_std = X.<span class="fn">std</span>(axis=<span class="num">0</span>)
+X_norm = (X - X_mean) / X_std
+print(<span class="str">f"Média: {X_mean}  Desvio: {X_std}"</span>)  <span class="cm"># guardar esses valores!</span>
+
+<span class="cm"># Modelo pequeno — 2 entradas, 3 saídas</span>
+model = tf.keras.Sequential([
+    tf.keras.layers.<span class="fn">Dense</span>(<span class="num">8</span>, activation=<span class="str">'relu'</span>, input_shape=(<span class="num">2</span>,)),
+    tf.keras.layers.<span class="fn">Dense</span>(<span class="num">3</span>, activation=<span class="str">'softmax'</span>)
+])
+model.<span class="fn">compile</span>(optimizer=<span class="str">'adam'</span>, loss=<span class="str">'sparse_categorical_crossentropy'</span>, metrics=[<span class="str">'accuracy'</span>])
+model.<span class="fn">fit</span>(X_norm, y, epochs=<span class="num">200</span>, verbose=<span class="num">0</span>)
+print(<span class="str">f"Acurácia: {model.evaluate(X_norm, y, verbose=0)[1]:.2%}"</span>)
+
+<span class="cm"># Converter para TFLite com quantização int8</span>
+converter = tf.lite.<span class="fn">TFLiteConverter</span>.<span class="fn">from_keras_model</span>(model)
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+
+<span class="kw">def</span> <span class="fn">gen_dataset</span>():
+    <span class="kw">for</span> x <span class="kw">in</span> X_norm: <span class="kw">yield</span> [x.<span class="fn">reshape</span>(<span class="num">1</span>, <span class="num">2</span>).<span class="fn">astype</span>(np.float32)]
+
+converter.representative_dataset = gen_dataset
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type  = tf.int8
+converter.inference_output_type = tf.int8
+
+tflite_model = converter.<span class="fn">convert</span>()
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"modelo_clima.tflite"</span>, <span class="str">"wb"</span>) <span class="kw">as</span> f: f.<span class="fn">write</span>(tflite_model)
+print(<span class="str">f"Modelo salvo: {len(tflite_model)} bytes"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bolt"></i>Inferência no ESP32 — as 6 etapas do runtime TFLM</div>
+      <p>O ciclo de inferência do TFLite Micro no ESP32 segue sempre a mesma sequência de 6 etapas. Entender cada uma delas é o que permite depurar erros e otimizar o sistema.</p>
+
+      <div class="infer-flow">
+        <div class="infer-flow__title">Ciclo de inferência — setup() e loop()</div>
+        <div class="if-step">
+          <div class="if-num">1</div>
+          <div class="if-body">
+            <div class="if-name">Carregar o modelo (setup)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">GetModel(modelo_clima)</code> — lê o FlatBuffer do array em flash. Operação única no setup(). O modelo fica em flash, não ocupa RAM.</div>
+          </div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">2</div>
+          <div class="if-body">
+            <div class="if-name">Criar o Interpreter (setup)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">MicroInterpreter(model, resolver, tensor_arena, arena_size)</code> — instancia o runtime com os ops registrados e a tensor arena. Operação única.</div>
+          </div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">3</div>
+          <div class="if-body">
+            <div class="if-name">AllocateTensors (setup)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">interpreter.AllocateTensors()</code> — aloca todos os tensores dentro da arena. Se falhar, a arena é pequena demais. Retorna kTfLiteOk se ok.</div>
+          </div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">4</div>
+          <div class="if-body">
+            <div class="if-name">Preencher o tensor de entrada (loop)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">interpreter.input(0)->data.int8[i] = valor_quantizado</code> — copia os dados do sensor para o buffer de input. <strong>Atenção à quantização</strong>: converter float para int8 usando scale e zero_point do tensor.</div>
+          </div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">5</div>
+          <div class="if-body">
+            <div class="if-name">Executar a inferência (loop)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">interpreter.Invoke()</code> — executa todas as operações da rede neural. No modelo pequeno desta aula, leva menos de 1ms no ESP32 a 240MHz.</div>
+          </div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">6</div>
+          <div class="if-body">
+            <div class="if-name">Ler o tensor de saída (loop)</div>
+            <div class="if-desc"><code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">interpreter.output(0)->data.int8[i]</code> — lê as probabilidades de cada classe (em int8). Converter de volta para float: <code style="font-family:'JetBrains Mono',monospace;color:#a7f3d0;">(val - zero_point) * scale</code>. A classe predita é o índice de maior valor.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-graduation-cap"></i>Edge Impulse — TinyML sem escrever Python</div>
+      <p>O <strong>Edge Impulse</strong> (edgeimpulse.com) é uma plataforma online gratuita que automatiza todo o pipeline: coleta de dados do sensor, extração de features, treino, quantização e geração do código Arduino — com alguns cliques. É o caminho mais rápido para colocar um modelo em funcionamento.</p>
+
+      <div class="ei-steps">
+        <div class="ei-step">
+          <i class="fas fa-database"></i>
+          <div class="ei-step__name">Coletar</div>
+          <div class="ei-step__desc">Capturar dados diretamente do ESP32 conectado</div>
+        </div>
+        <div class="ei-step">
+          <i class="fas fa-cog"></i>
+          <div class="ei-step__name">DSP Block</div>
+          <div class="ei-step__desc">Extrair features: FFT, espectrograma, estatísticas</div>
+        </div>
+        <div class="ei-step">
+          <i class="fas fa-brain"></i>
+          <div class="ei-step__name">Treinar</div>
+          <div class="ei-step__desc">Keras na nuvem com quantização automática</div>
+        </div>
+        <div class="ei-step">
+          <i class="fas fa-check-circle"></i>
+          <div class="ei-step__name">Validar</div>
+          <div class="ei-step__desc">Testar com dados novos, matriz de confusão</div>
+        </div>
+        <div class="ei-step">
+          <i class="fas fa-download"></i>
+          <div class="ei-step__name">Deploy</div>
+          <div class="ei-step__desc">Exportar biblioteca Arduino em 1 clique</div>
+        </div>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>Edge Impulse para ESP32:</strong> ao exportar, escolha "Arduino library". O zip resultante contém o modelo .h, o código de inferência e exemplos prontos. Instale via <strong>Sketch → Include Library → Add .ZIP Library</strong>. Leva menos de 5 minutos do download ao primeiro resultado no Serial Monitor.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Ao preencher o tensor de entrada, você tem um valor float de temperatura normalizado = 0.73. O tensor input tem scale=0.0078 e zero_point=-1. Qual é o valor int8 correto a colocar no tensor?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div>
+          <span class="quiz-texto">73 — apenas multiplicar por 100</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">B</div>
+          <span class="quiz-texto">0 — o valor já está normalizado, basta truncar para zero</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div>
+          <span class="quiz-texto">93 — fórmula: round(valor / scale + zero_point) = round(0.73/0.0078 + (-1)) = round(92.6) = 93</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">-128 — todos os valores normalizados mapeiam para -128 em int8</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — Classificador de clima com TFLite Micro + DHT22</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: carregar o modelo <code style="font-family:'JetBrains Mono',monospace;">modelo_clima.h</code> no ESP32, ler temperatura e umidade do DHT22 a cada 5 segundos, normalizar com os mesmos parâmetros usados no treino, rodar a inferência e imprimir a classe predita com as probabilidades no Serial Monitor.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Instalar a biblioteca TFLite Micro</div>
+            <div class="lab-step__desc">No Arduino IDE: <strong>Ferramentas → Gerenciador de Bibliotecas</strong>. Busque <strong>"TensorFlowLite_ESP32"</strong> e instale. Alternativamente, faça download do .zip no repositório tflite-micro e instale via .ZIP. Confirme que o exemplo "hello_world" compila sem erros antes de avançar.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Adicionar o arquivo modelo_clima.h</div>
+            <div class="lab-step__desc">Copie o arquivo <code style="font-family:'JetBrains Mono',monospace;">modelo_clima.h</code> fornecido pelo professor para a mesma pasta do sketch. Esse arquivo contém o array de bytes do modelo quantizado int8 com ~2KB.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar e testar o código completo</div>
+            <div class="lab-step__desc">Use o código abaixo. Abra o Serial Monitor a 115200. Você deve ver a inicialização do modelo seguida das predições a cada 5 segundos. Coloque a mão no DHT22 para ver a temperatura subir e a classe mudar de "Confortável" para "Quente/Úmido".</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Aumentar a tensor arena se necessário</div>
+            <div class="lab-step__desc">Se aparecer "AllocateTensors() failed", aumente o valor de <code style="font-family:'JetBrains Mono',monospace;">ARENA_SIZE</code> de 4096 para 8192 ou 16384. Se ainda falhar, verifique se o Wi-Fi está ativo consumindo RAM — desative-o para testar primeiro.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Publicar resultado via MQTT (opcional)</div>
+            <div class="lab-step__desc">Adicione Wi-Fi + PubSubClient ao código e publique o resultado da inferência em <code style="font-family:'JetBrains Mono',monospace;">lab/clima/classe</code>. Lembre-se: conecte Wi-Fi e faça a inferência em momentos separados para não estourar a RAM.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — TFLite Micro + DHT22 classificador de clima</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+<span class="pp">#include</span> <span class="str">"TensorFlowLite_ESP32.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/micro/all_ops_resolver.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/micro/micro_interpreter.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/schema/schema_generated.h"</span>
+<span class="pp">#include</span> <span class="str">"modelo_clima.h"</span>   <span class="cm">// array do modelo</span>
+
+<span class="pp">#define</span> PINO_DHT    <span class="num">4</span>
+<span class="pp">#define</span> ARENA_SIZE  <span class="num">4096</span>   <span class="cm">// ajustar se AllocateTensors() falhar</span>
+
+<span class="cm">// Parâmetros de normalização — mesmos do treino Python</span>
+<span class="kw">const float</span> MEAN_T = <span class="num">23.28f</span>, STD_T = <span class="num">8.76f</span>;
+<span class="kw">const float</span> MEAN_U = <span class="num">64.78f</span>, STD_U = <span class="num">14.23f</span>;
+<span class="kw">const char</span><span class="op">*</span> CLASSES[] = {<span class="str">"Frio"</span>, <span class="str">"Confortavel"</span>, <span class="str">"Quente/Umido"</span>};
+
+DHT dht(PINO_DHT, DHT22);
+
+<span class="cm">// Objetos TFLM — declarados globalmente (sem heap)</span>
+<span class="kw">const</span> tflite::Model<span class="op">*</span>         model;
+tflite::MicroInterpreter<span class="op">*</span>    interpreter;
+TfLiteTensor<span class="op">*</span>               input;
+TfLiteTensor<span class="op">*</span>               output;
+<span class="kw">uint8_t</span> tensor_arena[ARENA_SIZE];
+
+<span class="kw">int8_t</span> <span class="fn">quantizar</span>(<span class="kw">float</span> val, <span class="kw">float</span> scale, <span class="kw">int</span> zero_point) {
+  <span class="kw">int</span> q = (<span class="kw">int</span>)roundf(val / scale) + zero_point;
+  <span class="kw">return</span> (<span class="kw">int8_t</span>)constrain(q, <span class="num">-128</span>, <span class="num">127</span>);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+
+  <span class="cm">// 1. Carregar modelo</span>
+  model = tflite::<span class="fn">GetModel</span>(modelo_clima);
+  <span class="kw">if</span> (model->version() != TFLITE_SCHEMA_VERSION) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Versão do modelo incompatível!"</span>); <span class="kw">while</span>(<span class="kw">true</span>);
+  }
+
+  <span class="cm">// 2. Resolver de ops — AllOpsResolver inclui tudo (mais seguro para lab)</span>
+  <span class="kw">static</span> tflite::AllOpsResolver resolver;
+
+  <span class="cm">// 3. Criar interpreter</span>
+  <span class="kw">static</span> tflite::MicroInterpreter static_interp(
+    model, resolver, tensor_arena, ARENA_SIZE);
+  interpreter = &static_interp;
+
+  <span class="cm">// 4. Alocar tensores</span>
+  <span class="kw">if</span> (interpreter-><span class="fn">AllocateTensors</span>() != kTfLiteOk) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"AllocateTensors() falhou! Aumente ARENA_SIZE."</span>);
+    <span class="kw">while</span>(<span class="kw">true</span>);
+  }
+
+  input  = interpreter-><span class="fn">input</span>(<span class="num">0</span>);
+  output = interpreter-><span class="fn">output</span>(<span class="num">0</span>);
+
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Modelo carregado!"</span>);
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Input shape: [%d, %d]  tipo: %d\n"</span>,
+    input->dims->data[<span class="num">0</span>], input->dims->data[<span class="num">1</span>], input->type);
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Arena usada: %u / %d bytes\n"</span>,
+    interpreter-><span class="fn">arena_used_bytes</span>(), ARENA_SIZE);
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">float</span> u = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+  <span class="kw">if</span> (<span class="fn">isnan</span>(t) || <span class="fn">isnan</span>(u)) { <span class="fn">delay</span>(<span class="num">5000</span>); <span class="kw">return</span>; }
+
+  <span class="cm">// Normalizar com os parâmetros do treino</span>
+  <span class="kw">float</span> t_norm = (t - MEAN_T) / STD_T;
+  <span class="kw">float</span> u_norm = (u - MEAN_U) / STD_U;
+
+  <span class="cm">// Preencher tensor de entrada (int8 quantizado)</span>
+  <span class="kw">float</span> in_scale = input->params.scale;
+  <span class="kw">int</span>   in_zp    = input->params.zero_point;
+  input->data.int8[<span class="num">0</span>] = <span class="fn">quantizar</span>(t_norm, in_scale, in_zp);
+  input->data.int8[<span class="num">1</span>] = <span class="fn">quantizar</span>(u_norm, in_scale, in_zp);
+
+  <span class="cm">// Inferência</span>
+  <span class="kw">unsigned long</span> t0 = <span class="fn">micros</span>();
+  interpreter-><span class="fn">Invoke</span>();
+  <span class="kw">unsigned long</span> dt = <span class="fn">micros</span>() - t0;
+
+  <span class="cm">// Ler saída — converter int8 → float</span>
+  <span class="kw">float</span> out_scale = output->params.scale;
+  <span class="kw">int</span>   out_zp    = output->params.zero_point;
+  <span class="kw">float</span> probs[<span class="num">3</span>];
+  <span class="kw">int</span>   melhor = <span class="num">0</span>;
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">3</span>; i++) {
+    probs[i] = (output->data.int8[i] - out_zp) <span class="op">*</span> out_scale;
+    <span class="kw">if</span> (probs[i] > probs[melhor]) melhor = i;
+  }
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"\nT=%.1f°C U=%.1f%%  → [%s]  (%luµs)\n"</span>,
+    t, u, CLASSES[melhor], dt);
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"  Frio=%.2f  Conf=%.2f  Qte=%.2f\n"</span>,
+    probs[<span class="num">0</span>], probs[<span class="num">1</span>], probs[<span class="num">2</span>]);
+
+  <span class="fn">delay</span>(<span class="num">5000</span>);
+}</code></pre>
+      </div>
+
+      <div class="serial-out">
+        <div class="serial-out__bar">Serial Monitor · 115200 baud · saída esperada</div>
+        <div class="so-line"><span class="so-ok">Modelo carregado!</span></div>
+        <div class="so-line"><span class="so-info">Input shape: [1, 2]  tipo: 9</span></div>
+        <div class="so-line"><span class="so-info">Arena usada: 2048 / 4096 bytes</span></div>
+        <div class="so-line so-dim">————————————————————————</div>
+        <div class="so-line"><span class="so-label">T=</span><span class="so-val">27.3</span><span class="so-info">°C U=</span><span class="so-val">64.8</span><span class="so-info">%  → [</span><span class="so-ok">Confortavel</span><span class="so-info">]  (</span><span class="so-val">812</span><span class="so-info">µs)</span></div>
+        <div class="so-line"><span class="so-info">  Frio=0.02  Conf=</span><span class="so-ok">0.91</span><span class="so-info">  Qte=0.07</span></div>
+        <div class="so-line so-dim">————————————————————————</div>
+        <div class="so-line"><span class="so-label">T=</span><span class="so-val">33.1</span><span class="so-info">°C U=</span><span class="so-val">78.4</span><span class="so-info">%  → [</span><span class="so-label">Quente/Umido</span><span class="so-info">]  (</span><span class="so-val">815</span><span class="so-info">µs)</span></div>
+        <div class="so-line"><span class="so-info">  Frio=0.01  Conf=0.11  Qte=</span><span class="so-ok">0.88</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Conceito</div>
+        <div class="secao-titulo">4 exercícios — da depuração ao modelo próprio</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Inspecionar o modelo</div>
+      <p>No Serial Monitor, adicione ao setup() a impressão de todas as informações do modelo: número de tensores, tipo de cada tensor de entrada e saída, dimensões, scale e zero_point. Use os métodos <code style="font-family:'JetBrains Mono',monospace;">input(0)->type</code>, <code style="font-family:'JetBrains Mono',monospace;">input(0)->dims->data[i]</code>, <code style="font-family:'JetBrains Mono',monospace;">input(0)->params.scale</code> e <code style="font-family:'JetBrains Mono',monospace;">input(0)->params.zero_point</code>. Compare os valores de scale/zero_point com os do código Python de conversão — eles devem bater.</p>
+      <span class="dif-basico">LAB · Diagnóstico</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — inspeção do modelo no setup()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Após AllocateTensors() no setup():</span>
+<span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"\n=== Inspeção do modelo ==="</span>);
+<span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Num tensors: %d\n"</span>, interpreter-><span class="fn">tensors_size</span>());
+
+<span class="cm">// Tensor de entrada</span>
+<span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"INPUT:"</span>);
+<span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"  dims: [%d"</span>, input->dims->data[<span class="num">0</span>]);
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i&lt;input->dims->size;i++)
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">", %d"</span>, input->dims->data[i]);
+<span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"]\n  type=%d  scale=%.6f  zp=%d\n"</span>,
+  input->type, input->params.scale, input->params.zero_point);
+
+<span class="cm">// Tensor de saída</span>
+<span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"OUTPUT:"</span>);
+<span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"  dims: [%d, %d]\n  type=%d  scale=%.6f  zp=%d\n"</span>,
+  output->dims->data[<span class="num">0</span>], output->dims->data[<span class="num">1</span>],
+  output->type, output->params.scale, output->params.zero_point);
+
+<span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Arena usada: %u bytes\n"</span>, interpreter-><span class="fn">arena_used_bytes</span>());</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Barra de confiança no Serial Monitor</div>
+      <p>Modifique a saída do Serial Monitor para exibir uma barra de progresso ASCII representando a confiança de cada classe. Exemplo: <code style="font-family:'JetBrains Mono',monospace;">Frio     [===       ] 30%</code>. Cada <code style="font-family:'JetBrains Mono',monospace;">=</code> representa 10% de probabilidade. Também acenda o LED_BUILTIN do ESP32 (GPIO2) enquanto a classe predita for "Quente/Úmido" — simulando um alarme de desconforto térmico.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — barra ASCII e LED de alarme</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// No setup(): pinMode(LED_BUILTIN, OUTPUT);</span>
+
+<span class="cm">// Função de exibição — chamar após Invoke()</span>
+<span class="kw">void</span> <span class="fn">imprimirResultado</span>(<span class="kw">float</span><span class="op">*</span> probs, <span class="kw">int</span> melhor) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">""</span>);
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">3</span>; i++) {
+    <span class="kw">int</span> barras = (<span class="kw">int</span>)(probs[i] <span class="op">*</span> <span class="num">10</span>);
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"%-14s ["</span>, CLASSES[i]);
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j < <span class="num">10</span>; j++)
+      <span class="fn">Serial</span>.<span class="fn">print</span>(j < barras ? <span class="str">'='</span> : <span class="str">' '</span>);
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"] %3d%% %s\n"</span>,
+      (<span class="kw">int</span>)(probs[i] <span class="op">*</span> <span class="num">100</span>), (i == melhor) ? <span class="str">"◀"</span> : <span class="str">""</span>);
+  }
+  <span class="cm">// LED acende se classe 2 (Quente/Úmido)</span>
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, melhor == <span class="num">2</span> ? HIGH : LOW);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Medir latência por tipo de operação</div>
+      <p>Meça separadamente com <code style="font-family:'JetBrains Mono',monospace;">micros()</code> o tempo de: (a) leitura do DHT22, (b) normalização + quantização do input, (c) <code style="font-family:'JetBrains Mono',monospace;">Invoke()</code>, (d) desquantização e decisão do output. Imprima cada tempo e calcule o percentual de tempo que cada etapa representa no ciclo total. Qual etapa domina? Isso foi surpresa para você? Justifique.</p>
+      <span class="dif-medio">Análise de Performance</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-stopwatch"></i>Resultado esperado e análise</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Leitura DHT22:</strong> ~250.000µs (250ms) — dominante total. O DHT22 tem protocolo de 1 fio lento por design.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Normalização + quantização:</strong> ~5–10µs — negligível.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Invoke() — inferência:</strong> ~800–1200µs — muito rápido para uma rede com 2 camadas densas pequenas.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Desquantização + decisão:</strong> ~3–5µs — negligível.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Conclusão:</strong> o gargalo não é o modelo de ML — é o sensor. Em sensores mais rápidos (acelerômetro SPI a 1kHz), a inferência pode ser 10–100× mais lenta que a leitura, justificando otimizações como MicroMutableOpResolver em vez de AllOpsResolver.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: treinar seu próprio modelo no Edge Impulse</div>
+      <p>Acesse <strong>edgeimpulse.com</strong> e crie um projeto gratuito. Colete 30 amostras de dados do DHT22 (10 por classe: Frio, Confortável, Quente) usando o Serial Monitor para gerar o CSV. Suba o dataset, crie um bloco DSP de "Raw data", configure uma rede densa simples (8 neurônios), treine, valide e exporte como biblioteca Arduino. Substitua o <code style="font-family:'JetBrains Mono',monospace;">modelo_clima.h</code> pelo modelo gerado pelo Edge Impulse e confirme que o sistema funciona com seu modelo próprio. Compare a acurácia do modelo Edge Impulse com o modelo fornecido pelo professor.</p>
+      <span class="dif-desafio">Desafio · Pipeline completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-route"></i>Checklist do desafio</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Conta criada e projeto novo no Edge Impulse com ESP32 selecionado como target.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Dataset carregado com pelo menos 30 amostras (10 por classe) — CSV com colunas temperatura, umidade, label.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Impulse criado: Raw data block → Flatten → Dense layer (8 unidades) → Softmax 3 classes.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Modelo treinado com quantização int8 habilitada nas configurações de deploy.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Exportado como "Arduino library" (.zip), instalado via .ZIP no Arduino IDE.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Código adaptado para usar o header gerado pelo Edge Impulse (diferente do modelo_clima.h do professor — os nomes de variáveis mudam).</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 12 · Última antes da P2</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-memory"></i>
+        <strong>Memória e Tensor Arena</strong>
+        <p>Modelo quantizado fica na flash. Tensor arena é RAM estática para o runtime. AllocateTensors() falha se a arena é pequena demais.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Ciclo de inferência</strong>
+        <p>GetModel → Interpreter → AllocateTensors (setup). Preencher input → Invoke → Ler output (loop). Quantizar/desquantizar com scale e zero_point.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-route"></i>
+        <strong>Pipeline completo</strong>
+        <p>Dataset → Keras → TFLiteConverter (int8) → .tflite → array .h → Arduino. Edge Impulse automatiza tudo isso sem escrever Python.</p>
+      </div>
+    </div>
+
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>P2 — Semana 13.</strong> O conteúdo avaliado vai da Semana 7 à 12: I2C/SPI/UART, ESP32 + Wi-Fi, HTTP, MQTT, BLE/LoRa/Zigbee, Edge Computing e TinyML. Revise os conceitos de quantização (int8), tensor arena, os 4 drivers de Edge e o pipeline TFLM.</span>
+    </div>
+
+    <div class="proxima" style="background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.25);">
+      <div>
+        <div class="proxima-label" style="color:#f87171;">Próxima semana</div>
+        <div class="proxima-titulo">Semana 13 — P2 · Avaliação · Conteúdo Semanas 7 a 12</div>
+      </div>
+      <i class="fas fa-file-alt" style="color:#f87171;"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O erro "AllocateTensors() failed" significa que o TFLite Micro não conseguiu alocar memória suficiente na tensor arena para os tensores do modelo. A solução é aumentar ARENA_SIZE. Uma forma de calibrar o tamanho ideal é imprimir interpreter->arena_used_bytes() após uma inferência bem-sucedida e usar esse valor + 10% como mínimo. Modelo corrompido geraria erro diferente na carga do FlatBuffer.'},
+  quiz2:{correct:'C',msg:'✅ Correto! A fórmula de quantização é: int8 = round(float_value / scale) + zero_point. Aplicando: round(0.73 / 0.0078) + (-1) = round(93.59) + (-1) = 94 - 1 = 93. O zero_point desloca o zero do espaço float para o espaço int8 — é essencial para preservar o zero real do dado normalizado. Ignorar o zero_point causa erros sistemáticos na inferência.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

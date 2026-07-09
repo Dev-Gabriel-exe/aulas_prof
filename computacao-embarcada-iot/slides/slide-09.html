@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 09 — MQTT: Protocolo IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Diagrama pub/sub ── */
+.pubsub-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.pubsub-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.ps-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.ps-node{border-radius:12px;padding:.75rem 1.1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;text-align:center;min-width:100px;flex-shrink:0;}
+.ps-broker{background:rgba(45,212,191,.12);border:2px solid rgba(45,212,191,.4);color:var(--teal-400);min-width:130px;padding:1rem 1.25rem;}
+.ps-broker-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-family:'Inter',sans-serif;font-weight:600;}
+.ps-pub{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;}
+.ps-sub{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;}
+.ps-arrow{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:40px;}
+.ps-arrow__line{height:2px;width:100%;background:rgba(45,212,191,.3);position:relative;}
+.ps-arrow__line::after{content:'▶';position:absolute;right:-2px;top:-8px;font-size:.7rem;color:rgba(45,212,191,.5);}
+.ps-arrow__line.rev::after{content:'';right:auto;}
+.ps-arrow__line.rev::before{content:'◀';position:absolute;left:-2px;top:-8px;font-size:.7rem;color:rgba(45,212,191,.5);}
+.ps-arrow__label{font-size:.65rem;color:var(--text-muted);text-align:center;}
+
+/* ── Tópico tree ── */
+.topic-tree{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.topic-tree__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.topic-node{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:2;display:flex;align-items:center;gap:10px;}
+.topic-node .indent{display:inline-block;width:20px;height:1px;border-bottom:1px solid rgba(45,212,191,.2);margin-right:4px;}
+.topic-chip{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.76rem;font-weight:700;}
+.tc-root{background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.25);}
+.tc-lvl1{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.tc-lvl2{background:rgba(139,92,246,.1);color:#c4b5fd;border:1px solid rgba(139,92,246,.2);}
+.tc-wild{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.topic-desc{font-size:.75rem;color:var(--text-muted);font-family:'Inter',sans-serif;margin-left:4px;}
+
+/* ── QoS cards ── */
+.qos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.qos-card{border-radius:12px;padding:1.1rem;border:1px solid;text-align:center;}
+.qos-num{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:.2rem;}
+.qos-name{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.qos-desc{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.qos-badge{display:inline-block;margin-top:.5rem;padding:2px 8px;border-radius:5px;font-size:.65rem;font-weight:700;letter-spacing:.05em;}
+
+/* ── Broker terminal mockup ── */
+.terminal{background:#000;border:1px solid rgba(45,212,191,.3);border-radius:10px;padding:1.1rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;}
+.terminal__bar{display:flex;gap:6px;margin-bottom:.75rem;}
+.terminal__dot{width:10px;height:10px;border-radius:50%;}
+.t-line{font-size:.8rem;line-height:1.9;}
+.t-prompt{color:var(--teal-400);}
+.t-cmd{color:#f8fafc;}
+.t-out{color:rgba(167,243,208,.65);}
+.t-info{color:#fbbf24;}
+.t-ok{color:var(--teal-400);}
+
+/* ── Wiring ── */
+.wiring{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.25rem;margin:.75rem 0;}
+.wiring__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;}
+.wiring__table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.wiring__table th{text-align:left;padding:.4rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.06);}
+.wiring__table td{padding:.45rem .75rem;border-bottom:1px solid rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.wiring__table tr:last-child td{border-bottom:none;}
+.wire-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── Comparativo HTTP vs MQTT ── */
+.comp-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-box{border-radius:12px;padding:1.1rem 1.25rem;border:1px solid;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.qos-grid,.resumo-grid,.comp-row{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .qos-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">09</div>
+    <h1 class="capa-titulo">MQTT<br><em>Broker, Tópicos</em><br>e Pub/Subscribe</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · O protocolo que fala a língua dos dispositivos</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que MQTT — limitações do HTTP em IoT, modelo pub/sub</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-server"></i></div><span>Broker Mosquitto — instalação local, clientes de teste</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Tópicos — hierarquia, wildcards + e #, boas práticas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sliders-h"></i></div><span>QoS 0, 1 e 2 — garantias de entrega e quando usar cada um</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-broadcast-tower"></i></div><span>ESP32 publicando dados — biblioteca PubSubClient</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: ESP32 publica DHT22 · cliente Python paho-mqtt assina</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>ESP32 publica temperatura e umidade a cada 10 segundos em tópicos MQTT. Um script Python com paho-mqtt assina e exibe as leituras em tempo real no terminal.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit + DHT22 (da semana 8)</li>
+        <li>PC com Python 3 e Mosquitto instalados</li>
+        <li>Biblioteca Arduino: PubSubClient by Nick O'Leary</li>
+        <li>Biblioteca Python: paho-mqtt (<code style="font-family:'JetBrains Mono',monospace;">pip install paho-mqtt</code>)</li>
+        <li>Rede Wi-Fi de laboratório</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 7 — I2C, SPI, UART, display OLED</li>
+        <li>✅ Sem. 8 — ESP32, Wi-Fi, HTTP GET/POST</li>
+        <li>▶ Sem. 9 — MQTT: broker, tópicos, pub/sub</li>
+        <li>Sem. 10 — BLE, LoRa, Zigbee: outros protocolos IoT</li>
+        <li>Sem. 11 — Edge Computing e Edge AI</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>MQTT é o protocolo nativo de IoT — AWS IoT Core, Azure IoT Hub e Google Cloud IoT todos o suportam</li>
+        <li>Um broker gerencia milhares de dispositivos sem que eles precisem se conhecer</li>
+        <li>QoS garante que leituras críticas (alarmes, atuações) cheguem mesmo em redes instáveis</li>
+        <li>Entender pub/sub é a base para MQTT, Kafka e qualquer sistema orientado a eventos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">MQTT — o protocolo que HTTP não consegue ser em IoT</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>HTTP vs MQTT — por que mudar?</div>
+      <p>Na semana passada, o ESP32 mandava dados via HTTP POST. Funcionou bem para o lab, mas em produção essa abordagem tem problemas sérios: o ESP32 precisa conhecer o endereço do servidor, o servidor precisa estar sempre disponível, e cada envio abre uma nova conexão TCP — custosa em energia e tempo.</p>
+      <p>O <strong>MQTT</strong> (Message Queuing Telemetry Transport) foi criado em 1999 pela IBM para redes instáveis e dispositivos com poucos recursos — pense em sensores em plataformas de petróleo conectados via satélite. Ele resolve exatamente os pontos fracos do HTTP em IoT.</p>
+
+      <div class="comp-row">
+        <div class="comp-box" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);">
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;">HTTP em IoT — limitações</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Modelo <strong>request-response</strong> — cliente sempre inicia, servidor sempre espera</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Dispositivo precisa saber o <strong>endereço do servidor</strong> — acoplamento direto</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Para receber dados, o dispositivo precisa fazer <strong>polling</strong> (perguntar repetidamente)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Headers HTTP pesados — overhead alto para mensagens de <strong>poucos bytes</strong></span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem suporte nativo a <strong>reconexão</strong> ou garantia de entrega</span></li>
+          </ul>
+        </div>
+        <div class="comp-box" style="background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.2);">
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;">MQTT em IoT — vantagens</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Modelo <strong>publish/subscribe</strong> — produtor e consumidor nunca se conhecem</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Todos os dispositivos falam com o <strong>broker</strong> — único ponto de contato</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Assinantes recebem dados <strong>em tempo real</strong> sem polling</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Header mínimo de <strong>2 bytes</strong> — ideal para payload pequeno</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>QoS</strong> garante entrega mesmo em redes instáveis; reconexão automática</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>O modelo Publish/Subscribe — três atores</div>
+      <p>No MQTT existem três papéis: o <strong>Publisher</strong> (publica dados em um tópico), o <strong>Subscriber</strong> (assina tópicos e recebe mensagens) e o <strong>Broker</strong> (intermediário central que recebe de publishers e distribui para subscribers). Publisher e Subscriber nunca se comunicam diretamente — nem precisam saber que o outro existe.</p>
+
+      <div class="pubsub-diagram">
+        <div class="pubsub-diagram__title">Fluxo de mensagens MQTT — broker como hub central</div>
+        <div class="ps-row">
+          <div style="display:flex;flex-direction:column;gap:.6rem;">
+            <div class="ps-node ps-pub">ESP32 #1<div style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;font-weight:400;">Publisher</div></div>
+            <div class="ps-node ps-pub">ESP32 #2<div style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;font-weight:400;">Publisher</div></div>
+          </div>
+          <div class="ps-arrow">
+            <div class="ps-arrow__line"></div>
+            <div class="ps-arrow__label">PUBLISH<br>casa/sala/temp</div>
+          </div>
+          <div class="ps-node ps-broker">
+            BROKER<br>Mosquitto
+            <div class="ps-broker-label">:1883</div>
+          </div>
+          <div class="ps-arrow">
+            <div class="ps-arrow__line rev"></div>
+            <div class="ps-arrow__label">DELIVER<br>para assinantes</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.6rem;">
+            <div class="ps-node ps-sub">Python<div style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;font-weight:400;">Subscriber</div></div>
+            <div class="ps-node ps-sub">Dashboard<div style="font-size:.65rem;opacity:.7;font-family:'Inter',sans-serif;font-weight:400;">Subscriber</div></div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);line-height:1.6;">
+          O broker <strong style="color:var(--text-primary);">não armazena</strong> os dados permanentemente (apenas com retain=true para a última mensagem). Ele é um roteador de mensagens em tempo real.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Tópicos MQTT — hierarquia e wildcards</div>
+      <p>Tópicos são strings que funcionam como endereços de roteamento. Usam <strong>/</strong> como separador de níveis — pense em caminhos de arquivo. Você projeta a hierarquia de tópicos antes de começar a programar: uma boa estrutura facilita filtros e escalabilidade.</p>
+
+      <div class="topic-tree">
+        <div class="topic-tree__title">Exemplo de hierarquia de tópicos — sistema de casa inteligente</div>
+        <div class="topic-node"><span class="topic-chip tc-root">casa</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">├─</span> <span class="topic-chip tc-lvl1">casa/sala</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">│  ├─</span> <span class="topic-chip tc-lvl2">casa/sala/temperatura</span> <span class="topic-desc">→ publica: 27.3</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">│  └─</span> <span class="topic-chip tc-lvl2">casa/sala/umidade</span> <span class="topic-desc">→ publica: 64.8</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">├─</span> <span class="topic-chip tc-lvl1">casa/quarto</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">│  └─</span> <span class="topic-chip tc-lvl2">casa/quarto/temperatura</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">└─</span> <span class="topic-chip tc-lvl1">casa/jardim</span></div>
+        <div class="topic-node"><span style="color:rgba(45,212,191,.2);">   └─</span> <span class="topic-chip tc-lvl2">casa/jardim/umidade_solo</span></div>
+        <div style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;">
+          <div class="topic-node"><span class="topic-chip tc-wild">casa/+/temperatura</span> <span class="topic-desc">→ wildcard + : um nível qualquer → recebe sala E quarto</span></div>
+          <div class="topic-node"><span class="topic-chip tc-wild">casa/#</span> <span class="topic-desc">→ wildcard # : tudo abaixo → recebe todos os tópicos da casa</span></div>
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Wildcard</th><th>Significado</th><th>Exemplo</th><th>Assina</th></tr></thead>
+          <tbody>
+            <tr><td><strong>+</strong></td><td>Um nível qualquer</td><td><code style="font-family:'JetBrains Mono',monospace;">casa/+/temp</code></td><td>casa/sala/temp, casa/quarto/temp — não casa/sala/sub/temp</td></tr>
+            <tr><td><strong>#</strong></td><td>Zero ou mais níveis (sempre no final)</td><td><code style="font-family:'JetBrains Mono',monospace;">casa/#</code></td><td>tudo que começa com casa/</td></tr>
+            <tr><td><strong>—</strong></td><td>Sem wildcard — tópico exato</td><td><code style="font-family:'JetBrains Mono',monospace;">casa/sala/temp</code></td><td>apenas esse tópico específico</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Tópicos que começam com $</strong> são reservados pelo broker (ex: <code style="font-family:'JetBrains Mono',monospace;">$SYS/broker/clients/connected</code>). O wildcard <code style="font-family:'JetBrains Mono',monospace;">#</code> não os captura — você precisa assinar explicitamente.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-server"></i>Mosquitto — broker local em minutos</div>
+      <p>O <strong>Eclipse Mosquitto</strong> é o broker MQTT open-source mais usado, leve e fácil de instalar. Roda no mesmo computador do lab, escuta na porta padrão <strong>1883</strong> (sem TLS) e inclui duas ferramentas de linha de comando: <code style="font-family:'JetBrains Mono',monospace;">mosquitto_pub</code> e <code style="font-family:'JetBrains Mono',monospace;">mosquitto_sub</code>.</p>
+
+      <div class="terminal">
+        <div class="terminal__bar">
+          <div class="terminal__dot" style="background:#ef4444;"></div>
+          <div class="terminal__dot" style="background:#fbbf24;"></div>
+          <div class="terminal__dot" style="background:#22c55e;"></div>
+        </div>
+        <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">sudo apt install mosquitto mosquitto-clients</span></div>
+        <div class="t-line"><span class="t-out"># Windows: baixar instalador em mosquitto.org</span></div>
+        <div class="t-line"> </div>
+        <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">mosquitto -v</span> <span class="t-out" style="opacity:.5;">  # iniciar broker verboso (debug)</span></div>
+        <div class="t-line"><span class="t-info">1700000000: mosquitto version 2.x.x starting</span></div>
+        <div class="t-line"><span class="t-info">1700000000: Opening ipv4 listen socket on port 1883.</span></div>
+        <div class="t-line"> </div>
+        <div class="t-line"><span class="t-out"># Em outro terminal — assinar um tópico:</span></div>
+        <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">mosquitto_sub -h localhost -t "casa/#" -v</span></div>
+        <div class="t-line"> </div>
+        <div class="t-line"><span class="t-out"># Em outro terminal — publicar uma mensagem de teste:</span></div>
+        <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">mosquitto_pub -h localhost -t "casa/sala/temperatura" -m "27.3"</span></div>
+        <div class="t-line"><span class="t-ok">casa/sala/temperatura 27.3</span> <span class="t-out" style="opacity:.5;">← aparece no sub acima</span></div>
+      </div>
+
+      <div class="destaque">
+        <strong>Por padrão, Mosquitto 2.x exige configuração para aceitar conexões externas.</strong> Crie um arquivo <code style="font-family:'JetBrains Mono',monospace;">mosquitto.conf</code> com: <code style="font-family:'JetBrains Mono',monospace;">listener 1883</code> e <code style="font-family:'JetBrains Mono',monospace;">allow_anonymous true</code>. Inicie com <code style="font-family:'JetBrains Mono',monospace;">mosquitto -c mosquitto.conf</code>. Sem isso, o ESP32 não consegue se conectar a partir de outra máquina.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Em qual situação o modelo publish/subscribe do MQTT é claramente superior ao HTTP request-response?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Quando um servidor web precisa servir páginas HTML para muitos usuários simultâneos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Quando 50 sensores precisam enviar dados e 3 sistemas diferentes (dashboard, banco de dados, alarme) precisam receber todos esses dados em tempo real</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Quando o cliente precisa receber uma resposta imediata e confirmada com conteúdo específico para aquela requisição</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">Quando os dados precisam ser transmitidos com criptografia TLS — o MQTT não suporta isso via HTTP</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">QoS, Retain, LWT e ESP32 com PubSubClient</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sliders-h"></i>QoS — Quality of Service: quem garante que a mensagem chegou?</div>
+      <p>Em redes Wi-Fi de laboratório, quase tudo funciona. Em produção — uma fábrica com interferência, um galpão com paredes de concreto, um sensor externo com sinal instável — mensagens se perdem. O MQTT define três níveis de garantia de entrega chamados <strong>QoS</strong>.</p>
+
+      <div class="qos-grid">
+        <div class="qos-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <div class="qos-num" style="color:var(--teal-400);">0</div>
+          <div class="qos-name" style="color:var(--teal-400);">At most once</div>
+          <div class="qos-desc">Dispara e esquece. Sem confirmação, sem retransmissão. Pode perder mensagens.</div>
+          <div class="qos-badge" style="background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);">Leituras frequentes, perda aceitável</div>
+        </div>
+        <div class="qos-card" style="background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);">
+          <div class="qos-num" style="color:#fbbf24;">1</div>
+          <div class="qos-name" style="color:#fbbf24;">At least once</div>
+          <div class="qos-desc">Entregue pelo menos uma vez. Broker confirma com PUBACK. Pode chegar duplicada.</div>
+          <div class="qos-badge" style="background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);">Uso geral — dados de sensor</div>
+        </div>
+        <div class="qos-card" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.2);">
+          <div class="qos-num" style="color:#c4b5fd;">2</div>
+          <div class="qos-name" style="color:#c4b5fd;">Exactly once</div>
+          <div class="qos-desc">Entregue exatamente uma vez. Handshake de 4 passos. Mais lento e pesado.</div>
+          <div class="qos-badge" style="background:rgba(139,92,246,.1);color:#c4b5fd;border:1px solid rgba(139,92,246,.2);">Atuações críticas, billing, alarmes</div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Na prática:</strong> QoS 1 é o ponto de equilíbrio para 90% dos projetos IoT — garante entrega sem o overhead do QoS 2. Use QoS 0 para telemetria de alta frequência (temperatura a cada 1s) onde perder uma leitura não importa. Use QoS 2 apenas para comandos irreversíveis (abrir uma válvula, acionar um alarme de incêndio).
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bookmark"></i>Retain e Last Will — dois recursos essenciais</div>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Retained Message</p>
+          <p>Quando uma mensagem é publicada com <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">retain=true</code>, o broker armazena a última mensagem daquele tópico. Todo novo assinante recebe imediatamente esse valor ao se conectar — sem precisar esperar a próxima publicação.</p>
+          <div class="destaque" style="margin-top:.5rem;font-size:.82rem;">
+            <strong>Caso de uso típico:</strong> status de um dispositivo (<code style="font-family:'JetBrains Mono',monospace;">online</code> / <code style="font-family:'JetBrains Mono',monospace;">offline</code>). Um dashboard que abre já sabe o estado atual sem esperar.
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Last Will and Testament (LWT)</p>
+          <p>Ao conectar, o cliente informa ao broker: "Se eu desconectar de forma inesperada (queda de energia, reset, perda de Wi-Fi), publique esta mensagem em nome de mim." O broker executa o LWT automaticamente quando detecta a queda.</p>
+          <div class="destaque" style="margin-top:.5rem;font-size:.82rem;">
+            <strong>Caso de uso típico:</strong> <code style="font-family:'JetBrains Mono',monospace;">casa/esp32/status = "offline"</code>. Quando o ESP32 cai, o broker avisa todos os assinantes.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-broadcast-tower"></i>PubSubClient — MQTT no ESP32</div>
+      <p>A biblioteca <strong>PubSubClient</strong> by Nick O'Leary é a implementação MQTT mais usada no ecossistema Arduino/ESP32. Instale via Gerenciador de Bibliotecas (busque "PubSubClient"). Ela suporta MQTT 3.1.1, QoS 0 e 1, retain e LWT.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 MQTT Publisher com reconexão e LWT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> SSID       = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA      = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> BROKER_IP  = <span class="str">"192.168.1.100"</span>;   <span class="cm">// IP do PC com Mosquitto</span>
+<span class="kw">const int</span>  BROKER_PORT = <span class="num">1883</span>;
+<span class="kw">const char</span><span class="op">*</span> CLIENT_ID   = <span class="str">"esp32-sensor-01"</span>;  <span class="cm">// único por dispositivo</span>
+
+<span class="cm">// Tópicos</span>
+<span class="kw">const char</span><span class="op">*</span> TOP_STATUS  = <span class="str">"lab/esp32/status"</span>;
+<span class="kw">const char</span><span class="op">*</span> TOP_TEMP    = <span class="str">"lab/esp32/temperatura"</span>;
+<span class="kw">const char</span><span class="op">*</span> TOP_UMID    = <span class="str">"lab/esp32/umidade"</span>;
+<span class="kw">const char</span><span class="op">*</span> TOP_CMD     = <span class="str">"lab/esp32/comando"</span>;  <span class="cm">// subscribe</span>
+
+WiFiClient   wifiClient;
+PubSubClient mqtt(wifiClient);
+
+<span class="cm">// ── Callback: chamada ao receber mensagem em tópico assinado</span>
+<span class="kw">void</span> <span class="fn">callbackMQTT</span>(<span class="kw">char</span><span class="op">*</span> topico, <span class="kw">byte</span><span class="op">*</span> payload, <span class="kw">unsigned int</span> tamanho) {
+  String msg = <span class="str">""</span>;
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < (<span class="kw">int</span>)tamanho; i++) msg += (<span class="kw">char</span>)payload[i];
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[MQTT ←] %s : %s\n"</span>, topico, msg.<span class="fn">c_str</span>());
+
+  <span class="kw">if</span> (msg == <span class="str">"ping"</span>) {
+    mqtt.<span class="fn">publish</span>(<span class="str">"lab/esp32/pong"</span>, <span class="str">"pong"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">conectarWifi</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_STA);
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Wi-Fi"</span>);
+  <span class="kw">while</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) { <span class="fn">delay</span>(<span class="num">500</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>); }
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" OK · IP: "</span> + <span class="fn">WiFi</span>.<span class="fn">localIP</span>().<span class="fn">toString</span>());
+}
+
+<span class="kw">void</span> <span class="fn">conectarMQTT</span>() {
+  mqtt.<span class="fn">setServer</span>(BROKER_IP, BROKER_PORT);
+  mqtt.<span class="fn">setCallback</span>(callbackMQTT);
+
+  <span class="kw">while</span> (!mqtt.<span class="fn">connected</span>()) {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"MQTT..."</span>);
+
+    <span class="cm">// connect(clientId, user, pass, willTopic, willQos, willRetain, willMsg)</span>
+    <span class="kw">if</span> (mqtt.<span class="fn">connect</span>(CLIENT_ID, <span class="str">""</span>, <span class="str">""</span>, TOP_STATUS, <span class="num">1</span>, <span class="kw">true</span>, <span class="str">"offline"</span>)) {
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" conectado!"</span>);
+      mqtt.<span class="fn">publish</span>(TOP_STATUS, <span class="str">"online"</span>, <span class="kw">true</span>);   <span class="cm">// retain=true</span>
+      mqtt.<span class="fn">subscribe</span>(TOP_CMD, <span class="num">1</span>);               <span class="cm">// QoS 1</span>
+    } <span class="kw">else</span> {
+      <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">" falhou (rc=%d). Nova tentativa em 5s\n"</span>, mqtt.<span class="fn">state</span>());
+      <span class="fn">delay</span>(<span class="num">5000</span>);
+    }
+  }
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">conectarWifi</span>();
+  <span class="fn">conectarMQTT</span>();
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (!mqtt.<span class="fn">connected</span>()) <span class="fn">conectarMQTT</span>();
+  mqtt.<span class="fn">loop</span>();   <span class="cm">// processa mensagens recebidas e mantém conexão viva</span>
+}</code></pre>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>mqtt.loop() é obrigatório no loop().</strong> Sem ele, o cliente não processa mensagens recebidas, não responde ao keepalive do broker e é desconectado em poucos segundos. Se você usar delay() por muito tempo no loop(), o MQTT pode perder a conexão — use millis() para timing.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Um sensor de temperatura publica a cada 30 segundos. Um dashboard conecta e precisa mostrar a temperatura atual imediatamente, sem esperar 30 segundos. Qual recurso MQTT resolve isso?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">QoS 2 — garante entrega imediata ao se conectar</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">B</div>
+          <span class="quiz-texto">Last Will Testament — o broker re-envia a última mensagem ao detectar nova conexão</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">C</div>
+          <span class="quiz-texto">Retained Message — o broker guarda a última mensagem e a entrega imediatamente a qualquer novo assinante</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O dashboard deve fazer publish em um tópico especial pedindo o reenvio ao sensor</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — ESP32 + DHT22 publicando · Python assinando</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: ESP32 lê DHT22 e publica temperatura e umidade como JSON em <code style="font-family:'JetBrains Mono',monospace;">lab/esp32/dados</code> via MQTT (QoS 1). Um script Python com paho-mqtt assina o tópico e imprime cada leitura com timestamp.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo do LAB</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Iniciar o broker Mosquitto</div>
+            <div class="lab-step__desc">No computador do professor (ou de cada dupla), inicie o Mosquitto com o arquivo de configuração que permite conexões anônimas externas. Confirme no terminal que está ouvindo na porta 1883. Anote o IP da máquina — será usado no código do ESP32.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar o broker com mosquitto_sub</div>
+            <div class="lab-step__desc">Antes de programar o ESP32, valide o broker: em um terminal assine <code style="font-family:'JetBrains Mono',monospace;">mosquitto_sub -h localhost -t "lab/#" -v</code> e em outro publique <code style="font-family:'JetBrains Mono',monospace;">mosquitto_pub -h localhost -t "lab/teste" -m "ok"</code>. Se aparecer "ok" no sub, o broker está funcionando.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código completo no ESP32</div>
+            <div class="lab-step__desc">Use o código abaixo. Substitua SSID, SENHA e BROKER_IP. Confirme no Serial Monitor (115200) que aparece "MQTT... conectado!" antes de prosseguir.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Executar o subscriber Python</div>
+            <div class="lab-step__desc">Instale paho-mqtt (<code style="font-family:'JetBrains Mono',monospace;">pip install paho-mqtt</code>) e execute o script abaixo. Você deve ver as leituras do DHT22 chegando a cada 10 segundos, com timestamp.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar o fluxo bidirecional</div>
+            <div class="lab-step__desc">Com o mosquitto_pub, envie um comando para o ESP32: <code style="font-family:'JetBrains Mono',monospace;">mosquitto_pub -h localhost -t "lab/esp32/comando" -m "ping"</code>. Observe no Serial Monitor do ESP32 o recebimento e a resposta "pong" no tópico <code style="font-family:'JetBrains Mono',monospace;">lab/esp32/pong</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Código ESP32 completo -->
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — ESP32 + DHT22 → MQTT completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="kw">const char</span><span class="op">*</span> SSID      = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA     = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> BROKER_IP = <span class="str">"192.168.1.100"</span>;
+<span class="kw">const char</span><span class="op">*</span> CLIENT_ID = <span class="str">"esp32-dht-01"</span>;
+
+<span class="pp">#define</span> PINO_DHT   <span class="num">4</span>
+<span class="pp">#define</span> TIPO_DHT   DHT22
+<span class="pp">#define</span> INTERVALO  <span class="num">10000UL</span>
+
+<span class="kw">const char</span><span class="op">*</span> TOP_DADOS  = <span class="str">"lab/esp32/dados"</span>;
+<span class="kw">const char</span><span class="op">*</span> TOP_STATUS = <span class="str">"lab/esp32/status"</span>;
+<span class="kw">const char</span><span class="op">*</span> TOP_CMD    = <span class="str">"lab/esp32/comando"</span>;
+
+DHT          dht(PINO_DHT, TIPO_DHT);
+WiFiClient   wifiClient;
+PubSubClient mqtt(wifiClient);
+<span class="kw">unsigned long</span> ultimaPublicacao = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">callbackMQTT</span>(<span class="kw">char</span><span class="op">*</span> topico, <span class="kw">byte</span><span class="op">*</span> payload, <span class="kw">unsigned int</span> tam) {
+  String msg = <span class="str">""</span>;
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < (<span class="kw">int</span>)tam; i++) msg += (<span class="kw">char</span>)payload[i];
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[CMD] %s : %s\n"</span>, topico, msg.<span class="fn">c_str</span>());
+  <span class="kw">if</span> (msg == <span class="str">"ping"</span>) mqtt.<span class="fn">publish</span>(<span class="str">"lab/esp32/pong"</span>, <span class="str">"pong"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">conectarWifi</span>() {
+  <span class="fn">WiFi</span>.<span class="fn">mode</span>(WIFI_STA); <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID, SENHA);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Wi-Fi"</span>);
+  <span class="kw">while</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) { <span class="fn">delay</span>(<span class="num">500</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"."</span>); }
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" OK · "</span> + <span class="fn">WiFi</span>.<span class="fn">localIP</span>().<span class="fn">toString</span>());
+}
+
+<span class="kw">void</span> <span class="fn">conectarMQTT</span>() {
+  mqtt.<span class="fn">setServer</span>(BROKER_IP, <span class="num">1883</span>);
+  mqtt.<span class="fn">setCallback</span>(callbackMQTT);
+  <span class="kw">while</span> (!mqtt.<span class="fn">connected</span>()) {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"MQTT..."</span>);
+    <span class="kw">if</span> (mqtt.<span class="fn">connect</span>(CLIENT_ID, <span class="str">""</span>, <span class="str">""</span>, TOP_STATUS, <span class="num">1</span>, <span class="kw">true</span>, <span class="str">"offline"</span>)) {
+      <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" OK"</span>);
+      mqtt.<span class="fn">publish</span>(TOP_STATUS, <span class="str">"online"</span>, <span class="kw">true</span>);
+      mqtt.<span class="fn">subscribe</span>(TOP_CMD, <span class="num">1</span>);
+    } <span class="kw">else</span> {
+      <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">" erro rc=%d\n"</span>, mqtt.<span class="fn">state</span>()); <span class="fn">delay</span>(<span class="num">5000</span>);
+    }
+  }
+}
+
+<span class="kw">void</span> <span class="fn">publicarDados</span>(<span class="kw">float</span> t, <span class="kw">float</span> u) {
+  StaticJsonDocument<<span class="num">128</span>> doc;
+  doc[<span class="str">"temp"</span>]      = t;
+  doc[<span class="str">"umid"</span>]      = u;
+  doc[<span class="str">"dispositivo"</span>] = CLIENT_ID;
+
+  <span class="kw">char</span> buf[<span class="num">128</span>];
+  <span class="fn">serializeJson</span>(doc, buf);
+
+  <span class="cm">// publish(topico, payload, retained)</span>
+  <span class="kw">if</span> (mqtt.<span class="fn">publish</span>(TOP_DADOS, buf, <span class="kw">false</span>)) {   <span class="cm">// QoS 0 padrão</span>
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"[PUB] T=%.1f U=%.1f\n"</span>, t, u);
+  } <span class="kw">else</span> {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"[PUB] Falhou — buffer cheio?"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+  <span class="fn">conectarWifi</span>();
+  <span class="fn">conectarMQTT</span>();
+  <span class="fn">delay</span>(<span class="num">2000</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">WiFi</span>.<span class="fn">status</span>() != WL_CONNECTED) <span class="fn">conectarWifi</span>();
+  <span class="kw">if</span> (!mqtt.<span class="fn">connected</span>()) <span class="fn">conectarMQTT</span>();
+  mqtt.<span class="fn">loop</span>();   <span class="cm">// SEMPRE chamar — mantém conexão e processa callbacks</span>
+
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimaPublicacao >= INTERVALO) {
+    ultimaPublicacao = <span class="fn">millis</span>();
+    <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+    <span class="kw">float</span> u = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+    <span class="kw">if</span> (!<span class="fn">isnan</span>(t) && !<span class="fn">isnan</span>(u)) <span class="fn">publicarDados</span>(t, u);
+    <span class="kw">else</span> <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"[ERRO] Leitura DHT inválida"</span>);
+  }
+}</code></pre>
+      </div>
+
+      <!-- Código Python subscriber -->
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — subscriber paho-mqtt com JSON</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># subscriber_mqtt.py — pip install paho-mqtt</span>
+<span class="kw">import</span> paho.mqtt.client <span class="kw">as</span> mqtt
+<span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+BROKER = <span class="str">"192.168.1.100"</span>   <span class="cm"># mesmo IP do Mosquitto</span>
+PORT   = <span class="num">1883</span>
+TOPICO = <span class="str">"lab/#"</span>            <span class="cm"># assina tudo abaixo de lab/</span>
+
+<span class="kw">def</span> <span class="fn">on_connect</span>(client, userdata, flags, rc):
+    <span class="kw">if</span> rc == <span class="num">0</span>:
+        print(f<span class="str">"Conectado ao broker {BROKER}:{PORT}"</span>)
+        client.<span class="fn">subscribe</span>(TOPICO, qos=<span class="num">1</span>)
+        print(f<span class="str">"Assinando: {TOPICO}\n"</span>)
+    <span class="kw">else</span>:
+        print(f<span class="str">"Falha na conexão — rc={rc}"</span>)
+
+<span class="kw">def</span> <span class="fn">on_message</span>(client, userdata, msg):
+    ts = datetime.<span class="fn">now</span>().<span class="fn">strftime</span>(<span class="str">"%H:%M:%S"</span>)
+    payload = msg.payload.<span class="fn">decode</span>(<span class="str">"utf-8"</span>)
+
+    <span class="cm"># Tenta fazer parse como JSON</span>
+    <span class="kw">try</span>:
+        dados = json.<span class="fn">loads</span>(payload)
+        t = dados.<span class="fn">get</span>(<span class="str">"temp"</span>, <span class="str">"?"</span>)
+        u = dados.<span class="fn">get</span>(<span class="str">"umid"</span>, <span class="str">"?"</span>)
+        disp = dados.<span class="fn">get</span>(<span class="str">"dispositivo"</span>, <span class="str">"?"</span>)
+        print(f<span class="str">"[{ts}] {msg.topic}"</span>)
+        print(f<span class="str">"       Temp={t}°C  Umid={u}%  de={disp}\n"</span>)
+    <span class="kw">except</span> json.JSONDecodeError:
+        <span class="cm"># Mensagem não é JSON (ex: status "online"/"offline")</span>
+        print(f<span class="str">"[{ts}] {msg.topic} : {payload}\n"</span>)
+
+<span class="kw">def</span> <span class="fn">on_disconnect</span>(client, userdata, rc):
+    print(f<span class="str">"Desconectado (rc={rc}) — reconectando..."</span>)
+
+client = mqtt.<span class="fn">Client</span>(client_id=<span class="str">"python-sub-01"</span>)
+client.on_connect    = on_connect
+client.on_message    = on_message
+client.on_disconnect = on_disconnect
+
+client.<span class="fn">connect</span>(BROKER, PORT, keepalive=<span class="num">60</span>)
+print(<span class="str">"Aguardando mensagens... (Ctrl+C para sair)"</span>)
+client.<span class="fn">loop_forever</span>()   <span class="cm"># bloqueia e processa eventos indefinidamente</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Conceito</div>
+        <div class="secao-titulo">4 exercícios — do tópico ao sistema bidirecional</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Projetando hierarquia de tópicos</div>
+      <p>Você está projetando o sistema MQTT para um prédio comercial com 3 andares. Cada andar tem sensores de temperatura, umidade e presença (PIR). Há também um atuador de ar-condicionado por andar. Projete a hierarquia completa de tópicos para esse sistema. Em seguida, escreva o padrão de wildcard que um dashboard de monitoramento usaria para (a) receber todos os dados de temperatura do prédio e (b) receber todos os dados do segundo andar.</p>
+      <span class="dif-basico">Conceito</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-sitemap"></i>Hierarquia sugerida</div>
+          <div class="code-block" style="margin-top:.5rem;">
+            <div class="code-header"><span class="code-lang">Estrutura de tópicos</span></div>
+            <pre><code>predio/andar1/temperatura      → sensor temp andar 1
+predio/andar1/umidade
+predio/andar1/presenca
+predio/andar1/ac/comando       → atuador (subscribe no ESP do AC)
+predio/andar1/ac/status        → estado atual do AC (retain=true)
+predio/andar2/temperatura
+predio/andar2/umidade
+predio/andar2/presenca
+predio/andar2/ac/comando
+predio/andar2/ac/status
+predio/andar3/...
+
+<span class="cm">// (a) Todos os dados de temperatura do prédio:</span>
+predio/+/temperatura
+
+<span class="cm">// (b) Todos os dados do segundo andar:</span>
+predio/andar2/#</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Tópicos separados vs JSON único</div>
+      <p>O código do LAB publica temperatura e umidade juntos em um único tópico como JSON (<code style="font-family:'JetBrains Mono',monospace;">lab/esp32/dados</code>). Uma abordagem alternativa seria publicar em tópicos separados: <code style="font-family:'JetBrains Mono',monospace;">lab/esp32/temperatura</code> com o valor <code style="font-family:'JetBrains Mono',monospace;">27.3</code> (número puro) e <code style="font-family:'JetBrains Mono',monospace;">lab/esp32/umidade</code> com <code style="font-family:'JetBrains Mono',monospace;">64.8</code>. Implemente essa segunda abordagem no ESP32 e no Python. Depois discuta: quais são as vantagens e desvantagens de cada abordagem em um projeto real?</p>
+      <span class="dif-medio">LAB + Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — tópicos separados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Na função publicarDados(), substituir serializeJson por:</span>
+<span class="kw">char</span> bufT[<span class="num">16</span>], bufU[<span class="num">16</span>];
+<span class="fn">dtostrf</span>(t, <span class="num">4</span>, <span class="num">1</span>, bufT);   <span class="cm">// float para string: "27.3"</span>
+<span class="fn">dtostrf</span>(u, <span class="num">4</span>, <span class="num">1</span>, bufU);
+mqtt.<span class="fn">publish</span>(<span class="str">"lab/esp32/temperatura"</span>, bufT);
+mqtt.<span class="fn">publish</span>(<span class="str">"lab/esp32/umidade"</span>,     bufU);</code></pre>
+        </div>
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-balance-scale"></i>Análise comparativa</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Tópicos separados:</strong> mais simples para assinantes que só precisam de um valor; integração direta com ferramentas como Node-RED e InfluxDB (sem parser JSON); facil usar retain por variável.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>JSON único:</strong> garante que temperatura e umidade chegam como um snapshot atômico do mesmo instante; reduz número de mensagens MQTT; mais fácil de versionar e adicionar campos.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Recomendação:</strong> use JSON para dados que pertencem ao mesmo instante de leitura. Use tópicos separados quando os consumidores são heterogêneos e cada um precisa só de um campo.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Comando de intervalo via MQTT</div>
+      <p>No código do ESP32, além do comando "ping", adicione suporte ao comando <code style="font-family:'JetBrains Mono',monospace;">intervalo:X</code> (onde X é um número de segundos) que altera o intervalo de publicação em tempo de execução. Por exemplo, publicar <code style="font-family:'JetBrains Mono',monospace;">intervalo:5</code> no tópico de comando faz o ESP32 passar a publicar a cada 5 segundos. O ESP32 deve confirmar com uma publicação em <code style="font-family:'JetBrains Mono',monospace;">lab/esp32/config</code>: <code style="font-family:'JetBrains Mono',monospace;">{"intervalo":5}</code>.</p>
+      <span class="dif-medio">Integração</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — callback com comando de intervalo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Variável global substitui a constante INTERVALO</span>
+<span class="kw">unsigned long</span> intervaloAtual = <span class="num">10000UL</span>;
+
+<span class="cm">// No callbackMQTT():</span>
+<span class="kw">if</span> (msg.<span class="fn">startsWith</span>(<span class="str">"intervalo:"</span>)) {
+  <span class="kw">int</span> seg = msg.<span class="fn">substring</span>(<span class="num">10</span>).<span class="fn">toInt</span>();
+  <span class="kw">if</span> (seg >= <span class="num">1</span> && seg <= <span class="num">3600</span>) {
+    intervaloAtual = (<span class="kw">unsigned long</span>)seg <span class="op">*</span> <span class="num">1000UL</span>;
+
+    StaticJsonDocument<<span class="num">64</span>> conf;
+    conf[<span class="str">"intervalo"</span>] = seg;
+    <span class="kw">char</span> buf[<span class="num">32</span>]; <span class="fn">serializeJson</span>(conf, buf);
+    mqtt.<span class="fn">publish</span>(<span class="str">"lab/esp32/config"</span>, buf);
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Intervalo alterado para %ds\n"</span>, seg);
+  }
+}
+
+<span class="cm">// No loop(), substituir INTERVALO por intervaloAtual:</span>
+<span class="kw">if</span> (<span class="fn">millis</span>() - ultimaPublicacao >= intervaloAtual) { ... }</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: salvar histórico em CSV</div>
+      <p>Modifique o script Python para, além de imprimir no terminal, salvar cada leitura recebida em um arquivo <code style="font-family:'JetBrains Mono',monospace;">historico.csv</code> com as colunas: <code style="font-family:'JetBrains Mono',monospace;">timestamp, dispositivo, temperatura, umidade</code>. Se o arquivo já existir, adicione ao final (append) sem reescrever o cabeçalho. Após 5 minutos de coleta, use pandas para calcular a média, mínimo e máximo de temperatura e umidade e imprima o resumo no terminal.</p>
+      <span class="dif-desafio">Desafio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — subscriber com CSV + resumo pandas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> paho.mqtt.client <span class="kw">as</span> mqtt
+<span class="kw">import</span> json, csv, os, time, threading
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+BROKER  = <span class="str">"192.168.1.100"</span>
+ARQUIVO = <span class="str">"historico.csv"</span>
+CABECALHO = [<span class="str">"timestamp"</span>, <span class="str">"dispositivo"</span>, <span class="str">"temperatura"</span>, <span class="str">"umidade"</span>]
+
+<span class="cm"># Cria arquivo com cabeçalho se não existir</span>
+<span class="kw">if not</span> os.path.<span class="fn">exists</span>(ARQUIVO):
+    <span class="kw">with</span> <span class="fn">open</span>(ARQUIVO, <span class="str">"w"</span>, newline=<span class="str">""</span>) <span class="kw">as</span> f:
+        csv.<span class="fn">writer</span>(f).<span class="fn">writerow</span>(CABECALHO)
+
+<span class="kw">def</span> <span class="fn">on_message</span>(client, userdata, msg):
+    <span class="kw">try</span>:
+        d = json.<span class="fn">loads</span>(msg.payload.<span class="fn">decode</span>())
+        ts = datetime.<span class="fn">now</span>().<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+        row = [ts, d.<span class="fn">get</span>(<span class="str">"dispositivo"</span>), d.<span class="fn">get</span>(<span class="str">"temp"</span>), d.<span class="fn">get</span>(<span class="str">"umid"</span>)]
+        <span class="kw">with</span> <span class="fn">open</span>(ARQUIVO, <span class="str">"a"</span>, newline=<span class="str">""</span>) <span class="kw">as</span> f:
+            csv.<span class="fn">writer</span>(f).<span class="fn">writerow</span>(row)
+        print(f<span class="str">"[{ts}] T={row[2]}°C U={row[3]}%"</span>)
+    <span class="kw">except</span>: <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">resumo_periodico</span>():
+    <span class="kw">while True</span>:
+        time.<span class="fn">sleep</span>(<span class="num">300</span>)   <span class="cm"># a cada 5 minutos</span>
+        <span class="kw">try</span>:
+            <span class="kw">import</span> pandas <span class="kw">as</span> pd
+            df = pd.<span class="fn">read_csv</span>(ARQUIVO)
+            print(<span class="str">"\n=== Resumo dos últimos 5 min ==="</span>)
+            print(df[[<span class="str">"temperatura"</span>,<span class="str">"umidade"</span>]].<span class="fn">agg</span>([<span class="str">"mean"</span>,<span class="str">"min"</span>,<span class="str">"max"</span>]).<span class="fn">round</span>(<span class="num">2</span>))
+        <span class="kw">except</span> <span class="kw">Exception as</span> e: print(f<span class="str">"Resumo: {e}"</span>)
+
+threading.<span class="fn">Thread</span>(target=resumo_periodico, daemon=<span class="kw">True</span>).<span class="fn">start</span>()
+
+c = mqtt.<span class="fn">Client</span>()
+c.on_connect = <span class="kw">lambda</span> cl,u,f,rc: cl.<span class="fn">subscribe</span>(<span class="str">"lab/esp32/dados"</span>, <span class="num">1</span>)
+c.on_message = on_message
+c.<span class="fn">connect</span>(BROKER, <span class="num">1883</span>)
+c.<span class="fn">loop_forever</span>()</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 9</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>Pub/Sub e Broker</strong>
+        <p>Publisher e Subscriber nunca se falam — o Broker é o hub. Mosquitto na porta 1883. mqtt.loop() obrigatório no loop().</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Tópicos e QoS</strong>
+        <p>Hierarquia com /. Wildcards: + (um nível) e # (tudo abaixo). QoS 0 = dispara e esquece, QoS 1 = pelo menos uma vez.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-bookmark"></i>
+        <strong>Retain e LWT</strong>
+        <p>Retain: broker guarda última mensagem para novos assinantes. LWT: broker publica "offline" automaticamente se o device cair.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O ESP32 está publicando leituras reais no tópico correto? O Python está recebendo e exibindo os dados? Você testou o comando "ping" via mosquitto_pub? Se sim — pronto para a Semana 10: BLE, LoRa e Zigbee — quando o Wi-Fi não é a resposta certa.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 10 — Outros protocolos IoT: Bluetooth BLE, LoRa/LoRaWAN e Zigbee — comparativo e casos de uso</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O pub/sub brilha quando há múltiplos produtores e múltiplos consumidores independentes que precisam dos mesmos dados. No HTTP, cada sensor precisaria saber o endereço de cada sistema que consome seus dados — acoplamento inviável. No MQTT, todos publicam no broker e cada sistema assina o que quer.'},
+  quiz2:{correct:'C',msg:'✅ Correto! A Retained Message é o recurso exato para isso. O broker armazena a última mensagem publicada com retain=true e a entrega imediatamente a qualquer novo assinante — sem polling, sem esperar a próxima publicação. O LWT funciona na direção contrária: é o cliente que configura uma mensagem a ser publicada quando ele cair.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 07 — Computação Embarcada e IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Protocolo cards comparativos ── */
+.proto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.proto-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.proto-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+.proto-card__bg{position:absolute;top:-20px;right:-20px;font-size:5rem;opacity:.04;pointer-events:none;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.proto-card__name{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.15rem;}
+.proto-card__full{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;opacity:.6;margin-bottom:.9rem;}
+.proto-card__spec{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;}
+.proto-card__spec:last-of-type{border-bottom:none;}
+.proto-card__spec-label{color:var(--text-muted);}
+.proto-card__spec-value{color:var(--text-primary);font-weight:600;text-align:right;}
+
+/* ── Bus diagrama ── */
+.bus-diagram{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.bus-diagram__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.bus-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;}
+.bus-master{background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);border-radius:8px;padding:.5rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--teal-400);font-weight:700;flex-shrink:0;}
+.bus-line{height:2px;flex:1;min-width:30px;position:relative;}
+.bus-line::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.bus-line-sda::before{background:rgba(96,165,250,.5);}
+.bus-line-scl::before{background:rgba(139,92,246,.5);}
+.bus-line-mosi::before{background:rgba(45,212,191,.5);}
+.bus-line-miso::before{background:rgba(251,191,36,.5);}
+.bus-line-clk::before{background:rgba(244,114,182,.5);}
+.bus-line-cs::before{background:rgba(52,211,153,.5);}
+.bus-line-tx::before{background:rgba(251,146,60,.5);}
+.bus-line-rx::before{background:rgba(167,139,250,.5);}
+.bus-device{border-radius:8px;padding:.45rem .85rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;flex-shrink:0;}
+.bus-label{font-size:.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;width:40px;}
+.bus-addr{font-size:.68rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+
+/* ── OLED display mockup ── */
+.oled-mock{background:#000;border:3px solid rgba(45,212,191,.3);border-radius:10px;padding:1.25rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;max-width:320px;box-shadow:0 0 30px rgba(45,212,191,.08);}
+.oled-mock__title{font-size:.65rem;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.75rem;text-align:center;}
+.oled-line{color:#a7f3d0;font-size:.9rem;line-height:1.8;white-space:pre;}
+.oled-line.big{font-size:1.3rem;font-weight:700;}
+.oled-line.dim{color:rgba(167,243,208,.35);}
+.oled-cursor{display:inline-block;width:8px;height:14px;background:var(--teal-400);animation:blink .8s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── I2C scanner demo ── */
+.scanner-demo{background:rgba(45,212,191,.03);border:1px solid rgba(45,212,191,.15);border-radius:14px;padding:1.5rem;margin:.75rem 0;}
+.scanner-demo__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.addr-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin:.75rem 0;}
+.addr-cell{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.addr-cell.empty{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.15);}
+.addr-cell.found{background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.4);color:var(--teal-400);}
+.addr-cell.found:hover{background:rgba(45,212,191,.25);}
+.addr-legend{font-size:.75rem;color:var(--text-secondary);margin-top:.5rem;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Wiring ── */
+.wiring{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.25rem;margin:.75rem 0;}
+.wiring__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;}
+.wiring__table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.wiring__table th{text-align:left;padding:.4rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.06);}
+.wiring__table td{padding:.45rem .75rem;border-bottom:1px solid rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.wiring__table tr:last-child td{border-bottom:none;}
+.wire-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;cursor:pointer;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.proto-grid,.resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .proto-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">07</div>
+    <h1 class="capa-titulo">Comunicação<br><em>I2C, SPI e UART</em><br>Display OLED</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Dispositivos que conversam entre si</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exchange-alt"></i></div><span>Por que precisamos de protocolos — além do digital simples</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-network-wired"></i></div><span>I2C — barramento de 2 fios, múltiplos dispositivos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sync-alt"></i></div><span>SPI — 4 fios, alta velocidade, comunicação full-duplex</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>UART — comunicação assíncrona ponto a ponto</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-search"></i></div><span>Scanner I2C — encontrar endereços de dispositivos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tv"></i></div><span>LAB: display OLED SSD1306 via I2C com dados do DHT22</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Exibir temperatura, umidade e distância no display OLED 128×64 via I2C, com layout organizado por zonas.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>Display OLED 0.96" SSD1306 (I2C, 4 pinos)</li>
+        <li>DHT22 (da semana 4)</li>
+        <li>Arduino Uno + cabo USB</li>
+        <li>Jumpers + protoboard</li>
+        <li>Bibliotecas: Adafruit SSD1306 + Adafruit GFX</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 1–5 — Hardware, programação, sensores, atuadores</li>
+        <li>✅ Sem. 6 — P1</li>
+        <li>▶ Sem. 7 — Comunicação serial: I2C, SPI, UART</li>
+        <li>Sem. 8 — ESP32: Wi-Fi e HTTP</li>
+        <li>Sem. 9 — MQTT: protocolo IoT</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>I2C permite conectar dezenas de dispositivos com apenas 2 fios</li>
+        <li>UART é o que o Serial Monitor usa — agora você entende por dentro</li>
+        <li>SPI é o protocolo de cartões SD, displays rápidos e ADCs externos</li>
+        <li>Escolher o protocolo errado pode tornar o sistema lento ou impossível de expandir</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que protocolos — e os três mais importantes</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O problema que protocolos resolvem</div>
+      <p>Até agora você controlou tudo com <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">digitalRead()</code> e <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">analogRead()</code> — um pino, um valor, sem coordenação. Isso funciona para sensores simples. Mas e quando você precisa de um display OLED? De um módulo GPS? De uma memória flash externa? De um sensor de pressão com 10 registros de configuração?</p>
+      <p>Esses dispositivos precisam trocar <strong>múltiplos bytes de dados</strong> em sequência, de forma coordenada, sabendo quem fala e quem escuta. É exatamente para isso que existem os protocolos de comunicação serial.</p>
+      <div class="destaque">
+        <strong>Serial vs Paralelo:</strong> comunicação paralela envia múltiplos bits simultaneamente em fios separados — rápida mas cara em pinos e PCB. Serial envia um bit por vez no mesmo fio — mais lenta mas usa pouquíssimos pinos. Em sistemas embarcados com pinos escassos, serial é a escolha quase universal.
+      </div>
+    </div>
+
+    <!-- Comparativo dos 3 protocolos -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>I2C vs SPI vs UART — comparativo completo</div>
+      <div class="proto-grid">
+        <div class="proto-card" style="background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.2);">
+          <div class="proto-card__bg">I2C</div>
+          <div class="proto-card__name" style="color:#60a5fa;">I2C</div>
+          <div class="proto-card__full" style="color:#93c5fd;">Inter-Integrated Circuit</div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Fios</span><span class="proto-card__spec-value">2 (SDA + SCL)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Topologia</span><span class="proto-card__spec-value">Multi-master, multi-slave</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Velocidade</span><span class="proto-card__spec-value">100kHz – 3.4MHz</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Endereçamento</span><span class="proto-card__spec-value">7 bits (128 addr.)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Full-duplex?</span><span class="proto-card__spec-value">❌ Half-duplex</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Pull-ups</span><span class="proto-card__spec-value">Obrigatório (4.7kΩ)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Distância</span><span class="proto-card__spec-value">~1m (placa)</span></div>
+          <div style="margin-top:.75rem;"><span class="badge-blue">OLED, BMP280, MPU6050, RTC</span></div>
+        </div>
+
+        <div class="proto-card" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.2);">
+          <div class="proto-card__bg">SPI</div>
+          <div class="proto-card__name" style="color:#c4b5fd;">SPI</div>
+          <div class="proto-card__full" style="color:#ddd6fe;">Serial Peripheral Interface</div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Fios</span><span class="proto-card__spec-value">4 (MOSI, MISO, SCK, CS)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Topologia</span><span class="proto-card__spec-value">1 master, N slaves</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Velocidade</span><span class="proto-card__spec-value">Até 80MHz</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Endereçamento</span><span class="proto-card__spec-value">Por pino CS (1 por slave)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Full-duplex?</span><span class="proto-card__spec-value">✅ Sim</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Pull-ups</span><span class="proto-card__spec-value">Não necessário</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Distância</span><span class="proto-card__spec-value">~30cm (alta velocidade)</span></div>
+          <div style="margin-top:.75rem;"><span class="badge-purple">Cartão SD, display TFT, ADC externo</span></div>
+        </div>
+
+        <div class="proto-card" style="background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.2);">
+          <div class="proto-card__bg">UART</div>
+          <div class="proto-card__name" style="color:#fb923c;">UART</div>
+          <div class="proto-card__full" style="color:#fed7aa;">Universal Async Receiver-Transmitter</div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Fios</span><span class="proto-card__spec-value">2 (TX + RX)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Topologia</span><span class="proto-card__spec-value">Ponto a ponto</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Velocidade</span><span class="proto-card__spec-value">300 – 4Mbps (baud rate)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Endereçamento</span><span class="proto-card__spec-value">Nenhum (só 2 dispositivos)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Full-duplex?</span><span class="proto-card__spec-value">✅ Sim</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Clock</span><span class="proto-card__spec-value">Assíncrono (sem clock)</span></div>
+          <div class="proto-card__spec"><span class="proto-card__spec-label">Distância</span><span class="proto-card__spec-value">Metros (RS-232/485)</span></div>
+          <div style="margin-top:.75rem;"><span class="badge" style="background:rgba(251,146,60,.12);color:#fb923c;border-color:rgba(251,146,60,.22);">GPS, Bluetooth serial, Serial Monitor</span></div>
+        </div>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-hand-paper"></i>
+        <span><strong>Pergunta para a turma:</strong> Você tem uma placa com 4 sensores (temperatura, pressão, umidade e acelerômetro) para conectar ao Arduino. I2C ou SPI? Qual protocolo faz mais sentido aqui e por quê?</span>
+      </div>
+    </div>
+
+    <!-- Diagrama I2C -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-network-wired"></i>I2C por dentro — como o barramento funciona</div>
+      <p>O I2C usa apenas dois fios para toda a comunicação. <strong>SDA</strong> (Serial Data) transporta os dados. <strong>SCL</strong> (Serial Clock) sincroniza a comunicação. O master controla o clock e inicia toda comunicação. Os slaves respondem quando endereçados.</p>
+      <p>Cada dispositivo I2C tem um <strong>endereço de 7 bits</strong> gravado em hardware — geralmente configurável por pinos de endereço (A0, A1, A2). O display OLED SSD1306 usa o endereço <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">0x3C</code> (ou 0x3D se o pino SA0 estiver em HIGH).</p>
+
+      <div class="bus-diagram">
+        <div class="bus-diagram__title">Barramento I2C — múltiplos dispositivos, 2 fios</div>
+        <div class="bus-row">
+          <div class="bus-label">SDA</div>
+          <div class="bus-master">Arduino<br><span style="font-size:.65rem;opacity:.7;">A4=SDA</span></div>
+          <div class="bus-line bus-line-sda" style="flex:1;min-width:20px;"></div>
+          <div class="bus-device" style="background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:#60a5fa;">OLED<br><span class="bus-addr">0x3C</span></div>
+          <div class="bus-line bus-line-sda" style="flex:1;min-width:20px;"></div>
+          <div class="bus-device" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--teal-400);">BMP280<br><span class="bus-addr">0x76</span></div>
+          <div class="bus-line bus-line-sda" style="flex:1;min-width:20px;"></div>
+          <div class="bus-device" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#c4b5fd;">MPU6050<br><span class="bus-addr">0x68</span></div>
+        </div>
+        <div class="bus-row" style="margin-top:.5rem;">
+          <div class="bus-label">SCL</div>
+          <div class="bus-master">Arduino<br><span style="font-size:.65rem;opacity:.7;">A5=SCL</span></div>
+          <div class="bus-line bus-line-scl" style="flex:3;min-width:60px;"></div>
+          <span style="font-size:.72rem;color:var(--text-muted);">mesmos dispositivos acima ↑</span>
+        </div>
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-muted);">
+          ⚠ Resistores pull-up de <strong>4.7kΩ</strong> obrigatórios em SDA e SCL (entre cada linha e o VCC).
+          Muitos módulos já os incluem na placa.
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Pinos I2C no Arduino Uno:</strong> SDA = A4 · SCL = A5. No ESP32: SDA = GPIO21 · SCL = GPIO22 (padrão, mas configurável). A biblioteca Wire.h abstrai tudo — você não precisa implementar o protocolo manualmente.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Scanner I2C — encontrando endereços desconhecidos</div>
+      <p>Comprou um módulo sem documentação? Não sabe o endereço I2C? O scanner percorre todos os 127 endereços possíveis e reporta quais respondem. É o primeiro código que você roda antes de qualquer projeto I2C.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — I2C Scanner</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;Wire.h&gt;</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Wire</span>.<span class="fn">begin</span>();
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"=== Scanner I2C ==="</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Varrendo endereços 0x01 a 0x7F..."</span>);
+
+  <span class="kw">int</span> encontrados = <span class="num">0</span>;
+
+  <span class="kw">for</span> (<span class="kw">byte</span> addr = <span class="num">1</span>; addr < <span class="num">127</span>; addr++) {
+    <span class="fn">Wire</span>.<span class="fn">beginTransmission</span>(addr);
+    <span class="kw">byte</span> erro = <span class="fn">Wire</span>.<span class="fn">endTransmission</span>();
+
+    <span class="kw">if</span> (erro == <span class="num">0</span>) {   <span class="cm">// 0 = dispositivo respondeu</span>
+      <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Dispositivo encontrado: 0x"</span>);
+      <span class="kw">if</span> (addr < <span class="num">16</span>) <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"0"</span>);   <span class="cm">// zero-pad</span>
+      <span class="fn">Serial</span>.<span class="fn">println</span>(addr, HEX);
+      encontrados<span class="op">++</span>;
+    }
+  }
+
+  <span class="kw">if</span> (encontrados == <span class="num">0</span>) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Nenhum dispositivo encontrado!"</span>);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Verifique as conexões e os pull-ups."</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">Serial</span>.<span class="fn">print</span>(encontrados);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">" dispositivo(s) encontrado(s)."</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {}  <span class="cm">// scanner roda uma vez no setup()</span></code></pre>
+      </div>
+
+      <!-- Scanner visual interativo -->
+      <div class="scanner-demo">
+        <div class="scanner-demo__title">Resultado típico de um scanner I2C — clique nos endereços encontrados</div>
+        <div class="addr-grid" id="addrGrid"></div>
+        <div class="addr-legend" id="addrLegend">Endereços comuns: 0x3C (OLED) · 0x76 (BMP280) · 0x68 (MPU6050) · 0x57 (EEPROM) · 0x48 (ADS1115)</div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Você conectou um display OLED I2C mas o scanner não encontra nenhum dispositivo. Qual é a causa mais provável?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">A biblioteca Wire.h não foi instalada corretamente</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Faltam os resistores pull-up ou SDA/SCL estão invertidos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">O endereço 0x3C não é suportado pelo Arduino Uno</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">O scanner só funciona com dispositivos SPI, não I2C</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">SPI, UART e o Display OLED SSD1306</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>SPI — velocidade em troca de pinos</div>
+      <p>O SPI usa 4 sinais: <strong>MOSI</strong> (Master Out Slave In), <strong>MISO</strong> (Master In Slave Out), <strong>SCK</strong> (clock) e <strong>CS/SS</strong> (Chip Select — um pino por dispositivo). É síncrono e full-duplex: master e slave trocam dados simultaneamente a cada pulso de clock.</p>
+      <p>A grande desvantagem do SPI em relação ao I2C: cada dispositivo adicional precisa de um pino CS dedicado. Com 4 dispositivos SPI, você usa 4 pinos extras só para seleção. Em projetos com muitos periféricos, isso limita a escalabilidade.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Sinal SPI</th><th>Direção</th><th>Pino Arduino Uno</th><th>Função</th></tr></thead>
+          <tbody>
+            <tr><td><strong>MOSI</strong></td><td>Master → Slave</td><td>Pino 11</td><td>Dados do master para o slave</td></tr>
+            <tr><td><strong>MISO</strong></td><td>Slave → Master</td><td>Pino 12</td><td>Dados do slave para o master</td></tr>
+            <tr><td><strong>SCK</strong></td><td>Master → Slave</td><td>Pino 13</td><td>Clock gerado pelo master</td></tr>
+            <tr><td><strong>CS/SS</strong></td><td>Master → Slave</td><td>Pino 10 (padrão)</td><td>Seleciona qual slave está ativo (LOW = ativo)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>SCK = pino 13 = LED_BUILTIN no Arduino Uno.</strong> Se você usar SPI enquanto tem um LED no pino 13, ele vai piscar na frequência do clock. Na prática, mova o LED para outro pino em projetos SPI.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>UART — o protocolo que você já usa sem saber</div>
+      <p>Toda vez que você abre o Serial Monitor e faz <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;color:#a7f3d0;">Serial.println()</code>, está usando UART. É o protocolo mais simples: dois fios (TX e RX), sem clock compartilhado — cada lado precisa concordar previamente com a mesma velocidade (baud rate).</p>
+      <p>UART é assíncrono: não há sinal de clock externo. A sincronização é feita por bits de start e stop embutidos em cada byte transmitido. Por isso o baud rate precisa ser idêntico nos dois lados — divergências causam dados corrompidos.</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Baud rates comuns</p>
+          <div class="tabela-wrap" style="margin:0;">
+            <table>
+              <thead><tr><th>Baud rate</th><th>Uso típico</th></tr></thead>
+              <tbody>
+                <tr><td>9600</td><td>Serial Monitor padrão, GPS</td></tr>
+                <tr><td>115200</td><td>ESP32, módulos Wi-Fi, debug rápido</td></tr>
+                <tr><td>57600</td><td>Bluetooth serial (HC-05)</td></tr>
+                <tr><td>4800</td><td>GPS antigo, baixo consumo</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Ligação UART entre dois dispositivos</p>
+          <div class="code-block" style="margin:0;">
+            <div class="code-header"><span class="code-lang">Conexão</span></div>
+            <pre><code><span class="cm">// SEMPRE cruzado: TX de um → RX do outro</span>
+Arduino TX (pino 1) → Módulo RX
+Arduino RX (pino 0) → Módulo TX
+GND comum obrigatório
+
+<span class="cm">// SoftwareSerial para UART extra</span>
+<span class="cm">// (libera pinos 0/1 para o Serial Monitor)</span>
+<span class="pp">#include</span> <span class="str">&lt;SoftwareSerial.h&gt;</span>
+SoftwareSerial <span class="fn">mySerial</span>(<span class="num">4</span>, <span class="num">5</span>); <span class="cm">// RX=4, TX=5</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tv"></i>Display OLED SSD1306 — o painel do seu projeto</div>
+      <p>O display OLED SSD1306 de 0.96" tem resolução de <strong>128×64 pixels</strong>, interface I2C (4 pinos: VCC, GND, SDA, SCL) e consome apenas ~20mA quando ativo. É o display padrão do ecossistema Arduino por custo, tamanho e facilidade de uso.</p>
+      <p>A biblioteca <strong>Adafruit SSD1306</strong> (com dependência <strong>Adafruit GFX</strong>) abstrai toda a comunicação I2C e oferece funções de alto nível: texto, linhas, retângulos, bitmaps. Você não precisa entender o protocolo do chip para usar.</p>
+
+      <!-- OLED mockup visual -->
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;margin:.75rem 0;">
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Preview — dados do DHT22 no OLED</p>
+          <div class="oled-mock">
+            <div class="oled-mock__title">SSD1306 · 128×64px</div>
+            <div class="oled-line dim">━━━━━━━━━━━━━━━━━</div>
+            <div class="oled-line" style="font-size:.72rem;color:rgba(167,243,208,.6);">  ESTACAO METEO  </div>
+            <div class="oled-line dim">━━━━━━━━━━━━━━━━━</div>
+            <div class="oled-line"> </div>
+            <div class="oled-line big">  27.3<span style="font-size:.9rem;">°C</span></div>
+            <div class="oled-line">  Umidade: 64.8%</div>
+            <div class="oled-line"> </div>
+            <div class="oled-line dim">━━━━━━━━━━━━━━━━━</div>
+            <div class="oled-line" style="font-size:.72rem;">  Dist: 45 cm   <div class="oled-cursor"></div></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:260px;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Ligação OLED → Arduino Uno</p>
+          <div class="wiring">
+            <div class="wiring__title">I2C · 4 pinos · sem resistor externo (módulo já tem pull-ups)</div>
+            <table class="wiring__table">
+              <thead><tr><th>Pino OLED</th><th>Conectar em</th><th>Obs.</th></tr></thead>
+              <tbody>
+                <tr><td><span class="wire-dot" style="background:#ef4444;"></span>VCC</td><td style="color:var(--teal-400);">3.3V ou 5V</td><td>Módulos SSD1306 aceitam ambas</td></tr>
+                <tr><td><span class="wire-dot" style="background:#1f2937;border:1px solid #374151;"></span>GND</td><td style="color:var(--teal-400);">GND</td><td>—</td></tr>
+                <tr><td><span class="wire-dot" style="background:#60a5fa;"></span>SDA</td><td style="color:var(--teal-400);">A4</td><td>Pino SDA do I2C no Uno</td></tr>
+                <tr><td><span class="wire-dot" style="background:#c4b5fd;"></span>SCL</td><td style="color:var(--teal-400);">A5</td><td>Pino SCL do I2C no Uno</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — OLED SSD1306 básico</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;Wire.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;Adafruit_GFX.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;Adafruit_SSD1306.h&gt;</span>
+
+<span class="pp">#define</span> LARGURA   <span class="num">128</span>
+<span class="pp">#define</span> ALTURA     <span class="num">64</span>
+<span class="pp">#define</span> OLED_RESET  <span class="num">-1</span>   <span class="cm">// -1 = sem pino de reset</span>
+<span class="pp">#define</span> ADDR_OLED 0x3C   <span class="cm">// endereço padrão do SSD1306</span>
+
+Adafruit_SSD1306 <span class="fn">display</span>(LARGURA, ALTURA, &Wire, OLED_RESET);
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+
+  <span class="kw">if</span> (!<span class="fn">display</span>.<span class="fn">begin</span>(SSD1306_SWITCHCAPVCC, ADDR_OLED)) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"OLED não encontrado! Verifique endereço e ligação."</span>);
+    <span class="kw">while</span> (<span class="kw">true</span>);   <span class="cm">// trava — não tem como continuar sem display</span>
+  }
+
+  <span class="fn">display</span>.<span class="fn">clearDisplay</span>();                  <span class="cm">// limpa buffer</span>
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">1</span>);                  <span class="cm">// tamanho 1 = 6×8 px por char</span>
+  <span class="fn">display</span>.<span class="fn">setTextColor</span>(SSD1306_WHITE);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">0</span>, <span class="num">0</span>);               <span class="cm">// coluna=0, linha=0</span>
+  <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"Ola, OLED!"</span>);
+  <span class="fn">display</span>.<span class="fn">display</span>();                       <span class="cm">// ENVIA o buffer para o hardware</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {}</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>O padrão buffer/display:</strong> a biblioteca SSD1306 trabalha com um buffer em RAM. Você desenha no buffer com clearDisplay(), print(), drawLine() etc. Nada aparece no display até você chamar <code style="font-family:'JetBrains Mono',monospace;">display.display()</code>. Esquecer esse chamada é o erro mais comum de iniciantes com OLED.
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Qual é a diferença fundamental entre I2C e SPI que define quando usar cada um?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">I2C é mais rápido, SPI é mais lento — use I2C sempre que possível</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">I2C usa menos pinos e endereça múltiplos dispositivos; SPI é mais rápido mas precisa de um pino CS por dispositivo</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">SPI é para comunicação longa distância, I2C é para curta distância</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">I2C é síncrono, SPI é assíncrono — a diferença é apenas no clock</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — Estação meteorológica com OLED + DHT22</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: exibir temperatura, umidade e um indicador de conforto no display OLED, atualizando a cada 3 segundos com millis(). Sem delay() em nenhuma linha.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo do LAB</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Instalar as bibliotecas</div>
+            <div class="lab-step__desc">No Arduino IDE: <strong>Sketch → Include Library → Manage Libraries</strong>. Instale <strong>Adafruit SSD1306</strong> (instala Adafruit GFX automaticamente como dependência). Se pedido, confirme a instalação de todas as dependências.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Montar o circuito</div>
+            <div class="lab-step__desc">OLED: VCC→5V, GND→GND, SDA→A4, SCL→A5. DHT22: VCC→5V, DATA→pino 8 com pull-up 10kΩ, GND→GND. Rode o Scanner I2C primeiro — confirme que o OLED aparece em 0x3C antes de avançar.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar o OLED isoladamente</div>
+            <div class="lab-step__desc">Carregue o exemplo básico (<strong>File → Examples → Adafruit SSD1306 → ssd1306_128x64_i2c</strong>) para confirmar que o display funciona antes de integrar o DHT22.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código integrado</div>
+            <div class="lab-step__desc">Use o código completo abaixo. Observe o display atualizar automaticamente. Coloque a mão no DHT22 para ver a temperatura subir em tempo real no OLED.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Personalizar o layout</div>
+            <div class="lab-step__desc">Experimente mudar o tamanho do texto (setTextSize(2) para o valor principal), adicionar linhas divisórias (drawFastHLine), ou exibir um ícone simples desenhado com setPixel(). O display é sua tela — explore.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Estação meteorológica OLED + DHT22 completa</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;Wire.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;Adafruit_GFX.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;Adafruit_SSD1306.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+
+<span class="pp">#define</span> OLED_W     <span class="num">128</span>
+<span class="pp">#define</span> OLED_H      <span class="num">64</span>
+<span class="pp">#define</span> OLED_RESET  <span class="num">-1</span>
+<span class="pp">#define</span> OLED_ADDR  0x3C
+<span class="pp">#define</span> PINO_DHT    <span class="num">8</span>
+<span class="pp">#define</span> TIPO_DHT    DHT22
+
+Adafruit_SSD1306 <span class="fn">display</span>(OLED_W, OLED_H, &Wire, OLED_RESET);
+DHT <span class="fn">dht</span>(PINO_DHT, TIPO_DHT);
+
+<span class="kw">unsigned long</span> ultimaAtualizacao = <span class="num">0</span>;
+<span class="kw">float</span> temp = <span class="num">0</span>, umid = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">desenharTela</span>(<span class="kw">float</span> t, <span class="kw">float</span> u) {
+  <span class="fn">display</span>.<span class="fn">clearDisplay</span>();
+
+  <span class="cm">// ── Cabeçalho ──</span>
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">setTextColor</span>(SSD1306_WHITE);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">20</span>, <span class="num">0</span>);
+  <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"ESTACAO METEO"</span>);
+  <span class="fn">display</span>.<span class="fn">drawFastHLine</span>(<span class="num">0</span>, <span class="num">10</span>, OLED_W, SSD1306_WHITE);
+
+  <span class="cm">// ── Temperatura grande ──</span>
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">2</span>);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">10</span>, <span class="num">16</span>);
+  <span class="fn">display</span>.<span class="fn">print</span>(t, <span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">" C"</span>);
+
+  <span class="cm">// ── Umidade pequena ──</span>
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">0</span>, <span class="num">40</span>);
+  <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"Umidade: "</span>);
+  <span class="fn">display</span>.<span class="fn">print</span>(u, <span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"%"</span>);
+
+  <span class="cm">// ── Indicador de conforto ──</span>
+  <span class="fn">display</span>.<span class="fn">drawFastHLine</span>(<span class="num">0</span>, <span class="num">52</span>, OLED_W, SSD1306_WHITE);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">0</span>, <span class="num">55</span>);
+  <span class="kw">if</span>      (t < <span class="num">18</span>) <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"Frio"</span>);
+  <span class="kw">else if</span> (t > <span class="num">28</span>) <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"Quente!"</span>);
+  <span class="kw">else if</span> (u > <span class="num">70</span>) <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"Umido"</span>);
+  <span class="kw">else</span>             <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"Confortavel"</span>);
+
+  <span class="fn">display</span>.<span class="fn">display</span>();   <span class="cm">// envia buffer → hardware</span>
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">dht</span>.<span class="fn">begin</span>();
+
+  <span class="kw">if</span> (!<span class="fn">display</span>.<span class="fn">begin</span>(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"OLED nao encontrado!"</span>);
+    <span class="kw">while</span> (<span class="kw">true</span>);
+  }
+
+  <span class="cm">// Tela de boas-vindas</span>
+  <span class="fn">display</span>.<span class="fn">clearDisplay</span>();
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">setTextColor</span>(SSD1306_WHITE);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">25</span>, <span class="num">28</span>);
+  <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"Inicializando..."</span>);
+  <span class="fn">display</span>.<span class="fn">display</span>();
+  <span class="fn">delay</span>(<span class="num">2000</span>);   <span class="cm">// aguarda DHT22 estabilizar</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">millis</span>() - ultimaAtualizacao >= <span class="num">3000</span>) {
+    ultimaAtualizacao = <span class="fn">millis</span>();
+
+    <span class="kw">float</span> t = <span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+    <span class="kw">float</span> u = <span class="fn">dht</span>.<span class="fn">readHumidity</span>();
+
+    <span class="kw">if</span> (<span class="fn">isnan</span>(t) || <span class="fn">isnan</span>(u)) {
+      <span class="fn">display</span>.<span class="fn">clearDisplay</span>();
+      <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">5</span>, <span class="num">28</span>);
+      <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"ERRO: sensor DHT"</span>);
+      <span class="fn">display</span>.<span class="fn">display</span>();
+      <span class="kw">return</span>;
+    }
+
+    temp = t; umid = u;
+    <span class="fn">desenharTela</span>(temp, umid);
+
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"T:"</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(t,<span class="num">1</span>);
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">" U:"</span>); <span class="fn">Serial</span>.<span class="fn">println</span>(u,<span class="num">1</span>);
+  }
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Conceito</div>
+        <div class="secao-titulo">4 exercícios — do scanner ao painel completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Scanner e identificação</div>
+      <p>Execute o código Scanner I2C com o display OLED e o DHT22 conectados. Anote o endereço encontrado e responda: (a) o endereço retornado é em decimal ou hexadecimal? (b) Se você conectar um segundo OLED idêntico ao mesmo barramento, o scanner encontraria dois dispositivos no mesmo endereço? O que aconteceria na prática?</p>
+      <span class="dif-basico">Conceito + LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a)</strong> O scanner imprime em hexadecimal — <code style="font-family:'JetBrains Mono',monospace;">Serial.println(addr, HEX)</code>. O OLED SSD1306 aparecerá como <code style="font-family:'JetBrains Mono',monospace;">0x3C</code>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b)</strong> Não — dois dispositivos com o mesmo endereço no I2C causam conflito de barramento. Quando o master enviar dados para 0x3C, ambos responderão simultaneamente, corrompendo os dados. Para usar dois OLEDs iguais, um deles precisa ter o endereço alterado para 0x3D via pino SA0. O scanner encontraria apenas um endereço respondendo de forma imprevisível.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Barra de progresso no OLED</div>
+      <p>Adicione ao código da estação meteorológica uma <strong>barra de progresso horizontal</strong> que representa a umidade: 0% = barra vazia, 100% = barra cheia. A barra deve ocupar a linha inferior do display (y=56, largura 128px, altura 6px). Use <code style="font-family:'JetBrains Mono',monospace;">display.drawRect()</code> para o contorno e <code style="font-family:'JetBrains Mono',monospace;">display.fillRect()</code> para o preenchimento proporcional.</p>
+      <span class="dif-medio">LAB</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — adicionar na função desenharTela()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Substituir o bloco de indicador de conforto por:</span>
+<span class="fn">display</span>.<span class="fn">drawFastHLine</span>(<span class="num">0</span>, <span class="num">52</span>, OLED_W, SSD1306_WHITE);
+
+<span class="cm">// Contorno da barra</span>
+<span class="fn">display</span>.<span class="fn">drawRect</span>(<span class="num">0</span>, <span class="num">56</span>, <span class="num">128</span>, <span class="num">8</span>, SSD1306_WHITE);
+
+<span class="cm">// Preenchimento proporcional à umidade</span>
+<span class="kw">int</span> larguraBarra = (<span class="kw">int</span>)(<span class="num">126</span> * (u / <span class="num">100.0</span>));
+larguraBarra = <span class="fn">constrain</span>(larguraBarra, <span class="num">0</span>, <span class="num">126</span>);
+<span class="fn">display</span>.<span class="fn">fillRect</span>(<span class="num">1</span>, <span class="num">57</span>, larguraBarra, <span class="num">6</span>, SSD1306_WHITE);
+
+<span class="cm">// Label da umidade ao lado</span>
+<span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">0</span>, <span class="num">44</span>);
+<span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"UR: "</span>); <span class="fn">display</span>.<span class="fn">print</span>(u,<span class="num">0</span>); <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"%"</span>);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Menu de telas</div>
+      <p>Implemente um sistema de <strong>duas telas alternáveis</strong> por botão: Tela 1 mostra temperatura e umidade (como no LAB). Tela 2 mostra a distância do HC-SR04 com a barra de proximidade. Cada pressionamento do botão alterna entre as telas. Use debounce e millis() — sem delay().</p>
+      <span class="dif-medio">Integração</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-lightbulb"></i>Estrutura sugerida</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Variável global <code style="font-family:'JetBrains Mono',monospace;">int telaAtual = 0</code></span></li>
+            <li><i class="fas fa-check-circle"></i><span>Duas funções: <code style="font-family:'JetBrains Mono',monospace;">desenharTelaDHT()</code> e <code style="font-family:'JetBrains Mono',monospace;">desenharTelaSonar()</code></span></li>
+            <li><i class="fas fa-check-circle"></i><span>No loop(): botão com debounce alterna telaAtual entre 0 e 1</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Timer de 3s para DHT22 e timer de 300ms para HC-SR04 — independentes com millis()</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A função de desenho chamada depende do telaAtual: <code style="font-family:'JetBrains Mono',monospace;">if (telaAtual == 0) desenharTelaDHT(); else desenharTelaSonar();</code></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Desafio: animação de boot</div>
+      <p>Crie uma tela de boot animada que exibe uma barra de progresso de 0 a 100% durante os 2 segundos de inicialização do DHT22. Use <code style="font-family:'JetBrains Mono',monospace;">fillRect()</code> crescendo de 0 a 128px. Ao terminar, limpa a tela e mostra "Sistema pronto!" por 1 segundo antes de iniciar a tela principal. Tudo usando millis() — sem delay() no loop() (o delay(2000) inicial ainda é permitido no setup()).</p>
+      <span class="dif-desafio">Desafio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — animação de boot no setup()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// No setup(), substitua o delay(2000) por:</span>
+<span class="kw">unsigned long</span> inicio = <span class="fn">millis</span>();
+<span class="kw">unsigned long</span> duracao = <span class="num">2000</span>;
+
+<span class="kw">while</span> (<span class="fn">millis</span>() - inicio < duracao) {
+  <span class="kw">int</span> progresso = (<span class="kw">int</span>)(<span class="num">128</span> * (<span class="kw">float</span>)(<span class="fn">millis</span>() - inicio) / duracao);
+
+  <span class="fn">display</span>.<span class="fn">clearDisplay</span>();
+  <span class="fn">display</span>.<span class="fn">setTextSize</span>(<span class="num">1</span>);
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">30</span>, <span class="num">20</span>);
+  <span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"Inicializando..."</span>);
+
+  <span class="cm">// Barra de progresso</span>
+  <span class="fn">display</span>.<span class="fn">drawRect</span>(<span class="num">0</span>, <span class="num">40</span>, <span class="num">128</span>, <span class="num">10</span>, SSD1306_WHITE);
+  <span class="fn">display</span>.<span class="fn">fillRect</span>(<span class="num">1</span>, <span class="num">41</span>, progresso, <span class="num">8</span>, SSD1306_WHITE);
+
+  <span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">55</span>, <span class="num">55</span>);
+  <span class="fn">display</span>.<span class="fn">print</span>((<span class="kw">int</span>)(progresso / <span class="num">1.28</span>)); <span class="fn">display</span>.<span class="fn">print</span>(<span class="str">"%"</span>);
+  <span class="fn">display</span>.<span class="fn">display</span>();
+}
+
+<span class="fn">display</span>.<span class="fn">clearDisplay</span>();
+<span class="fn">display</span>.<span class="fn">setCursor</span>(<span class="num">25</span>, <span class="num">28</span>);
+<span class="fn">display</span>.<span class="fn">println</span>(<span class="str">"Sistema pronto!"</span>);
+<span class="fn">display</span>.<span class="fn">display</span>();
+<span class="fn">delay</span>(<span class="num">1000</span>);</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 7</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-network-wired"></i>
+        <strong>I2C</strong>
+        <p>2 fios (SDA+SCL), múltiplos dispositivos por endereço 7-bit, pull-ups 4.7kΩ obrigatórios. Uno: A4=SDA, A5=SCL.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sync-alt"></i>
+        <strong>SPI e UART</strong>
+        <p>SPI: 4 fios, 1 CS por device, muito rápido. UART: 2 fios, ponto a ponto, assíncrono — TX→RX cruzados, mesmo baud rate.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tv"></i>
+        <strong>OLED SSD1306</strong>
+        <p>display.display() é obrigatório para enviar o buffer. clearDisplay() antes de redesenhar. Endereço 0x3C padrão.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O display OLED está mostrando dados reais do DHT22? Você entende por que dois OLEDs iguais no mesmo barramento causam conflito? Você sabe quando escolher I2C vs SPI? Se sim — pronto para a Semana 8: ESP32 com Wi-Fi e requisições HTTP.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 8 — ESP32 e Wi-Fi: configuração de rede, cliente HTTP, enviando dados para API REST</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+
+/* Scanner I2C visual */
+(function(){
+  const grid=document.getElementById('addrGrid');
+  const found={0x3C:'OLED SSD1306',0x76:'BMP280',0x68:'MPU6050'};
+  for(let a=0x01;a<0x78;a++){
+    const cell=document.createElement('div');
+    cell.className='addr-cell '+(found[a]?'found':'empty');
+    cell.textContent='0x'+(a<16?'0':'')+a.toString(16).toUpperCase();
+    if(found[a]){
+      cell.title=found[a];
+      cell.onclick=()=>{
+        document.getElementById('addrLegend').textContent=
+          '0x'+(a<16?'0':'')+a.toString(16).toUpperCase()+' → '+found[a];
+      };
+    }
+    grid.appendChild(cell);
+  }
+})();
+
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Sem pull-ups, o barramento I2C fica em estado indefinido — os dispositivos não conseguem estabelecer comunicação. SDA e SCL invertidos também impedem a detecção. A biblioteca Wire.h já está incluída no Arduino IDE e não precisa de instalação. O endereço 0x3C é perfeitamente suportado.'},
+  quiz2:{correct:'B',msg:'✅ Correto! I2C: 2 fios, endereça até 127 dispositivos no mesmo barramento — ideal quando se tem muitos sensores. SPI: 4 fios + 1 CS por device, muito mais rápido — ideal para displays TFT, cartões SD e ADCs onde a velocidade importa. I2C NÃO é mais rápido que SPI — é o oposto.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

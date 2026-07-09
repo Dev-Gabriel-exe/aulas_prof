@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 14 — TinyML Aplicações</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.pp{color:#fb923c;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── Aplicações grid ── */
+.app-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.app-card{border-radius:14px;padding:1.25rem;border:1px solid;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.app-card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.5);}
+.app-card__icon{font-size:1.6rem;margin-bottom:.6rem;display:block;}
+.app-card__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;margin-bottom:.3rem;}
+.app-card__desc{font-size:.8rem;color:var(--text-secondary);line-height:1.55;margin-bottom:.6rem;}
+.app-card__hw{font-size:.72rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+
+/* ── Pipeline de áudio ── */
+.audio-pipeline{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.audio-pipeline__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.ap-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.ap-node{border-radius:9px;padding:.6rem 1rem;font-size:.8rem;font-weight:700;text-align:center;flex-shrink:0;}
+.ap-arrow{color:var(--text-muted);font-size:.75rem;flex-shrink:0;}
+.ap-label{font-size:.7rem;color:var(--text-muted);margin-top:3px;text-align:center;font-family:'Inter',sans-serif;}
+
+/* ── Waveform visual ── */
+.waveform{background:#011a17;border:1px solid var(--code-border);border-radius:10px;padding:1rem 1.25rem;margin:.75rem 0;}
+.waveform__title{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:700;margin-bottom:.75rem;}
+.wf-bars{display:flex;align-items:flex-end;gap:3px;height:60px;}
+.wf-bar{flex:1;border-radius:2px 2px 0 0;min-width:4px;transition:height .3s;}
+.wf-label{font-size:.68rem;color:var(--text-muted);margin-top:.4rem;display:flex;justify-content:space-between;}
+
+/* ── Série temporal visual ── */
+.timeseries{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.timeseries__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.ts-chart{height:80px;display:flex;align-items:center;gap:2px;position:relative;}
+.ts-bar{flex:1;border-radius:2px;min-width:6px;position:relative;}
+.ts-threshold{position:absolute;left:0;right:0;height:2px;background:rgba(239,68,68,.5);border-radius:1px;}
+.ts-threshold-label{position:absolute;right:4px;top:-16px;font-size:.65rem;color:#f87171;font-family:'JetBrains Mono',monospace;}
+.ts-anomaly{position:absolute;top:-8px;font-size:.7rem;}
+
+/* ── Feature cards ── */
+.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.feature-card{border-radius:12px;padding:1rem;border:1px solid rgba(45,212,191,.15);background:rgba(45,212,191,.04);text-align:center;}
+.feature-card__name{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--teal-400);margin-bottom:.3rem;}
+.feature-card__formula{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);margin-bottom:.4rem;}
+.feature-card__desc{font-size:.75rem;color:var(--text-secondary);line-height:1.4;}
+
+/* ── Wiring ── */
+.wiring{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.25rem;margin:.75rem 0;}
+.wiring__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;}
+.wiring__table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.wiring__table th{text-align:left;padding:.4rem .75rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.06);}
+.wiring__table td{padding:.45rem .75rem;border-bottom:1px solid rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.wiring__table tr:last-child td{border-bottom:none;}
+.wire-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+
+/* ── Lab steps ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* ── Serial mockup ── */
+.serial-out{background:#000;border:1px solid rgba(45,212,191,.3);border-radius:10px;padding:1.1rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;}
+.serial-out__bar{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;border-bottom:1px solid rgba(45,212,191,.1);padding-bottom:.5rem;}
+.so-line{font-size:.8rem;line-height:1.9;}
+.so-ok{color:var(--teal-400);}.so-warn{color:#fbbf24;}.so-err{color:#f87171;}.so-dim{color:rgba(255,255,255,.25);}
+
+@media(max-width:1000px){.feature-grid{grid-template-columns:1fr 1fr;}.app-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:520px){
+  .app-grid,.resumo-grid,.feature-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">14</div>
+    <h1 class="capa-titulo">TinyML<br><em>Aplicações</em><br>na Prática</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Wake word, gestos e anomalias reais</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-microphone"></i></div><span>Wake word detection — MFCC, janelas de áudio, pipeline completo</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-hand-paper"></i></div><span>Classificação de gestos — acelerômetro MPU6050, features de série temporal</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exclamation-triangle"></i></div><span>Detecção de anomalias — janela deslizante, features estatísticas, modelo TFLite</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-database"></i></div><span>Coleta de dados no ESP32 — estratégias para dataset embarcado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-graduation-cap"></i></div><span>Edge Impulse — pipeline end-to-end para dados de sensores</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LAB: detector de anomalia em temperatura com TFLite Micro + MQTT</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Treinar (Python/Edge Impulse) e deployar no ESP32 um modelo que classifica leituras do DHT22 como "Normal" ou "Anomalia" usando features estatísticas de janela deslizante — e publica os alertas via MQTT.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Materiais de hoje</div>
+      <ul class="info-lista">
+        <li>ESP32 DevKit + DHT22 (das semanas anteriores)</li>
+        <li>Opcional: módulo MPU6050 (acelerômetro I2C)</li>
+        <li>Arquivo <code style="font-family:'JetBrains Mono',monospace;">modelo_anomalia.h</code> fornecido pelo professor</li>
+        <li>Python com tensorflow, numpy, pandas instalados</li>
+        <li>Broker Mosquitto ativo (semana 9)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 12 — TFLite Micro: ciclo de inferência, tensor arena</li>
+        <li>✅ Sem. 13 — P2</li>
+        <li>▶ Sem. 14 — TinyML: aplicações reais</li>
+        <li>Sem. 15 — Integração com nuvem: AWS IoT Core</li>
+        <li>Sem. 16 — Plataformas IoT: Node-RED e ThingSpeak</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que isso importa</div>
+      <ul class="info-lista">
+        <li>As 3 aplicações desta aula representam 80% dos casos de uso de TinyML em produção</li>
+        <li>Detecção de anomalias em sensores é o caso mais pedido em IoT industrial</li>
+        <li>Você vai sair daqui sabendo como criar e deployar um modelo útil do zero</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Panorama de aplicações e Wake Word Detection</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th"></i>O mapa das aplicações TinyML — onde cada caso vive</div>
+      <p>TinyML não é uma tecnologia isolada — é a convergência de três áreas aplicadas a hardware restrito. Cada categoria de aplicação exige sensores, features e modelos diferentes. Conhecer o panorama ajuda a escolher a abordagem certa para cada problema.</p>
+
+      <div class="app-grid">
+        <div class="app-card" style="background:rgba(244,114,182,.04);border-color:rgba(244,114,182,.2);">
+          <span class="app-card__icon">🎤</span>
+          <div class="app-card__title" style="color:#f472b6;">Áudio / Voz</div>
+          <div class="app-card__desc">Wake word, classificação de som ambiente, detecção de choro, identificação de falhas mecânicas por ruído.</div>
+          <div class="app-card__hw">Microfone MEMS · I2S · PDM<br>MFCC · espectrograma</div>
+        </div>
+        <div class="app-card" style="background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.2);">
+          <span class="app-card__icon">📳</span>
+          <div class="app-card__title" style="color:#fb923c;">Movimento / Gesto</div>
+          <div class="app-card__desc">Classificação de gestos, contagem de passos, detecção de queda, monitoramento de postura, vibração de motor.</div>
+          <div class="app-card__hw">MPU6050 · ADXL345 · IMU<br>FFT · média · RMS · variância</div>
+        </div>
+        <div class="app-card" style="background:rgba(45,212,191,.05);border-color:rgba(45,212,191,.2);">
+          <span class="app-card__icon">🌡️</span>
+          <div class="app-card__title" style="color:var(--teal-400);">Série Temporal / Sensor</div>
+          <div class="app-card__desc">Anomalia em temperatura, umidade, pressão, consumo elétrico. Previsão de falha de equipamento.</div>
+          <div class="app-card__hw">DHT22 · BMP280 · ACS712<br>Janela deslizante · z-score</div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Princípio comum a todas as aplicações:</strong> nunca alimentar dados brutos diretamente no modelo de ML embarcado. Sempre extrair <strong>features</strong> — representações compactas e informativas dos dados. Features reduzem dimensão, eliminam ruído e permitem usar modelos muito menores sem perder acurácia.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-microphone"></i>Wake Word Detection — como o ESP32 "ouve" uma palavra</div>
+      <p>Wake word (ou keyword spotting) é o caso de uso mais icônico de TinyML: o dispositivo fica em modo de baixo consumo ouvindo continuamente, e acorda o sistema maior apenas quando detecta uma palavra específica. "Hey Siri", "Ok Google", "Alexa" — todos rodam modelos TinyML no próprio chip de áudio.</p>
+      <p>O segredo é não processar áudio bruto. Em vez disso, o pipeline extrai um <strong>espectrograma Mel (MFCC)</strong> — uma representação 2D do áudio que captura as frequências mais relevantes para a percepção humana — e o modelo classifica essa "imagem" de áudio.</p>
+
+      <div class="audio-pipeline">
+        <div class="audio-pipeline__title">Pipeline de Wake Word — do microfone à decisão</div>
+        <div class="ap-row">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.3);color:#f472b6;">Microfone<br><span style="font-size:.65rem;opacity:.7;">I2S / PDM</span></div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);color:#60a5fa;">Janela<br><span style="font-size:.65rem;opacity:.7;">1s · 16kHz</span></div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;">FFT<br><span style="font-size:.65rem;opacity:.7;">por frame</span></div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:#c4b5fd;">MFCC<br><span style="font-size:.65rem;opacity:.7;">40 coef.</span></div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--teal-400);">CNN/RNN<br><span style="font-size:.65rem;opacity:.7;">int8 · ~20KB</span></div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <div class="ap-node" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.4);color:var(--teal-400);">Decisão<br><span style="font-size:.65rem;opacity:.7;">wake / silêncio</span></div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);line-height:1.7;margin-top:.5rem;">
+          <strong style="color:var(--text-secondary);">MFCC</strong> (Mel-Frequency Cepstral Coefficients): simula como o ouvido humano percebe frequências — mais sensível nas baixas, comprimido nas altas. Reduz 16.000 amostras/segundo para ~40 coeficientes por frame (25ms), tornando viável rodar a inferência a cada 10ms no ESP32.
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Componente</th><th>Função</th><th>No ESP32</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Microfone I2S</strong></td><td>Captura áudio digital 16-bit 16kHz</td><td>INMP441 ou SPH0645 — 4 pinos (BCK, WS, SD, VCC)</td></tr>
+            <tr><td><strong>Janela deslizante</strong></td><td>Buffer circular de 1 segundo com overlap de 500ms</td><td>Implementado em RAM estática — ~32KB para 1s a 16kHz</td></tr>
+            <tr><td><strong>FFT + Mel filter</strong></td><td>Converte amostras temporais em espectro de frequência Mel</td><td>Biblioteca esp-dsp ou Edge Impulse DSP block</td></tr>
+            <tr><td><strong>Modelo CNN int8</strong></td><td>Classifica o espectrograma em classes (wake/silêncio)</td><td>TFLite Micro — ~15–50KB na flash</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso-teal">
+        <i class="fas fa-graduation-cap"></i>
+        <span><strong>Edge Impulse para wake word:</strong> o projeto "Keyword Spotting" do Edge Impulse tem templates prontos com MFCC + CNN para ESP32. Você pode treinar um modelo "ok-embarcado" com ~20 gravações da sua própria voz em 10 minutos — gratuito. Excelente ponto de partida para o projeto final.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Por que o pipeline de wake word extrai MFCC em vez de usar as amostras de áudio bruto diretamente como entrada do modelo?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Porque TFLite Micro não suporta entrada de áudio bruto — só aceita features pré-processadas</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Porque 1 segundo de áudio a 16kHz gera 16.000 amostras — um modelo que aceita 40 coeficientes MFCC é 400× menor, cabe na RAM do MCU e é muito mais rápido de inferir</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Porque áudio bruto é analógico e precisa ser convertido para formato digital antes de qualquer ML</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">Porque MFCC remove o ruído de fundo automaticamente, tornando o modelo mais robusto</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Classificação de gestos e detecção de anomalias em sensores</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hand-paper"></i>Classificação de gestos com acelerômetro MPU6050</div>
+      <p>O <strong>MPU6050</strong> é um IMU (Inertial Measurement Unit) de 6 eixos: acelerômetro 3D + giroscópio 3D, comunicação I2C, endereço 0x68 (ou 0x69). É o sensor de movimento mais usado em projetos TinyML de gestos — presente em controles de game, sistemas de detecção de queda e interfaces sem toque.</p>
+      <p>Para classificar gestos, você coleta uma janela curta de dados (ex: 2 segundos a 100Hz = 200 amostras × 6 eixos = 1.200 valores) e extrai features que resumem o movimento — a rede aprende a distinguir "circular" de "sacudir" de "inclinar" por meio dessas features.</p>
+
+      <div class="wiring">
+        <div class="wiring__title">Ligação MPU6050 → ESP32 (I2C)</div>
+        <table class="wiring__table">
+          <thead><tr><th>Pino MPU6050</th><th>Conectar em</th><th>Obs.</th></tr></thead>
+          <tbody>
+            <tr><td><span class="wire-dot" style="background:#ef4444;"></span>VCC</td><td style="color:var(--teal-400);">3.3V</td><td>Aceita 3.3V ou 5V</td></tr>
+            <tr><td><span class="wire-dot" style="background:#1f2937;border:1px solid #374151;"></span>GND</td><td style="color:var(--teal-400);">GND</td><td>—</td></tr>
+            <tr><td><span class="wire-dot" style="background:#60a5fa;"></span>SDA</td><td style="color:var(--teal-400);">GPIO 21</td><td>SDA padrão I2C ESP32</td></tr>
+            <tr><td><span class="wire-dot" style="background:#c4b5fd;"></span>SCL</td><td style="color:var(--teal-400);">GPIO 22</td><td>SCL padrão I2C ESP32</td></tr>
+            <tr><td><span class="wire-dot" style="background:#374151;"></span>AD0</td><td style="color:var(--teal-400);">GND</td><td>GND=0x68 · 3.3V=0x69</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;margin-top:.75rem;">Features estatísticas de série temporal — o vocabulário do modelo de gestos</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__name">Média</div>
+          <div class="feature-card__formula">Σx / N</div>
+          <div class="feature-card__desc">Nível médio do sinal — distingue gestos com inclinação estática</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__name">Desvio Padrão</div>
+          <div class="feature-card__formula">√(Σ(x-μ)²/N)</div>
+          <div class="feature-card__desc">Energia do movimento — alto em gestos rápidos, baixo em repouso</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__name">RMS</div>
+          <div class="feature-card__formula">√(Σx²/N)</div>
+          <div class="feature-card__desc">Root Mean Square — magnitude total, útil para detecção de queda</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__name">Cruzamentos</div>
+          <div class="feature-card__formula">zero-crossing rate</div>
+          <div class="feature-card__desc">Frequência de oscilação — distingue sacudir rápido de lento</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — coletar janela MPU6050 e extrair features</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;Wire.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;MPU6050_light.h&gt;</span>   <span class="cm">// instalar: "MPU6050_light" by rfetick</span>
+<span class="pp">#include</span> <span class="str">&lt;math.h&gt;</span>
+
+<span class="pp">#define</span> JANELA_N   <span class="num">50</span>    <span class="cm">// 50 amostras @ ~50Hz = ~1 segundo</span>
+<span class="pp">#define</span> N_FEATURES <span class="num">6</span>    <span class="cm">// média e std de acX, acY, acZ</span>
+
+MPU6050 mpu(Wire);
+<span class="kw">float</span>  buf_ax[JANELA_N], buf_ay[JANELA_N], buf_az[JANELA_N];
+<span class="kw">float</span>  features[N_FEATURES];
+
+<span class="kw">float</span> <span class="fn">calcMedia</span>(<span class="kw">float</span><span class="op">*</span> buf) {
+  <span class="kw">float</span> s = <span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;JANELA_N;i++) s += buf[i];
+  <span class="kw">return</span> s / JANELA_N;
+}
+
+<span class="kw">float</span> <span class="fn">calcStd</span>(<span class="kw">float</span><span class="op">*</span> buf, <span class="kw">float</span> media) {
+  <span class="kw">float</span> var = <span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;JANELA_N;i++) var += (buf[i]-media)*(buf[i]-media);
+  <span class="kw">return</span> <span class="fn">sqrt</span>(var/JANELA_N);
+}
+
+<span class="kw">void</span> <span class="fn">coletarJanela</span>() {
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;JANELA_N;i++) {
+    mpu.<span class="fn">update</span>();
+    buf_ax[i] = mpu.<span class="fn">getAccX</span>();
+    buf_ay[i] = mpu.<span class="fn">getAccY</span>();
+    buf_az[i] = mpu.<span class="fn">getAccZ</span>();
+    <span class="fn">delay</span>(<span class="num">20</span>);   <span class="cm">// ~50Hz</span>
+  }
+  <span class="cm">// Extrair features: [media_x, std_x, media_y, std_y, media_z, std_z]</span>
+  <span class="kw">float</span> mx=<span class="fn">calcMedia</span>(buf_ax), my=<span class="fn">calcMedia</span>(buf_ay), mz=<span class="fn">calcMedia</span>(buf_az);
+  features[<span class="num">0</span>]=mx; features[<span class="num">1</span>]=<span class="fn">calcStd</span>(buf_ax,mx);
+  features[<span class="num">2</span>]=my; features[<span class="num">3</span>]=<span class="fn">calcStd</span>(buf_ay,my);
+  features[<span class="num">4</span>]=mz; features[<span class="num">5</span>]=<span class="fn">calcStd</span>(buf_az,mz);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>);
+  <span class="fn">Wire</span>.<span class="fn">begin</span>();
+  mpu.<span class="fn">begin</span>();
+  mpu.<span class="fn">calcOffsets</span>();   <span class="cm">// calibrar — mantenha parado por 3s</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"MPU6050 pronto!"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">coletarJanela</span>();
+  <span class="cm">// Aqui: alimentar features[] no modelo TFLite e inferir</span>
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"mx=%.2f sx=%.2f my=%.2f sy=%.2f mz=%.2f sz=%.2f\n"</span>,
+    features[<span class="num">0</span>],features[<span class="num">1</span>],features[<span class="num">2</span>],
+    features[<span class="num">3</span>],features[<span class="num">4</span>],features[<span class="num">5</span>]);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Detecção de anomalias em série temporal — a abordagem do LAB</div>
+      <p>Detecção de anomalia em dados de sensores é o caso de uso TinyML mais comum em IoT industrial. O princípio: o modelo aprende o padrão "normal" durante o treino e, durante a inferência, classifica cada janela como Normal ou Anomalia com base em features da janela.</p>
+      <p>A abordagem desta aula usa um modelo de <strong>classificação binária</strong> treinado com features estatísticas de janelas de temperatura. É mais simples que um autoencoder (que também é válido) e cabe em poucos KB de flash.</p>
+
+      <div class="timeseries">
+        <div class="timeseries__title">Série temporal de temperatura — janela de 10 leituras com anomalia</div>
+        <div class="ts-chart" id="tsChart">
+          <!-- Gerado por JS -->
+        </div>
+        <div style="display:flex;gap:1.5rem;margin-top:.75rem;font-size:.75rem;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(45,212,191,.6);"></span>Normal</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(239,68,68,.7);"></span>Anomalia detectada</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:24px;height:2px;background:rgba(239,68,68,.5);border-radius:1px;"></span>Threshold (μ + 2σ)</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — treinar classificador de anomalia (DHT22)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+
+<span class="cm"># Features por janela: [media, std, min, max, amplitude, rms]</span>
+<span class="kw">def</span> <span class="fn">extrair_features</span>(janela):
+    m = np.<span class="fn">mean</span>(janela)
+    s = np.<span class="fn">std</span>(janela)
+    <span class="kw">return</span> [m, s, np.<span class="fn">min</span>(janela), np.<span class="fn">max</span>(janela),
+            np.<span class="fn">max</span>(janela) - np.<span class="fn">min</span>(janela),
+            np.<span class="fn">sqrt</span>(np.<span class="fn">mean</span>(np.<span class="fn">square</span>(janela)))]
+
+<span class="cm"># Dados simulados — substituir por leituras reais do DHT22</span>
+<span class="cm"># Classe 0 = Normal (T entre 20–28°C, variação pequena)</span>
+<span class="cm"># Classe 1 = Anomalia (T fora do range ou variação brusca)</span>
+normais   = [np.<span class="fn">random</span>.<span class="fn">normal</span>(<span class="num">24</span>, <span class="num">1.5</span>, <span class="num">10</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">60</span>)]
+anomalias = [np.<span class="fn">random</span>.<span class="fn">normal</span>(<span class="num">24</span>, <span class="num">1.5</span>, <span class="num">10</span>) + np.<span class="fn">random</span>.<span class="fn">choice</span>([<span class="num">8</span>,<span class="num">-8</span>])
+             <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">40</span>)]
+
+X = np.<span class="fn">array</span>([<span class="fn">extrair_features</span>(j) <span class="kw">for</span> j <span class="kw">in</span> normais + anomalias], dtype=np.float32)
+y = np.<span class="fn">array</span>([<span class="num">0</span>]*<span class="num">60</span> + [<span class="num">1</span>]*<span class="num">40</span>)
+
+<span class="cm"># Normalizar — guardar média e desvio para usar no ESP32</span>
+X_mean, X_std = X.<span class="fn">mean</span>(axis=<span class="num">0</span>), X.<span class="fn">std</span>(axis=<span class="num">0</span>) + <span class="num">1e-8</span>
+X_norm = (X - X_mean) / X_std
+print(<span class="str">f"Média: {X_mean.round(3)}"</span>)
+print(<span class="str">f"Std:   {X_std.round(3)}"</span>)
+
+<span class="cm"># Modelo pequeno — 6 features → 8 → 4 → 2 classes</span>
+model = tf.keras.Sequential([
+    tf.keras.layers.<span class="fn">Dense</span>(<span class="num">8</span>, activation=<span class="str">'relu'</span>, input_shape=(<span class="num">6</span>,)),
+    tf.keras.layers.<span class="fn">Dense</span>(<span class="num">4</span>, activation=<span class="str">'relu'</span>),
+    tf.keras.layers.<span class="fn">Dense</span>(<span class="num">2</span>, activation=<span class="str">'softmax'</span>)
+])
+model.<span class="fn">compile</span>(optimizer=<span class="str">'adam'</span>,
+              loss=<span class="str">'sparse_categorical_crossentropy'</span>,
+              metrics=[<span class="str">'accuracy'</span>])
+model.<span class="fn">fit</span>(X_norm, y, epochs=<span class="num">300</span>, verbose=<span class="num">0</span>)
+loss, acc = model.<span class="fn">evaluate</span>(X_norm, y, verbose=<span class="num">0</span>)
+print(<span class="str">f"Acurácia: {acc:.2%}"</span>)
+
+<span class="cm"># Converter e quantizar para int8</span>
+converter = tf.lite.<span class="fn">TFLiteConverter</span>.<span class="fn">from_keras_model</span>(model)
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+<span class="kw">def</span> <span class="fn">rep_data</span>():
+    <span class="kw">for</span> x <span class="kw">in</span> X_norm[:<span class="num">20</span>]: <span class="kw">yield</span> [x.<span class="fn">reshape</span>(<span class="num">1</span>,<span class="num">6</span>).<span class="fn">astype</span>(np.float32)]
+converter.representative_dataset = rep_data
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type  = tf.int8
+converter.inference_output_type = tf.int8
+tflite = converter.<span class="fn">convert</span>()
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"modelo_anomalia.tflite"</span>,<span class="str">"wb"</span>) <span class="kw">as</span> f: f.<span class="fn">write</span>(tflite)
+print(<span class="str">f"Modelo salvo: {len(tflite)} bytes"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Por que usamos features estatísticas (média, desvio, RMS) em vez de passar a janela de 10 leituras brutas diretamente ao modelo TinyML?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">A</div>
+          <span class="quiz-texto">Porque o TFLite Micro não suporta vetores de entrada com mais de 6 elementos</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">Features resumem o padrão da janela em poucos valores informativos — o modelo fica menor, mais rápido e mais generalizável; 10 leituras brutas aumentam a dimensão sem acrescentar informação nova</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">C</div>
+          <span class="quiz-texto">Porque o sensor DHT22 já entrega diretamente features estatísticas em vez de leituras brutas</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">D</div>
+          <span class="quiz-texto">Para economizar memória flash — 6 floats ocupam menos que 10 floats na flash</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">LAB — Detector de anomalia de temperatura com TFLite + MQTT</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span>Objetivo: o ESP32 lê o DHT22 continuamente, acumula uma janela de 10 leituras, extrai 6 features estatísticas, roda o modelo TFLite Micro para classificar Normal/Anomalia, e publica alertas via MQTT quando detectar anomalia.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Gerar o dataset de calibração</div>
+            <div class="lab-step__desc">Durante 5 minutos, registre leituras normais do DHT22 no Serial Monitor (temperatura ambiente estável). Depois simule anomalias aquecendo o sensor com as mãos. Copie os valores para o script Python de treino. Quanto mais dados, melhor a generalização.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Treinar e converter o modelo</div>
+            <div class="lab-step__desc">Execute o script Python da Aula 2 com seus dados reais. Anote os valores de X_mean e X_std — você vai precisar deles hardcoded no ESP32 para normalizar as features antes da inferência. Converta o .tflite para .h com o script da Semana 12.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Carregar o código completo no ESP32</div>
+            <div class="lab-step__desc">Use o código abaixo. Substitua os valores de MEAN[] e STD[] pelos do seu treino. Confirme no Serial Monitor que a inferência funciona antes de ativar o Wi-Fi/MQTT.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Testar e provocar anomalias</div>
+            <div class="lab-step__desc">Com o código rodando, aquece o sensor com as mãos ou sopra ar quente. Observe no Serial Monitor "ANOMALIA detectada!" e confirme no mosquitto_sub que a mensagem MQTT chegou ao tópico <code style="font-family:'JetBrains Mono',monospace;">borda/anomalia/temperatura</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — detector de anomalia completo: TFLite + DHT22 + MQTT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="pp">#include</span> <span class="str">&lt;DHT.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;WiFi.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;PubSubClient.h&gt;</span>
+<span class="pp">#include</span> <span class="str">&lt;ArduinoJson.h&gt;</span>
+<span class="pp">#include</span> <span class="str">"TensorFlowLite_ESP32.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/micro/all_ops_resolver.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/micro/micro_interpreter.h"</span>
+<span class="pp">#include</span> <span class="str">"tensorflow/lite/schema/schema_generated.h"</span>
+<span class="pp">#include</span> <span class="str">"modelo_anomalia.h"</span>
+<span class="pp">#include</span> <span class="str">&lt;math.h&gt;</span>
+
+<span class="cm">// ── Configurações ──</span>
+<span class="kw">const char</span><span class="op">*</span> SSID      = <span class="str">"NomeDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> SENHA     = <span class="str">"SenhaDaRede"</span>;
+<span class="kw">const char</span><span class="op">*</span> BROKER_IP = <span class="str">"192.168.1.100"</span>;
+<span class="pp">#define</span> PINO_DHT   <span class="num">4</span>
+<span class="pp">#define</span> JANELA_N   <span class="num">10</span>
+<span class="pp">#define</span> ARENA_SIZE <span class="num">6144</span>
+
+<span class="cm">// ── Parâmetros de normalização — copiar do treino Python ──</span>
+<span class="kw">const float</span> MEAN[<span class="num">6</span>] = {<span class="num">24.1f</span>, <span class="num">1.4f</span>, <span class="num">22.0f</span>, <span class="num">26.5f</span>, <span class="num">4.5f</span>, <span class="num">24.2f</span>};
+<span class="kw">const float</span> STD[<span class="num">6</span>]  = {<span class="num">2.3f</span>,  <span class="num">1.1f</span>, <span class="num">2.4f</span>,  <span class="num">2.6f</span>,  <span class="num">1.8f</span>, <span class="num">2.3f</span>};
+
+DHT dht(PINO_DHT, DHT22);
+WiFiClient wc; PubSubClient mqtt(wc);
+
+<span class="cm">// TFLM</span>
+<span class="kw">const</span> tflite::Model<span class="op">*</span>       model;
+tflite::MicroInterpreter<span class="op">*</span>  interpreter;
+TfLiteTensor<span class="op">*</span>              input;
+TfLiteTensor<span class="op">*</span>              output;
+<span class="kw">uint8_t</span> tensor_arena[ARENA_SIZE];
+
+<span class="cm">// Janela deslizante</span>
+<span class="kw">float</span> janela[JANELA_N]; <span class="kw">int</span> idx=<span class="num">0</span>; <span class="kw">bool</span> cheia=<span class="kw">false</span>;
+
+<span class="kw">void</span> <span class="fn">extrairFeatures</span>(<span class="kw">float</span><span class="op">*</span> feat) {
+  <span class="kw">float</span> m=<span class="num">0</span>, mn=janela[<span class="num">0</span>], mx=janela[<span class="num">0</span>], sq=<span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;JANELA_N;i++){
+    m+=janela[i]; sq+=janela[i]*janela[i];
+    <span class="kw">if</span>(janela[i]&lt;mn) mn=janela[i];
+    <span class="kw">if</span>(janela[i]&gt;mx) mx=janela[i];
+  }
+  m/=JANELA_N; sq/=JANELA_N;
+  <span class="kw">float</span> var=<span class="num">0</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;JANELA_N;i++) var+=(janela[i]-m)*(janela[i]-m);
+  feat[<span class="num">0</span>]=m; feat[<span class="num">1</span>]=<span class="fn">sqrt</span>(var/JANELA_N); feat[<span class="num">2</span>]=mn;
+  feat[<span class="num">3</span>]=mx; feat[<span class="num">4</span>]=mx-mn; feat[<span class="num">5</span>]=<span class="fn">sqrt</span>(sq);
+}
+
+<span class="kw">int8_t</span> <span class="fn">quantizar</span>(<span class="kw">float</span> v, <span class="kw">float</span> sc, <span class="kw">int</span> zp) {
+  <span class="kw">return</span> (<span class="kw">int8_t</span>)<span class="fn">constrain</span>((<span class="kw">int</span>)<span class="fn">roundf</span>(v/sc)+zp, <span class="num">-128</span>, <span class="num">127</span>);
+}
+
+<span class="kw">void</span> <span class="fn">publicarAlerta</span>(<span class="kw">float</span> t, <span class="kw">float</span> conf) {
+  <span class="kw">if</span>(<span class="fn">WiFi</span>.<span class="fn">status</span>()!=WL_CONNECTED||!mqtt.<span class="fn">connected</span>()) <span class="kw">return</span>;
+  StaticJsonDocument<<span class="num">96</span>> doc;
+  doc[<span class="str">"temp"</span>]=t; doc[<span class="str">"confianca"</span>]=conf; doc[<span class="str">"alerta"</span>]=<span class="str">"ANOMALIA"</span>;
+  <span class="kw">char</span> buf[<span class="num">96</span>]; <span class="fn">serializeJson</span>(doc,buf);
+  mqtt.<span class="fn">publish</span>(<span class="str">"borda/anomalia/temperatura"</span>,buf);
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">115200</span>); <span class="fn">dht</span>.<span class="fn">begin</span>();
+
+  <span class="cm">// Wi-Fi</span>
+  <span class="fn">WiFi</span>.<span class="fn">begin</span>(SSID,SENHA);
+  <span class="kw">while</span>(<span class="fn">WiFi</span>.<span class="fn">status</span>()!=WL_CONNECTED) <span class="fn">delay</span>(<span class="num">300</span>);
+  mqtt.<span class="fn">setServer</span>(BROKER_IP,<span class="num">1883</span>);
+  mqtt.<span class="fn">connect</span>(<span class="str">"esp32-anomalia"</span>);
+
+  <span class="cm">// TFLite</span>
+  model = tflite::<span class="fn">GetModel</span>(modelo_anomalia);
+  <span class="kw">static</span> tflite::AllOpsResolver resolver;
+  <span class="kw">static</span> tflite::MicroInterpreter si(model,resolver,tensor_arena,ARENA_SIZE);
+  interpreter=&si;
+  <span class="kw">if</span>(interpreter-><span class="fn">AllocateTensors</span>()!=kTfLiteOk){
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"AllocateTensors falhou! Aumente ARENA_SIZE."</span>); <span class="kw">while</span>(<span class="kw">true</span>);
+  }
+  input=interpreter-><span class="fn">input</span>(<span class="num">0</span>); output=interpreter-><span class="fn">output</span>(<span class="num">0</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Pronto. Acumulando janela..."</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  mqtt.<span class="fn">loop</span>();
+
+  <span class="kw">float</span> t=<span class="fn">dht</span>.<span class="fn">readTemperature</span>();
+  <span class="kw">if</span>(<span class="fn">isnan</span>(t)){<span class="fn">delay</span>(<span class="num">2000</span>);<span class="kw">return</span>;}
+
+  <span class="cm">// Acumular janela deslizante</span>
+  janela[idx]=(t-<span class="num">0</span>); <span class="cm">// raw temp</span>
+  idx=(idx+<span class="num">1</span>)%JANELA_N;
+  <span class="kw">if</span>(idx==<span class="num">0</span>) cheia=<span class="kw">true</span>;
+  <span class="kw">if</span>(!cheia){<span class="fn">delay</span>(<span class="num">3000</span>);<span class="kw">return</span>;}
+
+  <span class="cm">// Extrair e normalizar features</span>
+  <span class="kw">float</span> feat[<span class="num">6</span>]; <span class="fn">extrairFeatures</span>(feat);
+  <span class="kw">float</span> sc=input->params.scale; <span class="kw">int</span> zp=input->params.zero_point;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;<span class="num">6</span>;i++)
+    input->data.int8[i] = <span class="fn">quantizar</span>((feat[i]-MEAN[i])/STD[i], sc, zp);
+
+  <span class="cm">// Inferência</span>
+  interpreter-><span class="fn">Invoke</span>();
+
+  <span class="kw">float</span> osc=output->params.scale; <span class="kw">int</span> ozp=output->params.zero_point;
+  <span class="kw">float</span> pNormal   = (output->data.int8[<span class="num">0</span>]-ozp)*osc;
+  <span class="kw">float</span> pAnomalia = (output->data.int8[<span class="num">1</span>]-ozp)*osc;
+
+  <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"T=%.1f°C  Normal=%.2f  Anomalia=%.2f  → %s\n"</span>,
+    t, pNormal, pAnomalia, pAnomalia&gt;<span class="num">0.7f</span>?<span class="str">"*** ANOMALIA ***"</span>:<span class="str">"Normal"</span>);
+
+  <span class="kw">if</span>(pAnomalia &gt; <span class="num">0.7f</span>) <span class="fn">publicarAlerta</span>(t, pAnomalia);
+
+  <span class="fn">delay</span>(<span class="num">3000</span>);
+}</code></pre>
+      </div>
+
+      <div class="serial-out">
+        <div class="serial-out__bar">Serial Monitor · 115200 baud · comportamento esperado</div>
+        <div class="so-line"><span class="so-ok">Pronto. Acumulando janela...</span></div>
+        <div class="so-line so-dim">——————————————————————————</div>
+        <div class="so-line"><span class="so-ok">T=24.1°C  Normal=0.94  Anomalia=0.06  → Normal</span></div>
+        <div class="so-line"><span class="so-ok">T=24.3°C  Normal=0.91  Anomalia=0.09  → Normal</span></div>
+        <div class="so-line"><span class="so-warn">T=31.8°C  Normal=0.18  Anomalia=0.82  → *** ANOMALIA ***</span></div>
+        <div class="so-line"><span class="so-warn">T=33.2°C  Normal=0.05  Anomalia=0.95  → *** ANOMALIA ***</span></div>
+        <div class="so-line"><span class="so-ok">T=25.0°C  Normal=0.88  Anomalia=0.12  → Normal</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Análise</div>
+        <div class="secao-titulo">4 exercícios — do ajuste fino ao sistema completo</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Calibrar o threshold de alerta</div>
+      <p>O código usa threshold fixo de 0.7 para classificar uma janela como anomalia. Modifique para usar um threshold configurável via MQTT: ao receber uma mensagem no tópico <code style="font-family:'JetBrains Mono',monospace;">borda/config/threshold</code> com um valor float (ex: <code style="font-family:'JetBrains Mono',monospace;">"0.85"</code>), o ESP32 atualiza o threshold em tempo de execução e confirma publicando o novo valor em <code style="font-family:'JetBrains Mono',monospace;">borda/config/threshold/ack</code>. Isso simula o gerenciamento remoto de um modelo em campo.</p>
+      <span class="dif-medio">LAB · Integração MQTT</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Trecho — threshold via MQTT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">float</span> thresholdAnomalia = <span class="num">0.70f</span>;   <span class="cm">// variável global</span>
+
+<span class="kw">void</span> <span class="fn">callbackMQTT</span>(<span class="kw">char</span><span class="op">*</span> topico, <span class="kw">byte</span><span class="op">*</span> payload, <span class="kw">unsigned int</span> tam) {
+  String msg = <span class="str">""</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;(<span class="kw">int</span>)tam;i++) msg+=(<span class="kw">char</span>)payload[i];
+
+  <span class="kw">if</span>(String(topico)==<span class="str">"borda/config/threshold"</span>) {
+    <span class="kw">float</span> novo = msg.<span class="fn">toFloat</span>();
+    <span class="kw">if</span>(novo&gt;<span class="num">0.0f</span> && novo&lt;<span class="num">1.0f</span>) {
+      thresholdAnomalia = novo;
+      <span class="kw">char</span> buf[<span class="num">32</span>];
+      <span class="fn">snprintf</span>(buf, <span class="kw">sizeof</span>(buf), <span class="str">"%.2f"</span>, thresholdAnomalia);
+      mqtt.<span class="fn">publish</span>(<span class="str">"borda/config/threshold/ack"</span>, buf);
+      <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"Threshold atualizado: %.2f\n"</span>, thresholdAnomalia);
+    }
+  }
+}
+
+<span class="cm">// No setup(), após mqtt.connect():</span>
+mqtt.<span class="fn">setCallback</span>(callbackMQTT);
+mqtt.<span class="fn">subscribe</span>(<span class="str">"borda/config/threshold"</span>);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — Adicionar umidade como segunda feature</div>
+      <p>O modelo atual usa apenas temperatura. Expanda o pipeline para incluir <strong>umidade</strong> como segunda variável: a janela deslizante agora acumula temperatura E umidade em paralelo. O vetor de features sobe para 12 (6 por variável). Treine um novo modelo com os dados expandidos, gere um novo .h, e integre ao ESP32. Compare a acurácia do modelo com 6 vs 12 features. Quando a umidade melhora a detecção e quando não faz diferença?</p>
+      <span class="dif-medio">LAB + Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-balance-scale"></i>Análise esperada</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>A umidade melhora a detecção quando a anomalia envolve mudança simultânea de temperatura e umidade (ex: incêndio → temperatura sobe, umidade cai drasticamente).</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A umidade não ajuda quando a anomalia é puramente térmica (ex: superaquecimento de um componente eletrônico), pois a umidade não varia.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>O custo: tensor arena maior, modelo ligeiramente maior. Para o ESP32, ainda viável — ambos cabem confortavelmente na flash e RAM disponíveis.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Coletar seu próprio dataset de gestos</div>
+      <p>Com o MPU6050 conectado, escreva um sketch que coleta 50 janelas de 1 segundo para cada um de 3 gestos: (A) sacudir horizontalmente, (B) inclinar para frente, (C) circular. Para cada janela, imprime as 6 features no formato CSV: <code style="font-family:'JetBrains Mono',monospace;">classe,media_x,std_x,media_y,std_y,media_z,std_z</code>. Copie o CSV do Serial Monitor, treine um modelo de 3 classes no Python e calcule a matriz de confusão. Qual gesto é mais difícil de classificar e por quê?</p>
+      <span class="dif-desafio">Desafio · Pipeline completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C — coletar dataset de gestos para CSV</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Pressione o botão para iniciar a coleta de 1 janela</span>
+<span class="cm">// Imprime: classe,mx,sx,my,sy,mz,sz</span>
+<span class="pp">#define</span> BTN_PIN   <span class="num">0</span>    <span class="cm">// BOOT button no ESP32</span>
+<span class="kw">int</span> classeAtual = <span class="num">0</span>;   <span class="cm">// mudar manualmente: 0=sacudir, 1=inclinar, 2=circular</span>
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (<span class="fn">digitalRead</span>(BTN_PIN) == LOW) {
+    <span class="fn">delay</span>(<span class="num">50</span>);   <span class="cm">// debounce</span>
+    <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Prepare o gesto "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(classeAtual);
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"... 3s"</span>);
+    <span class="fn">delay</span>(<span class="num">3000</span>);
+    <span class="fn">coletarJanela</span>();
+    <span class="fn">Serial</span>.<span class="fn">printf</span>(<span class="str">"%d,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n"</span>,
+      classeAtual,
+      features[<span class="num">0</span>],features[<span class="num">1</span>],features[<span class="num">2</span>],
+      features[<span class="num">3</span>],features[<span class="num">4</span>],features[<span class="num">5</span>]);
+  }
+}</code></pre>
+        </div>
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-info-circle"></i>Análise típica de matriz de confusão</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>"Sacudir" tem std muito alta em todos os eixos — fácil de distinguir.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>"Inclinar para frente" tem média_y deslocada — bem caracterizado.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>"Circular" é o mais difícil: features médias ficam próximas do repouso pois a energia se distribui em todos os eixos. Adicionar FFT ou energia por eixo melhora significativamente.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Dashboard MQTT de anomalias</div>
+      <p>Escreva um script Python que assina <code style="font-family:'JetBrains Mono',monospace;">borda/anomalia/#</code> e mantém um contador de anomalias por hora. A cada 5 minutos, publica um resumo em <code style="font-family:'JetBrains Mono',monospace;">dashboard/resumo</code> com JSON: <code style="font-family:'JetBrains Mono',monospace;">{"anomalias_ultima_hora": N, "temp_max_anomalia": X, "ultima_anomalia_ts": "HH:MM:SS"}</code>. Isso simula um sistema de monitoramento de saúde de equipamento em tempo real — o padrão usado em IoT industrial.</p>
+      <span class="dif-desafio">Desafio · Sistema completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — dashboard de anomalias via MQTT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> paho.mqtt.client <span class="kw">as</span> mqtt
+<span class="kw">import</span> json, time, threading
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+BROKER = <span class="str">"192.168.1.100"</span>
+historico = deque(maxlen=<span class="num">3600</span>)   <span class="cm"># máximo 1h de anomalias</span>
+ultima_anomalia = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">on_message</span>(client, ud, msg):
+    <span class="kw">global</span> ultima_anomalia
+    <span class="kw">try</span>:
+        d = json.<span class="fn">loads</span>(msg.payload.<span class="fn">decode</span>())
+        ts = datetime.<span class="fn">now</span>()
+        historico.<span class="fn">append</span>({<span class="str">"ts"</span>: ts, <span class="str">"temp"</span>: d.<span class="fn">get</span>(<span class="str">"temp"</span>,<span class="num">0</span>)})
+        ultima_anomalia = ts
+        print(f<span class="str">"[{ts.strftime('%H:%M:%S')}] Anomalia: T={d.get('temp')}°C conf={d.get('confianca'):.2f}"</span>)
+    <span class="kw">except</span>: <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">publicar_resumo</span>(client):
+    <span class="kw">while True</span>:
+        time.<span class="fn">sleep</span>(<span class="num">300</span>)
+        agora = datetime.<span class="fn">now</span>()
+        recentes = [e <span class="kw">for</span> e <span class="kw">in</span> historico
+                    <span class="kw">if</span> (agora - e[<span class="str">"ts"</span>]).<span class="fn">seconds</span> &lt; <span class="num">3600</span>]
+        temp_max = <span class="fn">max</span>((e[<span class="str">"temp"</span>] <span class="kw">for</span> e <span class="kw">in</span> recentes), default=<span class="num">0</span>)
+        resumo = {
+            <span class="str">"anomalias_ultima_hora"</span>: <span class="fn">len</span>(recentes),
+            <span class="str">"temp_max_anomalia"</span>: temp_max,
+            <span class="str">"ultima_anomalia_ts"</span>: ultima_anomalia.<span class="fn">strftime</span>(<span class="str">"%H:%M:%S"</span>) <span class="kw">if</span> ultima_anomalia <span class="kw">else</span> <span class="str">"nenhuma"</span>
+        }
+        client.<span class="fn">publish</span>(<span class="str">"dashboard/resumo"</span>, json.<span class="fn">dumps</span>(resumo))
+        print(f<span class="str">"Resumo publicado: {resumo}"</span>)
+
+c = mqtt.<span class="fn">Client</span>()
+c.on_connect = <span class="kw">lambda</span> cl,u,f,rc: cl.<span class="fn">subscribe</span>(<span class="str">"borda/anomalia/#"</span>)
+c.on_message = on_message
+c.<span class="fn">connect</span>(BROKER, <span class="num">1883</span>)
+threading.<span class="fn">Thread</span>(target=publicar_resumo, args=(c,), daemon=<span class="kw">True</span>).<span class="fn">start</span>()
+c.<span class="fn">loop_forever</span>()</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 14</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui dominando</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-microphone"></i>
+        <strong>Wake Word</strong>
+        <p>MFCC comprime 16.000 amostras/s em ~40 coeficientes por frame. CNN/RNN int8 classifica espectrograma. Roda continuamente com consumo mínimo.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-hand-paper"></i>
+        <strong>Gestos e Anomalias</strong>
+        <p>Features estatísticas (média, std, RMS, amplitude) resumem a série temporal. O modelo aprende padrões nessas features — não nos dados brutos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>Sistema completo</strong>
+        <p>TFLite Micro + MQTT + features estatísticas = sistema de detecção embarcado em produção. Threshold configurável via MQTT sem recompilar firmware.</p>
+      </div>
+    </div>
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist:</strong> O detector de anomalia está rodando no ESP32 e publicando alertas no broker? Você entende por que usamos features e não dados brutos? Consegue explicar o pipeline de wake word em 3 passos? Se sim — pronto para a Semana 15: integração com AWS IoT Core.</span>
+    </div>
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 15 — Integração com nuvem: AWS IoT Core, shadow, regras de roteamento e visualização</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);});
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! 1 segundo de áudio a 16kHz = 16.000 amostras como entrada do modelo. Um modelo que aceita 16.000 entradas seria enorme — impossível para o ESP32. O MFCC reduz para ~40 coeficientes por frame de 25ms, representando o som de forma compacta e informativamente relevante. O modelo de classificação opera sobre essa representação muito menor e mais rica.'},
+  quiz2:{correct:'B',msg:'✅ Correto! Features estatísticas capturam os padrões da janela de forma compacta: 6 números resumem 10 leituras. Um modelo que aceita 10 leituras brutas seria apenas ~1.67× maior em entradas, mas o problema real é a generalização — leituras brutas variam muito entre instâncias do mesmo padrão; features como desvio padrão e amplitude capturam a essência do comportamento independente da magnitude absoluta.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+
+/* ── Gráfico série temporal ── */
+(function(){
+  const chart = document.getElementById('tsChart');
+  if(!chart) return;
+  const vals=[24.1,24.3,24.0,23.8,24.2,31.8,33.2,34.0,25.0,24.4];
+  const threshold=27;
+  vals.forEach((v,i)=>{
+    const bar=document.createElement('div');
+    const pct=Math.max(10,(v/40)*100);
+    const isAnom=v>threshold;
+    bar.className='ts-bar';
+    bar.style.height=pct+'%';
+    bar.style.background=isAnom?'rgba(239,68,68,.7)':'rgba(45,212,191,.55)';
+    bar.style.flex='1';
+    bar.style.borderRadius='3px';
+    bar.title=`T=${v}°C`;
+    if(isAnom){
+      const mark=document.createElement('div');
+      mark.className='ts-anomaly';
+      mark.textContent='⚠';
+      mark.style.cssText='position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.8rem;';
+      bar.style.position='relative';
+      bar.appendChild(mark);
+    }
+    chart.appendChild(bar);
+  });
+  const line=document.createElement('div');
+  line.className='ts-threshold';
+  line.style.bottom=((threshold/40)*100)+'%';
+  const lbl=document.createElement('div');
+  lbl.className='ts-threshold-label';
+  lbl.textContent='27°C';
+  lbl.style.cssText='position:absolute;right:4px;bottom:'+((threshold/40)*100)+'%;font-size:.65rem;color:#f87171;font-family:JetBrains Mono,monospace;';
+  chart.style.position='relative';
+  chart.appendChild(line);
+  chart.appendChild(lbl);
+})();
+</script>
+</body>
+</html>

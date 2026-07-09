@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 19 — P3 · Prova Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+
+/* ── Revisão — cards por semana ── */
+.rev-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.85rem;margin:.75rem 0;}
+.rev-card{border-radius:12px;padding:1rem;border:1px solid rgba(45,212,191,.18);background:rgba(45,212,191,.03);}
+.rev-card__sem{font-family:'Montserrat',sans-serif;font-size:.63rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;}
+.rev-card__title{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:var(--white);margin-bottom:.55rem;}
+.rev-card ul{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.rev-card ul li{font-size:.72rem;color:var(--text-secondary);line-height:1.4;padding-left:11px;position:relative;}
+.rev-card ul li::before{content:'▸';position:absolute;left:0;color:var(--teal-400);font-size:.6rem;}
+
+/* ── Quiz (simulado) ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-tag{display:inline-block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal-400);background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.2);padding:2px 9px;border-radius:6px;margin-bottom:.6rem;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Trabalho para entrega ── */
+.entrega-box{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.22);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;}
+.entrega-box__title{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.9rem;display:flex;align-items:center;gap:8px;}
+.entrega-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.entrega-item{text-align:center;}
+.entrega-item i{font-size:1.1rem;color:#f87171;margin-bottom:.4rem;display:block;}
+.entrega-item strong{display:block;font-size:.82rem;color:var(--white);margin-bottom:.2rem;}
+.entrega-item span{font-size:.76rem;color:var(--text-secondary);}
+
+.rubrica-wrap{overflow-x:auto;margin:.75rem 0;}
+.questao-trabalho{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.questao-trabalho-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.questao-trabalho p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.questao-trabalho .valor{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.resposta-espaco{margin-top:.85rem;border:1px dashed rgba(255,255,255,.15);border-radius:8px;padding:1.5rem;font-size:.78rem;color:var(--text-muted);text-align:center;}
+
+/* ── Checklist final ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.83rem;margin-bottom:3px;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:1000px){.rev-grid{grid-template-columns:repeat(3,1fr);}.entrega-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:580px){
+  .rev-grid,.resumo-grid,.entrega-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🏁 P3 · Prova Final</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">19</div>
+    <h1 class="capa-titulo">P3<br><em>Prova Final</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Revisão, simulado e trabalho de encerramento do semestre</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-book-open"></i></div><span>Aula 1 — Revisão consolidada: Semanas 14 a 18</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-check"></i></div><span>Aula 2 — Simulado interativo com gabarito comentado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-file-signature"></i></div><span>Aula 3 — Trabalho para entrega (vale a nota da P3)</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-battery-three-quarters"></i></div><span>Cobre: TinyML aplicações, nuvem, plataformas, energia e segurança</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-calendar-check"></i></div><span>Última avaliação regular do semestre antes da Segunda Chamada</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade da Aula 3</div>
+      <p>Trabalho individual para entrega, valendo a nota da P3. Substitui a prova objetiva tradicional em sala — as questões objetivas já foram praticadas na Semana 18 como atividade valendo ponto extra.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 14 a 17 — conteúdo completo</li>
+        <li>✅ Sem. 18 — atividade extra (pontos bônus)</li>
+        <li>▶ Sem. 19 — P3 · Prova Final da disciplina</li>
+        <li>Sem. 20 — Segunda Chamada</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-info-circle"></i>Por que o formato mudou</div>
+      <ul class="info-lista">
+        <li>A disciplina tem apenas 3 avaliações (P1, P2, P3) — não 4 como constava no planejamento anterior</li>
+        <li>A P3 é a prova final regular do semestre, cobrindo todo o conteúdo pós-P2</li>
+        <li>Em vez de repetir o formato objetivo já usado na Semana 18, a P3 é um trabalho prático para consolidar o aprendizado</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Como se preparar</div>
+      <ul class="info-lista">
+        <li>Refaça o simulado da Aula 2 até acertar todas as questões</li>
+        <li>Releia os cards de revisão da Aula 1 antes de iniciar o trabalho</li>
+        <li>O trabalho da Aula 3 exige aplicar os conceitos, não apenas recordá-los</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 — REVISÃO ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Revisão consolidada — Semanas 14 a 18</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>O mapa de tudo que foi visto desde a P2</div>
+      <p>Cinco semanas de conteúdo, do modelo de ML rodando na borda até a segurança do sistema completo. A P3 é cumulativa sobre esse bloco — os cards abaixo resumem o essencial de cada semana para revisão rápida.</p>
+
+      <div class="rev-grid">
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 14</div>
+          <div class="rev-card__title">TinyML — aplicações</div>
+          <ul>
+            <li>Wake word detection</li>
+            <li>Detecção de anomalias em série temporal</li>
+            <li>Classificação de gestos</li>
+            <li>Autoencoders pequenos no MCU</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 15</div>
+          <div class="rev-card__title">Integração com nuvem</div>
+          <ul>
+            <li>AWS IoT Core, certificados X.509</li>
+            <li>Device Shadow (desired vs reported)</li>
+            <li>Rules Engine</li>
+            <li>TLS/mTLS na porta 8883</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 16</div>
+          <div class="rev-card__title">Plataformas IoT</div>
+          <ul>
+            <li>ThingSpeak — HTTP, MATLAB</li>
+            <li>Adafruit IO — MQTT, feeds</li>
+            <li>Node-RED — flows, nodes, wires</li>
+            <li>Dashboards sem HTML/CSS</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 17</div>
+          <div class="rev-card__title">Energia e segurança</div>
+          <ul>
+            <li>Active, Modem/Light/Deep Sleep</li>
+            <li>Vida da bateria = mAh ÷ mA médio</li>
+            <li>4 camadas de segurança</li>
+            <li>MITM, replay, tampering, Mirai</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 18</div>
+          <div class="rev-card__title">Prática extra</div>
+          <ul>
+            <li>Simulado objetivo em sala</li>
+            <li>Dissertativas sobre defesa em profundidade</li>
+            <li>Consolidação antes da P3</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="destaque">
+      <strong>Dica de estudo:</strong> a P3 vai exigir menos "decorar conceito isolado" e mais "aplicar em um cenário completo". Pratique montar mentalmente um sistema IoT do sensor até a nuvem, passando por: escolha de protocolo → segurança → plataforma de visualização → estratégia de energia. É exatamente essa integração que o trabalho da Aula 3 vai cobrar.
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 — SIMULADO ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Simulado — pratique antes do trabalho valer nota</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-info-circle"></i>
+      <span>Este simulado é só para prática — não vale nota. Clique nas alternativas para ver o gabarito comentado na hora. Refaça quantas vezes quiser antes de começar o trabalho da Aula 3.</span>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 14 · TinyML aplicações</span>
+      <div class="quiz-pergunta">1. Em um autoencoder pequeno usado para detecção de anomalia em sensor de vibração, como o modelo identifica que algo está fora do padrão?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Comparando o valor lido com um limiar fixo definido manualmente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Medindo o erro de reconstrução — a diferença entre o sinal de entrada e a versão que o modelo reconstrói; erro alto indica padrão fora do normal</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Enviando o dado bruto para um servidor central comparar com um banco de anomalias conhecidas</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Usando apenas a média móvel dos últimos 10 valores</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 15 · Nuvem</span>
+      <div class="quiz-pergunta">2. Qual é a principal vantagem de usar o Device Shadow do AWS IoT Core em vez de enviar comandos diretamente ao dispositivo?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Reduz o custo de banda em qualquer cenário</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Permite consultar/alterar o estado desejado mesmo com o dispositivo offline — o comando fica pendente e é aplicado assim que ele reconecta</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Elimina a necessidade de TLS na comunicação</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">É obrigatório para qualquer dispositivo se conectar ao AWS IoT Core</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 16 · Plataformas</span>
+      <div class="quiz-pergunta">3. Um projeto precisa combinar dados de MQTT com uma chamada HTTP para uma API externa e aplicar lógica customizada antes de exibir em um dashboard. Qual ferramenta estudada é mais flexível para esse cenário?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">ThingSpeak</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Adafruit IO</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Node-RED — combina múltiplos protocolos e permite lógica JavaScript livre em function nodes</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Nenhuma das plataformas suporta múltiplos protocolos</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 17 · Energia</span>
+      <div class="quiz-pergunta">4. Um sensor precisa durar 1 ano com uma bateria de 3000mAh. Qual a corrente média máxima que o sistema pode consumir?</div>
+      <div class="quiz-ops" id="quiz4-ops">
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">3 mA</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">~0.34 mA — cálculo: 3000mAh ÷ (365×24h) = 3000 ÷ 8760 ≈ 0.34mA</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">30 mA</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">300 mA</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz4-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 17 · Segurança</span>
+      <div class="quiz-pergunta">5. Qual das opções abaixo NÃO é uma das 4 camadas de segurança IoT vistas em aula?</div>
+      <div class="quiz-ops" id="quiz5-ops">
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Transporte (TLS/mTLS)</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Autenticação</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Compressão de dados</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Integridade</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz5-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · P3</span></div>
+
+  <!-- ── AULA 3 — TRABALHO PARA ENTREGA ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · Vale nota da P3</div>
+        <div class="secao-titulo">Trabalho para entrega — Projeto integrador de IoT</div>
+      </div>
+    </div>
+
+    <div class="entrega-box">
+      <div class="entrega-box__title"><i class="fas fa-file-signature"></i>Informações de entrega</div>
+      <div class="entrega-grid">
+        <div class="entrega-item">
+          <i class="fas fa-user"></i>
+          <strong>Individual</strong>
+          <span>Trabalho de autoria própria</span>
+        </div>
+        <div class="entrega-item">
+          <i class="fas fa-calendar"></i>
+          <strong>Prazo</strong>
+          <span>Definir data de entrega</span>
+        </div>
+        <div class="entrega-item">
+          <i class="fas fa-upload"></i>
+          <strong>Formato</strong>
+          <span>PDF ou documento com respostas + diagramas</span>
+        </div>
+        <div class="entrega-item">
+          <i class="fas fa-star"></i>
+          <strong>Valor</strong>
+          <span>Nota da P3 (0 a 10)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-scale-balanced"></i>Critérios de avaliação</div>
+      <div class="rubrica-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>Peso</th><th>O que é avaliado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Correção técnica</strong></td><td>4,0</td><td>Conceitos aplicados corretamente (protocolos, segurança, energia, TinyML)</td></tr>
+            <tr><td><strong>Integração do sistema</strong></td><td>3,0</td><td>Coerência entre as escolhas — sensor, protocolo, nuvem/plataforma e estratégia de energia fazem sentido juntos</td></tr>
+            <tr><td><strong>Justificativa técnica</strong></td><td>2,0</td><td>Argumentação clara de por que cada escolha foi feita, com trade-offs explicados</td></tr>
+            <tr><td><strong>Clareza e organização</strong></td><td>1,0</td><td>Documento bem estruturado, diagramas legíveis, respostas objetivas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span><strong>Este trabalho não tem gabarito publicado.</strong> As respostas serão avaliadas individualmente pelo professor conforme a rubrica acima. Use os cards de revisão da Aula 1 e o simulado da Aula 2 para se preparar — eles cobrem os mesmos conceitos que aparecem aqui.</span>
+    </div>
+
+    <div class="questao-trabalho">
+      <div class="questao-trabalho-num">Parte 1 — Projeto de sistema (6,0 pontos)</div>
+      <p>Escolha <strong>um</strong> cenário abaixo (ou proponha um similar com aprovação do professor) e projete um sistema IoT completo:</p>
+      <ul class="icon-list" style="margin-top:.5rem;">
+        <li><i class="fas fa-check-circle"></i><span><strong>Cenário A:</strong> monitoramento de silo de grãos em fazenda remota, sem cobertura Wi-Fi, precisa durar 1 ano com bateria.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Cenário B:</strong> sensor de qualidade do ar em ambiente urbano, conectado à nuvem, com dashboard público em tempo real.</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Cenário C:</strong> dispositivo vestível (wearable) de detecção de queda para idosos, com resposta em tempo real e alerta remoto.</span></li>
+      </ul>
+      <p style="margin-top:.75rem;">Para o cenário escolhido, responda:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-angle-right"></i><span><strong>(a)</strong> Qual protocolo de comunicação você usaria (Wi-Fi/MQTT, LoRa, BLE, etc.) e por quê?</span></li>
+        <li><i class="fas fa-angle-right"></i><span><strong>(b)</strong> Onde o processamento de IA (se houver) deveria acontecer — na borda (TinyML) ou na nuvem? Justifique.</span></li>
+        <li><i class="fas fa-angle-right"></i><span><strong>(c)</strong> Qual plataforma de visualização/integração você escolheria (ThingSpeak, Adafruit IO, Node-RED, AWS IoT Core) e por quê?</span></li>
+        <li><i class="fas fa-angle-right"></i><span><strong>(d)</strong> Que estratégia de energia o sistema deve usar (modo de sleep, intervalo de transmissão)? Se aplicável, calcule a vida estimada de bateria.</span></li>
+        <li><i class="fas fa-angle-right"></i><span><strong>(e)</strong> Quais das 4 camadas de segurança são mais críticas nesse cenário específico, e como você as implementaria?</span></li>
+      </ul>
+      <span class="valor">Valor: 6,0</span>
+      <div class="resposta-espaco">Espaço para diagrama de arquitetura + respostas escritas (a) a (e)</div>
+    </div>
+
+    <div class="questao-trabalho">
+      <div class="questao-trabalho-num">Parte 2 — Análise crítica (2,0 pontos)</div>
+      <p>Ainda sobre o cenário escolhido: descreva <strong>um ataque específico</strong> (dos vistos na Semana 17) que o sistema projetado poderia sofrer, e explique detalhadamente a contramedida técnica que você implementaria para mitigá-lo — não basta citar o nome da defesa, é preciso explicar como ela funcionaria no seu sistema específico.</p>
+      <span class="valor">Valor: 2,0</span>
+      <div class="resposta-espaco">Espaço para resposta dissertativa</div>
+    </div>
+
+    <div class="questao-trabalho">
+      <div class="questao-trabalho-num">Parte 3 — Reflexão do semestre (2,0 pontos)</div>
+      <p>Das 17 semanas de conteúdo cursadas (desde microcontroladores até segurança em IoT), qual tópico você considera mais relevante para sua atuação profissional futura, e por quê? Relacione com algo do seu próprio contexto (projeto pessoal, estágio, ou área de interesse).</p>
+      <span class="valor">Valor: 2,0</span>
+      <div class="resposta-espaco">Espaço para resposta dissertativa livre</div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist final</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Antes de entregar</div>
+        <div class="secao-titulo">Confira antes de submeter o trabalho</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-diagram-project"></i>
+        <strong>Arquitetura clara</strong>
+        <p>O sistema projetado tem sensor, protocolo, processamento e nuvem/plataforma bem definidos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-calculator"></i>
+        <strong>Cálculo de energia</strong>
+        <p>Se o cenário envolve bateria, a estimativa de vida útil está presente e com a fórmula mostrada.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shield-halved"></i>
+        <strong>Segurança justificada</strong>
+        <p>O ataque e a contramedida são específicos ao cenário, não apenas definições genéricas.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-file-check"></i>
+        <strong>Formato correto</strong>
+        <p>Documento organizado, com as 3 partes claramente identificadas e enviado no prazo.</p>
+      </div>
+    </div>
+
+    <div class="proxima" style="background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.25);">
+      <div>
+        <div class="proxima-label" style="color:#f87171;">Próxima semana</div>
+        <div class="proxima-titulo">Semana 20 — Segunda Chamada · Prova substitutiva para alunos com frequência válida</div>
+      </div>
+      <i class="fas fa-flag-checkered" style="color:#f87171;"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Autoencoders aprendem a reconstruir o padrão "normal" dos dados. Quando o erro entre o sinal de entrada e a versão reconstruída pelo modelo é alto, isso indica que o dado se desvia do que o modelo aprendeu como normal — sinalizando uma possível anomalia, sem precisar de um limiar fixo definido manualmente.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O Device Shadow mantém um documento JSON com o estado "desired" e "reported" na nuvem, mesmo quando o dispositivo está offline. Isso permite que aplicações consultem ou alterem o estado desejado a qualquer momento — o dispositivo sincroniza e aplica a mudança assim que reconectar.'},
+  quiz3:{correct:'C',msg:'✅ Correto! O Node-RED é a ferramenta mais flexível dentre as estudadas para cenários que exigem múltiplos protocolos (MQTT, HTTP, WebSocket) e lógica customizada, graças aos function nodes com JavaScript livre e à enorme quantidade de nodes de integração disponíveis.'},
+  quiz4:{correct:'B',msg:'✅ Correto! Vida da bateria = capacidade ÷ corrente média, isolando a corrente: corrente máxima = capacidade ÷ tempo desejado. 3000mAh ÷ 8760h (1 ano) ≈ 0.34mA. Esse é o tipo de cálculo que a P3 pode cobrar aplicado a um cenário específico.'},
+  quiz5:{correct:'C',msg:'✅ Correto! As 4 camadas de segurança IoT vistas são: transporte (TLS/mTLS), autenticação (certificados/API keys), autorização (policies/ACLs) e integridade (assinatura, timestamp+nonce). Compressão de dados é uma otimização de banda/armazenamento, não uma camada de segurança.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

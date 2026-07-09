@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 18 — Trabalho valendo ponto extra</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;--teal-900:#0d3330;--teal-800:#134e4a;
+  --teal-700:#0f766e;--teal-500:#14b8a6;--teal-400:#2dd4bf;--teal-300:#5eead4;
+  --white:#fff;--text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);--card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;--code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+
+/* ── Revisão consolidada — cards por semana ── */
+.rev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.rev-card{border-radius:12px;padding:1.1rem;border:1px solid rgba(45,212,191,.18);background:rgba(45,212,191,.03);}
+.rev-card__sem{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;}
+.rev-card__title{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.6rem;}
+.rev-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.rev-card ul li{font-size:.76rem;color:var(--text-secondary);line-height:1.45;padding-left:12px;position:relative;}
+.rev-card ul li::before{content:'▸';position:absolute;left:0;color:var(--teal-400);font-size:.65rem;}
+
+/* ── Peso da prova ── */
+.peso-bar-wrap{background:#011a17;border:1px solid var(--code-border);border-radius:12px;padding:1.5rem;margin:.75rem 0;}
+.peso-bar-wrap__title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;}
+.peso-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.55rem;}
+.peso-label{width:170px;flex-shrink:0;font-size:.78rem;color:var(--text-secondary);}
+.peso-bar{flex:1;height:22px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden;}
+.peso-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal-700),var(--teal-400));display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.peso-fill span{font-size:.68rem;font-weight:700;color:#012a25;font-family:'JetBrains Mono',monospace;}
+
+/* ── Formato da prova ── */
+.formato-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.formato-card{border-radius:12px;padding:1.1rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);text-align:center;}
+.formato-card i{font-size:1.3rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.formato-card strong{display:block;font-family:'Montserrat',sans-serif;font-size:.85rem;color:var(--white);margin-bottom:.3rem;}
+.formato-card p{font-size:.78rem;color:var(--text-secondary);}
+
+/* ── Quiz (simulado) ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-tag{display:inline-block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal-400);background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.2);padding:2px 9px;border-radius:6px;margin-bottom:.6rem;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Dissertativas ── */
+.dissert{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.dissert-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.dissert p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dissert .valor{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Checklist final ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.83rem;margin-bottom:3px;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:950px){.rev-grid{grid-template-columns:1fr 1fr;}.formato-grid{grid-template-columns:1fr;}}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:580px){
+  .rev-grid,.resumo-grid{grid-template-columns:1fr;}
+  .peso-label{width:120px;font-size:.7rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📝 Trabalho P3</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">18</div>
+    <h1 class="capa-titulo">Trabalho P3<br><em>Revisão + Atividade em sala</em></h1>
+    <p class="capa-sub">Conteúdo das Semanas 14 a 17 · TinyML aplicações, integração com nuvem, plataformas IoT, energia e segurança</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Sem. 14 — TinyML aplicações: wake word, anomalias, gestos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud"></i></div><span>Sem. 15 — AWS IoT Core: Shadow, Rules Engine, TLS/mTLS</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Sem. 16 — ThingSpeak, Adafruit IO, Node-RED e dashboards</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-battery-three-quarters"></i></div><span>Sem. 17 — Deep sleep, cálculo de bateria, segurança em IoT</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-check"></i></div><span>Simulado objetivo — 10 questões cobrindo as 4 semanas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pen-fancy"></i></div><span>4 questões dissertativas com gabarito comentado</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Formato do trabalho</div>
+      <p>Atividade em sala, em formato de trabalho, com questões objetivas e dissertativas, valendo 4 pontos extras no total. Os alunos respondem em sala, discutem as respostas e recebem correção guiada. Use esta página para revisar antes da atividade.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-book-open"></i>O que será trabalhado</div>
+      <ul class="info-lista">
+        <li>TFLite Micro: pipeline, tensor arena, quantização (revisão da Sem. 12, base para Sem. 14)</li>
+        <li>Aplicações TinyML: wake word, detecção de anomalia, classificação de gestos</li>
+        <li>AWS IoT Core: Device Shadow, Rules Engine, certificados X.509</li>
+        <li>ThingSpeak, Adafruit IO, Node-RED: quando usar cada um</li>
+        <li>Modos de energia do ESP32 e cálculo de vida de bateria</li>
+        <li>4 camadas de segurança IoT e ataques comuns (MITM, replay, tampering)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos</div>
+      <ul class="info-lista">
+        <li>✅ Sem. 14 a 17 — conteúdo completo</li>
+        <li>▶ Sem. 18 — Trabalho P3</li>
+        <li>🔴 Sem. 19 — Prova Final (P4) + Projeto</li>
+        <li>Sem. 20 — Segunda Chamada</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Como estudar</div>
+      <ul class="info-lista">
+        <li>Refaça os quizzes das Semanas 14 a 17 antes de tentar o simulado desta página</li>
+        <li>Foque em cálculos: corrente média, vida de bateria, quantização int8</li>
+        <li>Pratique explicar os 4 ataques IoT e suas contramedidas em poucas frases — é o tipo de questão dissertativa mais comum</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── REVISÃO CONSOLIDADA ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão · Semanas 14 a 17</div>
+        <div class="secao-titulo">O mapa do que será trabalhado</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Os 4 blocos de conteúdo</div>
+      <p>A P3 cobre quatro semanas com temas bem distintos entre si — da aplicação prática de TinyML até segurança de rede. Cada bloco abaixo resume o essencial de cada semana.</p>
+
+      <div class="rev-grid">
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 14</div>
+          <div class="rev-card__title">TinyML — aplicações</div>
+          <ul>
+            <li>Wake word detection (ex: "Hey ESP32")</li>
+            <li>Detecção de anomalias em série temporal de sensor</li>
+            <li>Classificação de gestos com acelerômetro</li>
+            <li>Mesma pipeline da Sem. 12, dados diferentes</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 15</div>
+          <div class="rev-card__title">Integração com nuvem</div>
+          <ul>
+            <li>AWS IoT Core: registro de dispositivo, certificados X.509</li>
+            <li>Device Shadow — estado desejado vs reportado</li>
+            <li>Rules Engine — roteamento de mensagens por SQL-like</li>
+            <li>TLS/mTLS — autenticação mútua na porta 8883</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 16</div>
+          <div class="rev-card__title">Plataformas IoT</div>
+          <ul>
+            <li>ThingSpeak — HTTP, fields, free tier 15s mínimo</li>
+            <li>Adafruit IO — MQTT nativo, feeds, triggers</li>
+            <li>Node-RED — flows visuais, nodes, wires</li>
+            <li>Dashboard: gauge, chart, button, text</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <div class="rev-card__sem">Semana 17</div>
+          <div class="rev-card__title">Energia e segurança</div>
+          <ul>
+            <li>4 modos: Active, Modem Sleep, Light Sleep, Deep Sleep</li>
+            <li>Vida da bateria = capacidade ÷ corrente média</li>
+            <li>4 camadas: transporte, autenticação, autorização, integridade</li>
+            <li>Ataques: MITM, replay, firmware tampering, credential stuffing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-weight-hanging"></i>Valor extra sugerido por bloco</div>
+      <p>Distribuição sugerida das questões — os blocos de <strong>Segurança</strong> e <strong>Energia (cálculo de bateria)</strong> tendem a concentrar mais questões por envolverem cálculo e serem os temas mais cobrados na atividade.</p>
+
+      <div class="peso-bar-wrap">
+        <div class="peso-bar-wrap__title">Distribuição de questões por tema</div>
+        <div class="peso-row">
+          <span class="peso-label">TinyML aplicações</span>
+          <div class="peso-bar"><div class="peso-fill" style="width:20%;"><span>20%</span></div></div>
+        </div>
+        <div class="peso-row">
+          <span class="peso-label">Integração com nuvem</span>
+          <div class="peso-bar"><div class="peso-fill" style="width:20%;"><span>20%</span></div></div>
+        </div>
+        <div class="peso-row">
+          <span class="peso-label">Plataformas IoT</span>
+          <div class="peso-bar"><div class="peso-fill" style="width:20%;"><span>20%</span></div></div>
+        </div>
+        <div class="peso-row">
+          <span class="peso-label">Energia (cálculo)</span>
+          <div class="peso-bar"><div class="peso-fill" style="width:20%;"><span>20%</span></div></div>
+        </div>
+        <div class="peso-row">
+          <span class="peso-label">Segurança IoT</span>
+          <div class="peso-bar"><div class="peso-fill" style="width:20%;"><span>20%</span></div></div>
+        </div>
+      </div>
+
+      <div class="formato-grid">
+        <div class="formato-card">
+          <i class="fas fa-list-check"></i>
+          <strong>10 questões objetivas</strong>
+          <p>Múltipla escolha, valor 0,2 cada — total 2,0 pontos extras</p>
+        </div>
+        <div class="formato-card">
+          <i class="fas fa-pen-fancy"></i>
+          <strong>4 questões dissertativas</strong>
+          <p>Explicar conceitos e justificar cálculos — total 2,0 pontos extras</p>
+        </div>
+        <div class="formato-card">
+          <i class="fas fa-clock"></i>
+          <strong>Duração sugerida</strong>
+          <p>70 a 90 minutos, em sala, com correção coletiva</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado</span></div>
+
+  <!-- ── SIMULADO OBJETIVO ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade em sala · 10 questões objetivas</div>
+        <div class="secao-titulo">Teste seus conhecimentos antes da discussão coletiva</div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 14 · TinyML aplicações</span>
+      <div class="quiz-pergunta">1. Um sistema de detecção de wake word precisa rodar continuamente no ESP32, mas a bateria não pode acabar em poucas horas. Qual estratégia de arquitetura resolve esse conflito?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Rodar o modelo de wake word na nuvem e enviar áudio continuamente via Wi-Fi</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Rodar um modelo TinyML muito pequeno e de baixo consumo continuamente no ESP32 (edge), acionando o restante do sistema (Wi-Fi, modelo maior) só quando a wake word é detectada</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Usar deep sleep o tempo todo e verificar o áudio apenas 1 vez por hora</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Usar apenas hardware analógico, sem nenhum modelo de ML</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 15 · AWS IoT Core</span>
+      <div class="quiz-pergunta">2. O Device Shadow de um dispositivo AWS IoT Core mostra "desired: {led: ON}" mas "reported: {led: OFF}". O que isso significa?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Erro de sincronia — o Shadow está corrompido e deve ser deletado</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Alguém (app ou console) solicitou que o LED fosse ligado, mas o dispositivo ainda não confirmou/aplicou a mudança e reportou seu estado real como desligado</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O dispositivo está offline e por isso os dois campos divergem</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">O campo "desired" é apenas histórico e não tem efeito no dispositivo</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 16 · Plataformas IoT</span>
+      <div class="quiz-pergunta">3. Um projeto acadêmico precisa enviar dados de sensor a cada 20 segundos, gerar gráficos automáticos e permitir análise posterior com MATLAB. Qual plataforma é mais indicada?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">ThingSpeak — integração nativa com MATLAB e gráficos automáticos por field</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Adafruit IO — foco em automações e triggers, sem integração MATLAB</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Node-RED — exigiria configurar toda a análise estatística manualmente</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Nenhuma das opções acima suporta MATLAB</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 17 · Energia</span>
+      <div class="quiz-pergunta">4. Um ESP32 fica 3 segundos acordado (média de 120mA) e 57 segundos em deep sleep (0.01mA) por ciclo de 1 minuto. Qual é a corrente média aproximada do sistema?</div>
+      <div class="quiz-ops" id="quiz4-ops">
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">60 mA — média simples entre os dois estados</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">~6 mA — carga total (3s×120mA + 57s×0.01mA ≈ 360.6mAs) ÷ 60s ≈ 6mA</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">120 mA — o consumo do deep sleep é desprezível, então conta só o ativo</span></div>
+        <div class="quiz-op" onclick="responder('quiz4',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">0.01 mA — o tempo em deep sleep domina o ciclo, então a corrente média tende a esse valor</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz4-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 17 · Segurança</span>
+      <div class="quiz-pergunta">5. Um dispositivo IoT publica sempre a mesma credencial padrão de fábrica e nunca recebe atualização de firmware. Esse cenário descreve o vetor de ataque por trás de qual botnet histórica famosa?</div>
+      <div class="quiz-ops" id="quiz5-ops">
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Stuxnet</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Mirai — infectou milhões de câmeras e roteadores usando credenciais padrão em 2016</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">WannaCry</span></div>
+        <div class="quiz-op" onclick="responder('quiz5',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Heartbleed</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz5-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 14 · TinyML</span>
+      <div class="quiz-pergunta">6. Para detecção de anomalias em série temporal de um sensor de vibração, qual abordagem de modelo é mais comum em TinyML, dado o limite de memória do microcontrolador?</div>
+      <div class="quiz-ops" id="quiz6-ops">
+        <div class="quiz-op" onclick="responder('quiz6',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Redes neurais profundas com dezenas de camadas (deep learning completo)</span></div>
+        <div class="quiz-op" onclick="responder('quiz6',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Autoencoders pequenos — o modelo aprende a "reconstruir" o sinal normal; erro de reconstrução alto indica anomalia</span></div>
+        <div class="quiz-op" onclick="responder('quiz6',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Sempre enviar os dados brutos para a nuvem e processar lá</span></div>
+        <div class="quiz-op" onclick="responder('quiz6',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Usar apenas limiares fixos (if/else) sem nenhum modelo de ML</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz6-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 15 · Segurança na nuvem</span>
+      <div class="quiz-pergunta">7. Por que o AWS IoT Core exige certificados X.509 individuais por dispositivo, em vez de uma única credencial compartilhada entre todos?</div>
+      <div class="quiz-ops" id="quiz7-ops">
+        <div class="quiz-op" onclick="responder('quiz7',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Por exigência de licenciamento da AWS, sem relação com segurança</span></div>
+        <div class="quiz-op" onclick="responder('quiz7',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Permite revogar o acesso de um único dispositivo comprometido sem afetar os demais, e rastrear a origem exata de cada mensagem</span></div>
+        <div class="quiz-op" onclick="responder('quiz7',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Certificados compartilhados são tecnicamente impossíveis no protocolo TLS</span></div>
+        <div class="quiz-op" onclick="responder('quiz7',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Reduz o custo de banda de cada dispositivo</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz7-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 16 · Node-RED</span>
+      <div class="quiz-pergunta">8. Em um flow Node-RED, qual a função do node "JSON" posicionado entre "mqtt in" e um "function" node?</div>
+      <div class="quiz-ops" id="quiz8-ops">
+        <div class="quiz-op" onclick="responder('quiz8',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Criptografar o payload antes de repassar</span></div>
+        <div class="quiz-op" onclick="responder('quiz8',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Converter a string JSON recebida via MQTT em um objeto JavaScript, permitindo acessar campos como msg.payload.temp</span></div>
+        <div class="quiz-op" onclick="responder('quiz8',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Validar a assinatura digital da mensagem</span></div>
+        <div class="quiz-op" onclick="responder('quiz8',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Comprimir o payload para reduzir tráfego de rede</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz8-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 17 · Segurança</span>
+      <div class="quiz-pergunta">9. Um comando MQTT de "abrir válvula" é interceptado e retransmitido 10 minutos depois pelo atacante, mesmo com TLS habilitado. Qual mecanismo específico evita essa retransmissão ser aceita?</div>
+      <div class="quiz-ops" id="quiz9-ops">
+        <div class="quiz-op" onclick="responder('quiz9',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Aumentar o tamanho da chave TLS</span></div>
+        <div class="quiz-op" onclick="responder('quiz9',this,true,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">Timestamp + nonce no payload, rejeitando mensagens fora da janela de tempo ou com nonce já utilizado</span></div>
+        <div class="quiz-op" onclick="responder('quiz9',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Trocar de porta MQTT de 8883 para 1883</span></div>
+        <div class="quiz-op" onclick="responder('quiz9',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Usar QoS 0 em vez de QoS 2</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz9-feedback"></div>
+    </div>
+
+    <div class="quiz-box">
+      <span class="quiz-tag">Sem. 15/16 · Integração</span>
+      <div class="quiz-pergunta">10. Uma empresa quer flexibilidade total de lógica de negócio, hospedar a própria infraestrutura de IoT e não pagar por serviço gerenciado. Qual das plataformas estudadas é a mais adequada?</div>
+      <div class="quiz-ops" id="quiz10-ops">
+        <div class="quiz-op" onclick="responder('quiz10',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">AWS IoT Core — serviço gerenciado com cobrança por uso</span></div>
+        <div class="quiz-op" onclick="responder('quiz10',this,false,'B')"><div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div><span class="quiz-texto">ThingSpeak — plataforma fechada com limites de free tier</span></div>
+        <div class="quiz-op" onclick="responder('quiz10',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Node-RED — open-source, self-hosted, lógica livre em JavaScript</span></div>
+        <div class="quiz-op" onclick="responder('quiz10',this,false,'D')"><div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div><span class="quiz-texto">Adafruit IO — voltado para makers com limite de feeds gratuitos</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz10-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Dissertativas</span></div>
+
+  <!-- ── DISSERTATIVAS ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">4 questões dissertativas · valor 0,5 cada</div>
+        <div class="secao-titulo">Pratique explicar — não só reconhecer a resposta certa</div>
+      </div>
+    </div>
+
+    <div class="dissert">
+      <div class="dissert-num">Dissertativa 01</div>
+      <p>Explique, em suas palavras, por que a estratégia de "sempre ligar o Wi-Fi para transmitir e depois voltar ao deep sleep" pode custar mais bateria do que o esperado, mesmo o deep sleep consumindo apenas 10µA. Cite pelo menos duas otimizações vistas na Semana 17 para reduzir esse custo.</p>
+      <span class="valor">Valor: 0,5</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-check-double"></i>Resposta esperada</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>O tempo acordado (boot + conexão Wi-Fi + leitura + publicação) consome uma corrente muito mais alta (dezenas a centenas de mA) que o deep sleep, e mesmo poucos segundos acordado podem dominar a carga total do ciclo — especialmente em ciclos curtos.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Otimização 1:</strong> usar IP estático em vez de DHCP, eliminando ~500ms de negociação de rede por ciclo.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Otimização 2:</strong> transmitir apenas quando houver variação significativa na leitura (ex: delta de temperatura > 0.5°C), evitando ligar o rádio Wi-Fi em ciclos sem novidade.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Também aceitável: aumentar o intervalo entre ciclos, desligar explicitamente o Wi-Fi antes do sleep, ou usar BLE em vez de Wi-Fi quando a distância permitir.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="dissert">
+      <div class="dissert-num">Dissertativa 02</div>
+      <p>Um colega de equipe propõe usar apenas TLS (sem timestamp, sem nonce, sem autenticação por certificado individual) como única camada de segurança para um sistema IoT que controla atuadores industriais. Explique por que essa abordagem é insuficiente, aplicando o conceito de "defesa em profundidade" visto na Semana 17.</p>
+      <span class="valor">Valor: 0,5</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-check-double"></i>Resposta esperada</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>TLS protege apenas a camada de <strong>transporte</strong> (criptografia em trânsito) — não impede replay attacks (retransmissão de uma mensagem cifrada válida capturada anteriormente), nem garante autorização granular por dispositivo.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Defesa em profundidade exige combinar as 4 camadas: transporte (TLS), autenticação (certificado por dispositivo), autorização (ACL/policy limitando o que cada dispositivo pode fazer) e integridade (timestamp+nonce contra replay, firmware assinado).</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Sem essas camadas adicionais, um atacante que capture uma mensagem legítima de "abrir válvula" pode reenviá-la mais tarde e o sistema aceitaria, mesmo com TLS ativo — pois o conteúdo cifrado ainda é válido para o servidor.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="dissert">
+      <div class="dissert-num">Dissertativa 03</div>
+      <p>Compare ThingSpeak, Adafruit IO e Node-RED em termos de (a) protocolo de comunicação predominante, (b) modelo de hospedagem e (c) melhor cenário de uso para cada um. Justifique com base no que foi visto na Semana 16.</p>
+      <span class="valor">Valor: 0,5</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-check-double"></i>Resposta esperada</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>ThingSpeak:</strong> HTTP REST, hospedado pela MathWorks (nuvem gerenciada), melhor para projetos acadêmicos que precisam de análise estatística/MATLAB integrada.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Adafruit IO:</strong> MQTT nativo + HTTP, hospedado pela Adafruit (nuvem gerenciada), melhor para projetos maker com necessidade de triggers/automações simples e dashboard rápido.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Node-RED:</strong> multi-protocolo (MQTT, HTTP, WebSocket, etc.), self-hosted (local, VPS ou cloud própria), melhor quando se precisa de lógica customizada em JavaScript, integração com múltiplos serviços ao mesmo tempo, ou controle total sobre a infraestrutura.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="dissert">
+      <div class="dissert-num">Dissertativa 04</div>
+      <p>Descreva um cenário de aplicação de TinyML (diferente dos exemplos dados em aula) que combine pelo menos duas das técnicas vistas na Semana 12 e 14 (quantização int8, tensor arena, wake word, detecção de anomalia ou classificação de gestos). Explique por que rodar esse modelo na borda (ESP32) é preferível a enviar os dados brutos para a nuvem.</p>
+      <span class="valor">Valor: 0,5</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.5rem;">
+          <div class="card-titulo"><i class="fas fa-check-double"></i>Critério de correção</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Não há uma única resposta certa — o professor deve avaliar se o aluno descreve um cenário plausível (ex: detecção de queda em idosos com acelerômetro, monitoramento de vibração em motor industrial, classificação de som de tosse) usando corretamente os termos técnicos.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>A justificativa para processamento na borda deve mencionar pelo menos um de: <strong>latência</strong> (decisão em milissegundos sem depender de rede), <strong>privacidade</strong> (dado sensível não sai do dispositivo), <strong>consumo de energia/banda</strong> (evita transmitir continuamente), ou <strong>funcionamento offline</strong>.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Pontuação parcial se o aluno descrever corretamente a técnica mas errar a justificativa de edge vs cloud, ou vice-versa.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist final</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Antes de fechar o caderno</div>
+        <div class="secao-titulo">Você está pronto para a P3 se consegue...</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-brain"></i>
+        <strong>TinyML aplicações</strong>
+        <p>Explicar wake word, detecção de anomalia e classificação de gestos com exemplos próprios.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cloud"></i>
+        <strong>Nuvem</strong>
+        <p>Descrever Device Shadow, Rules Engine e por que certificados são individuais por dispositivo.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Plataformas</strong>
+        <p>Escolher entre ThingSpeak, Adafruit IO e Node-RED conforme o cenário do projeto.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Energia e segurança</strong>
+        <p>Calcular corrente média e vida de bateria; explicar as 4 camadas e os ataques comuns.</p>
+      </div>
+    </div>
+
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-info-circle"></i>
+      <span><strong>Gabarito da atividade:</strong> as respostas corretas são reveladas ao clicar em cada alternativa. Refaça a atividade quantas vezes precisar antes do trabalho em sala — a ordem das perguntas não muda, mas o objetivo é internalizar o raciocínio, não decorar a letra da resposta.</span>
+    </div>
+
+    <div class="proxima" style="background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.25);">
+      <div>
+        <div class="proxima-label" style="color:#f87171;">Próxima semana</div>
+        <div class="proxima-titulo">Semana 19 — Prova Final (P4) · Conteúdo cumulativo + Apresentação de Projeto Final</div>
+      </div>
+      <i class="fas fa-flag-checkered" style="color:#f87171;"></i>
+    </div>
+  </section>
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! A arquitetura clássica de wake word em edge devices usa um modelo minúsculo (poucos KB) sempre ativo no MCU para detectar apenas o padrão de ativação, acordando o restante do pipeline (Wi-Fi, modelo maior, nuvem) apenas quando necessário — assim o consumo médio permanece baixo mesmo com monitoramento contínuo.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O Device Shadow separa o estado "desired" (o que deveria acontecer, definido por um app/console) do "reported" (o que o dispositivo de fato confirma que está fazendo). A divergência é normal durante o intervalo entre o comando ser enviado e o dispositivo aplicá-lo e reportar de volta.'},
+  quiz3:{correct:'A',msg:'✅ Correto! O ThingSpeak foi desenvolvido pela MathWorks (mesma empresa do MATLAB) e oferece MATLAB Analysis integrado diretamente na plataforma, além de gráficos automáticos por field — por isso é a escolha mais comum em contextos acadêmicos que envolvem análise estatística.'},
+  quiz4:{correct:'B',msg:'✅ Correto! Corrente média = carga total ÷ tempo total do ciclo. Carga = (3s × 120mA) + (57s × 0.01mA) = 360 + 0.57 = 360.57mAs. Dividido por 60s ≈ 6.01mA. A média simples entre os dois estados (opção A) ignora a ponderação pelo tempo de cada fase, que é o erro mais comum nesse tipo de cálculo.'},
+  quiz5:{correct:'B',msg:'✅ Correto! A botnet Mirai (2016) infectou milhões de dispositivos IoT (câmeras, roteadores, DVRs) escaneando a internet por dispositivos com credenciais padrão de fábrica nunca alteradas, formando uma das maiores botnets já registradas e usada em ataques DDoS massivos.'},
+  quiz6:{correct:'B',msg:'✅ Correto! Autoencoders pequenos são a abordagem clássica de detecção de anomalia em TinyML: o modelo aprende a reconstruir o padrão "normal" do sinal, e quando o erro de reconstrução (diferença entre entrada e saída reconstruída) ultrapassa um limiar, sinaliza anomalia — tudo isso cabe nos poucos KB de RAM disponíveis no MCU.'},
+  quiz7:{correct:'B',msg:'✅ Correto! Certificados individuais por dispositivo permitem revogação granular (desligar apenas o dispositivo comprometido, sem afetar a frota inteira) e rastreabilidade (saber exatamente qual dispositivo enviou qual mensagem) — pilares de qualquer arquitetura de segurança IoT em escala.'},
+  quiz8:{correct:'B',msg:'✅ Correto! O node "mqtt in" entrega o payload como string bruta. O node JSON faz o parse dessa string para um objeto JavaScript, permitindo que os nodes seguintes (como function) acessem campos individuais via notação de ponto, como msg.payload.temp.'},
+  quiz9:{correct:'B',msg:'✅ Correto! TLS protege o conteúdo em trânsito, mas não impede que uma mensagem cifrada válida seja capturada e reenviada depois (replay). A defesa específica contra isso é incluir timestamp e nonce no payload da aplicação, permitindo ao servidor rejeitar mensagens antigas ou com nonce repetido — isso é independente da criptografia de transporte.'},
+  quiz10:{correct:'C',msg:'✅ Correto! Node-RED é open-source e self-hosted — pode rodar localmente, em VPS próprio ou em qualquer cloud, sem custos de licenciamento e com liberdade total para customizar a lógica em JavaScript nos function nodes. AWS IoT Core, ThingSpeak e Adafruit IO são serviços gerenciados por terceiros, com seus próprios modelos de cobrança e limites.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

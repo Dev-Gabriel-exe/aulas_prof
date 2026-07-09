@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 02 — Computação Embarcada e IoT</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal-950:#012a25;
+  --teal-900:#0d3330;
+  --teal-800:#134e4a;
+  --teal-700:#0f766e;
+  --teal-500:#14b8a6;
+  --teal-400:#2dd4bf;
+  --teal-300:#5eead4;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(45,212,191,.06);
+  --code-bg:#011a17;
+  --code-border:rgba(45,212,191,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--teal-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--teal-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--teal-800);bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:var(--teal-500);top:38%;left:42%;opacity:.1;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(45,212,191,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-400);border:1px solid rgba(45,212,191,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(45,212,191,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--teal-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--teal-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(45,212,191,.18);color:var(--teal-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(45,212,191,.05);border-left:3px solid var(--teal-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--teal-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(45,212,191,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(45,212,191,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--teal-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(45,212,191,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.07);border-left:3px solid var(--teal-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--teal-400);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-teal{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);font-size:.86rem;color:rgba(94,234,212,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-teal i{color:var(--teal-400);flex-shrink:0;margin-top:2px;}
+
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(45,212,191,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--teal-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(45,212,191,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(45,212,191,.03);}
+td strong{color:var(--text-primary);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(45,212,191,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--teal-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#2dd4bf;}.pp{color:#fb923c;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--teal-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+
+/* ── MCU Cards ── */
+.mcu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.mcu-card{border-radius:14px;padding:1.25rem;border:1px solid;transition:transform .2s,box-shadow .2s;cursor:default;}
+.mcu-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5);}
+.mcu-card__name{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;margin-bottom:.2rem;}
+.mcu-card__sub{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.9rem;opacity:.7;}
+.mcu-card__spec{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.8rem;}
+.mcu-card__spec:last-of-type{border-bottom:none;}
+.mcu-card__spec-label{color:var(--text-muted);}
+.mcu-card__spec-value{color:var(--text-primary);font-weight:600;text-align:right;}
+.mcu-card__tag{display:inline-block;margin-top:.75rem;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;}
+
+/* ── Pinout visual ── */
+.pinout-wrap{margin:.75rem 0;overflow-x:auto;}
+.pinout-board{
+  background:#1a2e1a;border:2px solid rgba(45,212,191,.25);border-radius:12px;
+  padding:1.25rem;display:inline-flex;flex-direction:column;gap:.35rem;min-width:500px;
+}
+.pin-row{display:flex;align-items:center;gap:.5rem;}
+.pin-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;flex-shrink:0;}
+.pin-name{width:90px;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--teal-300);flex-shrink:0;}
+.pin-desc{font-size:.78rem;color:var(--text-secondary);flex:1;}
+.pin-tag{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;}
+
+/* power pin */ .pin-pwr .pin-num{background:#ef444422;color:#f87171;border:1px solid #ef444440;}
+/* gnd pin */ .pin-gnd .pin-num{background:#1f293722;color:#94a3b8;border:1px solid #33415540;}
+/* digital */ .pin-dig .pin-num{background:#3b82f622;color:#60a5fa;border:1px solid #3b82f640;}
+/* pwm */ .pin-pwm .pin-num{background:#8b5cf622;color:#c4b5fd;border:1px solid #8b5cf640;}
+/* analog */ .pin-ana .pin-num{background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b40;}
+/* serial */ .pin-ser .pin-num{background:#2dd4bf22;color:var(--teal-400);border:1px solid rgba(45,212,191,.35);}
+
+/* ── Steps LAB ── */
+.lab-steps{display:flex;flex-direction:column;gap:0;position:relative;}
+.lab-steps::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--teal-400),rgba(45,212,191,.1));border-radius:1px;}
+.lab-step{display:flex;gap:1rem;padding:.75rem 0;position:relative;}
+.lab-step__num{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:800;position:relative;z-index:2;background:rgba(45,212,191,.12);color:var(--teal-400);border:2px solid rgba(45,212,191,.3);}
+.lab-step__body{flex:1;padding-top:8px;}
+.lab-step__title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:#f8fafc;margin-bottom:.3rem;}
+.lab-step__desc{font-size:.85rem;color:var(--text-secondary);line-height:1.6;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(45,212,191,.1);color:var(--teal-400);border:1px solid rgba(45,212,191,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(45,212,191,.2);border-radius:8px;padding:.5rem 1rem;color:var(--teal-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(45,212,191,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.2);}
+.quiz-op.correto{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);color:var(--teal-300);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.5rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--teal-400);margin-bottom:.5rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;cursor:pointer;}
+.proxima:hover{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--teal-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(45,212,191,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.mcu-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CAPA ══ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔬 LAB + Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Computação Embarcada e IoT · Tecnólogo · 3° Período</div>
+    <div class="semana-num">02</div>
+    <h1 class="capa-titulo">Microcontroladores:<br><em>Arduino, ESP32</em><br>e Raspberry Pi Pico</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do chip ao primeiro LED piscando</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-microchip"></i></div><span>MCU vs microprocessador — a diferença que importa</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-th"></i></div><span>Arduino Uno, ESP32 e Raspberry Pi Pico — comparativo</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Pinout — entendendo cada pino da placa</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-file-alt"></i></div><span>Datasheet — como ler a documentação técnica</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-lightbulb"></i></div><span>LAB: Hello World embarcado — Blink com LED</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade LAB</div>
+      <p>Instalar Arduino IDE, conectar hardware, escrever e fazer upload do primeiro programa: piscar o LED embutido na placa.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que você precisa hoje</div>
+      <ul class="info-lista">
+        <li>Arduino Uno ou Nano (ou acesso ao laboratório)</li>
+        <li>Cabo USB tipo A–B (Arduino Uno) ou mini/micro-USB</li>
+        <li>Arduino IDE instalado — arduino.cc/en/software</li>
+        <li>Driver USB instalado (CP2102 para ESP32, CH340 para clones)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Onde estamos na trilha</div>
+      <ul class="info-lista">
+        <li>✅ Semana 1 — Conceitos, IoT, Edge AI</li>
+        <li>▶ Semana 2 — Microcontroladores e Hello World</li>
+        <li>Semana 3 — Programação: pinos, PWM, serial monitor</li>
+        <li>Semana 4 — Sensores: DHT22, HC-SR04</li>
+        <li>Semana 5 — Atuadores: servo, relé, motor DC</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Por que começar com Arduino?</div>
+      <ul class="info-lista">
+        <li>Abstração de hardware — você programa sem precisar saber eletrônica profunda</li>
+        <li>Comunidade gigante — qualquer dúvida tem resposta no fórum</li>
+        <li>Ecossistema de shields e bibliotecas pronto para usar</li>
+        <li>Depois de dominar Arduino, ESP32 e Pico ficam naturais</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ══ CONTEÚDO ══ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">MCU vs Microprocessador — e os três players do semestre</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Microcontrolador vs Microprocessador — a diferença fundamental</div>
+      <p>Esta é uma confusão clássica. Os dois são chips que executam instruções, mas foram projetados para contextos completamente diferentes.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th></th><th>Microcontrolador (MCU)</th><th>Microprocessador (MPU)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>O que é</strong></td><td>CPU + RAM + Flash + periféricos <strong>no mesmo chip</strong></td><td>Apenas a CPU — depende de chips externos para RAM, armazenamento e I/O</td></tr>
+            <tr><td><strong>Custo</strong></td><td>R$ 5 – R$ 60</td><td>R$ 60 – R$ 500+</td></tr>
+            <tr><td><strong>RAM</strong></td><td>2 KB – 512 KB</td><td>512 MB – 16 GB (com módulo externo)</td></tr>
+            <tr><td><strong>Clock</strong></td><td>16 MHz – 240 MHz</td><td>1 GHz – 2.5 GHz</td></tr>
+            <tr><td><strong>Sistema operacional</strong></td><td>Bare-metal ou RTOS</td><td>Linux, Android, Windows IoT</td></tr>
+            <tr><td><strong>Consumo</strong></td><td>µA – mA (funciona com bateria AA por meses)</td><td>mA – A (precisa de fonte de alimentação estável)</td></tr>
+            <tr><td><strong>Exemplos</strong></td><td><span class="badge">ATmega328</span> <span class="badge">ESP32</span> <span class="badge">RP2040</span></td><td><span class="badge-blue">Raspberry Pi 4</span> <span class="badge-blue">BeagleBone</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Regra prática:</strong> se precisa de Linux, use microprocessador. Se precisa de baixo consumo, custo baixo e controle direto de hardware em tempo real, use microcontrolador. As duas categorias coexistem — muitos projetos IoT usam um MCU para coletar dados e um MPU para processar e publicar.
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> O Raspberry Pi 4 (aquele computadorzinho do tamanho de um cartão de crédito) é um microcontrolador ou um microprocessador? E o ESP32? Justifique antes de avançar.</span>
+    </div>
+
+    <!-- MCU cards comparativo -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th"></i>Os três que você vai usar neste semestre</div>
+      <div class="mcu-grid">
+
+        <!-- Arduino Uno -->
+        <div class="mcu-card" style="background:rgba(0,113,197,.08);border-color:rgba(0,113,197,.25);">
+          <div class="mcu-card__name" style="color:#60a5fa;">Arduino Uno</div>
+          <div class="mcu-card__sub" style="color:#93c5fd;">Ideal para aprender</div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">MCU</span><span class="mcu-card__spec-value">ATmega328P</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Clock</span><span class="mcu-card__spec-value">16 MHz</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">RAM</span><span class="mcu-card__spec-value">2 KB SRAM</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Flash</span><span class="mcu-card__spec-value">32 KB</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Pinos digitais</span><span class="mcu-card__spec-value">14 (6 PWM)</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Pinos analógicos</span><span class="mcu-card__spec-value">6 (10-bit ADC)</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Wi-Fi / BLE</span><span class="mcu-card__spec-value">❌ Não tem</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Tensão</span><span class="mcu-card__spec-value">5V lógica</span></div>
+          <div class="mcu-card__tag" style="background:rgba(0,113,197,.15);color:#60a5fa;border:1px solid rgba(96,165,250,.3);">Semana 2–5 do semestre</div>
+        </div>
+
+        <!-- ESP32 -->
+        <div class="mcu-card" style="background:rgba(45,212,191,.06);border-color:rgba(45,212,191,.25);">
+          <div class="mcu-card__name" style="color:var(--teal-400);">ESP32</div>
+          <div class="mcu-card__sub" style="color:var(--teal-300);">O cavalo de batalha do IoT</div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">MCU</span><span class="mcu-card__spec-value">Xtensa LX6 dual-core</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Clock</span><span class="mcu-card__spec-value">240 MHz</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">RAM</span><span class="mcu-card__spec-value">520 KB SRAM</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Flash</span><span class="mcu-card__spec-value">4 MB (típico)</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Pinos digitais</span><span class="mcu-card__spec-value">34 GPIO</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Wi-Fi</span><span class="mcu-card__spec-value">✅ 802.11 b/g/n</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Bluetooth</span><span class="mcu-card__spec-value">✅ BT 4.2 / BLE</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Tensão</span><span class="mcu-card__spec-value">3.3V lógica</span></div>
+          <div class="mcu-card__tag" style="background:rgba(45,212,191,.12);color:var(--teal-400);border:1px solid rgba(45,212,191,.3);">Semana 8 em diante — IoT real</div>
+        </div>
+
+        <!-- Raspberry Pi Pico -->
+        <div class="mcu-card" style="background:rgba(236,72,153,.06);border-color:rgba(236,72,153,.22);">
+          <div class="mcu-card__name" style="color:#f472b6;">Raspberry Pi Pico</div>
+          <div class="mcu-card__sub" style="color:#f9a8d4;">Moderno e muito capaz</div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">MCU</span><span class="mcu-card__spec-value">RP2040 dual-core ARM</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Clock</span><span class="mcu-card__spec-value">133 MHz</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">RAM</span><span class="mcu-card__spec-value">264 KB SRAM</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Flash</span><span class="mcu-card__spec-value">2 MB</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Pinos digitais</span><span class="mcu-card__spec-value">26 GPIO</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Linguagem</span><span class="mcu-card__spec-value">C/C++ ou MicroPython</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Wi-Fi (Pico W)</span><span class="mcu-card__spec-value">✅ versão W</span></div>
+          <div class="mcu-card__spec"><span class="mcu-card__spec-label">Tensão</span><span class="mcu-card__spec-value">3.3V lógica</span></div>
+          <div class="mcu-card__tag" style="background:rgba(236,72,153,.12);color:#f472b6;border:1px solid rgba(244,114,182,.3);">Referência para TinyML</div>
+        </div>
+      </div>
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Atenção: tensão lógica importa.</strong> O Arduino Uno opera em 5V. O ESP32 e o Pico operam em 3.3V. Conectar um sinal de 5V direto num pino do ESP32 pode queimar o chip permanentemente. Nunca ignore a tensão lógica ao misturar dispositivos.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — você precisa monitorar temperatura de 50 pontos numa lavoura, com bateria, sem cabeamento. Qual MCU faz mais sentido?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">Arduino Uno — simples e barato</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">ESP32 — Wi-Fi + BLE + baixo consumo com deep sleep</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Raspberry Pi 4 — processamento poderoso</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">Qualquer um serve — são todos iguais no fundo</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2 ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Pinout e Datasheet — entendendo o mapa da placa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>O que é pinout?</div>
+      <p>Pinout é o mapa de todos os pinos de uma placa ou chip — cada pino tem um número, um nome e uma função. Saber ler um pinout é fundamental: é a diferença entre conectar corretamente um sensor e queimar o hardware.</p>
+      <p>Cada pino pode ter <strong>múltiplas funções</strong> dependendo da configuração no código. Um mesmo pino pode ser entrada digital, saída PWM ou parte de um barramento I2C — você define no setup().</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>Tipos de pinos — Arduino Uno</div>
+      <div class="pinout-wrap">
+        <div class="pinout-board">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Arduino Uno — pinos essenciais</div>
+
+          <div class="pin-row pin-pwr">
+            <div class="pin-num">VIN</div>
+            <div class="pin-name">VIN</div>
+            <div class="pin-desc">Alimentação 7–12V por fonte externa</div>
+            <span class="pin-tag" style="background:rgba(239,68,68,.12);color:#f87171;">Energia</span>
+          </div>
+          <div class="pin-row pin-pwr">
+            <div class="pin-num">5V</div>
+            <div class="pin-name">5V</div>
+            <div class="pin-desc">Saída regulada 5V — alimenta sensores</div>
+            <span class="pin-tag" style="background:rgba(239,68,68,.12);color:#f87171;">Energia</span>
+          </div>
+          <div class="pin-row pin-pwr">
+            <div class="pin-num">3V3</div>
+            <div class="pin-name">3.3V</div>
+            <div class="pin-desc">Saída 3.3V — máx 50mA</div>
+            <span class="pin-tag" style="background:rgba(239,68,68,.12);color:#f87171;">Energia</span>
+          </div>
+          <div class="pin-row pin-gnd">
+            <div class="pin-num">GND</div>
+            <div class="pin-name">GND</div>
+            <div class="pin-desc">Terra — referência de 0V de todo o circuito</div>
+            <span class="pin-tag" style="background:rgba(148,163,184,.1);color:#94a3b8;">Terra</span>
+          </div>
+
+          <div style="height:6px;"></div>
+
+          <div class="pin-row pin-dig">
+            <div class="pin-num">D2</div>
+            <div class="pin-name">Digital 2</div>
+            <div class="pin-desc">Entrada/saída digital — HIGH (5V) ou LOW (0V)</div>
+            <span class="pin-tag" style="background:rgba(59,130,246,.12);color:#60a5fa;">Digital</span>
+          </div>
+          <div class="pin-row pin-pwm">
+            <div class="pin-num">D3</div>
+            <div class="pin-name">Digital 3~</div>
+            <div class="pin-desc">Digital + PWM — o ~ indica que suporta analogWrite()</div>
+            <span class="pin-tag" style="background:rgba(139,92,246,.12);color:#c4b5fd;">PWM</span>
+          </div>
+          <div class="pin-row pin-pwm">
+            <div class="pin-num">D13</div>
+            <div class="pin-name">Digital 13</div>
+            <div class="pin-desc">LED embutido na placa — usado no Blink</div>
+            <span class="pin-tag" style="background:rgba(139,92,246,.12);color:#c4b5fd;">LED built-in</span>
+          </div>
+
+          <div style="height:6px;"></div>
+
+          <div class="pin-row pin-ana">
+            <div class="pin-num">A0</div>
+            <div class="pin-name">Analog 0</div>
+            <div class="pin-desc">Leitura analógica 0–1023 (10-bit ADC, 0–5V)</div>
+            <span class="pin-tag" style="background:rgba(245,158,11,.12);color:#fbbf24;">Analógico</span>
+          </div>
+          <div class="pin-row pin-ana">
+            <div class="pin-num">A1–A5</div>
+            <div class="pin-name">Analog 1–5</div>
+            <div class="pin-desc">Igual ao A0 — 6 canais analógicos no total</div>
+            <span class="pin-tag" style="background:rgba(245,158,11,.12);color:#fbbf24;">Analógico</span>
+          </div>
+
+          <div style="height:6px;"></div>
+
+          <div class="pin-row pin-ser">
+            <div class="pin-num">D0</div>
+            <div class="pin-name">RX</div>
+            <div class="pin-desc">Recepção serial (UART) — evite usar quando há comunicação USB</div>
+            <span class="pin-tag" style="background:rgba(45,212,191,.1);color:var(--teal-400);">Serial</span>
+          </div>
+          <div class="pin-row pin-ser">
+            <div class="pin-num">D1</div>
+            <div class="pin-name">TX</div>
+            <div class="pin-desc">Transmissão serial (UART)</div>
+            <span class="pin-tag" style="background:rgba(45,212,191,.1);color:var(--teal-400);">Serial</span>
+          </div>
+          <div class="pin-row pin-ser">
+            <div class="pin-num">A4</div>
+            <div class="pin-name">SDA</div>
+            <div class="pin-desc">Dados I2C — para sensores e displays OLED</div>
+            <span class="pin-tag" style="background:rgba(45,212,191,.1);color:var(--teal-400);">I2C</span>
+          </div>
+          <div class="pin-row pin-ser">
+            <div class="pin-num">A5</div>
+            <div class="pin-name">SCL</div>
+            <div class="pin-desc">Clock I2C</div>
+            <span class="pin-tag" style="background:rgba(45,212,191,.1);color:var(--teal-400);">I2C</span>
+          </div>
+        </div>
+      </div>
+      <div class="destaque">
+        <strong>Regra de ouro:</strong> nunca conecte um pino de saída direto no GND ou nos 5V sem um resistor de proteção. Um LED ligado diretamente sem resistor vai queimar em segundos. Um resistor de 220Ω ou 330Ω entre o pino e o LED é o mínimo.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Como ler um datasheet</div>
+      <p>O datasheet é o documento técnico oficial do fabricante de um chip ou componente. É sua fonte de verdade — mais confiável que qualquer tutorial no YouTube. Parece intimidador no começo, mas você não precisa ler tudo: só as seções relevantes.</p>
+
+      <div class="grid-2">
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">O que procurar primeiro</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Absolute Maximum Ratings</strong> — os limites que você NUNCA pode ultrapassar. Tensão máxima, corrente máxima, temperatura.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Pinout diagram</strong> — o mapa dos pinos com todas as funções alternativas.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Electrical Characteristics</strong> — tensão de operação, corrente típica, consumo em sleep mode.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Communication interfaces</strong> — quais protocolos suporta (SPI, I2C, UART) e como configurar.</span></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--teal-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;">Datasheets para conhecer</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-external-link-alt"></i><span>ATmega328P — MCU do Arduino Uno (microchip.com)</span></li>
+            <li><i class="fas fa-external-link-alt"></i><span>ESP32 — Espressif Systems (espressif.com/en/products/socs/esp32)</span></li>
+            <li><i class="fas fa-external-link-alt"></i><span>RP2040 — Raspberry Pi Foundation (datasheets.raspberrypi.com)</span></li>
+            <li><i class="fas fa-external-link-alt"></i><span>DHT22 — sensor que usaremos na Semana 4</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Exemplo prático:</strong> no datasheet do ATmega328P, a seção "Absolute Maximum Ratings" diz que a tensão máxima em qualquer pino é 6V. O datasheet do ESP32 diz 3.6V. Se você conectar um sensor de 5V num pino do ESP32 sem divisor de tensão, ultrapassou o limite e o chip pode ser danificado permanentemente.</span>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 No pinout do Arduino Uno, o pino D13 tem uma função especial. Qual é ela?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')">
+          <div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>
+          <span class="quiz-texto">É o pino de alimentação principal da placa</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')">
+          <div class="quiz-letra" style="background:rgba(45,212,191,.15);color:var(--teal-400);">B</div>
+          <span class="quiz-texto">É o pino de comunicação I2C (SDA)</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')">
+          <div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>
+          <span class="quiz-texto">Está conectado ao LED embutido na placa</span>
+        </div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')">
+          <div class="quiz-letra" style="background:rgba(251,191,36,.15);color:#fbbf24;">D</div>
+          <span class="quiz-texto">É o pino de reset do microcontrolador</span>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · LAB</span></div>
+
+  <!-- ── AULA 3 LAB ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · LAB · ~50 minutos</div>
+        <div class="secao-titulo">Hello World Embarcado — o Blink</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-flask"></i>
+      <span><strong>Aula de laboratório.</strong> Abra o Arduino IDE, pegue a placa e siga o passo a passo. O objetivo é simples: fazer o LED embutido piscar. Parece pouco — mas esse é o momento em que o seu código sai do computador e entra no mundo físico pela primeira vez.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-ol"></i>Passo a passo — do zero ao LED piscando</div>
+      <div class="lab-steps">
+        <div class="lab-step">
+          <div class="lab-step__num">1</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Instalar o Arduino IDE</div>
+            <div class="lab-step__desc">Acesse <strong>arduino.cc/en/software</strong> e baixe a versão 2.x para o seu sistema operacional. Durante a instalação, aceite a instalação dos drivers USB — eles são necessários para a placa ser reconhecida.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">2</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Conectar a placa</div>
+            <div class="lab-step__desc">Conecte o Arduino Uno ao computador via cabo USB. O LED de energia (verde ou vermelho, marcado como "ON") deve acender. No Windows, o driver é instalado automaticamente. No macOS/Linux, normalmente é plug-and-play.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">3</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Selecionar a placa e a porta</div>
+            <div class="lab-step__desc">No Arduino IDE: <strong>Tools → Board → Arduino AVR Boards → Arduino Uno</strong>. Depois: <strong>Tools → Port → COMx</strong> (Windows) ou <strong>/dev/ttyUSB0</strong> ou <strong>/dev/tty.usbmodem</strong> (macOS/Linux). Se não aparecer porta, o driver não foi instalado — resolva antes de continuar.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">4</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Abrir o exemplo Blink</div>
+            <div class="lab-step__desc">No IDE: <strong>File → Examples → 01.Basics → Blink</strong>. O código já vem pronto — leia cada linha antes de fazer upload. Entender o que está escrito é mais importante do que o LED piscar.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">5</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Fazer upload</div>
+            <div class="lab-step__desc">Clique no botão de upload (→) ou pressione <strong>Ctrl+U</strong>. O IDE vai compilar (transformar código em binário) e enviar para a placa via USB. Durante o upload, os LEDs TX e RX da placa piscam rapidamente. Ao terminar, o LED do pino 13 começa a piscar a cada 1 segundo.</div>
+          </div>
+        </div>
+        <div class="lab-step">
+          <div class="lab-step__num">6</div>
+          <div class="lab-step__body">
+            <div class="lab-step__title">Modificar e experimentar</div>
+            <div class="lab-step__desc">Troque os valores de delay() e faça upload novamente. Mude 1000 para 200. Mude para 50. Observe o comportamento. Esse ciclo — escrever, compilar, observar — é o ciclo de desenvolvimento embarcado que você vai repetir centenas de vezes esse semestre.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>O código Blink — linha por linha</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Blink comentado</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">/*
+  Blink — Hello World do mundo embarcado
+  Pisca o LED conectado ao pino 13 (LED embutido na placa)
+  a cada 1 segundo.
+*/</span>
+
+<span class="cm">// LED_BUILTIN é uma constante definida pelo Arduino IDE
+// No Uno ela vale 13 — no ESP32 vale 2 — no Mega vale 13
+// Usar LED_BUILTIN em vez de 13 torna o código portável</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="cm">// pinMode configura o pino como INPUT ou OUTPUT
+  // Antes de usar um pino digital, sempre configure-o</span>
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH);  <span class="cm">// HIGH = 5V = LED aceso</span>
+  <span class="fn">delay</span>(<span class="num">1000</span>);                       <span class="cm">// aguarda 1000 ms = 1 segundo</span>
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);   <span class="cm">// LOW = 0V = LED apagado</span>
+  <span class="fn">delay</span>(<span class="num">1000</span>);                       <span class="cm">// aguarda 1 segundo</span>
+  <span class="cm">// → o loop reinicia aqui — para sempre</span>
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arduino C — Blink com Serial Monitor</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Versão melhorada: imprime no Serial Monitor
+// Abra com Ctrl+Shift+M — velocidade 9600 baud</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);           <span class="cm">// inicia comunicação serial</span>
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Arduino iniciado!"</span>);
+}
+
+<span class="kw">int</span> contador <span class="op">=</span> <span class="num">0</span>;  <span class="cm">// variável global — persiste entre loops</span>
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  contador<span class="op">++</span>;
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Ciclo: "</span>);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(contador);
+
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"LED: ACESO"</span>);
+  <span class="fn">delay</span>(<span class="num">1000</span>);
+
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"LED: APAGADO"</span>);
+  <span class="fn">delay</span>(<span class="num">1000</span>);
+}</code></pre>
+      </div>
+      <div class="destaque">
+        <strong>Serial Monitor é seu melhor amigo.</strong> Em sistemas embarcados não existe console nem print bonito. O Serial Monitor é sua janela para o que está acontecendo dentro do chip. Aprenda a usar desde agora — você vai depender dele o semestre inteiro.
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span><strong>Erro mais comum nessa aula:</strong> "port not found" ou "device not recognized". Causas: driver não instalado, cabo USB com defeito (muitos cabos de carregador não têm os fios de dados), ou porta errada selecionada no IDE. Resolva um por vez antes de tentar de novo.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Exercícios</span></div>
+
+  <!-- ── EXERCÍCIOS ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Exercícios · LAB + Reflexão</div>
+        <div class="secao-titulo">4 desafios — do básico ao criativo</div>
+      </div>
+    </div>
+
+    <div class="aviso-teal">
+      <i class="fas fa-info-circle"></i>
+      <span>Os três primeiros exercícios são feitos no Arduino IDE com a placa conectada. O quarto é de reflexão — sem hardware necessário.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01 — Blink com velocidade variável</div>
+      <p>Faça o LED piscar em três velocidades diferentes em sequência: <strong>rápido</strong> (100ms), <strong>médio</strong> (500ms) e <strong>lento</strong> (2000ms) — 3 piscadas de cada antes de mudar. Use o Serial Monitor para imprimir qual velocidade está ativa no momento.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">piscaNVezes</span>(<span class="kw">int</span> intervalo, <span class="kw">int</span> vezes, <span class="fn">String</span> nome) {
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Velocidade: "</span> + nome);
+  <span class="kw">for</span> (<span class="kw">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> vezes; i<span class="op">++</span>) {
+    <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH); <span class="fn">delay</span>(intervalo);
+    <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);  <span class="fn">delay</span>(intervalo);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="fn">piscaNVezes</span>(<span class="num">100</span>,  <span class="num">3</span>, <span class="str">"RAPIDO"</span>);
+  <span class="fn">piscaNVezes</span>(<span class="num">500</span>,  <span class="num">3</span>, <span class="str">"MEDIO"</span>);
+  <span class="fn">piscaNVezes</span>(<span class="num">2000</span>, <span class="num">3</span>, <span class="str">"LENTO"</span>);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02 — SOS em Morse</div>
+      <p>Implemente o sinal SOS em código Morse com o LED: <strong>· · · — — — · · ·</strong> (ponto = 200ms, traço = 600ms, pausa entre letras = 400ms, pausa entre ciclos = 2000ms). Use o Serial Monitor para indicar quando começa cada letra.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="pp">#define</span> PONTO  <span class="num">200</span>
+<span class="pp">#define</span> TRACO  <span class="num">600</span>
+<span class="pp">#define</span> PAUSA_LETRA  <span class="num">400</span>
+<span class="pp">#define</span> PAUSA_CICLO <span class="num">2000</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">flash</span>(<span class="kw">int</span> duracao) {
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH); <span class="fn">delay</span>(duracao);
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);  <span class="fn">delay</span>(<span class="num">100</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// S = . . .</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"S"</span>);
+  <span class="fn">flash</span>(PONTO); <span class="fn">flash</span>(PONTO); <span class="fn">flash</span>(PONTO);
+  <span class="fn">delay</span>(PAUSA_LETRA);
+
+  <span class="cm">// O = - - -</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"O"</span>);
+  <span class="fn">flash</span>(TRACO); <span class="fn">flash</span>(TRACO); <span class="fn">flash</span>(TRACO);
+  <span class="fn">delay</span>(PAUSA_LETRA);
+
+  <span class="cm">// S = . . .</span>
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"S"</span>);
+  <span class="fn">flash</span>(PONTO); <span class="fn">flash</span>(PONTO); <span class="fn">flash</span>(PONTO);
+
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"--- SOS completo ---"</span>);
+  <span class="fn">delay</span>(PAUSA_CICLO);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03 — Contador no Serial Monitor</div>
+      <p>Sem modificar o comportamento do LED, adicione ao código Blink um contador de ciclos e um <strong>temporizador de uptime</strong>: a cada ciclo, imprima no Serial Monitor o número do ciclo e quantos segundos se passaram desde que a placa foi ligada. Use a função <strong>millis()</strong> — pesquise como ela funciona.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Arduino C</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">int</span> ciclo <span class="op">=</span> <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  ciclo<span class="op">++</span>;
+  <span class="kw">unsigned long</span> uptime <span class="op">=</span> <span class="fn">millis</span>() <span class="op">/</span> <span class="num">1000</span>;  <span class="cm">// ms → segundos</span>
+
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">"Ciclo #"</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(ciclo);
+  <span class="fn">Serial</span>.<span class="fn">print</span>(<span class="str">" | Uptime: "</span>); <span class="fn">Serial</span>.<span class="fn">print</span>(uptime);
+  <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"s"</span>);
+
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, HIGH); <span class="fn">delay</span>(<span class="num">1000</span>);
+  <span class="fn">digitalWrite</span>(LED_BUILTIN, LOW);  <span class="fn">delay</span>(<span class="num">1000</span>);
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04 — Reflexão: por que delay() é problemático?</div>
+      <p>O delay() trava completamente o microcontrolador — durante o delay, nenhum outro código roda. Pesquise sobre a função <strong>millis()</strong> e explique, com suas palavras: como seria possível piscar o LED a cada 1 segundo <strong>e ao mesmo tempo</strong> verificar um botão continuamente, sem usar delay()? Escreva a lógica em pseudocódigo ou código real.</p>
+      <span class="dificuldade dif-desafio">Desafio conceitual</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver resposta</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-lightbulb"></i>Resposta — padrão millis() sem bloqueio</div>
+          <p>O problema do delay() é que ele é <strong>bloqueante</strong>: congela tudo pelo tempo especificado. A solução é usar millis() para verificar se "já passou tempo suficiente" sem travar o loop.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Arduino C — Blink sem delay (non-blocking)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+            <pre><code><span class="kw">unsigned long</span> ultimoToggle <span class="op">=</span> <span class="num">0</span>;
+<span class="kw">bool</span> estadoLED <span class="op">=</span> LOW;
+<span class="pp">#define</span> INTERVALO <span class="num">1000</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial</span>.<span class="fn">begin</span>(<span class="num">9600</span>);
+  <span class="fn">pinMode</span>(LED_BUILTIN, OUTPUT);
+  <span class="fn">pinMode</span>(<span class="num">2</span>, INPUT_PULLUP);  <span class="cm">// botão no pino 2</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// Verifica botão (roda TODA iteração do loop)</span>
+  <span class="kw">if</span> (<span class="fn">digitalRead</span>(<span class="num">2</span>) <span class="op">==</span> LOW) {
+    <span class="fn">Serial</span>.<span class="fn">println</span>(<span class="str">"Botao pressionado!"</span>);
+  }
+
+  <span class="cm">// Verifica se passou 1 segundo</span>
+  <span class="kw">if</span> (<span class="fn">millis</span>() <span class="op">-</span> ultimoToggle <span class="op">&gt;=</span> INTERVALO) {
+    ultimoToggle <span class="op">=</span> <span class="fn">millis</span>();
+    estadoLED <span class="op">=</span> <span class="op">!</span>estadoLED;
+    <span class="fn">digitalWrite</span>(LED_BUILTIN, estadoLED);
+  }
+  <span class="cm">// O loop continua rodando IMEDIATAMENTE
+  // sem travar — roda centenas de vezes por segundo</span>
+}</code></pre>
+          </div>
+          <p>Este padrão — verificar se "millis() - ultimaVez >= intervalo" — é o padrão fundamental para multitarefa em Arduino. Você vai usá-lo em todos os projetos do semestre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 2</div>
+        <div class="secao-titulo">O que você precisa ter saído daqui sabendo</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-microchip"></i>
+        <strong>MCU vs MPU</strong>
+        <p>MCU = tudo num chip, baixo consumo, função dedicada. MPU = CPU externa, precisa de SO, mais poderoso.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Pinout</strong>
+        <p>Todo pino tem nome, número e função. Sempre verifique a tensão lógica antes de conectar. D13 = LED embutido no Uno.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-lightbulb"></i>
+        <strong>Blink + Serial</strong>
+        <p>setup() roda uma vez. loop() roda para sempre. delay() é bloqueante. Serial.println() é seu console de debug.</p>
+      </div>
+    </div>
+
+    <div class="aviso-teal" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Seu LED está piscando? Você abriu o Serial Monitor e viu mensagens? Você entende por que delay() não é ideal em projetos reais? Se sim — está pronto para a Semana 3, onde entram os pinos analógicos, PWM e o sensor de temperatura.</span>
+    </div>
+
+    <div class="proxima">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 3 — Programação: pinos digitais e analógicos, PWM, leitura de botão, Serial Monitor avançado</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O ESP32 tem Wi-Fi integrado para transmissão dos dados, suporte a deep sleep (consumo de apenas ~10µA dormindo) e BLE para comunicação local. O Arduino Uno não tem conectividade. O Raspberry Pi 4 não foi projetado para operar com bateria por tempo prolongado.'},
+  quiz2:{correct:'C',msg:'✅ Correto! O pino D13 do Arduino Uno está conectado diretamente ao LED embutido na placa — por isso o Blink usa LED_BUILTIN, que equivale a 13 no Uno. Isso permite testar o hardware sem conectar nada externo.'}
+};
+function responder(id,el,ok,letra){
+  const ops=document.getElementById(id+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[id].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(id+'-feedback');
+  fb.textContent=quizData[id].msg;
+  fb.style.background=ok?'rgba(45,212,191,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=ok?'1px solid rgba(45,212,191,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=ok?'var(--teal-300)':'#fca5a5';
+  fb.style.padding='.75rem 1rem';fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>
