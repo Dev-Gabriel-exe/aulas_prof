@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 14 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.comp-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.comp-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.6rem;}
+.comp-a .comp-titulo{color:#60a5fa;}
+.comp-b .comp-titulo{color:#4ade80;}
+.comp-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.comp-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+.log-box{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.25rem;}
+.log-entry{display:flex;align-items:center;gap:.85rem;padding:.55rem .75rem;border-radius:9px;margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.log-entry:last-child{margin-bottom:0;}
+.log-v0{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#93c5fd;}
+.log-v1{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:#86efac;}
+.log-v2{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:#fde68a;}
+.log-v3{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.log-tag{font-weight:800;flex-shrink:0;}
+
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0;}
+.test-card{padding:.85rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:var(--card-bg);}
+.test-name{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent-300);margin-bottom:.3rem;font-weight:600;}
+.test-desc{font-size:.78rem;color:var(--text-secondary);}
+
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.comp-grid,.test-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo · Pós-P2</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">14</div>
+    <h1 class="capa-titulo">Delta<br><em>Lake</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · ACID, time travel e a arquitetura Lakehouse moderna</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que Data Lakes tradicionais falham — o problema que o Delta Lake resolve</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-halved"></i></div><span>ACID no Data Lake e o Transaction Log (_delta_log)</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code-merge"></i></div><span>MERGE INTO — upserts atômicos e Time Travel</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-lock"></i></div><span>Schema Enforcement vs Schema Evolution</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-compress"></i></div><span>OPTIMIZE, Z-Ordering e VACUUM</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Delta Lake vs Apache Iceberg e a arquitetura Lakehouse</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: criar tabela Delta Lake e usar time travel</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Criar uma tabela Delta Lake, aplicar MERGE INTO, navegar pelo histórico de versões com time travel e otimizar com OPTIMIZE + ZORDER.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da P2 (Semana 13)</div>
+      <ul class="info-lista">
+        <li>Ingestão (Full Load, Incremental, CDC), Spark/PySpark e Spark SQL otimizado</li>
+        <li>ETL vs ELT, dbt com camadas staging → marts e testes de qualidade</li>
+        <li>Apache Airflow orquestrando tudo isso em DAGs com sensores e retries</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conectando tudo</div>
+      <ul class="info-lista">
+        <li>Delta Lake roda sobre o mesmo Spark das Semanas 8-10</li>
+        <li>dbt pode materializar modelos diretamente como tabelas Delta</li>
+        <li>Airflow orquestra os jobs de OPTIMIZE e VACUUM periodicamente</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>PySpark + <code>delta-spark</code> (<code>pip install delta-spark</code>)</li>
+        <li>Ambiente local — não precisa de cluster nem de cloud</li>
+        <li>Dataset simples de pedidos para os exercícios</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que um Data Lake "puro" não é suficiente</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Pós-P2</div>
+      <p>Você já sabe ingerir dados (Semana 7), processá-los com Spark (Semanas 8-10) e transformá-los com dbt orquestrado por Airflow (Semanas 11-12). Falta uma peça: <strong>onde e como esses dados ficam armazenados de forma confiável</strong>. É disso que trata o Delta Lake.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-triangle-exclamation"></i>O problema do Data Lake tradicional</div>
+      <p>Um Data Lake tradicional é, na prática, uma pasta cheia de arquivos Parquet em um object storage (S3, HDFS, ADLS). Isso funciona bem para leitura, mas quebra em cenários comuns de engenharia de dados:</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ Sem Delta Lake</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem atomicidade — job falha no meio da escrita e a pasta fica com dados parciais</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem isolamento — leitor pode ver arquivos novos e antigos misturados</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Parquet é imutável — corrigir uma linha exige reescrever o arquivo inteiro</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem histórico — dado sobrescrito desaparece, impossível auditar</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ Com Delta Lake</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Escritas atômicas — tudo ou nada, nunca dados parciais</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Isolamento — leitores sempre veem a última versão consistente</span></li>
+            <li><i class="fas fa-check-circle"></i><span>UPDATE/DELETE/MERGE eficientes, sem reescrever a tabela inteira</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Histórico completo — time travel para qualquer versão anterior</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Origem:</strong> o Delta Lake foi criado pela Databricks em 2019 como formato aberto exatamente para resolver esses problemas sem abandonar o ecossistema de object storage barato que já conhecemos.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>A arquitetura Lakehouse</div>
+      <p>O termo <strong>Lakehouse</strong> descreve a combinação do custo baixo e flexibilidade de um Data Lake (armazenamento em object storage, formatos abertos) com as garantias transacionais e de performance que antes só existiam em Data Warehouses.</p>
+      <p>Delta Lake não substitui o Parquet — ele é uma <strong>camada de metadados sobre arquivos Parquet</strong> que adiciona um log de transações. É por isso que se diz que o Delta Lake "traz ACID ao Data Lake".</p>
+      <div class="destaque-green"><strong>Conexão com o que você já sabe:</strong> as zonas raw/silver/gold do Data Lake (Semana 3) continuam existindo — o Delta Lake apenas torna cada uma dessas zonas transacional e versionada, em vez de ser só uma pasta de arquivos Parquet soltos.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — o que o Delta Lake adiciona sobre arquivos Parquet comuns?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Um formato de compressão mais eficiente que o Parquet</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Uma camada de transaction log que traz garantias ACID sobre os mesmos arquivos Parquet</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Um banco de dados relacional embutido no Data Lake</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Substitui o Spark como motor de processamento</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · ACID e Transaction Log</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">ACID, o _delta_log e o MERGE INTO</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shield-halved"></i>As 4 garantias ACID aplicadas ao Data Lake</div>
+      <ul>
+        <li><strong>Atomicity:</strong> uma escrita só é considerada concluída se TODOS os arquivos Parquet envolvidos foram gravados com sucesso. Se algo falhar no meio, nada é commitado.</li>
+        <li><strong>Consistency:</strong> o schema da tabela é validado a cada escrita — não é possível deixar a tabela em um estado inválido.</li>
+        <li><strong>Isolation:</strong> leitores sempre veem uma versão consistente da tabela, nunca um estado intermediário de uma escrita em andamento.</li>
+        <li><strong>Durability:</strong> uma vez commitado, o estado fica registrado permanentemente no transaction log, no próprio object storage.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-folder-tree"></i>Como o _delta_log funciona na prática</div>
+      <p>Toda tabela Delta tem uma subpasta <code>_delta_log/</code> ao lado dos arquivos de dados. Cada escrita gera um novo arquivo JSON numerado sequencialmente, descrevendo quais arquivos foram adicionados e quais foram removidos naquela transação:</p>
+      <div class="log-box">
+        <div class="log-entry log-v0"><span class="log-tag">v0</span><span>00000000000000000000.json — criação da tabela (INSERT inicial)</span></div>
+        <div class="log-entry log-v1"><span class="log-tag">v1</span><span>00000000000000000001.json — primeiro INSERT (append de novos pedidos)</span></div>
+        <div class="log-entry log-v2"><span class="log-tag">v2</span><span>00000000000000000002.json — um UPDATE via MERGE INTO</span></div>
+        <div class="log-entry log-v3"><span class="log-tag">v3</span><span>00000000000000000003.json — um DELETE de registros de teste</span></div>
+      </div>
+      <p>Os arquivos Parquet antigos não são apagados imediatamente — eles ficam disponíveis para leitura de versões anteriores, o que possibilita o time travel (Aula 3).</p>
+      <div class="destaque"><strong>Como a leitura funciona:</strong> quando um engine lê uma tabela Delta, ele primeiro lê o transaction log para saber quais arquivos Parquet compõem a versão atual — e só então lê os dados. É essa indireção que garante isolamento e consistência.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Criando uma tabela e usando MERGE INTO</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — PySpark + Delta Lake</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> delta.tables <span class="kw">import</span> DeltaTable
+
+spark = (SparkSession.builder
+    .appName(<span class="str">"delta-lake-demo"</span>)
+    .config(<span class="str">"spark.sql.extensions"</span>, <span class="str">"io.delta.sql.DeltaSparkSessionExtension"</span>)
+    .config(<span class="str">"spark.sql.catalog.spark_catalog"</span>, <span class="str">"org.apache.spark.sql.delta.catalog.DeltaCatalog"</span>)
+    .getOrCreate())
+
+df = spark.read.parquet(<span class="str">"s3://meu-bucket/raw/pedidos/"</span>)
+
+<span class="cm"># Escreve como tabela Delta</span>
+df.write.format(<span class="str">"delta"</span>).mode(<span class="str">"overwrite"</span>).save(<span class="str">"s3://meu-bucket/delta/pedidos/"</span>)
+
+<span class="cm"># MERGE INTO — upsert atômico (insere novos, atualiza existentes)</span>
+delta_tabela = DeltaTable.forPath(spark, <span class="str">"s3://meu-bucket/delta/pedidos/"</span>)
+
+(delta_tabela.alias(<span class="str">"destino"</span>)
+    .merge(df_novos_pedidos.alias(<span class="str">"origem"</span>), <span class="str">"destino.id = origem.id"</span>)
+    .whenMatchedUpdateAll()
+    .whenNotMatchedInsertAll()
+    .execute())</code></pre>
+      </div>
+      <div class="destaque-green"><strong>MERGE INTO</strong> é a operação mais importante do Delta Lake para engenharia de dados: resolve, em uma única transação atômica, o clássico problema de "como faço upsert em um Data Lake" — algo impossível de fazer com segurança em Parquet puro.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um engenheiro precisa corrigir 200 registros incorretos em uma tabela de 2 bilhões de linhas sem reescrever a tabela inteira manualmente. Qual comando resolve isso?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">OPTIMIZE</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">MERGE INTO (upsert atômico)</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">VACUUM</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">versionAsOf</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Time Travel, Schema e Otimização</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Time Travel, Schema Evolution e Performance</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock-rotate-left"></i>Time Travel — consultando o passado dos dados</div>
+      <p>Como o transaction log preserva o histórico de versões, é possível consultar a tabela exatamente como ela estava em qualquer ponto do tempo — por número de versão ou por timestamp:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python / SQL — Time Travel</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Por número de versão</span>
+df_v5 = spark.read.format(<span class="str">"delta"</span>).option(<span class="str">"versionAsOf"</span>, <span class="num">5</span>).load(<span class="str">"s3://.../delta/pedidos/"</span>)
+
+<span class="cm"># Por timestamp</span>
+df_ontem = (spark.read.format(<span class="str">"delta"</span>)
+    .option(<span class="str">"timestampAsOf"</span>, <span class="str">"2026-07-01"</span>)
+    .load(<span class="str">"s3://.../delta/pedidos/"</span>))
+
+<span class="cm"># Via SQL</span>
+spark.sql(<span class="str">"SELECT * FROM pedidos VERSION AS OF 5"</span>)
+spark.sql(<span class="str">"SELECT * FROM pedidos TIMESTAMP AS OF '2026-07-01'"</span>)
+
+<span class="cm"># Ver o histórico completo de transações</span>
+delta_tabela.history().show()</code></pre>
+      </div>
+      <div class="grid-2">
+        <div class="destaque-green"><strong>Casos de uso:</strong> auditoria regulatória, reproduzir um relatório antigo, debugar "por que esse número mudou", e desfazer um DELETE ou UPDATE acidental com um RESTORE.</div>
+        <div class="aviso"><i class="fas fa-triangle-exclamation"></i><span><strong>Limitação:</strong> depende dos arquivos Parquet antigos ainda existirem. Rodar VACUUM com retenção curta apaga fisicamente esses arquivos e destrói o histórico.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-lock"></i>Schema Enforcement vs Schema Evolution</div>
+      <div class="comp-grid">
+        <div class="comp-card comp-a">
+          <div class="comp-titulo">🔵 Schema Enforcement (padrão)</div>
+          <div class="comp-item">O Delta Lake REJEITA qualquer escrita cujo schema não bata com o atual</div>
+          <div class="comp-item">Coluna faltando, tipo incompatível ou coluna extra geram erro</div>
+          <div class="comp-item">Protege contra corrupção silenciosa de schema</div>
+        </div>
+        <div class="comp-card comp-b">
+          <div class="comp-titulo">🟢 Schema Evolution (opt-in)</div>
+          <div class="comp-item">Habilitada explicitamente com <code>mergeSchema=true</code></div>
+          <div class="comp-item">Usada quando a mudança é intencional (nova coluna na origem)</div>
+          <div class="comp-item">NÃO é o padrão — proteção, não bug</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — habilitando schema evolution</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>df_novo.write.format(<span class="str">"delta"</span>) \
+    .mode(<span class="str">"append"</span>) \
+    .option(<span class="str">"mergeSchema"</span>, <span class="str">"true"</span>) \
+    .save(<span class="str">"s3://.../delta/pedidos/"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compress"></i>OPTIMIZE, Z-Ordering e VACUUM</div>
+      <p>Jobs incrementais frequentes (streaming, micro-batches) geram muitos arquivos Parquet pequenos — o "small files problem", que degrada a leitura. <code>OPTIMIZE</code> compacta esses arquivos:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — OPTIMIZE, ZORDER e VACUUM</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">OPTIMIZE</span> pedidos;
+
+<span class="cm">-- Compacta e já ordena fisicamente pelas colunas mais filtradas</span>
+<span class="kw">OPTIMIZE</span> pedidos <span class="kw">ZORDER BY</span> (cliente_id, data_pedido);
+
+<span class="cm">-- Remove arquivos Parquet não referenciados por nenhuma versão
+-- nos últimos N dias (default: 7 dias / 168 horas)</span>
+<span class="kw">VACUUM</span> pedidos <span class="kw">RETAIN</span> <span class="num">168</span> HOURS;</code></pre>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Técnica</th><th>Quando usar</th><th>Limitação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Particionamento</strong></td><td>Coluna de baixa cardinalidade, sempre no filtro (ex: data)</td><td>Muitas partições pequenas geram overhead; só otimiza 1 coluna bem</td></tr>
+            <tr><td><strong>Z-Order</strong></td><td>Múltiplas colunas de filtro, alta cardinalidade (ex: cliente_id)</td><td>Precisa rodar OPTIMIZE periodicamente — não é automático</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso"><i class="fas fa-triangle-exclamation"></i><span>VACUUM com retenção curta é perigoso: se houver uma query de time travel ou um job longo lendo uma versão antiga, ele pode quebrar por os arquivos terem sido apagados fisicamente.</span></div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — uma tabela é filtrada com frequência por duas colunas de alta cardinalidade ao mesmo tempo: cliente_id e data_pedido. Qual técnica é mais adequada?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Particionar a tabela por cliente_id</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">OPTIMIZE ... ZORDER BY (cliente_id, data_pedido)</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">VACUUM RETAIN 0 HOURS</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">mergeSchema=true</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Lakehouse e Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Delta Lake vs Iceberg e construção prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Delta Lake vs Apache Iceberg</div>
+      <p>Ambos resolvem o mesmo problema (ACID em Data Lake) com abordagens de metadados diferentes. O essencial é reconhecer que são <strong>concorrentes na mesma categoria</strong> — não confundir com Parquet/Avro, que são formatos de arquivo, um nível abaixo.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Delta Lake</th><th>Apache Iceberg</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Origem</strong></td><td>Databricks</td><td>Netflix, depois Apache</td></tr>
+            <tr><td><strong>Engine principal</strong></td><td>Fortemente acoplado ao Spark</td><td>Agnóstico — Spark, Flink, Trino, Snowflake</td></tr>
+            <tr><td><strong>Formato de log</strong></td><td>JSON + checkpoints Parquet</td><td>Manifestos Avro + metadata JSON</td></tr>
+            <tr><td><strong>Adoção</strong></td><td>Forte no ecossistema Databricks</td><td>Forte em ambientes multi-engine</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Apache Hudi é o terceiro nome relevante nesse espaço, com foco historicamente maior em upserts de baixa latência (streaming).</p>
+      <div class="destaque"><strong>Lakehouse na prática:</strong> essas três tecnologias (Delta, Iceberg, Hudi) são as implementações que tornam viável a promessa do Lakehouse — custo de Data Lake com confiabilidade de Data Warehouse.</div>
+    </div>
+
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Hands-on individual</div>
+        <div class="secao-titulo">Criar uma tabela Delta Lake e explorar o histórico</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale o ambiente com <code>pip install pyspark delta-spark</code>. O professor vai disponibilizar um dataset simples de pedidos (CSV) para os exercícios.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Criar a tabela Delta (15 min)</div>
+      <p>Configure a SparkSession com as extensões do Delta. Carregue o dataset de pedidos e escreva-o como tabela Delta com <code>.write.format("delta").save(...)</code>. Confirme que a subpasta <code>_delta_log/</code> foi criada e inspecione o conteúdo do primeiro arquivo JSON de versão.</p>
+      <span class="dif-basico">Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — MERGE INTO e histórico (20 min)</div>
+      <p>Faça um APPEND de novos pedidos, depois use <code>MERGE INTO</code> para atualizar 5 registros existentes e inserir 5 novos ao mesmo tempo. Em seguida, rode <code>delta_tabela.history().show()</code> e identifique quantas versões foram geradas e o que cada uma representa.</p>
+      <span class="dif-medio">MERGE + Histórico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: time travel e otimização (15 min)</div>
+      <p>Consulte a versão 0 da tabela (estado original, antes de qualquer MERGE) usando <code>versionAsOf</code> e compare o número de linhas com a versão atual. Depois, rode <code>OPTIMIZE ... ZORDER BY</code> em uma coluna de filtro frequente e compare o número de arquivos Parquet antes e depois da operação.</p>
+      <span class="dif-desafio">Time Travel + OPTIMIZE</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver comportamento esperado</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Comportamento esperado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Time travel:</strong> a versão 0 deve ter menos linhas que a versão atual (antes do MERGE do Exercício 2), confirmando que o dado antigo continua acessível mesmo após alterações posteriores.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>OPTIMIZE:</strong> o número de arquivos Parquet deve diminuir sensivelmente após a compactação — vários arquivos pequenos viram poucos arquivos maiores, sem alterar o conteúdo lógico da tabela.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>ZORDER:</strong> não reduz necessariamente o número de arquivos, mas reorganiza os dados internamente para acelerar filtros pelas colunas escolhidas.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 14</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 14</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-shield-halved"></i>
+        <strong>ACID + _delta_log</strong>
+        <p>Camada de transaction log sobre arquivos Parquet. Garante atomicidade, isolamento e histórico de versões.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-code-merge"></i>
+        <strong>MERGE INTO</strong>
+        <p>Upsert atômico — insere e atualiza em uma única transação, sem reescrever a tabela inteira.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-clock-rotate-left"></i>
+        <strong>Time Travel</strong>
+        <p>versionAsOf / timestampAsOf consultam estados anteriores da tabela. Depende dos arquivos antigos não terem sido removidos por VACUUM.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-compress"></i>
+        <strong>OPTIMIZE / Z-Order</strong>
+        <p>Compacta arquivos pequenos e reorganiza dados para acelerar filtros em múltiplas colunas de alta cardinalidade.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar por que Parquet puro não garante ACID? Consegue usar MERGE INTO para um upsert? Sabe consultar uma versão anterior com time travel? Entende a diferença entre schema enforcement e evolution, e quando usar Z-Order? Se sim para os quatro — você está pronto para a Semana 15.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-15-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 15 — Structured Streaming: janelas de tempo e watermarks</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver comportamento esperado';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Delta Lake não é um novo formato de arquivo nem substitui o Spark — é uma camada de metadados (_delta_log) sobre arquivos Parquet que registra transações de forma atômica e consistente, trazendo garantias ACID sem abandonar o ecossistema de object storage.'},
+  quiz2:{correct:'B',msg:'✅ Correto! MERGE INTO permite atualizar apenas os registros que batem com a condição, de forma atômica, sem reescrever a tabela inteira — é a operação de upsert do Delta Lake, essencial para correções pontuais em tabelas grandes.'},
+  quiz3:{correct:'B',msg:'✅ Correto! Particionar por uma coluna de alta cardinalidade (cliente_id) geraria partições demais. Z-Order resolve exatamente esse caso: reorganiza fisicamente os dados para permitir data skipping eficiente em múltiplas colunas de filtro simultâneas.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

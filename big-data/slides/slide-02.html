@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 02 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --bg-800:#7c2d12;
+  --accent-500:#f97316;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+  /* layer colors */
+  --batch:#1e3a5f;
+  --batch-acc:#3b82f6;
+  --speed:#1a3320;
+  --speed-acc:#4ade80;
+  --serving:#3b1f00;
+  --serving-acc:#fb923c;
+  --kappa:#1f1a3d;
+  --kappa-acc:#a78bfa;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═════════════════════════════════════════ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:#431407;bottom:-200px;right:-120px;}
+.blob-3{width:280px;height:280px;background:#f97316;top:38%;left:42%;opacity:.1;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ════════════════════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-blue{padding:1rem 1.25rem;border-radius:10px;background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-blue strong{color:#60a5fa;}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.destaque-purple{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid #a78bfa;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-purple strong{color:#a78bfa;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}
+
+/* ── Diagramas de arquitetura ── */
+.arq-wrap{border-radius:14px;overflow:hidden;border:1px solid var(--card-border);margin:.75rem 0;}
+.arq-titulo{padding:.75rem 1.25rem;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
+
+/* Lambda diagram */
+.lambda-diagram{padding:1.5rem;background:rgba(0,0,0,.25);display:flex;flex-direction:column;gap:1rem;}
+.lambda-source{display:flex;justify-content:center;}
+.lambda-source-node{padding:.6rem 2rem;border-radius:10px;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);text-align:center;}
+.lambda-fork{display:flex;justify-content:center;gap:2px;}
+.lambda-fork-line{display:flex;flex-direction:column;align-items:center;gap:0;flex:1;max-width:280px;}
+.lambda-fork-arrow{height:28px;width:2px;background:rgba(251,146,60,.25);position:relative;}
+.lambda-fork-arrow::after{content:'▼';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);color:rgba(251,146,60,.4);font-size:.65rem;}
+.lambda-layers{display:flex;gap:1rem;}
+.lambda-layer{flex:1;border-radius:12px;padding:1rem;border:1px solid;}
+.layer-batch{background:rgba(30,58,95,.3);border-color:rgba(59,130,246,.3);}
+.layer-speed{background:rgba(26,51,32,.3);border-color:rgba(74,222,128,.3);}
+.layer-titulo{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;}
+.layer-batch .layer-titulo{color:#60a5fa;}
+.layer-speed .layer-titulo{color:#4ade80;}
+.layer-item{font-size:.78rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.75rem;position:relative;}
+.layer-item::before{content:'▸';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+.layer-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.68rem;font-weight:600;margin-top:.3rem;}
+.layer-badge-blue{background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.2);}
+.layer-badge-green{background:rgba(74,222,128,.15);color:#86efac;border:1px solid rgba(74,222,128,.2);}
+.lambda-merge{display:flex;justify-content:center;gap:.5rem;margin-top:.25rem;}
+.merge-arrow{height:24px;width:2px;background:rgba(251,146,60,.25);position:relative;flex:1;max-width:280px;display:flex;justify-content:center;}
+.merge-arrow::after{content:'▼';position:absolute;bottom:-8px;color:rgba(251,146,60,.4);font-size:.65rem;}
+.serving-layer{border-radius:12px;padding:1rem;background:rgba(59,31,0,.3);border:1px solid rgba(251,146,60,.3);}
+.serving-layer .layer-titulo{color:var(--accent-400);}
+.query-row{display:flex;justify-content:center;gap:.5rem;margin-top:.5rem;}
+.query-row::before{content:'';display:block;height:24px;width:2px;background:rgba(251,146,60,.25);position:relative;}
+
+/* Kappa diagram */
+.kappa-diagram{padding:1.5rem;background:rgba(0,0,0,.25);display:flex;flex-direction:column;gap:.75rem;align-items:center;}
+.kappa-node{padding:.7rem 1.75rem;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;text-align:center;min-width:200px;}
+.kappa-source{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:var(--accent-400);}
+.kappa-stream{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;width:100%;max-width:500px;}
+.kappa-stream-body{padding:.75rem;display:flex;flex-direction:column;gap:.3rem;}
+.kappa-serving{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);color:var(--accent-400);}
+.kappa-query{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80;}
+.kappa-arrow{height:24px;width:2px;background:rgba(167,139,250,.3);position:relative;display:flex;justify-content:center;}
+.kappa-arrow::after{content:'▼';position:absolute;bottom:-8px;color:rgba(167,139,250,.4);font-size:.65rem;}
+.kappa-label{font-size:.72rem;font-weight:700;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.kappa-item{font-size:.78rem;color:var(--text-secondary);padding-left:.75rem;position:relative;margin-bottom:.25rem;}
+.kappa-item::before{content:'▸';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* Decisão */
+.decisao-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:.75rem 0;}
+.decisao-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.dec-lambda{background:rgba(30,58,95,.2);border-color:rgba(59,130,246,.25);}
+.dec-kappa{background:rgba(31,26,61,.2);border-color:rgba(167,139,250,.25);}
+.dec-hybrid{background:rgba(59,31,0,.2);border-color:rgba(251,146,60,.25);}
+.decisao-titulo{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem;}
+.dec-lambda .decisao-titulo{color:#60a5fa;}
+.dec-kappa .decisao-titulo{color:#a78bfa;}
+.dec-hybrid .decisao-titulo{color:var(--accent-400);}
+.decisao-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.decisao-item::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+
+/* Resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.decisao-grid,.resumo-grid{grid-template-columns:1fr;}
+  .lambda-layers{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ═══════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">02</div>
+    <h1 class="capa-titulo">Arquiteturas<br><em>Lambda</em> e <em>Kappa</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Como sistemas de Big Data são desenhados</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-puzzle-piece"></i></div><span>Por que precisamos de arquiteturas específicas para Big Data?</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Arquitetura Lambda — Batch Layer, Speed Layer, Serving Layer</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tools"></i></div><span>Ferramentas da arquitetura Lambda em cada camada</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Arquitetura Kappa — tudo é um stream</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Lambda vs. Kappa — comparativo técnico</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-rocket"></i></div><span>Arquiteturas modernas — Data Lakehouse</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-ruler"></i></div><span>Atividade: diagrama e escolha de arquitetura por cenário</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Comparativo Lambda vs. Kappa em diagrama + escolha justificada de arquitetura para 3 cenários reais.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 1</div>
+      <ul class="info-lista">
+        <li>Os 5 Vs: Volume, Velocidade, Variedade, Veracidade e Valor</li>
+        <li>BD Tradicional não escala horizontalmente para TB+</li>
+        <li>Big Data = processamento distribuído em cluster</li>
+        <li>Streaming (ms) vs. batch (horas) — o V2 determina a arquitetura</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 2 de 5 antes da P1 (Semana 6)</li>
+        <li>P1 cobre: 5 Vs, Lambda/Kappa, Data Lake, HDFS, Kafka</li>
+        <li>Próxima semana: Data Lakes — onde os dados ficam armazenados</li>
+        <li>Semana 4: HDFS — o sistema de arquivos distribuído</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Contexto histórico</div>
+      <ul class="info-lista">
+        <li>2006: Hadoop nasce no Yahoo! baseado em artigos do Google</li>
+        <li>2011: Nathan Marz (Twitter) publica a Arquitetura Lambda</li>
+        <li>2014: Jay Kreps (Confluent) propõe a Arquitetura Kappa</li>
+        <li>2019+: Data Lakehouse começa a unificar os dois mundos</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ═══════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Contexto ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que precisamos de arquiteturas específicas para Big Data?</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 1</div>
+      <p>Na semana passada entendemos que Big Data nasce quando os dados ultrapassam a capacidade de uma máquina. Agora a pergunta é: <strong>como você desenha um sistema que processa bilhões de eventos com confiabilidade, baixa latência e custo razoável?</strong> É disso que tratam as arquiteturas de Big Data.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-circle"></i>O problema que precisava ser resolvido</div>
+      <p>Imagine que você é engenheiro de dados no Twitter em 2010. Seu sistema precisa responder a uma pergunta simples a qualquer momento: <em>"quantos tweets sobre o assunto X foram feitos nas últimas 24 horas?"</em>.</p>
+      <p>Parece fácil — mas há um problema duplo. Se você calcular em <strong>tempo real</strong>, qualquer falha no sistema perde eventos para sempre e os resultados ficam imprecisos. Se você calcular em <strong>batch</strong>, o resultado fica desatualizado por horas. Como ter os dois ao mesmo tempo?</p>
+      <div class="destaque">
+        <strong>O dilema fundamental do Big Data:</strong> precisão histórica (que exige reprocessar todos os dados) versus baixa latência (que exige processar em tempo real). Durante anos, acreditava-se que era impossível ter os dois. As arquiteturas que veremos hoje são a solução para esse dilema.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-gavel"></i>CAP Theorem — a lei física do Big Data</div>
+      <p>Antes de entender as arquiteturas, é essencial conhecer o <strong>Teorema CAP</strong> (Brewer, 2000). Ele afirma que qualquer sistema de dados distribuído pode garantir no máximo <strong>dois dos três</strong> atributos ao mesmo tempo:</p>
+      <div class="grid-3" style="margin-top:.75rem;">
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">🔒</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:#60a5fa;margin-bottom:.4rem;">Consistency (C)</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Toda leitura recebe o dado mais atualizado, ou um erro. Todos os nós veem os mesmos dados ao mesmo tempo.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">⚡</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">Availability (A)</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Todo pedido recebe uma resposta (não necessariamente a mais atualizada). O sistema nunca fica indisponível.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">🔀</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:var(--accent-400);margin-bottom:.4rem;">Partition Tolerance (P)</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">O sistema continua funcionando mesmo quando partes da rede falham ou ficam isoladas.</div>
+        </div>
+      </div>
+      <div class="destaque" style="margin-top:.75rem;">
+        <strong>Na prática:</strong> em sistemas distribuídos, falhas de rede (P) são inevitáveis — você precisa tolerar partições. Então a escolha real é entre <strong>CP</strong> (consistência + tolerância, como HBase e Zookeeper) ou <strong>AP</strong> (disponibilidade + tolerância, como Cassandra e DynamoDB). Essa escolha guia o design das arquiteturas Lambda e Kappa.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-history"></i>Uma breve história: como chegamos aqui</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Ano</th><th>Marco</th><th>Impacto</th></tr></thead>
+          <tbody>
+            <tr><td><strong>2003–2004</strong></td><td>Google publica papers do GFS e MapReduce</td><td>Base teórica do processamento distribuído</td></tr>
+            <tr><td><strong>2006</strong></td><td>Yahoo! cria o Apache Hadoop (open source)</td><td>Primeira plataforma acessível de Big Data</td></tr>
+            <tr><td><strong>2010</strong></td><td>Apache Kafka é criado no LinkedIn</td><td>Streaming distribuído se torna viável</td></tr>
+            <tr><td><strong>2011</strong></td><td>Nathan Marz propõe a Arquitetura Lambda</td><td>Primeiro framework para batch + streaming juntos</td></tr>
+            <tr><td><strong>2014</strong></td><td>Jay Kreps critica Lambda e propõe a Kappa</td><td>Simplificação: tudo é stream, sem camada batch</td></tr>
+            <tr><td><strong>2016</strong></td><td>Apache Spark Structured Streaming é lançado</td><td>Facilita muito a implementação da Kappa</td></tr>
+            <tr><td><strong>2019+</strong></td><td>Delta Lake e Data Lakehouse surgem</td><td>Arquitetura moderna que tende a unificar tudo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> Se você fosse o engenheiro do Twitter em 2010 enfrentando o dilema batch vs. tempo real, o que você faria? Tente propor uma solução antes de vermos a resposta que Nathan Marz encontrou.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Arquitetura Lambda</span></div>
+
+  <!-- ── AULA 2: Lambda ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Arquitetura Lambda — precisão histórica com latência real</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user"></i>Origem: Nathan Marz e o problema do Twitter</div>
+      <p>Em 2011, o engenheiro <strong>Nathan Marz</strong> — trabalhando no Twitter — publicou a solução para o dilema batch vs. real-time. A ideia central era elegante: <strong>não escolha entre os dois — use os dois ao mesmo tempo</strong>.</p>
+      <p>A Arquitetura Lambda divide o sistema em <strong>três camadas independentes</strong> que trabalham em paralelo. O nome vem da letra grega λ (lambda), que visualmente representa a bifurcação do fluxo de dados em dois caminhos que se reencontram no final.</p>
+      <div class="destaque">
+        <strong>Fórmula Lambda:</strong> resultado da query = <span style="color:#60a5fa;">batch view</span> + <span style="color:#4ade80;">real-time view</span>. A camada batch garante precisão histórica; a camada de velocidade preenche o gap dos dados recentes.
+      </div>
+    </div>
+
+    <!-- Diagrama Lambda -->
+    <div class="arq-wrap">
+      <div class="arq-titulo" style="background:rgba(30,58,95,.3);color:#60a5fa;border-bottom:1px solid rgba(59,130,246,.2);">
+        <i class="fas fa-layer-group" style="margin-right:8px;"></i>Arquitetura Lambda — visão geral
+      </div>
+      <div class="lambda-diagram">
+        <!-- Source -->
+        <div class="lambda-source">
+          <div class="lambda-source-node">
+            <div style="font-size:.65rem;margin-bottom:3px;opacity:.7;">ENTRADA</div>
+            <div>Fonte de dados (eventos em tempo real)</div>
+            <div style="font-size:.72rem;margin-top:4px;opacity:.6;">Kafka · Fluentd · Filebeat · APIs · Sensores</div>
+          </div>
+        </div>
+        <!-- Fork arrows -->
+        <div style="display:flex;justify-content:center;gap:180px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="height:20px;width:2px;background:rgba(59,130,246,.3);"></div>
+            <div style="color:rgba(59,130,246,.5);font-size:.65rem;">▼</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="height:20px;width:2px;background:rgba(74,222,128,.3);"></div>
+            <div style="color:rgba(74,222,128,.5);font-size:.65rem;">▼</div>
+          </div>
+        </div>
+        <!-- Two layers -->
+        <div class="lambda-layers">
+          <div class="lambda-layer layer-batch">
+            <div class="layer-titulo"><i class="fas fa-database" style="margin-right:6px;"></i>Batch Layer</div>
+            <div class="layer-item">Armazena TODOS os dados brutos imutáveis</div>
+            <div class="layer-item">Reprocessa tudo periodicamente (horas/dias)</div>
+            <div class="layer-item">Gera "batch views" — resultados precisos e completos</div>
+            <div class="layer-item">Tolerante a erros: pode re-rodar qualquer vez</div>
+            <div style="margin-top:.6rem;display:flex;flex-wrap:wrap;gap:.3rem;">
+              <span class="layer-badge layer-badge-blue">Hadoop HDFS</span>
+              <span class="layer-badge layer-badge-blue">Apache Spark</span>
+              <span class="layer-badge layer-badge-blue">S3 + Parquet</span>
+            </div>
+          </div>
+          <div class="lambda-layer layer-speed">
+            <div class="layer-titulo"><i class="fas fa-bolt" style="margin-right:6px;"></i>Speed Layer</div>
+            <div class="layer-item">Processa APENAS os dados recentes (desde o último batch)</div>
+            <div class="layer-item">Atualiza "speed views" em tempo real (segundos)</div>
+            <div class="layer-item">Dados temporários — descartados após batch cobrir o período</div>
+            <div class="layer-item">Compensação: resultado pode ter pequenas imprecisões</div>
+            <div style="margin-top:.6rem;display:flex;flex-wrap:wrap;gap:.3rem;">
+              <span class="layer-badge layer-badge-green">Apache Storm</span>
+              <span class="layer-badge layer-badge-green">Spark Streaming</span>
+              <span class="layer-badge layer-badge-green">Apache Flink</span>
+            </div>
+          </div>
+        </div>
+        <!-- Merge arrows -->
+        <div style="display:flex;justify-content:center;gap:180px;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="height:20px;width:2px;background:rgba(59,130,246,.3);"></div>
+            <div style="color:rgba(59,130,246,.5);font-size:.65rem;">▼</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="height:20px;width:2px;background:rgba(74,222,128,.3);"></div>
+            <div style="color:rgba(74,222,128,.5);font-size:.65rem;">▼</div>
+          </div>
+        </div>
+        <!-- Serving -->
+        <div class="serving-layer">
+          <div class="layer-titulo"><i class="fas fa-server" style="margin-right:6px;"></i>Serving Layer — merge dos dois mundos</div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <div style="flex:1;min-width:200px;">
+              <div class="layer-item">Combina batch views + speed views para responder queries</div>
+              <div class="layer-item">Indexa e otimiza para acesso rápido de leitura</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.3rem;">
+                <span class="layer-badge" style="background:rgba(251,146,60,.15);color:#fdba74;border:1px solid rgba(251,146,60,.2);">Cassandra</span>
+                <span class="layer-badge" style="background:rgba(251,146,60,.15);color:#fdba74;border:1px solid rgba(251,146,60,.2);">HBase</span>
+                <span class="layer-badge" style="background:rgba(251,146,60,.15);color:#fdba74;border:1px solid rgba(251,146,60,.2);">Apache Druid</span>
+                <span class="layer-badge" style="background:rgba(251,146,60,.15);color:#fdba74;border:1px solid rgba(251,146,60,.2);">Elasticsearch</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Query -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <div style="height:20px;width:2px;background:rgba(251,146,60,.3);"></div>
+          <div style="color:rgba(251,146,60,.5);font-size:.65rem;">▼</div>
+          <div style="padding:.5rem 2rem;border-radius:8px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;">
+            Query: resultado = batch view + speed view
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-titulo"><i class="fas fa-thumbs-up"></i>Vantagens da Lambda</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Tolerância a falhas:</strong> se o speed layer cair, o batch ainda cobre tudo</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Precisão histórica:</strong> o batch reprocessa dados com lógica atualizada a qualquer momento</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Baixa latência:</strong> o speed layer entrega resultados em segundos</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Reprocessamento fácil:</strong> basta rodar novamente o job batch com nova lógica</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Escalabilidade independente:</strong> batch e speed escalam separadamente</span></li>
+        </ul>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-titulo"><i class="fas fa-thumbs-down"></i>Desvantagens da Lambda</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Duplicação de código:</strong> a mesma lógica precisa ser implementada em batch E em streaming</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Alta complexidade:</strong> dois sistemas completamente diferentes para manter e debugar</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Sincronização difícil:</strong> garantir que batch view e speed view retornam resultados consistentes é desafiador</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Custo elevado:</strong> infraestrutura dobrada (cluster Hadoop + cluster Storm/Spark Streaming)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-titulo"><i class="fas fa-building"></i>Quem usa Lambda na prática</div>
+      <div class="grid-3">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.12);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem;">🐦 Twitter</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Análise de trending topics: batch diário para histórico completo + speed layer para "trending agora" em tempo real.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.12);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">🛒 Alibaba</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Recomendação de produtos: batch recalcula perfis de usuário toda noite + speed layer atualiza preferências durante a sessão.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.12);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.5rem;">📊 LinkedIn</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Analytics de engajamento: batch gera relatórios diários de alcance + speed layer mostra visualizações em tempo real do perfil.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — na Arquitetura Lambda, qual camada é responsável por preencher o "gap" entre dois processamentos batch?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(59,130,246,.15);color:#60a5fa;">A</div><span class="quiz-texto">Batch Layer — ela processa dados continuamente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Speed Layer — ela cobre os dados recentes até o próximo batch</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Serving Layer — ela decide qual dado é mais recente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Não existe gap — o batch roda continuamente</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Arquitetura Kappa e Comparativo</span></div>
+
+  <!-- ── AULA 3: Kappa + Comparativo ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Arquitetura Kappa — tudo é um stream</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user-tie"></i>Origem: Jay Kreps e a crítica à Lambda</div>
+      <p>Em 2014, <strong>Jay Kreps</strong> — co-criador do Apache Kafka e fundador da Confluent — publicou um artigo provocador: <em>"Por que eu não gosto da Arquitetura Lambda"</em>. A crítica central era simples e cirúrgica:</p>
+      <div class="destaque">
+        <strong>Argumento de Kreps:</strong> "Manter dois sistemas (batch e streaming) que fazem a mesma coisa é o pior dos dois mundos: dobro do código, dobro dos bugs, dobro da complexidade operacional. E se você tem Kafka, pode fazer tudo com streaming — inclusive reprocessar dados históricos."
+      </div>
+      <p>A proposta da <strong>Arquitetura Kappa</strong> é radical na sua simplicidade: <strong>elimine completamente o batch layer</strong>. Tudo — dados históricos e dados novos — é processado como um stream. O Kafka armazena o histórico completo e você pode "rebobinar" e reprocessar quando precisar.</p>
+    </div>
+
+    <!-- Diagrama Kappa -->
+    <div class="arq-wrap">
+      <div class="arq-titulo" style="background:rgba(31,26,61,.4);color:#a78bfa;border-bottom:1px solid rgba(167,139,250,.2);">
+        <i class="fas fa-stream" style="margin-right:8px;"></i>Arquitetura Kappa — visão geral
+      </div>
+      <div class="kappa-diagram">
+        <div class="kappa-node kappa-source">
+          <div style="font-size:.65rem;margin-bottom:3px;opacity:.7;">ENTRADA</div>
+          Fonte de dados (todos os eventos)
+          <div style="font-size:.72rem;margin-top:4px;opacity:.6;">APIs · Sensores · Bancos · Logs · Aplicações</div>
+        </div>
+        <div class="kappa-arrow"></div>
+        <!-- Kafka -->
+        <div style="width:100%;max-width:580px;border-radius:12px;background:rgba(31,26,61,.4);border:1px solid rgba(167,139,250,.25);padding:1rem;">
+          <div class="kappa-label" style="color:#a78bfa;"><i class="fas fa-database" style="margin-right:6px;"></i>Apache Kafka — o Log Imutável Universal</div>
+          <div class="kappa-item">Armazena TODOS os eventos em ordem cronológica (log imutável)</div>
+          <div class="kappa-item">Retenção configurável: de horas a anos (ou infinita com tiered storage)</div>
+          <div class="kappa-item">Para reprocessar: leia o tópico desde o offset 0 com nova versão do código</div>
+          <div class="kappa-item">Múltiplos consumidores independentes podem ler o mesmo tópico</div>
+        </div>
+        <div class="kappa-arrow" style="background:rgba(167,139,250,.3);"></div>
+        <!-- Stream Processing -->
+        <div style="width:100%;max-width:580px;border-radius:12px;background:rgba(31,26,61,.3);border:1px solid rgba(167,139,250,.2);padding:1rem;">
+          <div class="kappa-label" style="color:#c4b5fd;"><i class="fas fa-bolt" style="margin-right:6px;"></i>Stream Processing — UMA única camada</div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:.3rem;">
+            <div style="flex:1;min-width:220px;">
+              <div class="kappa-item">Processa eventos em tempo real continuamente</div>
+              <div class="kappa-item">Para atualizar lógica: sobe nova versão, rebobina Kafka</div>
+              <div class="kappa-item">Mantém estado (agregações, joins) em memória ou RocksDB</div>
+            </div>
+            <div style="flex:1;min-width:220px;display:flex;flex-wrap:wrap;gap:.4rem;align-content:flex-start;margin-top:.25rem;">
+              <span style="padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:600;background:rgba(167,139,250,.15);color:#c4b5fd;border:1px solid rgba(167,139,250,.2);">Apache Flink</span>
+              <span style="padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:600;background:rgba(167,139,250,.15);color:#c4b5fd;border:1px solid rgba(167,139,250,.2);">Spark Structured Streaming</span>
+              <span style="padding:2px 8px;border-radius:5px;font-size:.72rem;font-weight:600;background:rgba(167,139,250,.15);color:#c4b5fd;border:1px solid rgba(167,139,250,.2);">Kafka Streams</span>
+            </div>
+          </div>
+        </div>
+        <div class="kappa-arrow" style="background:rgba(74,222,128,.3);"></div>
+        <div class="kappa-node kappa-serving" style="background:rgba(59,31,0,.3);border-color:rgba(251,146,60,.25);">
+          <span style="font-size:.65rem;display:block;margin-bottom:3px;opacity:.7;">SERVING</span>
+          Banco de dados de resultados
+          <div style="font-size:.72rem;margin-top:4px;opacity:.7;">Cassandra · Redis · DynamoDB · Druid</div>
+        </div>
+        <div class="kappa-arrow" style="background:rgba(74,222,128,.3);"></div>
+        <div class="kappa-node kappa-query">
+          Query em tempo real — único ponto de resposta
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-redo"></i>Como funciona o reprocessamento na Kappa</div>
+      <p>A grande dúvida sobre a Kappa é sempre: <em>"e se eu precisar corrigir um bug na lógica de processamento e recalcular dados históricos?"</em>. Na Lambda isso é fácil — basta rodar o batch novamente. Na Kappa, a resposta está no Kafka:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Reprocessamento na Arquitetura Kappa</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Situação: bug descoberto na lógica de cálculo de receita</span>
+<span class="cm"># Kafka retém TODOS os eventos dos últimos 90 dias</span>
+
+<span class="cm"># Passo 1: subir a versão nova do processador em paralelo</span>
+<span class="cm"># (sem derrubar a versão antiga ainda)</span>
+job_v2 = StreamingJob(
+  kafka_topic=<span class="str">"transactions"</span>,
+  start_offset=<span class="num">0</span>,          <span class="cm"># ← começa do início do histórico!</span>
+  output_table=<span class="str">"revenue_v2"</span>,  <span class="cm"># ← tabela separada para não afetar prod</span>
+  logic=<span class="str">"fixed_revenue_calculation"</span>
+)
+
+<span class="cm"># Passo 2: aguardar o job v2 alcançar o tempo real (catch-up)</span>
+<span class="cm"># Kafka processa 90 dias de eventos em ~2-4 horas com cluster adequado</span>
+
+<span class="cm"># Passo 3: quando v2 alcançar o tempo real, fazer o swap</span>
+<span class="fn">swap_traffic</span>(old=<span class="str">"revenue_v1"</span>, new=<span class="str">"revenue_v2"</span>)
+<span class="fn">decommission</span>(job_v1)
+
+<span class="cm"># Resultado: dados históricos reprocessados com lógica correta
+# Sem downtime. Sem perda de dados. Sem sistema batch separado.</span></code></pre>
+      </div>
+      <div class="destaque-purple">
+        <strong>A chave do reprocessamento Kappa:</strong> o Kafka é um <em>log imutável e ordenado</em>. Você pode "rebobinar" para qualquer ponto no tempo e reproduzir todos os eventos. É como ter um VCR dos seus dados — você pode assistir do começo quantas vezes quiser.
+      </div>
+    </div>
+
+    <!-- Comparativo Lambda vs Kappa -->
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Lambda vs. Kappa — comparativo técnico</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th><span class="badge-blue">Lambda</span></th><th><span class="badge-purple">Kappa</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Complexidade</strong></td><td>Alta — dois sistemas independentes</td><td>Média — um sistema de streaming</td></tr>
+            <tr><td><strong>Codebases</strong></td><td>Dois: batch (Spark) + streaming (Flink)</td><td>Um: só streaming</td></tr>
+            <tr><td><strong>Latência</strong></td><td>Baixa (speed layer em segundos)</td><td>Muito baixa (ms a segundos)</td></tr>
+            <tr><td><strong>Precisão histórica</strong></td><td>Muito alta (batch reprocessa tudo)</td><td>Alta (Kafka replay)</td></tr>
+            <tr><td><strong>Reprocessamento</strong></td><td>Simples — re-roda o job batch</td><td>Mais complexo — rebobina Kafka, duas versões em paralelo</td></tr>
+            <tr><td><strong>Custo de infra</strong></td><td>Alto — cluster Hadoop + cluster Spark Streaming</td><td>Médio — cluster Kafka + cluster Flink/Spark</td></tr>
+            <tr><td><strong>Manutenção</strong></td><td>Difícil — duas stacks diferentes para monitorar</td><td>Mais simples — uma stack só</td></tr>
+            <tr><td><strong>Maturidade</strong></td><td>Alta — padrão consolidado desde 2011</td><td>Alta — amplamente adotado desde 2016</td></tr>
+            <tr><td><strong>Melhor para</strong></td><td>Dados que mudam retroativamente (correções)</td><td>Eventos imutáveis (cliques, transações, logs)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a principal vantagem da Arquitetura Kappa sobre a Lambda?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(59,130,246,.15);color:#60a5fa;">A</div><span class="quiz-texto">Maior precisão histórica — o Kafka é mais preciso que o Hadoop</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Menos complexidade — um único sistema em vez de dois codebases separados</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Menor custo — Kappa não precisa de nenhum servidor adicional</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Maior velocidade — o batch layer da Lambda é muito lento</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Quando Usar + Arquiteturas Modernas + Atividade</span></div>
+
+  <!-- ── AULA 4: Quando usar + Atividade ──────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Quando usar cada arquitetura — e o que veio depois</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Guia de decisão: Lambda, Kappa ou nenhuma?</div>
+      <div class="decisao-grid">
+        <div class="decisao-card dec-lambda">
+          <div class="decisao-titulo"><i class="fas fa-layer-group" style="margin-right:6px;"></i>Use Lambda quando:</div>
+          <div class="decisao-item">Dados precisam ser corrigidos retroativamente (ex: preços de produtos mudam e afetam cálculos passados)</div>
+          <div class="decisao-item">Precisão histórica absoluta é crítica (ex: compliance financeiro, dados fiscais)</div>
+          <div class="decisao-item">Você precisa reprocessar anos de dados com frequência</div>
+          <div class="decisao-item">Equipe tem expertise em Hadoop/Spark batch separado</div>
+          <div class="decisao-item">Dados chegam em formatos muito diferentes (batch files + streaming)</div>
+        </div>
+        <div class="decisao-card dec-kappa">
+          <div class="decisao-titulo"><i class="fas fa-stream" style="margin-right:6px;"></i>Use Kappa quando:</div>
+          <div class="decisao-item">Eventos são imutáveis por natureza (cliques, transações, logs de sistema)</div>
+          <div class="decisao-item">Equipe é pequena e complexidade operacional é preocupação real</div>
+          <div class="decisao-item">Kafka já está na stack e o volume de retenção é gerenciável</div>
+          <div class="decisao-item">Latência muito baixa é obrigatória em todo o sistema</div>
+          <div class="decisao-item">Startup ou empresa que ainda está escalando a operação de dados</div>
+        </div>
+        <div class="decisao-card dec-hybrid">
+          <div class="decisao-titulo"><i class="fas fa-rocket" style="margin-right:6px;"></i>Use Lakehouse quando:</div>
+          <div class="decisao-item">Quer unificar Data Lake e Data Warehouse em uma só camada</div>
+          <div class="decisao-item">Precisa de ACID transactions no Data Lake (Delta Lake, Iceberg)</div>
+          <div class="decisao-item">Quer eliminar a complexidade das duas arquiteturas acima</div>
+          <div class="decisao-item">Equipe usa Databricks, Snowflake ou está no ecossistema moderno</div>
+          <div class="decisao-item">Projetos novos (2020+) — o padrão de mercado atual</div>
+        </div>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Atenção:</strong> essas arquiteturas são para problemas de <em>escala real</em>. Se sua empresa tem menos de 1–2 TB de dados e uma equipe pequena, um Data Warehouse comum (BigQuery, Redshift, Snowflake) provavelmente resolve com menos custo e complexidade.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-forward"></i>Arquiteturas modernas — o que vem depois de Lambda e Kappa</div>
+      <p>Em 2019, a Databricks propôs o conceito de <strong>Data Lakehouse</strong> — uma arquitetura que tenta combinar as melhores características do Data Lake (barato, flexível, suporta todos os formatos) com as do Data Warehouse (ACID, performance, schema forte). O Delta Lake é a tecnologia que torna isso possível.</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.6rem;">🏞️ Data Lake (tradicional)</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Barato — armazenamento em S3/HDFS</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Flexível — qualquer formato (Parquet, JSON, CSV)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem ACID — dados inconsistentes são comuns</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem schema enforcement — "Data Swamp" é um risco real</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.25);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.6rem;">🏗️ Data Lakehouse (Delta Lake)</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Barato — ainda usa S3/HDFS por baixo</span></li>
+            <li><i class="fas fa-check-circle"></i><span>ACID transactions — updates e deletes confiáveis</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Schema enforcement + time travel</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Batch e streaming na mesma tabela</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque">
+        <strong>Tendência atual:</strong> a maioria dos novos projetos de Big Data em 2024 começa com uma arquitetura Lakehouse (Delta Lake ou Apache Iceberg) em vez de Lambda ou Kappa puras. Vamos explorar Delta Lake em profundidade na Semana 14.
+      </div>
+    </div>
+
+    <!-- ATIVIDADE PRÁTICA -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Diagrama + Análise em grupo</div>
+        <div class="secao-titulo">Escolha justificada de arquitetura para cenários reais</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade em duplas. Cada dupla recebe os três cenários abaixo e deve: (1) desenhar em papel o fluxo simplificado da arquitetura escolhida e (2) justificar a escolha com base nos critérios discutidos em aula. Ao final, cada dupla apresenta um dos cenários.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário A — Plataforma de Streaming de Música</div>
+      <p>Uma empresa do porte do Spotify tem <strong>100 milhões de usuários ativos</strong>. O sistema precisa: (1) recomendar músicas em tempo real durante a sessão do usuário, (2) gerar relatórios semanais de artistas mais ouvidos por região, e (3) atualizar o modelo de recomendação com novos dados de escuta a cada hora. Qual arquitetura você escolheria e por quê?</p>
+      <span class="dificuldade dif-medio">Análise técnica</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Kappa ou Lakehouse</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que não Lambda?</strong> Os eventos de escuta são imutáveis — uma música ouvida não muda retroativamente. Não precisa de batch reprocessamento frequente.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Kappa é adequada:</strong> Kafka retém histórico de escutas, Flink/Spark Streaming atualiza preferências em tempo real, servindo recomendações instantâneas.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Para relatórios semanais:</strong> a mesma camada de streaming pode materializar views diárias em um banco analítico (Druid ou BigQuery) para os relatórios.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Alternativa moderna:</strong> Lakehouse com Delta Lake para os dados históricos + Spark Streaming para o tempo real — arquitetura atual do Spotify.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário B — Sistema Bancário de Detecção de Fraude</div>
+      <p>Um banco processa <strong>2 milhões de transações por dia</strong>. O modelo de fraude precisa: (1) analisar cada transação em menos de 150ms antes de aprovar, (2) recalcular scores de risco quando as regras de compliance mudam (o que acontece mensalmente), e (3) manter histórico de 5 anos para auditorias regulatórias. Qual arquitetura e por quê?</p>
+      <span class="dificuldade dif-medio">Análise técnica</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Lambda ou Lakehouse</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que Lambda faz sentido aqui?</strong> As regras de compliance mudam e precisam ser aplicadas retroativamente ao histórico de 5 anos. Reprocessamento batch é necessário e simples na Lambda.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Speed Layer:</strong> Kafka + Flink analisam cada transação em &lt;150ms usando o modelo mais recente carregado em memória.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Batch Layer:</strong> re-roda mensalmente quando as regras mudam, recalculando scores históricos para conformidade regulatória.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Alternativa moderna:</strong> Lakehouse com Delta Lake (time travel para auditorias + ACID) + Flink para o tempo real. Mais simples de operar que Lambda clássica.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário C — Startup de E-commerce em Crescimento</div>
+      <p>Uma startup de e-commerce tem <strong>500 mil pedidos por mês</strong>, espera crescer 10x em 2 anos e precisa de: (1) dashboard de vendas atualizado a cada 5 minutos para o time de operações, (2) análise de cohort de clientes (comportamento ao longo do tempo) para o time de marketing, e (3) budget de engenharia limitado com equipe de 3 engenheiros de dados. O que você recomenda?</p>
+      <span class="dificuldade dif-desafio">Decisão estratégica</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Nenhuma das duas — ainda</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><strong>Nem Lambda nem Kappa são necessárias:</strong> com 500k pedidos/mês, um PostgreSQL bem configurado ou um Data Warehouse gerenciado (BigQuery free tier) resolve tudo com folga.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Recomendação real:</strong> dbt + BigQuery (ou Redshift) para transformações, Airbyte para ingestão, Metabase para dashboards. Stack moderna, custo baixo, 1 engenheiro consegue manter.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Dashboard a cada 5 min:</strong> BigQuery Scheduled Queries ou Airbyte sync incremental resolve sem Kafka.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Quando migrar para Lakehouse/Kappa?</strong> Quando atingir ~50TB de dados ou quando o time crescer para 8+ engenheiros de dados. Antes disso, é overengineering.</span></li>
+          </ul>
+          <div class="destaque" style="margin-top:.75rem;">
+            <strong>Lição principal deste cenário:</strong> a melhor arquitetura é aquela que resolve o problema atual com o menor custo e complexidade possíveis. Big Data é ferramenta para problema de Big Data — não para todo problema.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — um sistema precisa reprocessar 3 anos de eventos históricos porque a fórmula de cálculo de comissão estava errada. Qual arquitetura facilita mais isso?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'A')"><div class="quiz-letra" style="background:rgba(59,130,246,.15);color:#60a5fa;">A</div><span class="quiz-texto">Lambda — basta re-rodar o job batch com a fórmula corrigida</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Kappa — o Kafka guarda tudo e é sempre fácil reprocessar</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Nenhuma — reprocessamento histórico é impossível em Big Data</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Ambas são equivalentes para reprocessamento histórico</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 2</span></div>
+
+  <!-- ── RESUMO ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 2</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-gavel"></i>
+        <strong>CAP Theorem</strong>
+        <p>Sistemas distribuídos garantem no máximo dois de três: Consistency, Availability, Partition Tolerance.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Lambda</strong>
+        <p>3 camadas: Batch (histórico preciso) + Speed (tempo real) + Serving (merge). Complexo, poderoso para reprocessamento.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-stream"></i>
+        <strong>Kappa</strong>
+        <p>Tudo é stream. Kafka como log imutável. Mais simples que Lambda. Reprocessa rebobinando o Kafka.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-rocket"></i>
+        <strong>Lakehouse</strong>
+        <p>Arquitetura moderna (Delta Lake / Iceberg). ACID no Data Lake. Tende a substituir Lambda e Kappa em novos projetos.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue desenhar a Arquitetura Lambda com suas 3 camadas e as ferramentas de cada uma? Sabe explicar por que a Kappa é mais simples e como ela faz reprocessamento? Consegue dizer em qual situação escolheria Lambda vs. Kappa vs. simplesmente um Data Warehouse? Se sim para os três — você está pronto para a Semana 3.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-03-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 3 — Data Lakes: zonas raw/silver/gold, formatos Parquet/Avro/ORC e a diferença para Data Warehouse</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c = btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML = c.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar solução'
+    : '<i class="fas fa-lightbulb"></i> ver solução';
+}
+function copiar(btn){
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData = {
+  quiz1:{correct:'B',msg:'✅ Correto! A Speed Layer existe exatamente para cobrir o intervalo entre dois processamentos batch. Enquanto o batch processa dados de ontem, a speed layer está processando os dados de agora — os dois se complementam no Serving Layer.'},
+  quiz2:{correct:'B',msg:'✅ Correto! A principal crítica de Jay Kreps à Lambda foi a necessidade de manter dois codebases separados (um para batch, um para streaming) com a mesma lógica de negócio. A Kappa elimina isso: uma única codebase de streaming faz tudo.'},
+  quiz3:{correct:'A',msg:'✅ Correto! Na Lambda, reprocessar histórico é simples: você corrige a lógica no job batch e o re-executa sobre os dados imutáveis do Batch Layer. Na Kappa, o reprocessamento é possível (rebobinando o Kafka) mas mais complexo: exige duas versões em paralelo, um período de catch-up e depois um swap. Para dados financeiros com necessidade de precisão histórica, Lambda facilita esse fluxo.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered) return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta) op.classList.add('correto');
+  });
+  if(letra!==correta) el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

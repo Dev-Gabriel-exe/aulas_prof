@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 12 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Airflow DAG visual ── */
+.airflow-dag{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.5rem;}
+.dag-row{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:.25rem;flex-wrap:wrap;}
+.dag-task{padding:.7rem 1.1rem;border-radius:10px;font-size:.78rem;font-weight:600;font-family:'JetBrains Mono',monospace;border:2px solid;text-align:center;min-width:120px;}
+.task-extract{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.4);color:#93c5fd;}
+.task-sensor{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fde68a;}
+.task-transform{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.4);color:#c4b5fd;}
+.task-test{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);color:var(--accent-300);}
+.task-load{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:#86efac;}
+.dag-arrow-h{color:rgba(251,146,60,.4);font-size:1rem;padding:0 .6rem;}
+.dag-arrow-v{display:flex;justify-content:center;color:rgba(251,146,60,.3);font-size:1rem;margin:.4rem 0;}
+
+/* ── Operator types ── */
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.op-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.op-bash{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.op-python{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.op-sensor{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);}
+.op-sql{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2);}
+.op-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.op-bash .op-titulo{color:#60a5fa;}
+.op-python .op-titulo{color:#4ade80;}
+.op-sensor .op-titulo{color:#fbbf24;}
+.op-sql .op-titulo{color:#a78bfa;}
+.op-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.op-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* ── Status colors (Airflow UI style) ── */
+.status-grid{display:flex;gap:.5rem;margin:.75rem 0;flex-wrap:wrap;}
+.status-box{padding:.4rem .8rem;border-radius:7px;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:.4rem;}
+.status-success{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3);}
+.status-running{background:rgba(96,165,250,.15);color:#60a5fa;border:1px solid rgba(96,165,250,.3);}
+.status-failed{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.status-upstream{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);}
+.status-queued{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3);}
+.status-skipped{background:rgba(255,255,255,.06);color:var(--text-muted);border:1px solid rgba(255,255,255,.1);}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#f87171;}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+/* Terminal */
+.terminal{background:#0a0a0a;border:1px solid rgba(74,222,128,.2);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.terminal-header{background:#111;padding:.45rem .9rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(74,222,128,.1);}
+.terminal-dot{width:10px;height:10px;border-radius:50%;}
+.terminal-body{padding:1rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;}
+.t-prompt{color:#4ade80;}.t-cmd{color:#fde68a;}.t-out{color:rgba(255,255,255,.55);}.t-acc{color:#fb923c;}.t-comment{color:#374151;font-style:italic;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.op-grid{grid-template-columns:1fr;}
+  .dag-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo · Última antes da P2</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">12</div>
+    <h1 class="capa-titulo">Apache<br><em>Airflow</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · O maestro que orquestra todo o pipeline de dados</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que precisamos de um orquestrador — o problema do cron</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>DAG — Directed Acyclic Graph — a estrutura central do Airflow</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>Operadores: BashOperator, PythonOperator, e a era dos TaskFlow/decorators</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-satellite-dish"></i></div><span>Sensores — esperando por condições externas antes de seguir</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clock"></i></div><span>Agendamento — schedule_interval, cron expressions, catchup</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-heartbeat"></i></div><span>Monitoramento — Airflow UI, retries, alertas, SLA</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-hammer"></i></div><span>Atividade: construir DAG completo de ingestão + transformação</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir uma DAG Airflow completa orquestrando ingestão de dados, execução de modelos dbt e validação de qualidade.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 11</div>
+      <ul class="info-lista">
+        <li>ETL transforma antes de carregar; ELT carrega bruto e transforma depois</li>
+        <li>dbt organiza transformações em camadas: staging → intermediate → marts</li>
+        <li>ref() e source() geram o DAG de dependências automaticamente</li>
+        <li>Testes genéricos e singulares garantem qualidade dos dados</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conectando tudo</div>
+      <ul class="info-lista">
+        <li>O dbt cria o DAG de transformações — mas quem dispara o dbt todo dia?</li>
+        <li>O Airflow é o orquestrador que conecta: ingestão (Airbyte/Kafka) → dbt → validação → notificação</li>
+        <li>Esta é a peça final que junta as Semanas 7 a 11</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle" style="color:#fbbf24;"></i>P2 na próxima semana!</div>
+      <ul class="info-lista">
+        <li>P2 cobre: ingestão (S7), Spark/PySpark (S8-9), Spark SQL (S10), ETL/ELT+dbt (S11), Airflow (S12)</li>
+        <li>Última semana de conteúdo antes da avaliação</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Por que orquestrar ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que precisamos de um orquestrador — o problema do cron</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 11</div>
+      <p>Você aprendeu a transformar dados com dbt — mas quem executa <code>dbt run</code> todo dia às 3h da manhã? E se a ingestão do dia anterior ainda não terminou? E se um modelo falhar — quem avisa alguém? É disso que trata a orquestração.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>O que cron não resolve</div>
+      <p>A solução mais simples para "rodar algo todo dia" é o <code>cron</code> do Linux. Mas pipelines de dados têm necessidades que o cron simplesmente não atende:</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ O que o cron NÃO faz</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não entende dependências — não sabe que a Tarefa B precisa esperar a A terminar</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não tem retry automático — se falhar, simplesmente não roda</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não tem visibilidade — você não sabe se rodou, quanto demorou, ou onde falhou</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não alerta ninguém quando algo dá errado</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não escala — cada servidor tem seu próprio cron, sem coordenação central</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ O que o Airflow resolve</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Dependências explícitas — define quem espera por quem</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Retries configuráveis com backoff exponencial</span></li>
+            <li><i class="fas fa-check-circle"></i><span>UI completa: histórico, duração, logs de cada execução</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Alertas automáticos via e-mail, Slack, PagerDuty</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Escala horizontalmente com Celery/Kubernetes Executor</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Origem:</strong> o Airflow foi criado pelo Airbnb em 2014 para gerenciar a complexidade crescente de pipelines de dados internos. Em 2016 se tornou projeto Apache, e hoje é o padrão de mercado para orquestração de dados — usado por Netflix, Spotify, Lyft, Adobe e milhares de empresas.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>O pipeline completo que o Airflow vai orquestrar</div>
+      <p>Juntando tudo que você aprendeu neste curso, este é o pipeline real que vamos construir hoje:</p>
+      <div class="airflow-dag">
+        <div class="dag-row">
+          <div class="dag-task task-extract">extract_orders<br><span style="font-size:.65rem;opacity:.6;">Airbyte/API</span></div>
+        </div>
+        <div class="dag-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="dag-row">
+          <div class="dag-task task-sensor">wait_for_file<br><span style="font-size:.65rem;opacity:.6;">FileSensor</span></div>
+        </div>
+        <div class="dag-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="dag-row">
+          <div class="dag-task task-transform">dbt_run_staging</div>
+          <div class="dag-arrow-h">→</div>
+          <div class="dag-task task-transform">dbt_run_marts</div>
+        </div>
+        <div class="dag-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="dag-row">
+          <div class="dag-task task-test">dbt_test</div>
+        </div>
+        <div class="dag-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="dag-row">
+          <div class="dag-task task-load">notify_success<br><span style="font-size:.65rem;opacity:.6;">Slack/Email</span></div>
+        </div>
+      </div>
+      <div class="destaque-green"><strong>Isso é exatamente a soma das Semanas 7-12:</strong> Ingestão (extract_orders, Semana 7) → Sensor esperando os dados ficarem prontos → Transformação com dbt (Semanas 11, usando Spark por trás se necessário, Semanas 8-10) → Testes de qualidade (Semana 11) → Notificação. O Airflow é a "cola" que conecta tudo.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a principal limitação do cron que motivou a criação de ferramentas como o Airflow?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">O cron é muito mais lento para executar tarefas que o Airflow</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">O cron não entende dependências entre tarefas, não tem retry automático nem visibilidade de execução</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O cron não funciona em servidores Linux modernos</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O cron exige licença paga para uso comercial</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · DAGs e Operadores</span></div>
+
+  <!-- ── AULA 2: DAGs e Operadores ─────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">DAGs e Operadores — definindo o "o quê" e a ordem</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>DAG — Directed Acyclic Graph</div>
+      <p>Assim como o dbt (Semana 11), o Airflow organiza o trabalho em um <strong>DAG</strong> — grafo direcionado e acíclico. <strong>Direcionado</strong> significa que as setas têm um sentido único (A → B, nunca os dois ao mesmo tempo). <strong>Acíclico</strong> significa que não pode haver loops — uma tarefa nunca pode depender (direta ou indiretamente) de si mesma.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — estrutura básica de uma DAG Airflow</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> airflow <span class="kw">import</span> DAG
+<span class="kw">from</span> airflow.operators.bash <span class="kw">import</span> BashOperator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+<span class="cm"># Configurações padrão aplicadas a todas as tasks da DAG</span>
+default_args = {
+    <span class="str">"owner"</span>: <span class="str">"engenharia_dados"</span>,
+    <span class="str">"retries"</span>: <span class="num">3</span>,
+    <span class="str">"retry_delay"</span>: timedelta(minutes=<span class="num">5</span>),
+}
+
+<span class="kw">with</span> <span class="fn">DAG</span>(
+    dag_id=<span class="str">"pipeline_vendas_diario"</span>,
+    default_args=default_args,
+    start_date=datetime(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>),
+    schedule_interval=<span class="str">"0 3 * * *"</span>,   <span class="cm"># todo dia às 3h da manhã</span>
+    catchup=<span class="kw">False</span>,
+) <span class="kw">as</span> dag:
+
+    extract = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"extract_orders"</span>,
+        bash_command=<span class="str">"python /scripts/extract_orders.py"</span>,
+    )
+
+    transform = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"dbt_run"</span>,
+        bash_command=<span class="str">"cd /dbt_project && dbt run"</span>,
+    )
+
+    test = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"dbt_test"</span>,
+        bash_command=<span class="str">"cd /dbt_project && dbt test"</span>,
+    )
+
+    <span class="cm"># O operador >> define a ordem: extract → transform → test</span>
+    extract >> transform >> test</code></pre>
+      </div>
+      <div class="destaque"><strong>O operador <code>>></code> (bitshift) define dependências:</strong> <code>tarefa_a >> tarefa_b</code> significa "tarefa_b só roda depois que tarefa_a terminar com sucesso". Você também pode usar <code>tarefa_b << tarefa_a</code> (sentido contrário) ou listas para paralelismo: <code>extract >> [transform_a, transform_b] >> test</code>.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cogs"></i>Operadores — os blocos de construção de uma task</div>
+      <p>Um <strong>Operator</strong> define o que uma task realmente faz. O Airflow tem centenas de operadores prontos (chamados "providers") para integrar com praticamente qualquer ferramenta.</p>
+      <div class="op-grid">
+        <div class="op-card op-bash">
+          <div class="op-titulo"><i class="fas fa-terminal"></i>BashOperator</div>
+          <div class="op-item">Executa qualquer comando shell</div>
+          <div class="op-item">Ideal para chamar scripts, CLIs (dbt, Spark-submit)</div>
+          <div class="op-item">Simples mas "caixa preta" — Airflow não vê o que acontece dentro</div>
+        </div>
+        <div class="op-card op-python">
+          <div class="op-titulo"><i class="fab fa-python"></i>PythonOperator</div>
+          <div class="op-item">Executa uma função Python diretamente</div>
+          <div class="op-item">Acesso total ao contexto da execução (datas, parâmetros)</div>
+          <div class="op-item">Mais flexível para lógica customizada</div>
+        </div>
+        <div class="op-card op-sensor">
+          <div class="op-titulo"><i class="fas fa-satellite-dish"></i>Sensors</div>
+          <div class="op-item">Espera até uma condição ser verdadeira</div>
+          <div class="op-item">FileSensor, S3KeySensor, ExternalTaskSensor</div>
+          <div class="op-item">Modo "poke" (verifica periodicamente) ou "reschedule"</div>
+        </div>
+        <div class="op-card op-sql">
+          <div class="op-titulo"><i class="fas fa-database"></i>Operadores de Provider</div>
+          <div class="op-item">SparkSubmitOperator, PostgresOperator, S3Hook</div>
+          <div class="op-item">Conectam diretamente com cada ferramenta do seu pipeline</div>
+          <div class="op-item">Centenas disponíveis: Kafka, Snowflake, BigQuery, dbt Cloud...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-magic"></i>TaskFlow API — a forma moderna de escrever DAGs</div>
+      <p>Desde o Airflow 2.0, existe uma forma mais "Pythônica" de escrever DAGs usando decorators (<code>@dag</code> e <code>@task</code>), eliminando boa parte do código repetitivo dos Operators tradicionais.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — TaskFlow API (Airflow 2.0+)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> airflow.decorators <span class="kw">import</span> dag, task
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="op">@dag</span>(
+    schedule_interval=<span class="str">"0 3 * * *"</span>,
+    start_date=datetime(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>),
+    catchup=<span class="kw">False</span>,
+)
+<span class="kw">def</span> <span class="fn">pipeline_vendas</span>():
+
+    <span class="op">@task</span>()
+    <span class="kw">def</span> <span class="fn">extrair_pedidos</span>():
+        <span class="cm"># lógica de extração</span>
+        <span class="kw">return</span> {<span class="str">"linhas_extraidas"</span>: <span class="num">15000</span>}
+
+    <span class="op">@task</span>()
+    <span class="kw">def</span> <span class="fn">transformar</span>(metadados: <span class="kw">dict</span>):
+        <span class="cm"># XCom automático: 'metadados' já vem com o retorno da task anterior!</span>
+        <span class="fn">print</span>(<span class="str">f"Transformando {metadados['linhas_extraidas']} linhas"</span>)
+
+    <span class="op">@task</span>()
+    <span class="kw">def</span> <span class="fn">validar</span>():
+        <span class="cm"># dbt test ou Great Expectations aqui</span>
+        <span class="kw">pass</span>
+
+    <span class="cm"># Dependências ficam implícitas pela passagem de dados!</span>
+    dados = <span class="fn">extrair_pedidos</span>()
+    <span class="fn">transformar</span>(dados) >> <span class="fn">validar</span>()
+
+pipeline_vendas()</code></pre>
+      </div>
+      <div class="destaque-green"><strong>XCom automático:</strong> no exemplo, o retorno de <code>extrair_pedidos()</code> é passado automaticamente para <code>transformar()</code> via XCom (Cross-Communication) — o mecanismo do Airflow para tasks compartilharem pequenos dados entre si. Na API tradicional, isso exigiria código explícito de <code>xcom_push</code>/<code>xcom_pull</code>.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — no código <code>extract >> [transform_a, transform_b] >> load</code>, qual é o comportamento esperado?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">transform_a e transform_b rodam em sequência, uma depois da outra</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">transform_a e transform_b rodam em paralelo após extract; load espera AMBAS terminarem</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Apenas uma das duas (a mais rápida) é executada</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">load roda independente, sem esperar transform_a ou transform_b</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Sensores, Agendamento e Monitoramento</span></div>
+
+  <!-- ── AULA 3: Sensores + Agendamento + Monitoramento ───────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Sensores, agendamento e monitoramento — controlando o tempo e a saúde do pipeline</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-satellite-dish"></i>Sensores — esperando por condições externas</div>
+      <p>Às vezes uma task não deve começar em um horário fixo, mas sim <strong>quando algo específico acontecer</strong> — um arquivo chegar no S3, uma outra DAG terminar, uma tabela ser atualizada. Para isso existem os <strong>Sensors</strong>.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Sensores comuns</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> airflow.sensors.filesystem <span class="kw">import</span> FileSensor
+<span class="kw">from</span> airflow.providers.amazon.aws.sensors.s3 <span class="kw">import</span> S3KeySensor
+<span class="kw">from</span> airflow.sensors.external_task <span class="kw">import</span> ExternalTaskSensor
+
+<span class="cm"># Espera um arquivo aparecer no sistema de arquivos local</span>
+esperar_arquivo = <span class="fn">FileSensor</span>(
+    task_id=<span class="str">"wait_for_file"</span>,
+    filepath=<span class="str">"/data/raw/orders_{{ ds }}.csv"</span>,   <span class="cm"># {{ ds }} = data de execução (Jinja)</span>
+    poke_interval=<span class="num">60</span>,     <span class="cm"># verifica a cada 60 segundos</span>
+    timeout=<span class="num">3600</span>,         <span class="cm"># desiste depois de 1 hora</span>
+    mode=<span class="str">"reschedule"</span>,    <span class="cm"># libera o worker entre verificações</span>
+)
+
+<span class="cm"># Espera um objeto aparecer no S3</span>
+esperar_s3 = <span class="fn">S3KeySensor</span>(
+    task_id=<span class="str">"wait_for_s3_file"</span>,
+    bucket_name=<span class="str">"meu-datalake"</span>,
+    bucket_key=<span class="str">"raw/orders/{{ ds }}/data.parquet"</span>,
+    poke_interval=<span class="num">120</span>,
+)
+
+<span class="cm"># Espera outra DAG terminar com sucesso</span>
+esperar_outra_dag = <span class="fn">ExternalTaskSensor</span>(
+    task_id=<span class="str">"wait_for_ingestion_dag"</span>,
+    external_dag_id=<span class="str">"pipeline_ingestao"</span>,
+    external_task_id=<span class="str">"extract_complete"</span>,
+)</code></pre>
+      </div>
+      <div class="destaque"><strong>poke vs reschedule:</strong> no modo "poke" (padrão), o sensor ocupa um worker inteiro enquanto espera — desperdiçando recursos em esperas longas. No modo "reschedule", o sensor libera o worker entre verificações, sendo muito mais eficiente para esperas de horas.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>Agendamento — schedule_interval e cron expressions</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Expressão</th><th>Significado</th><th>Uso comum</th></tr></thead>
+          <tbody>
+            <tr><td><code>"@daily"</code></td><td>Todo dia à meia-noite</td><td>Relatórios diários simples</td></tr>
+            <tr><td><code>"0 3 * * *"</code></td><td>Todo dia às 3h da manhã</td><td>Pipeline noturno (fora do horário de pico)</td></tr>
+            <tr><td><code>"0 */6 * * *"</code></td><td>A cada 6 horas</td><td>Sincronização frequente, não streaming</td></tr>
+            <tr><td><code>"0 9 * * 1-5"</code></td><td>9h da manhã, dias de semana</td><td>Relatório de início de expediente</td></tr>
+            <tr><td><code>"@once"</code></td><td>Executa só uma vez</td><td>Migrações, backfills pontuais</td></tr>
+            <tr><td><code>None</code></td><td>Só dispara manualmente ou via API/trigger</td><td>DAGs disparadas por evento externo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:1rem;border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.04);">
+        <div class="card-titulo" style="color:#fbbf24;"><i class="fas fa-exclamation-circle"></i>Pegadinha clássica: catchup e o "logical date"</div>
+        <p>Quando você cria uma DAG com <code>start_date=2024-01-01</code> e ela só é ativada hoje, o Airflow por padrão tenta executar TODAS as execuções "perdidas" desde a data de início — isso se chama <strong>catchup</strong>. Para a maioria dos pipelines de produção, você quer <code>catchup=False</code> para evitar uma avalanche de execuções históricas desnecessárias.</p>
+        <p style="margin-bottom:0;">Outra confusão comum: a execução rotulada como "2024-01-15" no Airflow representa o período que <strong>termina</strong> em 2024-01-15 — ou seja, ela só dispara <em>depois</em> que esse dia passar (no dia 16). Isso é chamado de "logical date" e existe porque o Airflow foi desenhado para processar dados de períodos já completos.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-heartbeat"></i>Monitoramento — a Airflow UI e os status de execução</div>
+      <p>A interface web do Airflow é onde você acompanha a saúde de todos os pipelines. Cada task em cada execução tem um status colorido:</p>
+      <div class="status-grid">
+        <div class="status-box status-success"><i class="fas fa-circle" style="font-size:.5rem;"></i>success</div>
+        <div class="status-box status-running"><i class="fas fa-circle" style="font-size:.5rem;"></i>running</div>
+        <div class="status-box status-failed"><i class="fas fa-circle" style="font-size:.5rem;"></i>failed</div>
+        <div class="status-box status-upstream"><i class="fas fa-circle" style="font-size:.5rem;"></i>upstream_failed</div>
+        <div class="status-box status-queued"><i class="fas fa-circle" style="font-size:.5rem;"></i>queued</div>
+        <div class="status-box status-skipped"><i class="fas fa-circle" style="font-size:.5rem;"></i>skipped</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Retries, alertas e SLA</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> datetime <span class="kw">import</span> timedelta
+<span class="kw">from</span> airflow.providers.slack.operators.slack_webhook <span class="kw">import</span> SlackWebhookOperator
+
+default_args = {
+    <span class="str">"retries"</span>: <span class="num">3</span>,                              <span class="cm"># tenta 3 vezes antes de marcar como failed</span>
+    <span class="str">"retry_delay"</span>: timedelta(minutes=<span class="num">5</span>),      <span class="cm"># espera 5 min entre tentativas</span>
+    <span class="str">"retry_exponential_backoff"</span>: <span class="kw">True</span>,        <span class="cm"># 5min, 10min, 20min...</span>
+    <span class="str">"sla"</span>: timedelta(hours=<span class="num">2</span>),               <span class="cm"># alerta se task demorar mais que 2h</span>
+    <span class="str">"email_on_failure"</span>: <span class="kw">True</span>,
+    <span class="str">"email"</span>: [<span class="str">"dados@empresa.com"</span>],
+}
+
+<span class="cm"># Callback customizado disparado em caso de falha</span>
+<span class="kw">def</span> <span class="fn">notificar_slack_falha</span>(context):
+    <span class="fn">SlackWebhookOperator</span>(
+        task_id=<span class="str">"slack_alert"</span>,
+        slack_webhook_conn_id=<span class="str">"slack_default"</span>,
+        message=<span class="str">f"🔴 Pipeline falhou: {context['task_instance'].task_id}"</span>,
+    ).<span class="fn">execute</span>(context=context)
+
+<span class="cm"># Aplicado na DAG: on_failure_callback=notificar_slack_falha</span></code></pre>
+      </div>
+      <div class="destaque-green"><strong>SLA (Service Level Agreement):</strong> diferente de retry (que lida com falhas), o SLA monitora <em>demora</em>. Se uma task que normalmente leva 10 minutos passar de 2 horas, o Airflow dispara um alerta — mesmo que a task ainda esteja "rodando" e não tenha falhado tecnicamente. Essencial para detectar gargalos antes que afetem relatórios do dia seguinte.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — uma DAG tem start_date de 6 meses atrás e acabou de ser ativada com catchup=True. O que vai acontecer?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Nada — catchup só funciona se a DAG já tiver rodado antes</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">O Airflow vai disparar todas as execuções "perdidas" dos últimos 6 meses de uma vez</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">A DAG só executa a partir de hoje, ignorando o histórico</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O Airflow pede confirmação manual antes de rodar qualquer execução</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Construindo o Pipeline Completo</span></div>
+
+  <!-- ── AULA 4: Atividade Prática ────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Construindo a DAG completa — ingestão + transformação + validação</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hammer"></i>DAG final — juntando ingestão, dbt e validação</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — DAG completa do pipeline de vendas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> airflow.decorators <span class="kw">import</span> dag, task
+<span class="kw">from</span> airflow.operators.bash <span class="kw">import</span> BashOperator
+<span class="kw">from</span> airflow.sensors.filesystem <span class="kw">import</span> FileSensor
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+default_args = {
+    <span class="str">"retries"</span>: <span class="num">2</span>,
+    <span class="str">"retry_delay"</span>: timedelta(minutes=<span class="num">5</span>),
+    <span class="str">"email_on_failure"</span>: <span class="kw">True</span>,
+}
+
+<span class="op">@dag</span>(
+    dag_id=<span class="str">"pipeline_vendas_completo"</span>,
+    default_args=default_args,
+    start_date=datetime(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>),
+    schedule_interval=<span class="str">"0 3 * * *"</span>,
+    catchup=<span class="kw">False</span>,
+    tags=[<span class="str">"vendas"</span>, <span class="str">"producao"</span>],
+)
+<span class="kw">def</span> <span class="fn">pipeline_vendas_completo</span>():
+
+    <span class="cm"># 1. INGESTÃO — extrai dados da fonte (Semana 7)</span>
+    extract = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"extract_orders"</span>,
+        bash_command=<span class="str">"python /scripts/extract_orders.py --date={{ ds }}"</span>,
+    )
+
+    <span class="cm"># 2. SENSOR — espera o arquivo ficar disponível no Data Lake</span>
+    wait_for_data = <span class="fn">FileSensor</span>(
+        task_id=<span class="str">"wait_for_raw_file"</span>,
+        filepath=<span class="str">"/datalake/raw/orders_{{ ds }}.parquet"</span>,
+        poke_interval=<span class="num">30</span>,
+        timeout=<span class="num">1800</span>,
+        mode=<span class="str">"reschedule"</span>,
+    )
+
+    <span class="cm"># 3. TRANSFORMAÇÃO — roda os modelos dbt (Semana 11)</span>
+    dbt_run_staging = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"dbt_run_staging"</span>,
+        bash_command=<span class="str">"cd /dbt_project && dbt run --select staging"</span>,
+    )
+
+    dbt_run_marts = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"dbt_run_marts"</span>,
+        bash_command=<span class="str">"cd /dbt_project && dbt run --select marts"</span>,
+    )
+
+    <span class="cm"># 4. VALIDAÇÃO — testes de qualidade (Semana 11)</span>
+    dbt_test = <span class="fn">BashOperator</span>(
+        task_id=<span class="str">"dbt_test"</span>,
+        bash_command=<span class="str">"cd /dbt_project && dbt test"</span>,
+    )
+
+    <span class="cm"># 5. NOTIFICAÇÃO — sucesso ou falha</span>
+    <span class="op">@task</span>(trigger_rule=<span class="str">"all_success"</span>)
+    <span class="kw">def</span> <span class="fn">notificar_sucesso</span>():
+        <span class="fn">print</span>(<span class="str">"✅ Pipeline concluído com sucesso!"</span>)
+        <span class="cm"># Aqui: enviar Slack, atualizar dashboard, etc.</span>
+
+    <span class="cm"># Definindo a ordem: extração → espera → staging → marts → teste → notificação</span>
+    extract >> wait_for_data >> dbt_run_staging >> dbt_run_marts >> dbt_test >> <span class="fn">notificar_sucesso</span>()
+
+pipeline_vendas_completo()</code></pre>
+      </div>
+      <div class="destaque"><strong>trigger_rule:</strong> por padrão, uma task só roda se TODAS as tasks anteriores tiverem sucesso (<code>all_success</code>). Mas você pode mudar esse comportamento: <code>all_failed</code> (só roda se tudo falhou — útil para rollback), <code>one_success</code> (basta uma ter sucesso), <code>none_failed</code> (roda mesmo se alguma foi "skipped").</div>
+    </div>
+
+    <!-- Atividade -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Hands-on em grupo</div>
+        <div class="secao-titulo">Construir e rodar a DAG no Airflow local</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>O professor vai disponibilizar um ambiente Airflow via Docker Compose (Astronomer CLI ou docker-airflow). Suba o ambiente, acesse a UI em <code>localhost:8080</code> e siga os exercícios.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Setup e primeira DAG (15 min)</div>
+      <p>Suba o ambiente Airflow com Docker. Acesse a UI e ative a DAG de exemplo fornecida pelo professor. Crie sua própria DAG simples com 3 BashOperators sequenciais (<code>tarefa_a >> tarefa_b >> tarefa_c</code>), cada um apenas imprimindo uma mensagem com <code>echo</code>. Dispare manualmente e observe na visualização Graph.</p>
+      <span class="dif-basico">Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — DAG com paralelismo e sensor (20 min)</div>
+      <p>Modifique sua DAG para ter duas tasks em paralelo após a primeira (<code>tarefa_a >> [tarefa_b, tarefa_c] >> tarefa_d</code>). Adicione um <code>FileSensor</code> esperando por um arquivo que você criará manualmente durante a execução — observe a DAG "pausada" aguardando até você criar o arquivo.</p>
+      <span class="dif-medio">Sensor + Paralelismo</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: simular falha e retry (15 min)</div>
+      <p>Crie uma task que falha propositalmente (ex: <code>exit 1</code> no BashOperator) e configure <code>retries=2</code> com <code>retry_delay</code> de 1 minuto. Observe na Airflow UI: (a) quantas tentativas o Airflow fez, (b) o status final da task após esgotar os retries, (c) o que acontece com as tasks downstream que dependiam dela (devem aparecer como <code>upstream_failed</code>).</p>
+      <span class="dif-desafio">Retry + Status</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver comportamento esperado</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Comportamento esperado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a)</strong> O Airflow tenta a execução original + 2 retries = 3 tentativas totais, todas falhando, com 1 minuto de espera entre cada.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b)</strong> Após esgotar os retries, a task fica com status <span class="status-box status-failed" style="display:inline;">failed</span> permanentemente para aquela execução (a menos que você a limpe manualmente para forçar novo retry).</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(c)</strong> Qualquer task que dependia dela (downstream) recebe o status <span class="status-box status-upstream" style="display:inline;">upstream_failed</span> e não é executada — o Airflow propaga a falha automaticamente para proteger a integridade do pipeline.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 12</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 12</div>
+        <div class="secao-titulo">O que você precisa ter gravado antes da P2</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>DAG</strong>
+        <p>Grafo direcionado acíclico. Operador >> define dependências. Tasks rodam na ordem definida pelo grafo.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cogs"></i>
+        <strong>Operadores</strong>
+        <p>BashOperator, PythonOperator, Sensors. TaskFlow API (@dag, @task) é a forma moderna de escrever.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-satellite-dish"></i>
+        <strong>Sensores</strong>
+        <p>Esperam condições externas (arquivo, S3, outra DAG). Modo reschedule é mais eficiente que poke.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-heartbeat"></i>
+        <strong>Monitoramento</strong>
+        <p>Status coloridos na UI. Retries com backoff. SLA detecta demora. Catchup=False evita execuções históricas indesejadas.</p>
+      </div>
+    </div>
+
+    <div class="aviso" style="margin-top:1.5rem;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>P2 é na semana que vem!</strong> Revisão do que será cobrado: ingestão batch/streaming/CDC (Semana 7), Apache Spark fundamentos e RDD (Semana 8), PySpark avançado — joins e shuffle (Semana 9), Spark SQL e Catalyst Optimizer (Semana 10), ETL/ELT e dbt (Semana 11), e Apache Airflow — DAGs, operadores, sensores (Semana 12).</span>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:.75rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe por que o cron não basta para pipelines de dados? Consegue escrever uma DAG simples com BashOperator e definir dependências com >>? Sabe a diferença entre Sensor e Operator? Entende retries, SLA e catchup? Se sim para os quatro — você está pronto para a Semana 13.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-13-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 13 — AVALIAÇÃO P2 · Conteúdo das Semanas 7 a 12</div>
+      </div>
+      <i class="fas fa-clipboard-check"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver comportamento esperado';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O cron foi desenhado apenas para "rodar X no horário Y" — ele não entende relacionamentos entre tarefas (dependências), não tem mecanismo de retry quando algo falha, e não oferece visibilidade do que aconteceu (sucesso, falha, duração). Ferramentas como o Airflow nasceram exatamente para resolver esses problemas em pipelines de dados cada vez mais complexos e interdependentes.'},
+  quiz2:{correct:'B',msg:'✅ Correto! A sintaxe extract >> [transform_a, transform_b] >> load define que transform_a e transform_b são tarefas independentes entre si que podem rodar EM PARALELO, ambas dependendo apenas de extract ter terminado. A tarefa load, por sua vez, só inicia depois que AMBAS transform_a e transform_b tiverem concluído com sucesso — esse é o comportamento padrão (trigger_rule=all_success).'},
+  quiz3:{correct:'B',msg:'✅ Correto! Catchup=True faz o Airflow disparar uma execução para CADA intervalo de agendamento que passou entre o start_date e o momento atual. Com 6 meses de histórico e um schedule_interval diário, isso significaria aproximadamente 180 execuções disparadas de uma vez (sujeitas ao parallelism configurado). É por isso que catchup=False é o padrão recomendado para a maioria dos pipelines de produção — evita sobrecarregar o sistema com backfills não intencionais.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

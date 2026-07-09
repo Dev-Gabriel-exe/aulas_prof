@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 06 — AVALIAÇÃO P1 · Big Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(239,68,68,.05);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+  --exam-red:#dc2626;
+  --exam-red-acc:#f87171;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═════════════════════════════ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c0a0a;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#dc2626;top:38%;left:42%;opacity:.12;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.2);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--exam-red-acc);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.1;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--exam-red-acc);}
+.capa-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--exam-red-acc);border-radius:2px;margin-bottom:2rem;}
+
+.cobertura{display:flex;flex-direction:column;gap:.65rem;}
+.cob-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.83rem;animation:slideIn .5s ease both;}
+.cob-item:nth-child(1){animation-delay:.1s;}.cob-item:nth-child(2){animation-delay:.2s;}.cob-item:nth-child(3){animation-delay:.3s;}.cob-item:nth-child(4){animation-delay:.4s;}.cob-item:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.cob-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.15);color:var(--exam-red-acc);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--exam-red-acc);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--exam-red-acc);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(239,68,68,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.aviso-exam{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-exam i{color:var(--exam-red-acc);flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--exam-red-acc);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+
+/* ── Semana cards ── */
+.semana-card{border-radius:14px;padding:1.25rem;border:1px solid;margin-bottom:0;}
+.s1{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.2);}
+.s2{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.s3{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.s4{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.s5{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);}
+.s-titulo{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;display:flex;align-items:center;gap:8px;}
+.s1 .s-titulo{color:var(--accent-400);}
+.s2 .s-titulo{color:#60a5fa;}
+.s3 .s-titulo{color:#4ade80;}
+.s4 .s-titulo{color:#a78bfa;}
+.s5 .s-titulo{color:#fbbf24;}
+.s-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.s-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;color:var(--text-muted);margin-top:2px;}
+.s-armadilha{font-size:.75rem;margin-top:.6rem;padding:.5rem .75rem;border-radius:7px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:rgba(252,165,165,.8);}
+.s-armadilha::before{content:'⚠ ';font-weight:700;}
+
+/* ── Simulado ── */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s;}
+.questao:hover{border-color:rgba(239,68,68,.2);}
+.q-header{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem;}
+.q-num{width:32px;height:32px;border-radius:9px;background:rgba(239,68,68,.12);color:var(--exam-red-acc);font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-semana{font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:600;margin-top:6px;flex-shrink:0;}
+.q-texto{font-size:.92rem;color:var(--text-primary);line-height:1.6;font-weight:500;}
+.q-opcoes{display:flex;flex-direction:column;gap:.45rem;}
+.q-op{display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .85rem;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:all .2s;font-size:.85rem;color:var(--text-secondary);}
+.q-op:hover{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+.q-op.correto{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35);color:#86efac;}
+.q-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.q-letra{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:1px;}
+.q-gabarito{display:none;margin-top:.85rem;padding:.85rem 1rem;border-radius:9px;font-size:.83rem;line-height:1.6;}
+.q-gabarito.show{display:block;}
+
+/* ── Dissertativas ── */
+.dissertativa{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.d-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.d-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1rem;padding:.85rem 1rem;border-radius:9px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.5rem 1rem;color:var(--exam-red-acc);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(239,68,68,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+.modelo-resposta{padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.modelo-resposta strong{color:#4ade80;}
+
+/* ── Checklist interativo ── */
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;}
+.check-item:hover{border-color:rgba(74,222,128,.3);}
+.check-item.checked{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;}
+.check-item.checked .check-box{background:rgba(74,222,128,.3);border-color:#4ade80;color:#4ade80;}
+.check-label{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+.check-item.checked .check-label{color:rgba(134,239,172,.8);}
+.progress-bar-wrap{margin:1rem 0;padding:1rem 1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-label span{font-size:.78rem;color:var(--text-secondary);}
+.progress-label strong{font-size:.82rem;color:var(--text-primary);}
+.progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#fb923c);border-radius:4px;transition:width .4s ease;}
+
+/* Dicas */
+.dica-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:.75rem 0;}
+.dica-card{border-radius:12px;padding:1rem;border:1px solid rgba(255,255,255,.07);background:var(--card-bg);}
+.dica-num{font-family:'Montserrat',sans-serif;font-size:1.8rem;font-weight:800;color:rgba(239,68,68,.15);line-height:1;margin-bottom:.4rem;}
+.dica-titulo{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+.dica-texto{font-size:.8rem;color:var(--text-secondary);line-height:1.55;}
+
+/* Scores */
+.score-box{display:none;margin-top:1rem;padding:1rem 1.25rem;border-radius:12px;text-align:center;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#4ade80;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.checklist-grid,.dica-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔴 Avaliação P1</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">06</div>
+    <h1 class="capa-titulo"><em>Avaliação P1</em></h1>
+    <p class="capa-sub">Semana de prova · Conteúdo das semanas 1 a 5</p>
+    <div class="divider"></div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">Esta página é o seu guia de preparação para a P1. Use o simulado, os gabaritos das questões dissertativas e o checklist interativo.</p>
+    <div class="cobertura">
+      <div class="cob-item"><div class="cob-num">S1</div><span>Os 5 Vs do Big Data e BD Tradicional vs Big Data</span></div>
+      <div class="cob-item"><div class="cob-num">S2</div><span>Arquiteturas Lambda e Kappa — camadas e ferramentas</span></div>
+      <div class="cob-item"><div class="cob-num">S3</div><span>Data Lake — zonas Raw/Silver/Gold e formatos Parquet/Avro</span></div>
+      <div class="cob-item"><div class="cob-num">S4</div><span>Apache HDFS — NameNode, DataNode, blocos, replicação</span></div>
+      <div class="cob-item"><div class="cob-num">S5</div><span>Apache Kafka — tópicos, partições, consumers, offset</span></div>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Formato da P1</div>
+      <ul class="info-lista">
+        <li>Questões de múltipla escolha — conceito e análise de cenário</li>
+        <li>Questões dissertativas — explicação e comparação de conceitos</li>
+        <li>Pode incluir análise de diagrama ou trecho de código</li>
+        <li>Consulta: sem consulta (prova fechada)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Temas mais importantes</div>
+      <ul class="info-lista">
+        <li>Diferença entre Lambda e Kappa — quando usar cada uma</li>
+        <li>NameNode vs DataNode — papéis e o que acontece com falha</li>
+        <li>Consumer Group — como partições são distribuídas</li>
+        <li>Zonas Raw/Silver/Gold — regras e fluxo de dados</li>
+        <li>Os 5 Vs — saber dar exemplo concreto de cada um</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dica de ouro</div>
+      <ul class="info-lista">
+        <li>Se a questão pede comparação, use uma tabela mental: Lambda X Kappa, HDFS X S3, Parquet X Avro</li>
+        <li>Para cenários, pergunte: qual é a escala? qual é a latência aceitável? os dados mudam retroativamente?</li>
+        <li>Desenho sempre ajuda — NameNode + DataNodes em 2 min no papel</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>começar a revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── REVISÃO RÁPIDA ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">①</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão rápida</div>
+        <div class="secao-titulo">Os 5 temas — pontos-chave e armadilhas comuns</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="semana-card s1">
+        <div class="s-titulo"><i class="fas fa-expand-arrows-alt"></i>Semana 1 — Os 5 Vs</div>
+        <div class="s-item"><strong>Volume:</strong> escala que ultrapassa uma máquina → escalonamento horizontal</div>
+        <div class="s-item"><strong>Velocidade:</strong> batch (horas), micro-batch (min), streaming (ms) — latência define a arquitetura</div>
+        <div class="s-item"><strong>Variedade:</strong> estruturado (SQL), semi (JSON/Avro), não estruturado (imagens/texto)</div>
+        <div class="s-item"><strong>Veracidade:</strong> qualidade dos dados → garbage in, garbage out</div>
+        <div class="s-item"><strong>Valor:</strong> o objetivo final — insights, predições, ações</div>
+        <div class="s-item">BD Tradicional: até ~TB, schema fixo, ACID. Big Data: TB+, qualquer tipo, escala horizontal</div>
+        <div class="s-armadilha">Armadilha: Big Data não é "melhor" que BD tradicional — é para problemas de escala real. 5.000 usuários não justifica Kafka + Spark.</div>
+      </div>
+
+      <div class="semana-card s2">
+        <div class="s-titulo"><i class="fas fa-layer-group"></i>Semana 2 — Lambda e Kappa</div>
+        <div class="s-item"><strong>Lambda:</strong> Batch Layer (histórico) + Speed Layer (tempo real) + Serving Layer (merge)</div>
+        <div class="s-item"><strong>Fórmula Lambda:</strong> resultado = batch view + real-time view</div>
+        <div class="s-item"><strong>Lambda ✅:</strong> reprocessamento fácil, precisão histórica alta</div>
+        <div class="s-item"><strong>Lambda ❌:</strong> dois codebases, complexidade dobrada, custo alto</div>
+        <div class="s-item"><strong>Kappa:</strong> tudo é stream via Kafka, um único codebase</div>
+        <div class="s-item"><strong>Kappa reprocessa:</strong> rebobinando o Kafka (offset=0), nova versão em paralelo, swap</div>
+        <div class="s-item"><strong>Lakehouse:</strong> ACID no Data Lake via Delta Lake — arquitetura moderna</div>
+        <div class="s-armadilha">Armadilha: Lambda não é "melhor" que Kappa. Lambda para dados que mudam retroativamente; Kappa para eventos imutáveis.</div>
+      </div>
+
+      <div class="semana-card s3">
+        <div class="s-titulo"><i class="fas fa-water"></i>Semana 3 — Data Lake</div>
+        <div class="s-item"><strong>DW:</strong> schema-on-write, estruturado, ACID, caro — para BI</div>
+        <div class="s-item"><strong>Data Lake:</strong> schema-on-read, qualquer tipo, barato — para ML e analytics</div>
+        <div class="s-item"><strong>Raw/Bronze:</strong> dado bruto, imutável, NUNCA modificar — fonte da verdade</div>
+        <div class="s-item"><strong>Silver:</strong> limpa, validada, deduplicada, Parquet — confusão zero</div>
+        <div class="s-item"><strong>Gold:</strong> agregada, pronta para BI e ML, por caso de uso</div>
+        <div class="s-item"><strong>Parquet:</strong> colunar, compressão excelente, ideal para analytics (Silver/Gold)</div>
+        <div class="s-item"><strong>Avro:</strong> row-based, schema embutido, schema evolution — ideal para Kafka/Raw</div>
+        <div class="s-armadilha">Armadilha: bug na Silver? Corrija a lógica e reprocesse a partir da Raw — NUNCA modifique a Raw.</div>
+      </div>
+
+      <div class="semana-card s4">
+        <div class="s-titulo"><i class="fas fa-server"></i>Semana 4 — HDFS</div>
+        <div class="s-item"><strong>NameNode:</strong> só metadados em RAM — sabe onde cada bloco está. SPOF sem HA.</div>
+        <div class="s-item"><strong>DataNode:</strong> armazena blocos. Heartbeat a cada 3s. 10 min sem heartbeat → considerado morto</div>
+        <div class="s-item"><strong>Bloco:</strong> 128 MB — reduz entradas de metadados no NameNode</div>
+        <div class="s-item"><strong>Replicação (fator 3):</strong> réplica 1 no nó local, réplica 2 em outro rack, réplica 3 no mesmo rack da 2ª</div>
+        <div class="s-item"><strong>Falha de DataNode:</strong> NameNode detecta, inicia re-replicação automática</div>
+        <div class="s-item"><strong>HDFS vs S3:</strong> data locality vs custo/operação/durabilidade (11 9s)</div>
+        <div class="s-armadilha">Armadilha: se o NameNode cair sem HA, o cluster para — DataNodes têm os dados mas ninguém sabe onde estão.</div>
+      </div>
+    </div>
+
+    <div class="semana-card s5">
+      <div class="s-titulo"><i class="fas fa-stream"></i>Semana 5 — Apache Kafka</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem 2rem;">
+        <div class="s-item"><strong>Broker:</strong> servidor Kafka do cluster</div>
+        <div class="s-item"><strong>Topic:</strong> canal nomeado, append-only, imutável</div>
+        <div class="s-item"><strong>Partition:</strong> log ordenado, unidade de paralelismo</div>
+        <div class="s-item"><strong>Offset:</strong> posição da mensagem na partição (começa em 0)</div>
+        <div class="s-item"><strong>Producer:</strong> publica; mesma chave → mesma partição</div>
+        <div class="s-item"><strong>Consumer:</strong> lê, mantém offset, pode rebobinar</div>
+        <div class="s-item"><strong>Consumer Group:</strong> cada partição = 1 consumer por grupo</div>
+        <div class="s-item"><strong>Grupos diferentes:</strong> leem tópico independentemente</div>
+        <div class="s-item"><strong>At-least-once:</strong> commit após processar (padrão)</div>
+        <div class="s-item"><strong>LAG:</strong> mensagens pendentes (LOG-END - CURRENT-OFFSET)</div>
+      </div>
+      <div class="s-armadilha">Armadilha: partições > consumers → alguns consumers leem mais de uma. Consumers > partições → consumers extras ficam ociosos.</div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado — 12 questões</span></div>
+
+  <!-- ── SIMULADO ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">②</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado</div>
+        <div class="secao-titulo">12 questões de múltipla escolha — clique para revelar o gabarito</div>
+      </div>
+    </div>
+
+    <div class="aviso-exam">
+      <i class="fas fa-stopwatch"></i>
+      <span>Para simular a prova, tente responder todas as questões SEM ver o gabarito. Marque sua resposta mentalmente, depois revele. O score aparece ao final.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">1</div>
+        <span class="q-semana badge">Semana 1</span>
+        <div class="q-texto">Uma empresa de e-commerce processa 800 mil pedidos por dia. Os dados chegam em CSV via integração com o ERP. Qual dos 5 Vs é o principal desafio para essa empresa implementar Big Data?</div>
+      </div>
+      <div class="q-opcoes" id="q1-ops">
+        <div class="q-op" onclick="respQ('q1',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Variedade — os dados chegam em CSV, um formato difícil de processar</div>
+        <div class="q-op" onclick="respQ('q1',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Volume — 800 mil pedidos/dia justifica Big Data por si só</div>
+        <div class="q-op" onclick="respQ('q1',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Nenhum — 800 mil pedidos/dia (~9 pedidos/seg) não justifica Big Data; um PostgreSQL bem configurado resolve</div>
+        <div class="q-op" onclick="respQ('q1',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Velocidade — 9 pedidos por segundo exige processamento em streaming</div>
+      </div>
+      <div class="q-gabarito" id="q1-gab"><strong>✅ Alternativa C.</strong> 800 mil pedidos/dia é ~9 pedidos/segundo e ~30 GB/mês se cada pedido tiver 1 KB. Um PostgreSQL gerencia isso com folga por anos. Big Data resolve problemas de <em>escala real</em> — a adoção prematura adiciona complexidade e custo sem benefício.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">2</div>
+        <span class="q-semana badge">Semana 1</span>
+        <div class="q-texto">Um hospital quer cruzar dados de exames de imagem (DICOM), textos de prontuários, resultados de exames laboratoriais (CSV) e dados de IoT de monitores cardíacos. Qual V do Big Data melhor descreve esse desafio?</div>
+      </div>
+      <div class="q-opcoes" id="q2-ops">
+        <div class="q-op" onclick="respQ('q2',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Volume — dados de hospital são sempre volumosos</div>
+        <div class="q-op" onclick="respQ('q2',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Velocidade — dados de IoT chegam em tempo real</div>
+        <div class="q-op" onclick="respQ('q2',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Variedade — imagens, texto livre, CSV estruturado e streaming de IoT são tipos radicalmente diferentes</div>
+        <div class="q-op" onclick="respQ('q2',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Veracidade — dados médicos têm muitos erros de entrada</div>
+      </div>
+      <div class="q-gabarito" id="q2-gab"><strong>✅ Alternativa C.</strong> O principal desafio aqui é a Variedade: imagens DICOM (não estruturado), prontuários em texto livre (não estruturado), CSV (estruturado) e streaming IoT (semiestruturado). Cada tipo exige tecnologia e pipeline diferentes — isso é o V3 por excelência.</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">3</div>
+        <span class="q-semana badge-blue">Semana 2</span>
+        <div class="q-texto">Na Arquitetura Lambda, um analista descobre que a fórmula de cálculo de receita estava errada há 6 meses. Qual camada permite corrigir esse problema de forma mais simples?</div>
+      </div>
+      <div class="q-opcoes" id="q3-ops">
+        <div class="q-op" onclick="respQ('q3',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Speed Layer — ela processa os dados em tempo real e pode ser corrigida imediatamente</div>
+        <div class="q-op" onclick="respQ('q3',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Batch Layer — corrige a lógica e re-executa o job sobre todos os dados históricos imutáveis</div>
+        <div class="q-op" onclick="respQ('q3',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Serving Layer — ela consolida batch e speed views e pode recalcular sob demanda</div>
+        <div class="q-op" onclick="respQ('q3',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Nenhuma — seria necessário reimportar todos os dados do sistema de origem</div>
+      </div>
+      <div class="q-gabarito" id="q3-gab"><strong>✅ Alternativa B.</strong> A grande vantagem do Batch Layer é exatamente essa: os dados brutos são armazenados de forma imutável. Para corrigir um erro histórico, basta corrigir o código do job batch e re-executá-lo sobre os dados originais — que nunca foram modificados.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">4</div>
+        <span class="q-semana badge-blue">Semana 2</span>
+        <div class="q-texto">Uma fintech decide migrar de Lambda para Kappa. O time alega que o Kafka retém 90 dias de eventos. Qual é a principal limitação dessa decisão?</div>
+      </div>
+      <div class="q-opcoes" id="q4-ops">
+        <div class="q-op" onclick="respQ('q4',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Kafka não suporta reprocessamento — é impossível rebobinar o offset</div>
+        <div class="q-op" onclick="respQ('q4',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>A Kappa não garante a ordem das mensagens dentro de uma partição</div>
+        <div class="q-op" onclick="respQ('q4',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Se as regras de compliance exigirem reprocessar dados anteriores a 90 dias, o Kafka não terá esses eventos — a retenção limita o replay histórico</div>
+        <div class="q-op" onclick="respQ('q4',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>A Kappa não tem camada de serving — os dados não podem ser consultados em tempo real</div>
+      </div>
+      <div class="q-gabarito" id="q4-gab"><strong>✅ Alternativa C.</strong> A Kappa depende do Kafka para reprocessamento histórico. Se a retenção é 90 dias e as regras fiscais exigem reprocessar 5 anos de dados, o Kafka simplesmente não tem mais esses eventos. Para esse cenário, ou você aumenta a retenção do Kafka (caro), usa tiered storage, ou considera que a Lambda (com HDFS/S3 ilimitado) é mais adequada.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">5</div>
+        <span class="q-semana badge-green">Semana 3</span>
+        <div class="q-texto">Um engenheiro de dados corrigiu um bug na transformação da zona Silver. Qual deve ser o procedimento correto?</div>
+      </div>
+      <div class="q-opcoes" id="q5-ops">
+        <div class="q-op" onclick="respQ('q5',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Corrigir os dados diretamente na zona Silver via UPDATE SQL</div>
+        <div class="q-op" onclick="respQ('q5',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Corrigir o dado na zona Raw e reprocessar Silver e Gold</div>
+        <div class="q-op" onclick="respQ('q5',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Corrigir a lógica de transformação e reprocessar Silver a partir da Raw original — nunca modificar a Raw</div>
+        <div class="q-op" onclick="respQ('q5',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Apagar a Silver e aguardar a próxima ingestão da fonte de dados</div>
+      </div>
+      <div class="q-gabarito" id="q5-gab"><strong>✅ Alternativa C.</strong> A zona Raw é imutável por design — é a "fonte da verdade". O bug está na lógica de transformação, não nos dados. O procedimento correto é: (1) corrigir o código de transformação, (2) apagar a Silver com dados incorretos, (3) reprocessar Silver a partir da Raw original. A Gold também precisa ser reprocessada em seguida.</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">6</div>
+        <span class="q-semana badge-green">Semana 3</span>
+        <div class="q-texto">Um pipeline Kafka ingere eventos de clique de usuários que serão armazenados na zona Raw. Qual formato é mais adequado e por quê?</div>
+      </div>
+      <div class="q-opcoes" id="q6-ops">
+        <div class="q-op" onclick="respQ('q6',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Parquet — colunar, melhor compressão, ideal para todos os contextos</div>
+        <div class="q-op" onclick="respQ('q6',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Avro — row-based, schema embutido, suporte a schema evolution, padrão do ecossistema Kafka</div>
+        <div class="q-op" onclick="respQ('q6',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>ORC — otimizado para Hive, melhor para streaming</div>
+        <div class="q-op" onclick="respQ('q6',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>CSV — mais simples para debug em caso de erros</div>
+      </div>
+      <div class="q-gabarito" id="q6-gab"><strong>✅ Alternativa B.</strong> Para dados em streaming via Kafka, Avro é o formato padrão porque: (1) é row-based, eficiente para serializar/deserializar eventos individuais; (2) o schema é embutido no arquivo; (3) suporta schema evolution — campos novos podem ser adicionados sem quebrar consumidores antigos; (4) é o padrão do Schema Registry do Confluent.</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">7</div>
+        <span class="q-semana badge-purple">Semana 4</span>
+        <div class="q-texto">Um cluster HDFS tem 1 NameNode e 6 DataNodes. O DataNode 3 falha. Quais blocos correm risco de perda?</div>
+      </div>
+      <div class="q-opcoes" id="q7-ops">
+        <div class="q-op" onclick="respQ('q7',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Todos os blocos do DataNode 3 — sem o nó, os dados são perdidos</div>
+        <div class="q-op" onclick="respQ('q7',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Nenhum — com replication-factor=3, cada bloco tem 2 réplicas em outros DataNodes</div>
+        <div class="q-op" onclick="respQ('q7',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Os blocos cujo Leader estava no DataNode 3 — as réplicas não são suficientes</div>
+        <div class="q-op" onclick="respQ('q7',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Apenas os blocos que estavam sendo escritos no momento da falha</div>
+      </div>
+      <div class="q-gabarito" id="q7-gab"><strong>✅ Alternativa B.</strong> Com replication-factor=3 padrão, cada bloco tem 3 cópias em DataNodes diferentes. A falha de 1 DataNode deixa os blocos com 2 réplicas — ainda disponíveis para leitura. O NameNode detecta a falha pelo heartbeat, identifica os blocos que ficaram com apenas 2 réplicas e inicia re-replicação para restaurar o fator 3. Nenhum dado é perdido.</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">8</div>
+        <span class="q-semana badge-purple">Semana 4</span>
+        <div class="q-texto">Por que o HDFS usa blocos de 128 MB em vez de blocos de 4 KB como sistemas de arquivos tradicionais?</div>
+      </div>
+      <div class="q-opcoes" id="q8-ops">
+        <div class="q-op" onclick="respQ('q8',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Para melhorar a segurança — blocos grandes são mais difíceis de interceptar</div>
+        <div class="q-op" onclick="respQ('q8',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Para reduzir o número de entradas de metadados no NameNode (que fica em RAM) e otimizar leituras sequenciais</div>
+        <div class="q-op" onclick="respQ('q8',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Para facilitar a replicação — blocos grandes são mais fáceis de copiar entre DataNodes</div>
+        <div class="q-op" onclick="respQ('q8',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Porque os discos dos DataNodes são mais lentos e blocos grandes compensam a latência</div>
+      </div>
+      <div class="q-gabarito" id="q8-gab"><strong>✅ Alternativa B.</strong> O NameNode mantém todos os metadados em RAM. Com blocos de 4 KB, um arquivo de 1 GB teria 262.144 entradas; com 128 MB, apenas 8. Para 500 TB de dados, blocos pequenos tornariam o NameNode impraticável. Além disso, blocos grandes permitem leitura sequencial eficiente — discos HDD são muito mais rápidos para leituras contínuas do que para muitos acessos aleatórios.</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">9</div>
+        <span class="q-semana badge-yellow">Semana 5</span>
+        <div class="q-texto">Um tópico Kafka tem 4 partições. O Consumer Group "analytics" tem 6 consumers. Como as partições são distribuídas?</div>
+      </div>
+      <div class="q-opcoes" id="q9-ops">
+        <div class="q-op" onclick="respQ('q9',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Todas as 4 partições são lidas por todos os 6 consumers simultaneamente</div>
+        <div class="q-op" onclick="respQ('q9',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>4 consumers ficam com 1 partição cada; 2 consumers ficam ociosos (idle)</div>
+        <div class="q-op" onclick="respQ('q9',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Cada partição é dividida igualmente entre os 6 consumers</div>
+        <div class="q-op" onclick="respQ('q9',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O Kafka cria 2 partições extras para atender os 2 consumers excedentes</div>
+      </div>
+      <div class="q-gabarito" id="q9-gab"><strong>✅ Alternativa B.</strong> A regra fundamental dos Consumer Groups: cada partição é atribuída a <em>exatamente um consumer</em> dentro do grupo ao mesmo tempo. Com 4 partições e 6 consumers, 4 consumers ficam ativos (um por partição) e 2 ficam completamente ociosos. Para máximo paralelismo, o número de consumers deve ser igual ao número de partições.</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">10</div>
+        <span class="q-semana badge-yellow">Semana 5</span>
+        <div class="q-texto">Um producer Kafka envia eventos de pedido usando o campo customer_id como chave da mensagem. Qual garantia isso oferece?</div>
+      </div>
+      <div class="q-opcoes" id="q10-ops">
+        <div class="q-op" onclick="respQ('q10',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Todos os pedidos são processados mais rapidamente por ter chave definida</div>
+        <div class="q-op" onclick="respQ('q10',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Pedidos de diferentes clientes nunca chegam ao mesmo consumer</div>
+        <div class="q-op" onclick="respQ('q10',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Todos os eventos do mesmo cliente vão para a mesma partição, garantindo a ordem temporal dos eventos por cliente</div>
+        <div class="q-op" onclick="respQ('q10',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>A chave criptografa os dados do pedido para maior segurança</div>
+      </div>
+      <div class="q-gabarito" id="q10-gab"><strong>✅ Alternativa C.</strong> No Kafka, a chave da mensagem determina a partição de destino (via hash da chave). A mesma chave sempre resulta na mesma partição. Como cada partição é um log ordenado, todos os eventos do cliente C001 (criado → pago → enviado → entregue) chegam na ordem correta ao consumer. Sem chave, os eventos de um mesmo cliente poderiam ir para partições diferentes e chegar fora de ordem.</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">11</div>
+        <span class="q-semana badge-yellow">Semana 5</span>
+        <div class="q-texto">O Consumer Group "fraud-detector" mostra LAG=500 no tópico "transactions". O que isso significa?</div>
+      </div>
+      <div class="q-opcoes" id="q11-ops">
+        <div class="q-op" onclick="respQ('q11',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O grupo já processou 500 mensagens com sucesso</div>
+        <div class="q-op" onclick="respQ('q11',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>O tópico tem apenas 500 mensagens no total</div>
+        <div class="q-op" onclick="respQ('q11',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>O grupo tem 500 mensagens pendentes de processamento — está 500 offsets atrás do final do log</div>
+        <div class="q-op" onclick="respQ('q11',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O Kafka está 500ms mais lento do que o normal</div>
+      </div>
+      <div class="q-gabarito" id="q11-gab"><strong>✅ Alternativa C.</strong> LAG = LOG-END-OFFSET − CURRENT-OFFSET. Um LAG de 500 significa que o grupo está 500 mensagens atrás do final do log — há 500 transações que chegaram ao Kafka mas ainda não foram processadas pelo grupo. Em detecção de fraude, um LAG alto é crítico: significa que transações fraudulentas podem estar passando sem análise. A solução é adicionar mais consumers (até o limite de partições).</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">12</div>
+        <span class="q-semana badge-blue">Semana 2</span>
+        <div class="q-texto">Uma empresa tem dados de vendas históricos que precisam ser corrigidos retroativamente (preços mudam), além de um dashboard em tempo real. Qual arquitetura é mais adequada?</div>
+      </div>
+      <div class="q-opcoes" id="q12-ops">
+        <div class="q-op" onclick="respQ('q12',this,'A',true)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Lambda — Batch Layer facilita reprocessamento histórico com nova lógica; Speed Layer entrega o dashboard em tempo real</div>
+        <div class="q-op" onclick="respQ('q12',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Kappa — tudo é stream e o Kafka resolve o reprocessamento igualmente bem</div>
+        <div class="q-op" onclick="respQ('q12',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Somente batch — o dashboard pode atualizar uma vez por dia sem prejuízo</div>
+        <div class="q-op" onclick="respQ('q12',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Nenhuma das arquiteturas Big Data — use um Data Warehouse convencional</div>
+      </div>
+      <div class="q-gabarito" id="q12-gab"><strong>✅ Alternativa A.</strong> O cenário tem dois indicadores que favorecem Lambda: (1) dados que mudam retroativamente (preços corrigidos) — o Batch Layer reprocessa com nova lógica sem problemas; (2) dashboard em tempo real — o Speed Layer cobre isso. Na Kappa, reprocessar dados históricos com preços corrigidos exigiria que o Kafka retivesse os dados por anos e um processo complexo de rebobinamento com nova versão em paralelo.</div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-box" id="score-box">
+      <div class="score-num" id="score-num">0/12</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:.25rem;" id="score-msg"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="calcScore()" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--exam-red-acc);padding:.7rem 2rem;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.15)'">
+        <i class="fas fa-calculator" style="margin-right:8px;"></i>Ver meu score
+      </button>
+    </div>
+  </section>
+
+  <div class="sep"><span>Questões Dissertativas</span></div>
+
+  <!-- ── DISSERTATIVAS ──────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">③</div>
+      <div class="secao-info">
+        <div class="secao-label">Questões dissertativas</div>
+        <div class="secao-titulo">4 questões abertas — modelo de resposta completo</div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 1 — Semanas 2 e 5</div>
+      <div class="d-enunciado">Compare as Arquiteturas Lambda e Kappa em termos de: (a) estrutura de camadas, (b) como cada uma realiza o reprocessamento de dados históricos, e (c) em que cenários você escolheria cada uma. Use exemplos concretos.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>(a) Estrutura:</strong> A Lambda possui três camadas: Batch Layer (processa todos os dados históricos periodicamente, gera "batch views" precisas), Speed Layer (processa apenas dados recentes em tempo real, gera "real-time views") e Serving Layer (combina as duas views para responder queries). A fórmula é: resultado = batch view + real-time view. A Kappa possui uma única camada de streaming — o Kafka funciona como log imutável central e um único job de streaming (Flink/Spark Streaming) processa tanto dados históricos quanto novos eventos.
+          <br><br>
+          <strong>(b) Reprocessamento:</strong> Na Lambda, o reprocessamento é simples — corrige-se o código do job batch e ele é re-executado sobre os dados imutáveis do Batch Layer (HDFS/S3). Na Kappa, o reprocessamento exige: (1) subir nova versão do job consumindo o tópico Kafka desde o offset 0 em uma tabela temporária, (2) aguardar o job atingir o tempo real (catch-up), (3) fazer o swap de tráfego para a nova versão, (4) desligar a versão antiga.
+          <br><br>
+          <strong>(c) Quando usar:</strong> Lambda é preferível quando os dados precisam ser corrigidos retroativamente (preços que mudam e afetam cálculos passados, regras de compliance que se aplicam ao histórico) ou quando a retenção do Kafka não cobre o horizonte histórico necessário. Exemplo: sistema bancário que precisa recalcular scoring de crédito dos últimos 5 anos com nova regulação. Kappa é preferível quando os eventos são imutáveis por natureza, a equipe é pequena e complexidade é uma preocupação real. Exemplo: sistema de rastreamento de entregas — um pacote saiu às 14h e chegou às 18h; esses fatos não mudam retroativamente.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 2 — Semana 4</div>
+      <div class="d-enunciado">Explique o papel do NameNode e dos DataNodes no HDFS. O que acontece quando um DataNode falha? E o que acontece quando o NameNode falha? Por que o NameNode é considerado um Single Point of Failure (SPOF)?</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>NameNode:</strong> é o master do cluster HDFS. Armazena exclusivamente metadados em RAM: o mapeamento de cada arquivo para seus blocos (FsImage) e o registro de onde cada bloco está armazenado (block location). Ele NÃO armazena os dados dos arquivos. Todos os clientes consultam o NameNode para saber onde ler ou onde escrever antes de contatar os DataNodes diretamente.
+          <br><br>
+          <strong>DataNodes:</strong> são os workers do cluster. Armazenam fisicamente os blocos de dados. Enviam heartbeat ao NameNode a cada 3 segundos indicando que estão ativos, e um block report periódico listando todos os blocos que possuem.
+          <br><br>
+          <strong>Falha de DataNode:</strong> O NameNode detecta a ausência de heartbeat após 10 minutos. Ele verifica quais blocos que estavam naquele DataNode ficaram com menos de 3 réplicas (fator padrão). Em seguida, instrui outros DataNodes ativos a criar cópias adicionais desses blocos para restaurar o fator de replicação. Nenhum dado é perdido e o sistema continua funcionando transparentemente.
+          <br><br>
+          <strong>Falha do NameNode:</strong> É catastrófica sem HA. Os DataNodes continuam vivos com todos os dados físicos intactos, mas nenhum cliente sabe onde os blocos estão — o único índice existia na memória do NameNode. O cluster fica completamente inacessível. Por isso o NameNode é um SPOF: uma única falha derruba todo o sistema. A solução é HA NameNode (Active/Standby com ZooKeeper e JournalNodes compartilhados), garantindo failover automático em segundos.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 3 — Semana 5</div>
+      <div class="d-enunciado">Uma empresa tem um tópico Kafka "transactions" com 6 partições. Três sistemas precisam processar cada transação: detecção de fraude (crítico, baixa latência), analytics (não crítico) e geração de notificações. Como você configuraria os Consumer Groups? Explique o comportamento esperado e como garantir que cada sistema processa 100% das transações.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Configuração:</strong> Criar 3 Consumer Groups independentes: "fraud-detector", "analytics" e "notifications". Cada grupo se inscreve no tópico "transactions" de forma totalmente independente.
+          <br><br>
+          <strong>Comportamento:</strong> Como o Kafka mantém o offset por grupo, cada um lê o tópico inteiro de forma independente — como se cada grupo tivesse sua própria cópia dos dados. O grupo fraud-detector no offset 1.000 não interfere no analytics no offset 980 nem em notifications no offset 1.050. Uma mensagem publicada no tópico é consumida pelos 3 grupos separadamente.
+          <br><br>
+          <strong>Distribuição de partições:</strong> Com 6 partições e 3 consumers por grupo (ideal), cada consumer do grupo lê 2 partições. Para fraud-detector com baixa latência, seria adequado ter 6 consumers (1 por partição) para máximo paralelismo.
+          <br><br>
+          <strong>Garantia de 100% das transações:</strong> O Kafka retém as mensagens independentemente do consumo. Cada grupo commita seus próprios offsets. Se o analytics cair por 2 horas, ao voltar, ele retoma do último offset commitado e processa todas as mensagens que chegaram durante a indisponibilidade — sem perda, graças ao LAG. O grupo fraud-detector não é afetado pela indisponibilidade do analytics.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 4 — Semanas 1, 3 e 4</div>
+      <div class="d-enunciado">Projete a arquitetura de armazenamento para uma plataforma de streaming de vídeo (estilo Netflix). Considere: vídeos, metadados de filmes, histórico de visualização dos usuários, logs de evento (play/pause/stop) e modelos de recomendação treinados. Para cada tipo de dado, indique: zona do Data Lake (Raw/Silver/Gold), formato de arquivo e justificativa.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Vídeos (arquivos .mp4):</strong> Raw — armazenados como recebidos, não estruturados. Formato original (.mp4, .mkv). Sem processamento até que um job de transcodificação precise deles. Não passam pela Silver/Gold — são processados por um pipeline separado de mídia.
+          <br><br>
+          <strong>Metadados de filmes (título, gênero, elenco, duração):</strong> Raw → CSV/JSON; Silver → Parquet (limpo, deduplicado, padronizado em schema fixo); Gold → Parquet (tabela de features para o modelo de recomendação, agregações por gênero/ano). Parquet na Silver/Gold por ser colunar — queries como "todos os filmes de ação de 2020" leem apenas as colunas relevantes.
+          <br><br>
+          <strong>Histórico de visualização:</strong> Raw → Avro (streaming via Kafka); Silver → Parquet (sessões completas, duração calculada, usuário validado); Gold → Parquet (features: % assistido, géneros preferidos, horário de pico). Avro na Raw por chegar via streaming Kafka com schema que pode evoluir.
+          <br><br>
+          <strong>Logs de evento (play/pause/stop):</strong> Raw → Avro (streaming, imutável, alto volume); Silver → Parquet (parseado, sessões identificadas, bots filtrados); Gold → Parquet agregado por feature de engajamento. O volume é enorme (bilhões/dia) — Parquet com compressão Snappy na Silver reduz em 5-8x.
+          <br><br>
+          <strong>Modelos de recomendação treinados:</strong> Ficam em um diretório separado (ex: s3://models/recommender/v1.2/) no formato nativo do framework (pickle, ONNX, TFLite). Versionados separadamente do Data Lake. Promovidos pelo MLflow Model Registry.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist de Preparação</span></div>
+
+  <!-- ── CHECKLIST ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">④</div>
+      <div class="secao-info">
+        <div class="secao-label">Checklist interativo</div>
+        <div class="secao-titulo">Marque o que você já domina — clique para marcar</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso de revisão</span>
+        <strong id="progress-text">0 / 20 conceitos</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    </div>
+
+    <div class="checklist-grid" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei explicar os 5 Vs com um exemplo concreto para cada</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei dizer quando Big Data é necessário e quando é overengineering</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo desenhar a Arquitetura Lambda com as 3 camadas e ferramentas</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a fórmula Lambda: resultado = batch view + real-time view</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo explicar por que a Kappa é mais simples que a Lambda</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei como a Kappa faz reprocessamento histórico via offset replay</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre Data Warehouse, Data Lake e Lakehouse</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei as regras de cada zona: Raw (imutável), Silver (limpa), Gold (agregada)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar Parquet e quando usar Avro — e por quê</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que acontece com um bug na Silver (reprocessar da Raw)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o papel do NameNode — só metadados em RAM, não armazena dados</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o papel do DataNode — heartbeat, block report, réplicas</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que acontece quando um DataNode falha (re-replicação automática)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei por que o NameNode é um SPOF e como mitigar (HA NameNode)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que é um tópico Kafka — append-only, imutável, particionado</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que é offset e como consumers o usam para controlar leitura</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a regra dos Consumer Groups: cada partição = 1 consumer por grupo</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei que grupos diferentes leem o tópico de forma totalmente independente</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que significa LAG e por que é crítico em sistemas de tempo real</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei relacionar Kafka com a Arquitetura Kappa (log central para replay)</div></div>
+    </div>
+
+    <div class="aviso-green" style="margin-top:1.25rem;">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Dica de estudo:</strong> para cada item não marcado, volte à semana correspondente e leia a seção de resumo. Se ainda tiver dúvida, tente explicar o conceito em voz alta como se estivesse ensinando alguém — é a técnica mais eficaz para identificar lacunas.</span>
+    </div>
+
+    <!-- Dicas finais -->
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-titulo"><i class="fas fa-star"></i>Dicas para a prova</div>
+      <div class="dica-grid">
+        <div class="dica-card">
+          <div class="dica-num">01</div>
+          <div class="dica-titulo">Leia o enunciado com calma</div>
+          <div class="dica-texto">Questões de cenário têm palavras-chave: "retroativamente" → Lambda, "imutável" → Kappa, "qualquer tipo de dado" → Data Lake, "metadados em RAM" → NameNode. Sublinhe essas palavras antes de escolher a alternativa.</div>
+        </div>
+        <div class="dica-card">
+          <div class="dica-num">02</div>
+          <div class="dica-titulo">Use tabelas mentais</div>
+          <div class="dica-texto">Para comparações (Lambda vs Kappa, HDFS vs S3, Parquet vs Avro), mentalize a tabela de critérios: complexidade, custo, latência, reprocessamento. Escolha baseado nos requisitos do cenário, não na "melhor" tecnologia em abstrato.</div>
+        </div>
+        <div class="dica-card">
+          <div class="dica-num">03</div>
+          <div class="dica-titulo">Nas dissertativas, seja específico</div>
+          <div class="dica-texto">Evite respostas genéricas. Use termos técnicos corretos: NameNode, DataNode, offset, partition, Consumer Group, Batch Layer, Speed Layer. Uma resposta de 5 linhas específica vale mais que 15 linhas vagas. Se possível, dê exemplos numéricos ou de empresas reais.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="proxima" onclick="window.location.href='semana-07-bigdata.html'">
+    <div>
+      <div class="proxima-label">Após a P1 · Semana 7</div>
+      <div class="proxima-titulo">Semana 7 — Ingestão em larga escala: batch (Airbyte, Sqoop) vs streaming (Kafka, Kinesis) e CDC</div>
+    </div>
+    <i class="fas fa-arrow-right"></i>
+  </div>
+
+</main>
+
+<script>
+// Toggle gabarito dissertativa
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar modelo de resposta'
+    :'<i class="fas fa-lightbulb"></i> ver modelo de resposta';
+}
+
+// Quiz simulado
+const correctAnswers={q1:'C',q2:'C',q3:'B',q4:'C',q5:'C',q6:'B',q7:'B',q8:'B',q9:'B',q10:'C',q11:'C',q12:'A'};
+const userAnswers={};
+
+function respQ(qId,el,letra,isCorrect){
+  const ops=document.getElementById(qId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  userAnswers[qId]=letra;
+  const correta=correctAnswers[qId];
+  ops.querySelectorAll('.q-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    const l=op.querySelector('.q-letra').textContent.trim();
+    if(l===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const gab=document.getElementById(qId+'-gab');
+  gab.style.background=isCorrect?'rgba(74,222,128,.07)':'rgba(239,68,68,.07)';
+  gab.style.border=isCorrect?'1px solid rgba(74,222,128,.2)':'1px solid rgba(239,68,68,.2)';
+  gab.style.color=isCorrect?'rgba(134,239,172,.9)':'rgba(252,165,165,.9)';
+  gab.classList.add('show');
+}
+
+function calcScore(){
+  const total=Object.keys(correctAnswers).length;
+  let correct=0;
+  for(const [q,ans] of Object.entries(userAnswers)){
+    if(ans===correctAnswers[q])correct++;
+  }
+  const unanswered=total-Object.keys(userAnswers).length;
+  const box=document.getElementById('score-box');
+  const num=document.getElementById('score-num');
+  const msg=document.getElementById('score-msg');
+  box.style.display='block';
+  num.textContent=`${correct}/${total}`;
+  const pct=Math.round(correct/total*100);
+  if(pct>=80){num.style.color='#4ade80';msg.textContent=`${pct}% — Excelente! Você está pronto para a P1.`;}
+  else if(pct>=60){num.style.color='#fbbf24';msg.textContent=`${pct}% — Bom! Revise os temas que errou antes da prova.`;}
+  else{num.style.color='#f87171';msg.textContent=`${pct}% — Atenção! Volte às semanas com mais erros e revise os pontos-chave.`;}
+  if(unanswered>0)msg.textContent+=` (${unanswered} questão(ões) não respondida(s))`;
+  box.style.padding='1.25rem';
+  box.style.borderRadius='12px';
+  box.style.background='rgba(255,255,255,.04)';
+  box.style.border='1px solid rgba(255,255,255,.08)';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// Checklist
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  if(el.classList.contains('checked'))el.querySelector('.check-box').innerHTML='✓';
+  else el.querySelector('.check-box').innerHTML='';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.check-item').length;
+  const checked=document.querySelectorAll('.check-item.checked').length;
+  const pct=Math.round(checked/total*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=`${checked} / ${total} conceitos`;
+}
+</script>
+</body>
+</html>

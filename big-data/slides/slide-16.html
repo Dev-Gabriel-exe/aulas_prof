@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 16 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.comp-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.comp-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.6rem;}
+.comp-a .comp-titulo{color:#60a5fa;}
+.comp-b .comp-titulo{color:#4ade80;}
+.comp-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.comp-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* Catalog metadata card grid */
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.op-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.op-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.op-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.op-c{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);}
+.op-d{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2);}
+.op-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.op-a .op-titulo{color:#60a5fa;}
+.op-b .op-titulo{color:#4ade80;}
+.op-c .op-titulo{color:#fbbf24;}
+.op-d .op-titulo{color:#a78bfa;}
+.op-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.op-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* Lineage graph visual */
+.lineage-box{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.5rem;}
+.lineage-row{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:.25rem;flex-wrap:wrap;}
+.lineage-node{padding:.65rem 1rem;border-radius:10px;font-size:.76rem;font-weight:600;font-family:'JetBrains Mono',monospace;border:2px solid;text-align:center;min-width:110px;}
+.ln-source{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.4);color:#93c5fd;}
+.ln-staging{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.4);color:#c4b5fd;}
+.ln-mart{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:#86efac;}
+.ln-dash{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);color:var(--accent-300);}
+.lineage-arrow-h{color:rgba(251,146,60,.4);font-size:1rem;padding:0 .6rem;}
+.lineage-arrow-v{display:flex;justify-content:center;color:rgba(251,146,60,.3);font-size:1rem;margin:.4rem 0;}
+
+/* Classification badges */
+.class-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0;}
+.class-card{padding:.85rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:var(--card-bg);}
+.class-name{font-family:'Montserrat',sans-serif;font-size:.8rem;color:var(--accent-300);margin-bottom:.3rem;font-weight:700;}
+.class-desc{font-size:.78rem;color:var(--text-secondary);}
+
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.comp-grid,.op-grid,.class-grid{grid-template-columns:1fr;}
+  .lineage-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">16</div>
+    <h1 class="capa-titulo">Governança<br>de <em>Dados</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Data Catalog, linhagem, classificação e LGPD</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-scale-balanced"></i></div><span>O que é governança de dados e por que ela importa</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ghost"></i></div><span>Riscos de não ter governança — dados órfãos e "tribal knowledge"</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-book-open"></i></div><span>Data Catalog — metadados técnicos, de negócio e operacionais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>OpenMetadata — arquitetura e principais conceitos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-diagram-project"></i></div><span>Linhagem de dados — rastreamento upstream e downstream</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-user-shield"></i></div><span>Classificação de dados sensíveis e LGPD aplicada</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: catalogar um dataset real e mapear sua linhagem</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Catalogar um dataset com metadados de negócio, classificar suas colunas sensíveis e desenhar o diagrama de linhagem desde a origem até o mart final.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 15</div>
+      <ul class="info-lista">
+        <li>Structured Streaming trata um stream como uma tabela infinita, processada em micro-batches</li>
+        <li>Window operations (tumbling/sliding) agregam eventos por intervalo de tempo</li>
+        <li>Watermark define a tolerância a atraso e viabiliza outputMode append</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conectando tudo</div>
+      <ul class="info-lista">
+        <li>Todo o pipeline das Semanas 7-15 gerou tabelas — governança organiza e documenta essas tabelas</li>
+        <li>ref()/source() do dbt (Semana 11) já são uma forma primitiva de linhagem</li>
+        <li>Testes do dbt e classificação de dados se complementam na proteção de dados sensíveis</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>OpenMetadata (open-source) via Docker Compose fornecido pelo professor</li>
+        <li>Um dataset simples de e-commerce para catalogação</li>
+        <li>Sem necessidade de conta cloud — ambiente 100% local</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que governança de dados importa</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 15</div>
+      <p>Você já sabe ingerir, processar em batch e streaming, transformar com dbt, orquestrar com Airflow e armazenar com garantias ACID via Delta Lake. Ao longo de 15 semanas, seu pipeline já gerou dezenas de tabelas — mas <strong>quem sabe o que cada uma significa, de onde vem e quem pode acessá-la?</strong> É disso que trata a governança.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-scale-balanced"></i>O que é governança de dados</div>
+      <p><strong>Governança de dados</strong> é o conjunto de processos, papéis, políticas e ferramentas que garantem que os dados de uma organização sejam confiáveis, descobríveis, seguros e usados de forma responsável. Não é uma ferramenta única — é uma combinação de catalogação, linhagem, qualidade (Semana 11) e conformidade regulatória.</p>
+      <div class="grid-3">
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.5rem;">🔍 Descobribilidade</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Qualquer pessoa consegue encontrar e entender uma tabela sem perguntar a quem a criou.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem;">🔗 Rastreabilidade</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">É possível saber de onde um dado veio e para onde ele vai (linhagem).</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">🔒 Conformidade</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Dados sensíveis são identificados e tratados conforme LGPD e políticas internas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ghost"></i>O que acontece sem governança</div>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ "Tribal knowledge"</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Só uma pessoa sabe o que a tabela <code>fct_v2_final_use_this_one</code> significa</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Essa pessoa sai da empresa — o conhecimento vai junto</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Dados órfãos: tabelas duplicadas, sem dono, sem documentação</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ Com governança</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Cada tabela tem descrição, dono (owner) e tags de negócio</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Novos membros do time encontram e entendem os dados sozinhos</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Mudanças em uma tabela mostram imediatamente quem é impactado (linhagem)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Caso real:</strong> imagine descobrir, meses depois, que uma coluna de CPF estava sendo replicada sem anonimização em 8 dashboards diferentes de BI — porque ninguém sabia que aquela tabela alimentava tantos consumidores. Isso é exatamente o tipo de problema que linhagem e catalogação resolvem antes que vire incidente de compliance.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual das opções melhor descreve o principal risco de uma empresa NÃO ter governança de dados?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">As queries SQL ficam mais lentas de executar</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Conhecimento sobre os dados fica concentrado em poucas pessoas, e mudanças podem impactar consumidores desconhecidos</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O Spark não consegue processar os dados corretamente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O custo de armazenamento em nuvem aumenta automaticamente</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Data Catalog e OpenMetadata</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Data Catalog — o "Google" dos dados da empresa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-book-open"></i>O que é um Data Catalog</div>
+      <p>Um <strong>Data Catalog</strong> é um inventário centralizado e pesquisável de todos os ativos de dados de uma organização — tabelas, dashboards, pipelines, modelos de ML — com metadados que descrevem o que cada um é, quem o mantém e como ele se conecta a outros ativos.</p>
+      <div class="op-grid">
+        <div class="op-card op-a">
+          <div class="op-titulo"><i class="fas fa-microchip"></i>Metadados técnicos</div>
+          <div class="op-item">Schema (colunas, tipos)</div>
+          <div class="op-item">Volume, frequência de atualização</div>
+          <div class="op-item">Localização física (path, banco)</div>
+        </div>
+        <div class="op-card op-b">
+          <div class="op-titulo"><i class="fas fa-briefcase"></i>Metadados de negócio</div>
+          <div class="op-item">Descrição em linguagem natural</div>
+          <div class="op-item">Dono (owner) e time responsável</div>
+          <div class="op-item">Tags de domínio (finance, marketing)</div>
+        </div>
+        <div class="op-card op-c">
+          <div class="op-titulo"><i class="fas fa-gauge-high"></i>Metadados operacionais</div>
+          <div class="op-item">Última execução, status do job</div>
+          <div class="op-item">SLA e freshness (atualidade)</div>
+          <div class="op-item">Histórico de qualidade (testes dbt)</div>
+        </div>
+        <div class="op-card op-d">
+          <div class="op-titulo"><i class="fas fa-shield-halved"></i>Metadados de governança</div>
+          <div class="op-item">Classificação de sensibilidade (PII)</div>
+          <div class="op-item">Políticas de acesso e retenção</div>
+          <div class="op-item">Conformidade regulatória (LGPD)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>OpenMetadata — arquitetura e conceitos principais</div>
+      <p><strong>OpenMetadata</strong> é uma plataforma open-source de catalogação que se conecta a dezenas de fontes (Postgres, Snowflake, dbt, Airflow, Kafka, Delta Lake) via conectores automáticos, extraindo metadados sem exigir documentação manual completa.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito</th><th>O que representa</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Service</strong></td><td>Uma conexão configurada com uma fonte (ex: "postgres-producao", "dbt-cloud")</td></tr>
+            <tr><td><strong>Database / Schema</strong></td><td>Estrutura hierárquica espelhando a organização real do banco de dados</td></tr>
+            <tr><td><strong>Table / Topic / Dashboard</strong></td><td>Os ativos de dados propriamente ditos, catalogados com metadados completos</td></tr>
+            <tr><td><strong>Glossary</strong></td><td>Dicionário de termos de negócio compartilhado (ex: "o que é 'cliente ativo'?")</td></tr>
+            <tr><td><strong>Tag / Classification</strong></td><td>Rótulos aplicados a colunas ou tabelas (ex: PII.Sensitive, Tier.Gold)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque"><strong>Ingestão automática:</strong> o OpenMetadata roda "connectors" agendados (parecido com um Airflow interno) que se conectam à fonte, leem o schema e populam o catálogo automaticamente — reduzindo drasticamente o esforço manual de manter a documentação atualizada.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a principal vantagem de um Data Catalog como o OpenMetadata usar conectores automáticos em vez de documentação manual?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Os conectores tornam as queries SQL mais rápidas</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Reduzem o esforço manual e mantêm o catálogo atualizado automaticamente conforme os dados mudam</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Eliminam a necessidade de ter donos (owners) para as tabelas</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Garantem automaticamente a conformidade com a LGPD</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Linhagem de Dados</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Linhagem — rastreando de onde vêm e para onde vão os dados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-diagram-project"></i>O que é linhagem de dados (data lineage)</div>
+      <p><strong>Linhagem</strong> é o mapeamento visual e rastreável de como um dado se transforma ao longo do pipeline: de qual sistema de origem ele veio, quais transformações sofreu, e em quais tabelas, dashboards ou modelos ele termina sendo usado.</p>
+      <div class="lineage-box">
+        <div class="lineage-row">
+          <div class="lineage-node ln-source">postgres.orders</div>
+        </div>
+        <div class="lineage-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="lineage-row">
+          <div class="lineage-node ln-staging">stg_orders</div>
+        </div>
+        <div class="lineage-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="lineage-row">
+          <div class="lineage-node ln-mart">fct_revenue_daily</div>
+        </div>
+        <div class="lineage-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="lineage-row">
+          <div class="lineage-node ln-dash">Dashboard: Receita Executiva</div>
+        </div>
+      </div>
+      <p>Essa cadeia mostra que qualquer mudança em <code>postgres.orders</code> (uma nova coluna, um tipo alterado) tem impacto rastreável até o dashboard executivo — sem linhagem, essa conexão só existiria na cabeça de quem construiu o pipeline.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-arrows-left-right"></i>Linhagem upstream vs downstream</div>
+      <div class="comp-grid">
+        <div class="comp-card comp-a">
+          <div class="comp-titulo">⬆️ Upstream (de onde vem)</div>
+          <div class="comp-item">Pergunta: "quais fontes alimentam esta tabela?"</div>
+          <div class="comp-item">Útil para debugar: "por que este número está errado?"</div>
+          <div class="comp-item">Rastreia até a fonte bruta original</div>
+        </div>
+        <div class="comp-card comp-b">
+          <div class="comp-titulo">⬇️ Downstream (para onde vai)</div>
+          <div class="comp-item">Pergunta: "o que depende desta tabela?"</div>
+          <div class="comp-item">Útil para avaliar impacto: "posso deletar esta coluna com segurança?"</div>
+          <div class="comp-item">Rastreia até dashboards e modelos finais</div>
+        </div>
+      </div>
+      <div class="destaque-green"><strong>Conexão com o que você já sabe:</strong> o <code>ref()</code> do dbt (Semana 11) já constrói uma linhagem implícita entre modelos dbt. Ferramentas como OpenMetadata estendem essa ideia para TODO o ecossistema — incluindo fontes fora do dbt, dashboards de BI e até modelos de Machine Learning.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-magnifying-glass"></i>Como a linhagem é capturada na prática</div>
+      <ul>
+        <li><strong>Análise estática de SQL:</strong> a ferramenta lê as queries (dos modelos dbt, views, stored procedures) e identifica automaticamente quais tabelas alimentam quais.</li>
+        <li><strong>Metadados de execução:</strong> Airflow e Spark expõem logs de execução que revelam quais inputs geraram quais outputs.</li>
+        <li><strong>Anotação manual:</strong> quando a transformação acontece fora do alcance automático (ex: script Python customizado), a linhagem é declarada manualmente na ferramenta.</li>
+      </ul>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um engenheiro precisa saber se é seguro remover uma coluna de uma tabela staging sem quebrar nenhum dashboard. Que tipo de linhagem ele deve consultar?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Upstream — para ver de onde a coluna se origina</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Downstream — para ver tudo que depende dessa tabela/coluna</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Nenhuma — linhagem não ajuda nesse tipo de decisão</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Apenas a documentação técnica da tabela, sem linhagem</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Classificação, LGPD e Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Classificação de dados sensíveis e LGPD aplicada</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user-shield"></i>Classificação de dados sensíveis</div>
+      <p>Antes de aplicar qualquer política de proteção, é preciso saber <strong>onde</strong> os dados sensíveis estão. A classificação identifica e rotula colunas conforme seu nível de sensibilidade:</p>
+      <div class="class-grid">
+        <div class="class-card">
+          <div class="class-name">PII (Personally Identifiable Information)</div>
+          <div class="class-desc">CPF, e-mail, telefone, endereço — qualquer dado que identifica uma pessoa diretamente.</div>
+        </div>
+        <div class="class-card">
+          <div class="class-name">Dados sensíveis (LGPD Art. 5º)</div>
+          <div class="class-desc">Origem racial, saúde, orientação sexual, dados biométricos — exigem tratamento ainda mais restrito.</div>
+        </div>
+        <div class="class-card">
+          <div class="class-name">Confidencial (negócio)</div>
+          <div class="class-desc">Dados financeiros internos, contratos, estratégia — sensíveis para a empresa, não necessariamente pessoais.</div>
+        </div>
+        <div class="class-card">
+          <div class="class-name">Público</div>
+          <div class="class-desc">Dados que podem ser compartilhados livremente, sem restrição de acesso.</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Na prática:</strong> ferramentas de catalogação como o OpenMetadata podem aplicar classificação automática via reconhecimento de padrões (regex para CPF, e-mail) combinada com revisão humana — reduzindo o risco de uma coluna sensível passar despercebida.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-gavel"></i>LGPD aplicada à engenharia de dados</div>
+      <ul>
+        <li><strong>Princípio da minimização:</strong> só colete e mantenha os dados pessoais estritamente necessários para a finalidade declarada.</li>
+        <li><strong>Anonimização/pseudonimização:</strong> dados sensíveis devem ser tratados antes de chegarem a ambientes de analytics amplamente acessíveis (conexão direta com a Semana 11 — ETL vs ELT em contextos regulados).</li>
+        <li><strong>Direito ao esquecimento:</strong> um titular pode solicitar a exclusão de seus dados — isso exige que a empresa saiba EXATAMENTE onde esses dados estão replicados (linhagem é essencial aqui).</li>
+        <li><strong>Registro de tratamento:</strong> é preciso documentar por que cada dado pessoal é coletado e processado — o catálogo de dados é a ferramenta natural para esse registro.</li>
+      </ul>
+      <div class="destaque-green"><strong>Como tudo se conecta:</strong> classificação identifica ONDE estão os dados sensíveis; linhagem mostra PARA ONDE eles se propagam; e só com essas duas peças é possível atender de forma confiável a uma solicitação de exclusão sob a LGPD.</div>
+    </div>
+
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Hands-on em grupo</div>
+        <div class="secao-titulo">Catalogar um dataset e mapear sua linhagem</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>O professor vai disponibilizar um ambiente OpenMetadata via Docker Compose com um dataset de e-commerce (orders, customers, products) já ingerido de um Postgres de exemplo.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Explorar o catálogo (15 min)</div>
+      <p>Acesse a UI do OpenMetadata. Localize as tabelas de orders, customers e products. Para cada uma, adicione uma descrição de negócio, defina um "owner" (você mesmo) e aplique pelo menos uma tag de domínio (ex: "Sales", "Ecommerce").</p>
+      <span class="dif-basico">Catalogação</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Classificar dados sensíveis (20 min)</div>
+      <p>Identifique quais colunas da tabela customers são PII (nome, e-mail, CPF, telefone) e aplique a tag <code>PII.Sensitive</code> em cada uma pelo catálogo. Escreva, em uma frase, qual seria o risco de compliance se essas colunas fossem expostas em um dashboard público sem tratamento.</p>
+      <span class="dif-medio">Classificação + LGPD</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: mapear e interpretar a linhagem (15 min)</div>
+      <p>Rode a ingestão de linhagem do OpenMetadata para o dataset (ou desenhe manualmente, se a ingestão automática não estiver disponível): postgres.orders → stg_orders → fct_revenue_daily. Responda: se a coluna <code>email</code> de customers fosse removida, quais tabelas/dashboards downstream seriam afetados? Como você usaria a linhagem para responder a essa pergunta sem "adivinhar"?</p>
+      <span class="dif-desafio">Linhagem + Impacto</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver abordagem esperada</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Abordagem esperada</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Consultar a linhagem DOWNSTREAM a partir de <code>customers.email</code>, não upstream — a pergunta é "o que quebra se eu remover", não "de onde vem".</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Qualquer modelo dbt que usa <code>ref('stg_customers')</code> e referencia a coluna email direta ou indiretamente aparece automaticamente no grafo de linhagem, sem precisar ler cada arquivo SQL manualmente.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Sem essa ferramenta, a resposta dependeria de "perguntar para alguém" ou vasculhar manualmente dezenas de modelos — exatamente o problema de "tribal knowledge" discutido na Aula 1.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 16</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 16</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-scale-balanced"></i>
+        <strong>Governança</strong>
+        <p>Conjunto de processos e ferramentas para dados confiáveis, descobríveis, seguros e conformes. Combina catálogo, linhagem, qualidade e classificação.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-book-open"></i>
+        <strong>Data Catalog</strong>
+        <p>Inventário pesquisável com metadados técnicos, de negócio, operacionais e de governança. OpenMetadata ingere isso automaticamente via conectores.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-diagram-project"></i>
+        <strong>Linhagem</strong>
+        <p>Upstream (de onde vem) responde debugging; downstream (para onde vai) responde análise de impacto.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-user-shield"></i>
+        <strong>Classificação + LGPD</strong>
+        <p>PII e dados sensíveis precisam ser identificados e rastreados para viabilizar minimização, anonimização e direito ao esquecimento.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar o que é um Data Catalog e os 4 tipos de metadados que ele guarda? Consegue diferenciar linhagem upstream de downstream? Sabe classificar uma coluna como PII e explicar o risco de não fazer isso? Entende como classificação + linhagem viabilizam o direito ao esquecimento da LGPD? Se sim para os quatro — você está pronto para a Semana 17.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-17-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 17 — Big Data para IA: Feature Stores, MLflow/Spark MLlib e revisão para a P3</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver abordagem esperada';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Sem governança, o conhecimento sobre o que cada tabela significa, de onde vem e para onde vai fica concentrado em poucas pessoas (o problema do "tribal knowledge"). Isso torna a organização vulnerável: quando essas pessoas saem, o conhecimento se perde, e mudanças em uma tabela podem quebrar dashboards ou pipelines cujos donos nem sabiam que dependiam dela.'},
+  quiz2:{correct:'B',msg:'✅ Correto! Conectores automáticos leem o schema e os metadados diretamente das fontes (bancos, dbt, Airflow), mantendo o catálogo sempre atualizado sem depender de alguém lembrar de atualizar a documentação manualmente toda vez que algo muda — o que na prática quase nunca acontece de forma consistente.'},
+  quiz3:{correct:'B',msg:'✅ Correto! Para saber o impacto de uma mudança (o que vai quebrar se eu alterar/remover algo), você precisa da linhagem DOWNSTREAM — tudo que consome essa tabela ou coluna. A linhagem upstream responde uma pergunta diferente: de onde os dados vieram, útil para debugar a origem de um problema, não para avaliar o impacto de uma mudança futura.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

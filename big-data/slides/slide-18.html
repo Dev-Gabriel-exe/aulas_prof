@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 18 — AVALIAÇÃO P3 · Big Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --exam-red:#dc2626;
+  --exam-red-acc:#f87171;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c0a0a;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#dc2626;top:38%;left:42%;opacity:.12;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.2);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--exam-red-acc);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.1;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--exam-red-acc);}
+.capa-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--exam-red-acc);border-radius:2px;margin-bottom:2rem;}
+.cobertura{display:flex;flex-direction:column;gap:.65rem;}
+.cob-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.83rem;animation:slideIn .5s ease both;}
+.cob-item:nth-child(1){animation-delay:.1s;}.cob-item:nth-child(2){animation-delay:.2s;}.cob-item:nth-child(3){animation-delay:.3s;}.cob-item:nth-child(4){animation-delay:.4s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.cob-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.15);color:var(--exam-red-acc);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--exam-red-acc);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--exam-red-acc);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.65rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.aviso-exam{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-exam i{color:var(--exam-red-acc);flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-pink{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.22);}
+
+.semanas-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.s-card{border-radius:14px;padding:1.25rem;border:1px solid;}
+.s14{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.s15{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.s16{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.s17{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.s-titulo{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+.s14 .s-titulo{color:#60a5fa;}
+.s15 .s-titulo{color:#4ade80;}
+.s16 .s-titulo{color:#a78bfa;}
+.s17 .s-titulo{color:#fb923c;}
+.s-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.s-item::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+.s-armadilha{font-size:.74rem;margin-top:.65rem;padding:.5rem .75rem;border-radius:7px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:rgba(252,165,165,.8);}
+.s-armadilha::before{content:'⚠ ';font-weight:700;}
+
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s;}
+.questao:hover{border-color:rgba(239,68,68,.2);}
+.q-header{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem;}
+.q-num{width:32px;height:32px;border-radius:9px;background:rgba(239,68,68,.12);color:var(--exam-red-acc);font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-texto{font-size:.92rem;color:var(--text-primary);line-height:1.6;font-weight:500;}
+.q-semana{font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:600;margin-top:6px;flex-shrink:0;}
+.q-opcoes{display:flex;flex-direction:column;gap:.45rem;}
+.q-op{display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .85rem;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:all .2s;font-size:.85rem;color:var(--text-secondary);}
+.q-op:hover{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+.q-op.correto{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35);color:#86efac;}
+.q-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.q-letra{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:1px;}
+.q-gabarito{display:none;margin-top:.85rem;padding:.85rem 1rem;border-radius:9px;font-size:.83rem;line-height:1.6;}
+.q-gabarito.show{display:block;}
+
+.dissertativa{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.d-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.d-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1rem;padding:.85rem 1rem;border-radius:9px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.5rem 1rem;color:var(--exam-red-acc);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(239,68,68,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+.modelo-resposta{padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.modelo-resposta strong{color:#4ade80;}
+
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;}
+.check-item:hover{border-color:rgba(74,222,128,.3);}
+.check-item.checked{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;}
+.check-item.checked .check-box{background:rgba(74,222,128,.3);border-color:#4ade80;color:#4ade80;}
+.check-label{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+.check-item.checked .check-label{color:rgba(134,239,172,.8);}
+.progress-bar-wrap{margin:1rem 0;padding:1rem 1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-label span{font-size:.78rem;color:var(--text-secondary);}
+.progress-label strong{font-size:.82rem;color:var(--text-primary);}
+.progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#fb923c);border-radius:4px;transition:width .4s ease;}
+
+.score-box{display:none;margin-top:1rem;padding:1.25rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#4ade80;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.semanas-grid,.checklist-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔴 Avaliação P3</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">18</div>
+    <h1 class="capa-titulo"><em>Avaliação P3</em></h1>
+    <p class="capa-sub">Semana de prova · Conteúdo das semanas 14 a 17</p>
+    <div class="divider"></div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">Guia completo de preparação para a P3. Use o simulado de 12 questões, os gabaritos das dissertativas e o checklist interativo.</p>
+    <div class="cobertura">
+      <div class="cob-item"><div class="cob-num">S14</div><span>Delta Lake — ACID, _delta_log, MERGE INTO, time travel, schema evolution, OPTIMIZE/ZORDER/VACUUM</span></div>
+      <div class="cob-item"><div class="cob-num">S15</div><span>Structured Streaming — micro-batch, output modes, tumbling/sliding windows, watermark</span></div>
+      <div class="cob-item"><div class="cob-num">S16</div><span>Governança de Dados — Data Catalog, linhagem upstream/downstream, classificação PII, LGPD</span></div>
+      <div class="cob-item"><div class="cob-num">S17</div><span>Big Data para IA — Feature Store, Feast, treino-serving skew, MLlib, MLflow</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Formato da P3</div>
+      <ul class="info-lista">
+        <li>Questões de múltipla escolha — conceito e análise de cenário</li>
+        <li>Questões dissertativas — comparação, projeto e justificativa</li>
+        <li>Pode incluir leitura de código PySpark, Delta ou Feast</li>
+        <li>Consulta: sem consulta (prova fechada)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Temas mais importantes</div>
+      <ul class="info-lista">
+        <li>_delta_log e como ele garante ACID sobre arquivos Parquet</li>
+        <li>Output modes e a relação entre watermark e outputMode append</li>
+        <li>Linhagem upstream vs downstream — quando usar cada uma</li>
+        <li>Offline store vs online store — point-in-time correctness</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dica de ouro</div>
+      <ul class="info-lista">
+        <li>Conecte os temas: Delta Lake armazena → Streaming alimenta em tempo real → Governança documenta → Feature Store serve para IA</li>
+        <li>Para cenários de streaming, pergunte: a agregação precisa de watermark? qual output mode faz sentido?</li>
+        <li>Para governança, pense sempre em "quem precisa saber disso e por quê" (compliance, debugging ou impacto)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>começar a revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">①</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão rápida</div>
+        <div class="secao-titulo">Os 4 temas — pontos-chave e armadilhas comuns</div>
+      </div>
+    </div>
+
+    <div class="semanas-grid">
+      <div class="s-card s14">
+        <div class="s-titulo">Semana 14 — Delta Lake</div>
+        <div class="s-item"><strong>_delta_log:</strong> camada de transaction log sobre Parquet. Leitura sempre consulta o log antes dos dados</div>
+        <div class="s-item"><strong>ACID:</strong> atomicidade, consistência, isolamento e durabilidade sobre arquivos imutáveis</div>
+        <div class="s-item"><strong>MERGE INTO:</strong> upsert atômico — insere e atualiza numa única transação</div>
+        <div class="s-item"><strong>Time travel:</strong> versionAsOf/timestampAsOf. Depende dos arquivos antigos existirem</div>
+        <div class="s-item"><strong>Schema enforcement</strong> é padrão; mergeSchema=true habilita evolution</div>
+        <div class="s-item"><strong>OPTIMIZE+ZORDER:</strong> compacta e acelera filtros multi-coluna. VACUUM remove órfãos</div>
+        <div class="s-armadilha">Armadilha: VACUUM com retenção curta apaga arquivos ainda usados por time travel.</div>
+      </div>
+      <div class="s-card s15">
+        <div class="s-titulo">Semana 15 — Structured Streaming</div>
+        <div class="s-item"><strong>Tabela infinita:</strong> stream processado incrementalmente via micro-batch</div>
+        <div class="s-item"><strong>append:</strong> só linhas novas. <strong>complete:</strong> tudo de novo. <strong>update:</strong> só o que mudou</div>
+        <div class="s-item"><strong>Tumbling window:</strong> fixa, sem sobreposição. <strong>Sliding window:</strong> sobreposta</div>
+        <div class="s-item"><strong>Watermark:</strong> tolerância a atraso; libera memória; viabiliza append em agregação</div>
+        <div class="s-item"><strong>checkpointLocation:</strong> obrigatório em produção — garante retomada exata após falha</div>
+        <div class="s-armadilha">Armadilha: outputMode("append") em agregação SEM watermark gera erro.</div>
+      </div>
+      <div class="s-card s16">
+        <div class="s-titulo">Semana 16 — Governança</div>
+        <div class="s-item"><strong>Data Catalog:</strong> metadados técnicos, de negócio, operacionais e de governança</div>
+        <div class="s-item"><strong>OpenMetadata:</strong> conectores automáticos populam o catálogo sem esforço manual</div>
+        <div class="s-item"><strong>Upstream:</strong> de onde vem (debugging). <strong>Downstream:</strong> o que depende (impacto)</div>
+        <div class="s-item"><strong>Classificação:</strong> identifica PII antes de aplicar qualquer proteção</div>
+        <div class="s-item"><strong>LGPD:</strong> minimização, anonimização, direito ao esquecimento — exige linhagem para rastrear onde o dado está</div>
+        <div class="s-armadilha">Armadilha: confundir upstream (origem) com downstream (impacto) em perguntas de cenário.</div>
+      </div>
+      <div class="s-card s17">
+        <div class="s-titulo">Semana 17 — Big Data para IA</div>
+        <div class="s-item"><strong>Treino-serving skew:</strong> feature calculada diferente no treino e em produção</div>
+        <div class="s-item"><strong>Offline store:</strong> histórico, point-in-time correct, usado no treino</div>
+        <div class="s-item"><strong>Online store:</strong> valor mais recente, baixa latência, usado em produção</div>
+        <div class="s-item"><strong>Feature View:</strong> definição única de feature usada nas duas camadas</div>
+        <div class="s-item"><strong>MLlib:</strong> treino distribuído quando o volume não cabe numa máquina</div>
+        <div class="s-item"><strong>MLflow:</strong> rastreia features + hiperparâmetros + modelo gerado</div>
+        <div class="s-armadilha">Armadilha: usar get_online_features para montar dataset de treino — perde o histórico correto.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado — 12 questões</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">②</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado</div>
+        <div class="secao-titulo">12 questões de múltipla escolha — clique para revelar o gabarito</div>
+      </div>
+    </div>
+
+    <div class="aviso-exam">
+      <i class="fas fa-stopwatch"></i>
+      <span>Para simular a prova, tente responder todas sem ver o gabarito primeiro. Marque mentalmente e depois revele. O score aparece ao final.</span>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">1</div>
+        <span class="q-semana badge-blue">Semana 14</span>
+        <div class="q-texto">Um job Spark falha no meio da escrita de uma tabela Delta, após gravar 60% dos arquivos Parquet planejados. O que acontece com a tabela?</div>
+      </div>
+      <div class="q-opcoes" id="q1-ops">
+        <div class="q-op" onclick="respQ('q1',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>A tabela fica com 60% dos dados novos visíveis para leitores</div>
+        <div class="q-op" onclick="respQ('q1',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>A tabela fica corrompida e precisa ser recriada do zero</div>
+        <div class="q-op" onclick="respQ('q1',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>A transação nunca é commitada no _delta_log — leitores continuam vendo a versão anterior, íntegra</div>
+        <div class="q-op" onclick="respQ('q1',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O Spark reinicia automaticamente a escrita a partir de onde parou</div>
+      </div>
+      <div class="q-gabarito" id="q1-gab"><strong>✅ C.</strong> Essa é a garantia de atomicidade do Delta Lake: uma transação só é considerada válida quando um novo arquivo JSON de versão é commitado com sucesso no _delta_log. Se o job falhar antes disso, os arquivos Parquet parciais podem existir fisicamente, mas não são referenciados por nenhuma versão do log — logo, leitores continuam enxergando exatamente a última versão consistente anterior à falha.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">2</div>
+        <span class="q-semana badge-blue">Semana 14</span>
+        <div class="q-texto">Uma equipe precisa investigar por que um relatório financeiro mudou de valor entre ontem e hoje, sem ter feito backup manual dos dados. Qual recurso do Delta Lake resolve isso diretamente?</div>
+      </div>
+      <div class="q-opcoes" id="q2-ops">
+        <div class="q-op" onclick="respQ('q2',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>OPTIMIZE ZORDER</div>
+        <div class="q-op" onclick="respQ('q2',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Time travel com timestampAsOf, comparando a versão de ontem com a de hoje</div>
+        <div class="q-op" onclick="respQ('q2',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>mergeSchema=true</div>
+        <div class="q-op" onclick="respQ('q2',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>VACUUM RETAIN 0 HOURS</div>
+      </div>
+      <div class="q-gabarito" id="q2-gab"><strong>✅ B.</strong> O time travel é exatamente para isso: consultar <code>timestampAsOf</code> (ou <code>versionAsOf</code>) permite comparar o estado exato da tabela em dois pontos do tempo, sem precisar de backups manuais. Note que a alternativa D (VACUUM com retenção zero) faria o oposto — apagaria justamente os arquivos que permitem essa investigação.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">3</div>
+        <span class="q-semana badge-blue">Semana 14</span>
+        <div class="q-texto">Uma tabela Delta é filtrada frequentemente por duas colunas de alta cardinalidade ao mesmo tempo (cliente_id e produto_id). Qual comando é mais adequado para acelerar essas consultas?</div>
+      </div>
+      <div class="q-opcoes" id="q3-ops">
+        <div class="q-op" onclick="respQ('q3',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Particionar a tabela por cliente_id</div>
+        <div class="q-op" onclick="respQ('q3',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>OPTIMIZE tabela ZORDER BY (cliente_id, produto_id)</div>
+        <div class="q-op" onclick="respQ('q3',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>VACUUM RETAIN 168 HOURS</div>
+        <div class="q-op" onclick="respQ('q3',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>versionAsOf(0)</div>
+      </div>
+      <div class="q-gabarito" id="q3-gab"><strong>✅ B.</strong> Particionar por uma coluna de alta cardinalidade geraria partições demais (overhead). Z-Order resolve exatamente esse cenário de múltiplas colunas de filtro com alta cardinalidade, reorganizando fisicamente os dados para permitir data skipping eficiente em ambas as colunas simultaneamente.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">4</div>
+        <span class="q-semana badge-green">Semana 15</span>
+        <div class="q-texto">Um engenheiro tenta rodar uma agregação por groupBy com <code>outputMode("append")</code>, sem definir nenhum watermark. O que acontece?</div>
+      </div>
+      <div class="q-opcoes" id="q4-ops">
+        <div class="q-op" onclick="respQ('q4',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O Spark executa normalmente, emitindo cada linha assim que ela chega</div>
+        <div class="q-op" onclick="respQ('q4',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>O Spark lança um erro — não é possível garantir quando uma linha agregada está definitivamente pronta sem um watermark</div>
+        <div class="q-op" onclick="respQ('q4',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>O job roda, mas ignora silenciosamente a cláusula groupBy</div>
+        <div class="q-op" onclick="respQ('q4',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O Spark converte automaticamente para outputMode("complete")</div>
+      </div>
+      <div class="q-gabarito" id="q4-gab"><strong>✅ B.</strong> Sem watermark, o Spark não tem como saber quando uma janela agregada não vai mais receber dados atrasados — ou seja, nunca pode ter certeza de que uma linha está "definitivamente pronta" para ser emitida de forma append (sem possibilidade de mudança futura). Por isso, essa combinação gera erro de análise antes mesmo do job começar a rodar.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">5</div>
+        <span class="q-semana badge-green">Semana 15</span>
+        <div class="q-texto">Uma agregação usa <code>window(col("ts"), "10 minutes", "5 minutes")</code>. Um evento com timestamp 10:07 cai em quais janelas?</div>
+      </div>
+      <div class="q-opcoes" id="q5-ops">
+        <div class="q-op" onclick="respQ('q5',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Apenas [10:00-10:10)</div>
+        <div class="q-op" onclick="respQ('q5',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>[10:00-10:10) e [10:05-10:15) — o evento cai em ambas por serem sliding windows sobrepostas</div>
+        <div class="q-op" onclick="respQ('q5',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Apenas [10:05-10:15)</div>
+        <div class="q-op" onclick="respQ('q5',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Nenhuma — o evento é descartado por estar fora do intervalo</div>
+      </div>
+      <div class="q-gabarito" id="q5-gab"><strong>✅ B.</strong> Com tamanho de 10 minutos e deslizamento de 5 minutos, as janelas se sobrepõem: [10:00-10:10), [10:05-10:15), [10:10-10:20)... O timestamp 10:07 cai dentro de [10:00-10:10) E de [10:05-10:15), contribuindo para a agregação de ambas — esse é o comportamento característico de sliding windows.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">6</div>
+        <span class="q-semana badge-green">Semana 15</span>
+        <div class="q-texto">Um job de Structured Streaming cai por falha de infraestrutura e precisa reiniciar. Qual configuração garante que ele retome exatamente de onde parou, sem duplicar nem perder dados?</div>
+      </div>
+      <div class="q-opcoes" id="q6-ops">
+        <div class="q-op" onclick="respQ('q6',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>outputMode("complete")</div>
+        <div class="q-op" onclick="respQ('q6',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>checkpointLocation configurado no writeStream</div>
+        <div class="q-op" onclick="respQ('q6',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>withWatermark com tolerância alta</div>
+        <div class="q-op" onclick="respQ('q6',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>trigger(processingTime="1 second")</div>
+      </div>
+      <div class="q-gabarito" id="q6-gab"><strong>✅ B.</strong> O checkpointLocation registra o progresso da leitura (offsets processados) e o estado das agregações no armazenamento persistente. Quando o job reinicia após uma falha, ele lê essas informações e retoma exatamente de onde parou — essa é a garantia de tolerância a falhas do Structured Streaming, independente do output mode ou watermark configurados.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">7</div>
+        <span class="q-semana badge-purple">Semana 16</span>
+        <div class="q-texto">Um engenheiro quer saber se é seguro remover a coluna "telefone" de uma tabela staging, sem quebrar nenhum dashboard que a consome. Qual tipo de linhagem ele deve consultar?</div>
+      </div>
+      <div class="q-opcoes" id="q7-ops">
+        <div class="q-op" onclick="respQ('q7',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Upstream, para ver de onde a coluna vem</div>
+        <div class="q-op" onclick="respQ('q7',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Downstream, para ver tudo que depende dessa coluna/tabela</div>
+        <div class="q-op" onclick="respQ('q7',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Nenhuma — isso não é resolvido por linhagem</div>
+        <div class="q-op" onclick="respQ('q7',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Apenas a documentação técnica do schema, sem linhagem</div>
+      </div>
+      <div class="q-gabarito" id="q7-gab"><strong>✅ B.</strong> A pergunta é sobre IMPACTO de uma mudança futura ("o que vai quebrar se eu remover isso") — essa é exatamente a função da linhagem downstream, que mostra tudo que consome (direta ou indiretamente) a tabela ou coluna em questão. Linhagem upstream responderia uma pergunta diferente: de onde os dados dessa coluna se originam.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">8</div>
+        <span class="q-semana badge-purple">Semana 16</span>
+        <div class="q-texto">Uma empresa recebe uma solicitação de exclusão de dados pessoais sob a LGPD (direito ao esquecimento). Qual combinação de ferramentas de governança viabiliza atender essa solicitação com confiança?</div>
+      </div>
+      <div class="q-opcoes" id="q8-ops">
+        <div class="q-op" onclick="respQ('q8',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Apenas testes de qualidade dbt (unique, not_null)</div>
+        <div class="q-op" onclick="respQ('q8',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Classificação de dados sensíveis (para saber ONDE estão) + linhagem (para saber PARA ONDE eles se propagaram)</div>
+        <div class="q-op" onclick="respQ('q8',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Apenas o Data Catalog, sem necessidade de linhagem</div>
+        <div class="q-op" onclick="respQ('q8',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>OPTIMIZE e VACUUM nas tabelas Delta envolvidas</div>
+      </div>
+      <div class="q-gabarito" id="q8-gab"><strong>✅ B.</strong> Para atender ao direito ao esquecimento com confiança, a empresa precisa primeiro saber ONDE os dados pessoais daquele titular estão (classificação de PII) e depois PARA ONDE esses dados se propagaram através de todo o pipeline (linhagem downstream) — só assim é possível garantir que a exclusão realmente alcançou todas as réplicas e derivações do dado original.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">9</div>
+        <span class="q-semana badge-purple">Semana 16</span>
+        <div class="q-texto">Qual é a principal vantagem de um Data Catalog como o OpenMetadata usar conectores automáticos de ingestão de metadados?</div>
+      </div>
+      <div class="q-opcoes" id="q9-ops">
+        <div class="q-op" onclick="respQ('q9',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Tornam as queries SQL mais rápidas de executar</div>
+        <div class="q-op" onclick="respQ('q9',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Mantêm o catálogo atualizado automaticamente, sem depender de documentação manual constante</div>
+        <div class="q-op" onclick="respQ('q9',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Eliminam a necessidade de classificar dados sensíveis</div>
+        <div class="q-op" onclick="respQ('q9',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Garantem conformidade automática com a LGPD</div>
+      </div>
+      <div class="q-gabarito" id="q9-gab"><strong>✅ B.</strong> Conectores automáticos leem o schema e os metadados diretamente das fontes (bancos, dbt, Airflow, Kafka), mantendo o catálogo sempre sincronizado com a realidade sem depender de alguém lembrar de atualizar a documentação manualmente — o que raramente acontece de forma consistente em times reais.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">10</div>
+        <span class="q-semana badge">Semana 17</span>
+        <div class="q-texto">Um modelo de fraude tem ótima performance no treino, mas se comporta de forma inconsistente em produção. Investigando, descobre-se que a feature "transações na última hora" é calculada com lógicas ligeiramente diferentes no notebook de treino e na API de produção. Como esse problema é chamado, e o que o resolveria estruturalmente?</div>
+      </div>
+      <div class="q-opcoes" id="q10-ops">
+        <div class="q-op" onclick="respQ('q10',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Overfitting; resolvido com mais dados de treino</div>
+        <div class="q-op" onclick="respQ('q10',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Treino-serving skew; resolvido com um Feature Store, que centraliza uma única definição de feature</div>
+        <div class="q-op" onclick="respQ('q10',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Data skew; resolvido com Z-Ordering</div>
+        <div class="q-op" onclick="respQ('q10',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Concept drift; resolvido com retraining periódico</div>
+      </div>
+      <div class="q-gabarito" id="q10-gab"><strong>✅ B.</strong> O cenário descreve exatamente o treino-serving skew: a mesma feature calculada com lógicas diferentes em treino e produção. A solução estrutural é um Feature Store (como o Feast), que centraliza a definição da feature em um único FeatureView, consumido tanto por get_historical_features (treino) quanto por get_online_features (produção) — eliminando a duplicação de lógica.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">11</div>
+        <span class="q-semana badge">Semana 17</span>
+        <div class="q-texto">Ao montar um dataset de treino com o Feast, por que é importante que a consulta seja "point-in-time correct"?</div>
+      </div>
+      <div class="q-opcoes" id="q11-ops">
+        <div class="q-op" onclick="respQ('q11',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Para reduzir a latência da consulta ao online store</div>
+        <div class="q-op" onclick="respQ('q11',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Para evitar vazamento de dados do futuro — cada exemplo de treino recebe o valor da feature que existia exatamente naquele momento no passado</div>
+        <div class="q-op" onclick="respQ('q11',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Para garantir que o modelo treine mais rápido</div>
+        <div class="q-op" onclick="respQ('q11',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Para permitir o uso de streaming em vez de batch</div>
+      </div>
+      <div class="q-gabarito" id="q11-gab"><strong>✅ B.</strong> Point-in-time correctness garante que, para cada linha do dataset de treino (associada a um timestamp específico), o valor da feature retornado seja exatamente o que existia naquele momento — nunca um valor calculado depois. Sem essa garantia, o modelo poderia "ver" informação do futuro durante o treino, gerando uma performance artificialmente boa que não se repete em produção.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">12</div>
+        <span class="q-semana badge">Semana 17</span>
+        <div class="q-texto">Uma equipe de ML precisa treinar um modelo sobre um dataset de 3 bilhões de linhas, que não cabe na memória de uma única máquina. Qual ferramenta das estudadas é mais adequada para o treino?</div>
+      </div>
+      <div class="q-opcoes" id="q12-ops">
+        <div class="q-op" onclick="respQ('q12',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>scikit-learn, por ser mais simples de usar</div>
+        <div class="q-op" onclick="respQ('q12',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Spark MLlib, pois treina de forma distribuída no mesmo cluster onde os dados residem</div>
+        <div class="q-op" onclick="respQ('q12',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Feast, pois é a ferramenta responsável por treinar modelos</div>
+        <div class="q-op" onclick="respQ('q12',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>OpenMetadata, pois cataloga o dataset antes do treino</div>
+      </div>
+      <div class="q-gabarito" id="q12-gab"><strong>✅ B.</strong> Para volumes de dados que não cabem em uma única máquina, o Spark MLlib é a escolha adequada, pois treina o modelo de forma distribuída, em paralelo, no mesmo cluster onde os dados já residem — evitando a necessidade de extrair uma amostra ou mover todo o dataset para uma máquina local. Feast é o Feature Store (não treina modelos) e OpenMetadata é o Data Catalog (não treina modelos).</div>
+    </div>
+
+    <div class="score-box" id="score-box">
+      <div class="score-num" id="score-num">0/12</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:.25rem;" id="score-msg"></div>
+    </div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="calcScore()" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--exam-red-acc);padding:.7rem 2rem;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.15)'">
+        <i class="fas fa-calculator" style="margin-right:8px;"></i>Ver meu score
+      </button>
+    </div>
+  </section>
+
+  <div class="sep"><span>Questões Dissertativas</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">③</div>
+      <div class="secao-info">
+        <div class="secao-label">Questões dissertativas</div>
+        <div class="secao-titulo">4 questões abertas — modelo de resposta completo</div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 1 — Semana 14</div>
+      <div class="d-enunciado">Uma tabela Delta de pedidos recebe atualizações diárias via MERGE INTO. Um analista percebe que, um mês depois, a tabela está lenta para ler mesmo com poucos dados. Ao investigar, ele encontra milhares de arquivos Parquet pequenos. Explique por que isso aconteceu, qual comando resolve o problema, e por que rodar esse comando com muita frequência também não é ideal.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Por que aconteceu:</strong> cada execução de MERGE INTO pode gerar novos arquivos Parquet pequenos (um por partição afetada, por exemplo). Ao longo de um mês de execuções diárias, isso acumula um "small files problem" — muitos arquivos pequenos, cada um com overhead de abertura e leitura de metadados.
+          <br><br>
+          <strong>Comando que resolve:</strong> <code>OPTIMIZE tabela</code> compacta os arquivos pequenos em arquivos maiores e mais eficientes de ler. Se houver colunas de filtro frequente e alta cardinalidade, <code>OPTIMIZE tabela ZORDER BY (coluna)</code> também reorganiza os dados fisicamente para acelerar ainda mais.
+          <br><br>
+          <strong>Por que não rodar com muita frequência:</strong> OPTIMIZE é uma operação custosa (reescreve arquivos inteiros), consumindo recursos de processamento. Rodá-la a cada pequena escrita anularia o ganho de performance, pois o custo de reotimizar constantemente pode superar o benefício. O padrão é agendar OPTIMIZE periodicamente (ex: diariamente, via Airflow) em vez de a cada transação.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 2 — Semana 15</div>
+      <div class="d-enunciado">Uma empresa de IoT recebe leituras de sensores de temperatura via Kafka, com timestamps de evento que podem chegar até 3 minutos atrasados devido a instabilidade de rede. Ela precisa calcular a temperatura média a cada janela de 1 minuto, e enviar o resultado final (sem repetições) para um dashboard. Projete a configuração de window, watermark e outputMode adequada, e justifique cada escolha.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Window:</strong> tumbling window de 1 minuto — <code>window(col("timestamp_evento"), "1 minute")</code>. Como o requisito é "janela de 1 minuto" sem menção a sobreposição, uma tumbling window (janelas fixas e não sobrepostas) é a escolha natural.
+          <br><br>
+          <strong>Watermark:</strong> <code>withWatermark("timestamp_evento", "3 minutes")</code>, para tolerar exatamente o atraso máximo esperado descrito no enunciado. Um watermark menor descartaria leituras legítimas atrasadas; um watermark muito maior atrasaria desnecessariamente a finalização das janelas.
+          <br><br>
+          <strong>Output mode:</strong> <code>append</code>, pois o requisito é "resultado final, sem repetições" — cada janela deve aparecer no dashboard uma única vez, depois de definitivamente fechada. Isso só é possível em append MODE combinado com watermark; sem watermark, o Spark rejeitaria essa combinação com erro.
+          <br><br>
+          <strong>Trade-off:</strong> o resultado de cada janela só aparece no dashboard até 3 minutos depois do fim da janela (tempo do watermark) — uma escolha consciente de latência em troca de resultados definitivos e sem duplicação.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 3 — Semana 16</div>
+      <div class="d-enunciado">Uma empresa de saúde mantém dados de pacientes (incluindo CID e histórico de consultas) em um Data Lake usado por times de analytics e de pesquisa. Um auditor pergunta: "se um paciente solicitar a exclusão de seus dados hoje, vocês conseguem garantir que ele foi completamente removido de todos os sistemas derivados?" Explique quais práticas de governança a empresa precisaria ter implementado ANTES dessa pergunta ser feita, para poder responder "sim" com confiança.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Classificação de dados sensíveis:</strong> toda coluna que identifica o paciente (nome, CPF, e possivelmente CID por ser dado de saúde sob a LGPD) precisa estar previamente classificada como PII/dado sensível no Data Catalog, para que qualquer pessoa (ou ferramenta) saiba exatamente onde procurar.
+          <br><br>
+          <strong>Linhagem downstream completa:</strong> a empresa precisa ter mapeado, desde a tabela raw de origem, TODAS as tabelas, modelos dbt e dashboards derivados que consomem esses dados — incluindo os usados por times de pesquisa, que muitas vezes replicam dados para ambientes separados.
+          <br><br>
+          <strong>Catalogação de todos os ativos:</strong> se existirem cópias "não oficiais" (planilhas exportadas, notebooks com dumps locais) fora do escopo do catálogo, a linhagem automática não as capturaria — reforçando a necessidade de processos que desencorajem cópias fora de ferramentas governadas.
+          <br><br>
+          <strong>Conclusão:</strong> sem classificação prévia (saber ONDE) e linhagem completa (saber PARA ONDE se propagou), a empresa não pode garantir com confiança que a exclusão alcançou todas as réplicas — o que representaria um risco real de não conformidade com a LGPD.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 4 — Semanas 14, 15 e 17</div>
+      <div class="d-enunciado">Uma fintech quer detectar fraude em tempo real. As transações chegam via Kafka, precisam ser processadas em streaming, as features usadas pelo modelo (ex: "número de transações na última hora") devem ser as mesmas usadas no treino do modelo, e o histórico de transações deve ser armazenado com garantias transacionais para auditoria. Desenhe a arquitetura de ponta a ponta, indicando qual tecnologia das estudadas atende a cada requisito.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Ingestão em tempo real:</strong> Kafka como fonte, consumido via Structured Streaming (Semana 15) com <code>readStream.format("kafka")</code>.
+          <br><br>
+          <strong>Cálculo de features em tempo real:</strong> agregações com window operations (ex: tumbling window de 1 hora) sobre o stream, usando watermark para tolerar atrasos, com <code>outputMode("update")</code> para atualizar continuamente os totais por cliente.
+          <br><br>
+          <strong>Armazenamento transacional para auditoria:</strong> o resultado do streaming é gravado em uma tabela Delta Lake (Semana 14) via <code>writeStream.format("delta")</code>, ganhando ACID, histórico de versões (time travel) e a possibilidade de MERGE INTO para correções pontuais.
+          <br><br>
+          <strong>Consistência treino/produção da feature:</strong> a mesma definição de feature ("transações na última hora") é registrada como uma FeatureView no Feast (Semana 17), com a tabela Delta gerada pelo streaming servindo de fonte para o offline store, e um online store (ex: Redis) sincronizado para consultas de baixíssima latência no momento da predição.
+          <br><br>
+          <strong>Fechamento do ciclo:</strong> essa arquitetura conecta as quatro semanas da P3: Delta Lake garante confiabilidade do armazenamento, Structured Streaming processa em tempo real, o Feature Store elimina o treino-serving skew, e a governança (Semana 16, implícita) garante que todo esse pipeline seja documentado e auditável.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist de Preparação</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">④</div>
+      <div class="secao-info">
+        <div class="secao-label">Checklist interativo</div>
+        <div class="secao-titulo">Marque o que você já domina</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso de revisão</span>
+        <strong id="progress-text">0 / 20 conceitos</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    </div>
+
+    <div class="checklist-grid" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei explicar como o _delta_log garante ACID sobre arquivos Parquet</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei usar MERGE INTO para um upsert atômico</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei consultar uma versão anterior com versionAsOf/timestampAsOf</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo schema enforcement vs evolution e quando usar Z-Order</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei os riscos de VACUUM com retenção curta</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Explico a diferença entre batch e streaming em termos do dataset</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre outputMode append, complete e update</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio tumbling window de sliding window</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo por que watermark é necessário para outputMode append com agregação</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o papel do checkpointLocation na tolerância a falhas</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que é um Data Catalog e os 4 tipos de metadados que ele guarda</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio linhagem upstream de downstream e sei quando usar cada uma</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei classificar uma coluna como PII e explicar o risco de não fazer isso</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo como classificação + linhagem viabilizam o direito ao esquecimento da LGPD</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Explico o que é treino-serving skew e como o Feature Store resolve</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio offline store de online store</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo por que point-in-time correctness evita vazamento de dados do futuro</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar Spark MLlib em vez de scikit-learn</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo o papel do MLflow no rastreamento de features + modelo</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo conectar as 4 semanas em uma arquitetura de ponta a ponta (Delta + Streaming + Governança + Feature Store)</div></div>
+    </div>
+
+    <div class="aviso-green" style="margin-top:1.25rem;">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Dica final:</strong> para cada item não marcado, volte à semana correspondente e leia o card de resumo. Tente explicar o conceito em voz alta como se estivesse ensinando alguém. Boa P3!</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-19-bigdata.html'">
+      <div>
+        <div class="proxima-label">Após a P3 · Semana 19</div>
+        <div class="proxima-titulo">Semana 19 — PROVA FINAL (P4): conteúdo cumulativo + apresentação do projeto final</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const correctAnswers={q1:'C',q2:'B',q3:'B',q4:'B',q5:'B',q6:'B',q7:'B',q8:'B',q9:'B',q10:'B',q11:'B',q12:'B'};
+const userAnswers={};
+
+function respQ(qId,el,letra,isCorrect){
+  const ops=document.getElementById(qId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  userAnswers[qId]=letra;
+  const correta=correctAnswers[qId];
+  ops.querySelectorAll('.q-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    const l=op.querySelector('.q-letra').textContent.trim();
+    if(l===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const gab=document.getElementById(qId+'-gab');
+  gab.style.background=isCorrect?'rgba(74,222,128,.07)':'rgba(239,68,68,.07)';
+  gab.style.border=isCorrect?'1px solid rgba(74,222,128,.2)':'1px solid rgba(239,68,68,.2)';
+  gab.style.color=isCorrect?'rgba(134,239,172,.9)':'rgba(252,165,165,.9)';
+  gab.classList.add('show');
+}
+
+function calcScore(){
+  const total=Object.keys(correctAnswers).length;
+  let correct=0;
+  for(const[q,ans] of Object.entries(userAnswers)){if(ans===correctAnswers[q])correct++;}
+  const unanswered=total-Object.keys(userAnswers).length;
+  const box=document.getElementById('score-box');
+  const num=document.getElementById('score-num');
+  const msg=document.getElementById('score-msg');
+  box.style.display='block';
+  num.textContent=`${correct}/${total}`;
+  const pct=Math.round(correct/total*100);
+  if(pct>=80){num.style.color='#4ade80';msg.textContent=`${pct}% — Excelente! Você está pronto para a P3.`;}
+  else if(pct>=60){num.style.color='#fbbf24';msg.textContent=`${pct}% — Bom! Revise os temas que errou antes da prova.`;}
+  else{num.style.color='#f87171';msg.textContent=`${pct}% — Atenção! Volte às semanas com mais erros e revise os pontos-chave.`;}
+  if(unanswered>0)msg.textContent+=` (${unanswered} não respondida(s))`;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar modelo de resposta'
+    :'<i class="fas fa-lightbulb"></i> ver modelo de resposta';
+}
+
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').innerHTML=el.classList.contains('checked')?'✓':'';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.check-item').length;
+  const checked=document.querySelectorAll('.check-item.checked').length;
+  const pct=Math.round(checked/total*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=`${checked} / ${total} conceitos`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 19 — PROVA FINAL (P4) · Big Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --exam-red:#dc2626;
+  --exam-red-acc:#f87171;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c0a0a;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#dc2626;top:38%;left:42%;opacity:.12;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.2);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--exam-red-acc);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:6.2rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.1rem;font-weight:800;color:var(--white);line-height:1.1;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--exam-red-acc);}
+.capa-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--exam-red-acc);border-radius:2px;margin-bottom:2rem;}
+.cobertura{display:flex;flex-direction:column;gap:.65rem;}
+.cob-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.83rem;animation:slideIn .5s ease both;}
+.cob-item:nth-child(1){animation-delay:.1s;}.cob-item:nth-child(2){animation-delay:.2s;}.cob-item:nth-child(3){animation-delay:.3s;}.cob-item:nth-child(4){animation-delay:.4s;}.cob-item:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.cob-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.15);color:var(--exam-red-acc);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:800;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--exam-red-acc);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--exam-red-acc);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.65rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.aviso-exam{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-exam i{color:var(--exam-red-acc);flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-pink{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.22);}
+.badge-teal{background:rgba(45,212,191,.12);color:#2dd4bf;border:1px solid rgba(45,212,191,.22);}
+
+.semanas-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.s-card{border-radius:14px;padding:1.25rem;border:1px solid;}
+.s1{background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.18);}
+.s2{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.s3{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.s4{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.s5{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.s-titulo{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+.s1 .s-titulo{color:#2dd4bf;}
+.s2 .s-titulo{color:#60a5fa;}
+.s3 .s-titulo{color:#4ade80;}
+.s4 .s-titulo{color:#a78bfa;}
+.s5 .s-titulo{color:#fb923c;}
+.s-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.s-item::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+.s-armadilha{font-size:.74rem;margin-top:.65rem;padding:.5rem .75rem;border-radius:7px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:rgba(252,165,165,.8);}
+.s-armadilha::before{content:'⚠ ';font-weight:700;}
+
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s;}
+.questao:hover{border-color:rgba(239,68,68,.2);}
+.q-header{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem;}
+.q-num{width:32px;height:32px;border-radius:9px;background:rgba(239,68,68,.12);color:var(--exam-red-acc);font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-texto{font-size:.92rem;color:var(--text-primary);line-height:1.6;font-weight:500;}
+.q-semana{font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:600;margin-top:6px;flex-shrink:0;}
+.q-opcoes{display:flex;flex-direction:column;gap:.45rem;}
+.q-op{display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .85rem;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:all .2s;font-size:.85rem;color:var(--text-secondary);}
+.q-op:hover{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+.q-op.correto{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35);color:#86efac;}
+.q-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.q-letra{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:1px;}
+.q-gabarito{display:none;margin-top:.85rem;padding:.85rem 1rem;border-radius:9px;font-size:.83rem;line-height:1.6;}
+.q-gabarito.show{display:block;}
+
+.dissertativa{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.d-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.d-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1rem;padding:.85rem 1rem;border-radius:9px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.5rem 1rem;color:var(--exam-red-acc);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(239,68,68,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+.modelo-resposta{padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.modelo-resposta strong{color:#4ade80;}
+
+/* Projeto final pipeline visual */
+.pipeline-box{border-radius:14px;overflow:hidden;border:1px solid rgba(239,68,68,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.5rem;}
+.pipeline-row{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:.25rem;flex-wrap:wrap;}
+.pipeline-node{padding:.65rem 1rem;border-radius:10px;font-size:.75rem;font-weight:600;font-family:'JetBrains Mono',monospace;border:2px solid;text-align:center;min-width:120px;}
+.pn-ingest{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.4);color:#5eead4;}
+.pn-store{background:rgba(59,130,246,.1);border-color:rgba(96,165,250,.4);color:#93c5fd;}
+.pn-transform{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.4);color:#c4b5fd;}
+.pn-orch{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fde68a;}
+.pn-gov{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:#86efac;}
+.pn-final{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);color:#fdba74;}
+.pipeline-arrow-h{color:rgba(239,68,68,.4);font-size:1rem;padding:0 .5rem;}
+.pipeline-arrow-v{display:flex;justify-content:center;color:rgba(239,68,68,.3);font-size:1rem;margin:.4rem 0;}
+
+/* Rubric table styling reuse tabela-wrap/table classes */
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--exam-red-acc);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+td strong{color:var(--text-primary);}
+
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;}
+.check-item:hover{border-color:rgba(74,222,128,.3);}
+.check-item.checked{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;}
+.check-item.checked .check-box{background:rgba(74,222,128,.3);border-color:#4ade80;color:#4ade80;}
+.check-label{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+.check-item.checked .check-label{color:rgba(134,239,172,.8);}
+.progress-bar-wrap{margin:1rem 0;padding:1rem 1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-label span{font-size:.78rem;color:var(--text-secondary);}
+.progress-label strong{font-size:.82rem;color:var(--text-primary);}
+.progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#fb923c);border-radius:4px;transition:width .4s ease;}
+
+.score-box{display:none;margin-top:1rem;padding:1.25rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#4ade80;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.semanas-grid,.checklist-grid{grid-template-columns:1fr;}
+  .pipeline-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔴 Prova Final · P4</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">19</div>
+    <h1 class="capa-titulo"><em>Prova Final</em></h1>
+    <p class="capa-sub">Conteúdo cumulativo · Entrega e apresentação do projeto final</p>
+    <div class="divider"></div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">A P4 cobre TODO o semestre. Use a revisão por blocos, o simulado cumulativo e o guia do projeto final para chegar preparado nos dois pilares da nota: prova e projeto.</p>
+    <div class="cobertura">
+      <div class="cob-item"><div class="cob-num">B1</div><span>Fundamentos — 5 Vs, Lambda/Kappa, Data Lake/Lakehouse, HDFS, Kafka (S1-5)</span></div>
+      <div class="cob-item"><div class="cob-num">B2</div><span>Ingestão e Processamento — CDC, Spark, PySpark, Spark SQL/Catalyst (S7-10)</span></div>
+      <div class="cob-item"><div class="cob-num">B3</div><span>Transformação e Orquestração — ETL/ELT, dbt, Airflow (S11-12)</span></div>
+      <div class="cob-item"><div class="cob-num">B4</div><span>Armazenamento Moderno e Streaming — Delta Lake, Structured Streaming (S14-15)</span></div>
+      <div class="cob-item"><div class="cob-num">B5</div><span>Governança e IA — Data Catalog, linhagem, LGPD, Feature Store, MLlib (S16-17)</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Formato da P4</div>
+      <ul class="info-lista">
+        <li>Prova escrita cumulativa — todo o conteúdo do semestre</li>
+        <li>Entrega do projeto final: pipeline completo de ingestão, transformação e análise</li>
+        <li>Apresentação oral do projeto para a turma/professor</li>
+        <li>Consulta: sem consulta na prova (fechada); projeto é trabalho contínuo</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Onde a banca mais cobra</div>
+      <ul class="info-lista">
+        <li>Conectar conceitos entre blocos (ex: CDC → Spark → dbt → Airflow → Delta)</li>
+        <li>Justificar escolhas de arquitetura para um cenário dado, não só definir termos</li>
+        <li>Identificar armadilhas clássicas de cada tecnologia (vistas nas P1/P2/P3)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dica de ouro</div>
+      <ul class="info-lista">
+        <li>Pense no semestre como UMA arquitetura só: ingestão → armazenamento → processamento → transformação → orquestração → governança → serving para IA</li>
+        <li>Seu projeto final é a prova viva dessa arquitetura — use-o como fio condutor de revisão</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>começar a revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">①</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão rápida — cumulativa</div>
+        <div class="secao-titulo">Os 5 blocos do semestre — pontos-chave e armadilhas</div>
+      </div>
+    </div>
+
+    <div class="semanas-grid">
+      <div class="s-card s1">
+        <div class="s-titulo">Bloco 1 — Fundamentos (S1-5)</div>
+        <div class="s-item"><strong>5 Vs:</strong> volume, velocidade, variedade, veracidade, valor</div>
+        <div class="s-item"><strong>Lambda:</strong> batch + speed + serving. <strong>Kappa:</strong> streaming puro</div>
+        <div class="s-item"><strong>Zonas do Data Lake:</strong> raw/bronze → silver → gold</div>
+        <div class="s-item"><strong>HDFS:</strong> blocos replicados, NameNode/DataNode</div>
+        <div class="s-item"><strong>Kafka:</strong> tópicos, partições, producers/consumers, offset, consumer groups</div>
+        <div class="s-armadilha">Armadilha: confundir Lakehouse (arquitetura) com Data Lake (armazenamento bruto).</div>
+      </div>
+      <div class="s-card s2">
+        <div class="s-titulo">Bloco 2 — Ingestão e Processamento (S7-10)</div>
+        <div class="s-item"><strong>Full Load/Incremental/CDC:</strong> Incremental não captura DELETEs; CDC lê o log de transações</div>
+        <div class="s-item"><strong>Spark:</strong> in-memory, lazy evaluation, transformação vs action</div>
+        <div class="s-item"><strong>PySpark:</strong> narrow (sem shuffle) vs wide (com shuffle); broadcast na tabela PEQUENA</div>
+        <div class="s-item"><strong>Catalyst:</strong> 4 fases; explain() mostra PushedFilters e tipo de join</div>
+        <div class="s-armadilha">Armadilha: UDF bloqueia predicate pushdown — prefira funções nativas.</div>
+      </div>
+      <div class="s-card s3">
+        <div class="s-titulo">Bloco 3 — Transformação e Orquestração (S11-12)</div>
+        <div class="s-item"><strong>ETL vs ELT:</strong> ETL transforma antes (dados sensíveis); ELT transforma depois (padrão moderno)</div>
+        <div class="s-item"><strong>dbt:</strong> staging → intermediate → marts; ref() cria dependência, source() aponta pra fonte bruta</div>
+        <div class="s-item"><strong>Testes dbt:</strong> genéricos (unique, not_null...) e singulares (SQL customizado)</div>
+        <div class="s-item"><strong>Airflow:</strong> DAG, operador >> define dependência; sensor espera, operator executa</div>
+        <div class="s-armadilha">Armadilha: catchup=True dispara todas as execuções perdidas — use catchup=False em produção.</div>
+      </div>
+      <div class="s-card s4">
+        <div class="s-titulo">Bloco 4 — Armazenamento e Streaming (S14-15)</div>
+        <div class="s-item"><strong>Delta Lake:</strong> _delta_log garante ACID; MERGE INTO = upsert atômico; time travel</div>
+        <div class="s-item"><strong>OPTIMIZE+ZORDER</strong> aceleram leitura; VACUUM remove órfãos (cuidado com retenção curta)</div>
+        <div class="s-item"><strong>Structured Streaming:</strong> tabela infinita, micro-batch</div>
+        <div class="s-item"><strong>Windows:</strong> tumbling (sem sobreposição) vs sliding (com sobreposição)</div>
+        <div class="s-armadilha">Armadilha: outputMode append em agregação SEM watermark gera erro.</div>
+      </div>
+      <div class="s-card s5">
+        <div class="s-titulo">Bloco 5 — Governança e IA (S16-17)</div>
+        <div class="s-item"><strong>Data Catalog:</strong> metadados técnicos, de negócio, operacionais e de governança</div>
+        <div class="s-item"><strong>Linhagem:</strong> upstream (origem/debug) vs downstream (impacto)</div>
+        <div class="s-item"><strong>LGPD:</strong> classificação PII + linhagem viabilizam o direito ao esquecimento</div>
+        <div class="s-item"><strong>Feature Store:</strong> elimina treino-serving skew; offline (treino) vs online (serving)</div>
+        <div class="s-armadilha">Armadilha: usar online store para montar dataset de treino perde o point-in-time correctness.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado Cumulativo — 15 questões</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">②</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado</div>
+        <div class="secao-titulo">15 questões de múltipla escolha — todo o semestre</div>
+      </div>
+    </div>
+
+    <div class="aviso-exam">
+      <i class="fas fa-stopwatch"></i>
+      <span>Este simulado cobre os 5 blocos do semestre. Tente responder tudo antes de ver os gabaritos — o score final aparece ao clicar no botão.</span>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">1</div><span class="q-semana badge-teal">Bloco 1</span>
+        <div class="q-texto">Uma empresa precisa de uma arquitetura que processe tanto dados históricos em lote quanto eventos em tempo real, mantendo uma camada de serving unificada para consultas. Qual arquitetura é essa?</div>
+      </div>
+      <div class="q-opcoes" id="q1-ops">
+        <div class="q-op" onclick="respQ('q1',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Kappa</div>
+        <div class="q-op" onclick="respQ('q1',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Lambda</div>
+        <div class="q-op" onclick="respQ('q1',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Lakehouse</div>
+        <div class="q-op" onclick="respQ('q1',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>ETL clássico</div>
+      </div>
+      <div class="q-gabarito" id="q1-gab"><strong>✅ B.</strong> A arquitetura Lambda combina explicitamente uma camada batch (dados históricos), uma camada speed (tempo real) e uma camada serving que unifica as duas para consultas — exatamente o que o enunciado descreve. Kappa usa apenas streaming, sem uma camada batch separada.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">2</div><span class="q-semana badge-teal">Bloco 1</span>
+        <div class="q-texto">Em um Data Lake organizado em zonas, onde os dados já foram limpos e padronizados, mas ainda não estão agregados para consumo de negócio?</div>
+      </div>
+      <div class="q-opcoes" id="q2-ops">
+        <div class="q-op" onclick="respQ('q2',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Raw/Bronze</div>
+        <div class="q-op" onclick="respQ('q2',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Silver</div>
+        <div class="q-op" onclick="respQ('q2',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Gold</div>
+        <div class="q-op" onclick="respQ('q2',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Staging externo</div>
+      </div>
+      <div class="q-gabarito" id="q2-gab"><strong>✅ B.</strong> A zona Silver contém dados já limpos, tipados e padronizados (equivalente à camada staging do dbt), mas ainda não agregados em métricas de negócio — isso é responsabilidade da zona Gold.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">3</div><span class="q-semana badge-blue">Bloco 2</span>
+        <div class="q-texto">Um sistema legado deleta fisicamente registros cancelados. A empresa precisa capturar esses cancelamentos no Data Lake. Qual estratégia de ingestão é obrigatória?</div>
+      </div>
+      <div class="q-opcoes" id="q3-ops">
+        <div class="q-op" onclick="respQ('q3',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Incremental com cursor em updated_at</div>
+        <div class="q-op" onclick="respQ('q3',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>CDC, que captura eventos DELETE via log de transações</div>
+        <div class="q-op" onclick="respQ('q3',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Airbyte em modo incremental dedup</div>
+        <div class="q-op" onclick="respQ('q3',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Full Load semanal</div>
+      </div>
+      <div class="q-gabarito" id="q3-gab"><strong>✅ B.</strong> Incremental não captura DELETEs — o registro simplesmente desaparece silenciosamente. CDC lê o log de transações do banco e emite um evento explícito de DELETE, sendo o único método que resolve esse requisito nativamente.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">4</div><span class="q-semana badge-blue">Bloco 2</span>
+        <div class="q-texto">Um join entre uma tabela de 2 bilhões de linhas e uma de 100 linhas está usando SortMergeJoin e demorando muito. Qual é a correção mais impactante?</div>
+      </div>
+      <div class="q-opcoes" id="q4-ops">
+        <div class="q-op" onclick="respQ('q4',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>repartition() na tabela grande</div>
+        <div class="q-op" onclick="respQ('q4',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Forçar broadcast() na tabela pequena</div>
+        <div class="q-op" onclick="respQ('q4',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Converter para RDD</div>
+        <div class="q-op" onclick="respQ('q4',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>coalesce() antes do join</div>
+      </div>
+      <div class="q-gabarito" id="q4-gab"><strong>✅ B.</strong> Forçar broadcast na tabela de 100 linhas copia essa tabela inteira para cada executor, eliminando completamente o shuffle da tabela de 2 bilhões de linhas — a otimização mais impactante disponível nesse cenário clássico.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">5</div><span class="q-semana badge-blue">Bloco 2</span>
+        <div class="q-texto">No explain() de um DataFrame aparece o nó BatchEvalPython e PushedFilters: []. O que isso indica?</div>
+      </div>
+      <div class="q-opcoes" id="q5-ops">
+        <div class="q-op" onclick="respQ('q5',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O plano está totalmente otimizado</div>
+        <div class="q-op" onclick="respQ('q5',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Uma UDF Python está bloqueando o predicate pushdown</div>
+        <div class="q-op" onclick="respQ('q5',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>O arquivo Parquet não foi encontrado</div>
+        <div class="q-op" onclick="respQ('q5',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O DataFrame está cacheado corretamente</div>
+      </div>
+      <div class="q-gabarito" id="q5-gab"><strong>✅ B.</strong> BatchEvalPython aparece quando há chamada a uma UDF Python. PushedFilters: [] confirma que o Catalyst não conseguiu empurrar filtros até o FileScan porque não "enxerga" o que a UDF faz — solução: substituir por funções nativas do pyspark.sql.functions.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">6</div><span class="q-semana badge-purple">Bloco 3</span>
+        <div class="q-texto">Uma empresa de saúde precisa anonimizar CPFs antes que os dados cheguem a um Data Warehouse na nuvem, por exigência da LGPD. Qual abordagem é obrigatória?</div>
+      </div>
+      <div class="q-opcoes" id="q6-ops">
+        <div class="q-op" onclick="respQ('q6',this,'A',true)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>ETL — anonimizar antes de carregar</div>
+        <div class="q-op" onclick="respQ('q6',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>ELT — carregar bruto e anonimizar com dbt depois</div>
+        <div class="q-op" onclick="respQ('q6',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Streaming, para reduzir a exposição</div>
+        <div class="q-op" onclick="respQ('q6',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Tanto faz — a ordem não importa</div>
+      </div>
+      <div class="q-gabarito" id="q6-gab"><strong>✅ A.</strong> Por exigência da LGPD, dados sensíveis como CPF devem ser anonimizados ANTES de trafegarem para sistemas de terceiros/cloud. No ELT, os CPFs brutos chegariam ao Data Warehouse — violando o princípio de minimização de dados.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">7</div><span class="q-semana badge-purple">Bloco 3</span>
+        <div class="q-texto">O que acontece quando um modelo dbt usa <code>{{ ref('stg_orders') }}</code>?</div>
+      </div>
+      <div class="q-opcoes" id="q7-ops">
+        <div class="q-op" onclick="respQ('q7',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Apenas substitui pelo nome literal da tabela</div>
+        <div class="q-op" onclick="respQ('q7',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Registra a dependência no DAG, garantindo que stg_orders rode antes</div>
+        <div class="q-op" onclick="respQ('q7',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Executa testes de qualidade automaticamente</div>
+        <div class="q-op" onclick="respQ('q7',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Aponta para a zona Raw</div>
+      </div>
+      <div class="q-gabarito" id="q7-gab"><strong>✅ B.</strong> ref() sinaliza que o modelo DEPENDE de stg_orders, fazendo o dbt construir o DAG de dependências e garantir a ordem de execução correta — eliminando a necessidade de gerenciar isso manualmente.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">8</div><span class="q-semana badge-purple">Bloco 3</span>
+        <div class="q-texto">Uma DAG Airflow tem start_date de 6 meses atrás e é ativada hoje com catchup=True. O que acontece?</div>
+      </div>
+      <div class="q-opcoes" id="q8-ops">
+        <div class="q-op" onclick="respQ('q8',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Nada — catchup só funciona se já tiver rodado antes</div>
+        <div class="q-op" onclick="respQ('q8',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Dispara todas as execuções perdidas dos últimos 6 meses de uma vez</div>
+        <div class="q-op" onclick="respQ('q8',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Executa apenas a partir de hoje</div>
+        <div class="q-op" onclick="respQ('q8',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Pede confirmação manual antes de cada execução</div>
+      </div>
+      <div class="q-gabarito" id="q8-gab"><strong>✅ B.</strong> catchup=True faz o Airflow disparar uma execução para cada intervalo de agendamento entre start_date e agora — com 6 meses e schedule diário, isso significa dezenas de execuções de uma vez. Por isso catchup=False é recomendado em produção.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">9</div><span class="q-semana badge-yellow">Bloco 4</span>
+        <div class="q-texto">Um job Spark falha no meio de uma escrita em tabela Delta. O que garante que a tabela não fique com dados parciais visíveis?</div>
+      </div>
+      <div class="q-opcoes" id="q9-ops">
+        <div class="q-op" onclick="respQ('q9',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O formato Parquet</div>
+        <div class="q-op" onclick="respQ('q9',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>A atomicidade garantida pelo _delta_log — a transação só é commitada por completo, ou não é commitada</div>
+        <div class="q-op" onclick="respQ('q9',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>O particionamento da tabela</div>
+        <div class="q-op" onclick="respQ('q9',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O comando VACUUM</div>
+      </div>
+      <div class="q-gabarito" id="q9-gab"><strong>✅ B.</strong> A atomicidade do Delta Lake, garantida pelo _delta_log, assegura que uma transação só é considerada válida quando o arquivo JSON de versão é commitado com sucesso — se o job falhar antes, a versão anterior íntegra continua sendo a visível.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">10</div><span class="q-semana badge-yellow">Bloco 4</span>
+        <div class="q-texto">Uma agregação por groupBy usa outputMode("append") sem nenhum watermark definido. O que acontece?</div>
+      </div>
+      <div class="q-opcoes" id="q10-ops">
+        <div class="q-op" onclick="respQ('q10',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Roda normalmente, emitindo cada linha assim que chega</div>
+        <div class="q-op" onclick="respQ('q10',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Gera erro — o Spark não sabe quando uma janela está definitivamente pronta sem watermark</div>
+        <div class="q-op" onclick="respQ('q10',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Converte automaticamente para complete mode</div>
+        <div class="q-op" onclick="respQ('q10',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Ignora silenciosamente o groupBy</div>
+      </div>
+      <div class="q-gabarito" id="q10-gab"><strong>✅ B.</strong> Sem watermark, o Spark não tem como garantir que uma janela agregada nunca mais vai mudar — condição necessária para emiti-la em modo append. Essa combinação gera erro de análise antes do job rodar.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">11</div><span class="q-semana badge-green">Bloco 5</span>
+        <div class="q-texto">Um engenheiro precisa saber se pode remover com segurança uma coluna de uma tabela staging. Qual tipo de linhagem ele deve consultar?</div>
+      </div>
+      <div class="q-opcoes" id="q11-ops">
+        <div class="q-op" onclick="respQ('q11',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Upstream</div>
+        <div class="q-op" onclick="respQ('q11',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Downstream</div>
+        <div class="q-op" onclick="respQ('q11',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Nenhuma — não é resolvido por linhagem</div>
+        <div class="q-op" onclick="respQ('q11',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Apenas o Data Catalog, sem linhagem</div>
+      </div>
+      <div class="q-gabarito" id="q11-gab"><strong>✅ B.</strong> Avaliar o IMPACTO de uma mudança futura ("o que quebra se eu remover") é exatamente a função da linhagem downstream — mostra tudo que consome a tabela/coluna em questão.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">12</div><span class="q-semana badge-green">Bloco 5</span>
+        <div class="q-texto">Um modelo de fraude tem ótima performance no treino, mas se comporta inconsistentemente em produção porque uma feature é calculada com lógicas diferentes em cada ambiente. Qual ferramenta resolve isso estruturalmente?</div>
+      </div>
+      <div class="q-opcoes" id="q12-ops">
+        <div class="q-op" onclick="respQ('q12',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Airflow, agendando o retraining</div>
+        <div class="q-op" onclick="respQ('q12',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Feature Store, com uma única definição de feature usada em treino e produção</div>
+        <div class="q-op" onclick="respQ('q12',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>OpenMetadata, catalogando as features</div>
+        <div class="q-op" onclick="respQ('q12',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Delta Lake, com time travel</div>
+      </div>
+      <div class="q-gabarito" id="q12-gab"><strong>✅ B.</strong> Esse é o clássico treino-serving skew, resolvido estruturalmente por um Feature Store (como o Feast), que centraliza a definição da feature em um único FeatureView consumido tanto no treino (offline) quanto em produção (online).</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">13</div><span class="q-semana badge-teal">Integrador</span>
+        <div class="q-texto">Uma empresa quer processar eventos de cliques em tempo real, calcular agregações por minuto e alimentar um modelo de recomendação. Qual sequência de tecnologias estudadas forma esse pipeline?</div>
+      </div>
+      <div class="q-opcoes" id="q13-ops">
+        <div class="q-op" onclick="respQ('q13',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Kafka → dbt → Airflow → OpenMetadata</div>
+        <div class="q-op" onclick="respQ('q13',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Kafka → Structured Streaming (window) → Delta Lake → Feast</div>
+        <div class="q-op" onclick="respQ('q13',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>HDFS → Spark SQL → VACUUM → MLflow</div>
+        <div class="q-op" onclick="respQ('q13',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Full Load → ETL → Kappa → Lambda</div>
+      </div>
+      <div class="q-gabarito" id="q13-gab"><strong>✅ B.</strong> Kafka ingere os eventos em tempo real; Structured Streaming processa e agrega por janela de tempo; o resultado é gravado em Delta Lake com garantias ACID; e o Feast serve essa feature de forma consistente para treino e produção do modelo de recomendação.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">14</div><span class="q-semana badge-blue">Integrador</span>
+        <div class="q-texto">Em qual etapa do pipeline (ingestão, armazenamento, transformação ou orquestração) o Catalyst Optimizer atua?</div>
+      </div>
+      <div class="q-opcoes" id="q14-ops">
+        <div class="q-op" onclick="respQ('q14',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Ingestão — otimiza a leitura do Kafka</div>
+        <div class="q-op" onclick="respQ('q14',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Processamento/Transformação — otimiza o plano de execução de queries Spark SQL/DataFrame</div>
+        <div class="q-op" onclick="respQ('q14',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Orquestração — decide a ordem das tasks no Airflow</div>
+        <div class="q-op" onclick="respQ('q14',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Governança — classifica dados sensíveis automaticamente</div>
+      </div>
+      <div class="q-gabarito" id="q14-gab"><strong>✅ B.</strong> O Catalyst Optimizer é o otimizador interno do Spark SQL/DataFrame, atuando na etapa de processamento/transformação — ele decide o plano físico de execução (predicate pushdown, column pruning, tipo de join), sem relação direta com ingestão, orquestração ou governança.</div>
+    </div>
+
+    <div class="questao">
+      <div class="q-header"><div class="q-num">15</div><span class="q-semana badge-purple">Integrador</span>
+        <div class="q-texto">Um pipeline de dados precisa: (1) ingerir dados de um Postgres, (2) esperar o arquivo chegar no Data Lake, (3) transformar com dbt, (4) validar qualidade, (5) notificar o time. Qual ferramenta orquestra esse fluxo do início ao fim?</div>
+      </div>
+      <div class="q-opcoes" id="q15-ops">
+        <div class="q-op" onclick="respQ('q15',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Delta Lake</div>
+        <div class="q-op" onclick="respQ('q15',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Apache Airflow, com um Sensor esperando o arquivo e BashOperators para dbt e notificação</div>
+        <div class="q-op" onclick="respQ('q15',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Feast</div>
+        <div class="q-op" onclick="respQ('q15',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>OpenMetadata</div>
+      </div>
+      <div class="q-gabarito" id="q15-gab"><strong>✅ B.</strong> O Airflow é o orquestrador que conecta ingestão, espera (Sensor), transformação (dbt via BashOperator), validação (dbt test) e notificação em uma única DAG com dependências explícitas — exatamente o papel discutido na Semana 12.</div>
+    </div>
+
+    <div class="score-box" id="score-box">
+      <div class="score-num" id="score-num">0/15</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:.25rem;" id="score-msg"></div>
+    </div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="calcScore()" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--exam-red-acc);padding:.7rem 2rem;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.15)'">
+        <i class="fas fa-calculator" style="margin-right:8px;"></i>Ver meu score
+      </button>
+    </div>
+  </section>
+
+  <div class="sep"><span>Projeto Final</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">③</div>
+      <div class="secao-info">
+        <div class="secao-label">Entrega e apresentação</div>
+        <div class="secao-titulo">Guia do projeto final — pipeline completo de ingestão, transformação e análise</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-diagram-project"></i>Arquitetura mínima esperada</div>
+      <p>O projeto final deve demonstrar, com um caso de uso real (ainda que pequeno), a capacidade de conectar as ferramentas estudadas ao longo do semestre em um pipeline coeso:</p>
+      <div class="pipeline-box">
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-ingest">Ingestão<br><span style="font-size:.6rem;opacity:.6;">Airbyte/Kafka/CDC</span></div>
+        </div>
+        <div class="pipeline-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-store">Armazenamento<br><span style="font-size:.6rem;opacity:.6;">Delta Lake</span></div>
+        </div>
+        <div class="pipeline-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-transform">Transformação<br><span style="font-size:.6rem;opacity:.6;">Spark + dbt</span></div>
+        </div>
+        <div class="pipeline-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-orch">Orquestração<br><span style="font-size:.6rem;opacity:.6;">Airflow</span></div>
+        </div>
+        <div class="pipeline-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-gov">Governança<br><span style="font-size:.6rem;opacity:.6;">Catálogo + LGPD</span></div>
+        </div>
+        <div class="pipeline-arrow-v"><i class="fas fa-arrow-down"></i></div>
+        <div class="pipeline-row">
+          <div class="pipeline-node pn-final">Análise Final<br><span style="font-size:.6rem;opacity:.6;">Dashboard / Feature Store</span></div>
+        </div>
+      </div>
+      <div class="destaque-green" style="padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);"><strong style="color:#4ade80;">Não é obrigatório usar TODAS as tecnologias do semestre</strong> — o essencial é justificar as escolhas feitas para o cenário do seu projeto, mostrando que você entende os trade-offs discutidos em cada semana.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-check"></i>Rubrica sugerida de avaliação</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>O que é avaliado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ingestão</strong></td><td>Estratégia de ingestão escolhida (Full Load/Incremental/CDC/streaming) é justificada pelo cenário</td></tr>
+            <tr><td><strong>Processamento</strong></td><td>Uso correto de Spark/PySpark, evitando armadilhas discutidas (UDF desnecessária, shuffle evitável)</td></tr>
+            <tr><td><strong>Transformação</strong></td><td>Modelos organizados em camadas (staging/marts), com testes de qualidade configurados</td></tr>
+            <tr><td><strong>Orquestração</strong></td><td>Pipeline automatizado via Airflow, com dependências e tratamento de falha (retries)</td></tr>
+            <tr><td><strong>Armazenamento</strong></td><td>Uso de Delta Lake (ou justificativa da ausência) e garantias de qualidade dos dados</td></tr>
+            <tr><td><strong>Governança</strong></td><td>Documentação mínima dos dados (mesmo que manual) e atenção a dados sensíveis, se houver</td></tr>
+            <tr><td><strong>Apresentação</strong></td><td>Clareza ao explicar decisões de arquitetura e responder perguntas técnicas da banca</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-microphone"></i>Estrutura sugerida para a apresentação</div>
+      <ul>
+        <li><strong>1. Contexto (1-2 min):</strong> qual problema de negócio o pipeline resolve, e por que Big Data é necessário aqui.</li>
+        <li><strong>2. Arquitetura (3-4 min):</strong> diagrama do pipeline completo, explicando cada etapa e a tecnologia escolhida.</li>
+        <li><strong>3. Demonstração (3-5 min):</strong> rodar (ou mostrar gravação) do pipeline funcionando, do dado bruto até o resultado final.</li>
+        <li><strong>4. Decisões técnicas (2-3 min):</strong> pelo menos uma decisão de arquitetura justificada com trade-offs (ex: "escolhi ELT em vez de ETL porque...").</li>
+        <li><strong>5. Perguntas:</strong> esteja pronto para justificar qualquer escolha tecnológica com os conceitos vistos nas semanas 1-17.</li>
+      </ul>
+      <div class="aviso-exam"><i class="fas fa-triangle-exclamation"></i><span>Erro comum: apresentar só o resultado final (um dashboard bonito) sem conseguir explicar o pipeline por trás. A banca tende a perguntar "por que você escolheu X e não Y?" — prepare-se para justificar, não só descrever.</span></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist Final do Semestre</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">④</div>
+      <div class="secao-info">
+        <div class="secao-label">Checklist interativo</div>
+        <div class="secao-titulo">Revisão final antes da P4</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso de revisão</span>
+        <strong id="progress-text">0 / 20 conceitos</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    </div>
+
+    <div class="checklist-grid" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei diferenciar Lambda e Kappa, e as zonas do Data Lake</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei escolher entre Full Load, Incremental e CDC por critérios técnicos</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo lazy evaluation, narrow/wide transformations e broadcast join</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei ler um explain() e identificar PushedFilters, joins e UDFs problemáticas</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar ETL vs ELT e justificar com um cenário de compliance</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo as camadas dbt e a diferença entre ref() e source()</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei montar uma DAG Airflow com dependências, sensores e retries</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Explico como o _delta_log garante ACID e sei usar MERGE INTO e time travel</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar OPTIMIZE/ZORDER e os riscos do VACUUM</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo o modelo micro-batch e a diferença entre output modes</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio tumbling e sliding window, e sei o papel do watermark</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que é um Data Catalog e os tipos de metadados que ele guarda</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio linhagem upstream de downstream com exemplos práticos</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo como classificação PII + linhagem viabilizam a LGPD</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Explico treino-serving skew e como o Feature Store resolve</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Diferencio offline store de online store e entendo point-in-time correctness</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar Spark MLlib em vez de scikit-learn</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo desenhar um pipeline de ponta a ponta conectando todos os blocos do semestre</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Meu projeto final está funcional e consigo demonstrá-lo do início ao fim</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo justificar pelo menos 3 decisões de arquitetura do meu projeto com os conceitos do curso</div></div>
+    </div>
+
+    <div class="aviso-green" style="margin-top:1.25rem;">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Dica final do semestre:</strong> revise pelos "armadilhas" destacadas em cada bloco — historicamente são os pontos mais cobrados em provas cumulativas. Pratique explicar seu projeto final em voz alta como se fosse a própria apresentação. Boa prova e boa apresentação!</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-20-bigdata.html'">
+      <div>
+        <div class="proxima-label">Após a P4 · Semana 20</div>
+        <div class="proxima-titulo">Semana 20 — Segunda Chamada (prova substitutiva para alunos com frequência válida)</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const correctAnswers={q1:'B',q2:'B',q3:'B',q4:'B',q5:'B',q6:'A',q7:'B',q8:'B',q9:'B',q10:'B',q11:'B',q12:'B',q13:'B',q14:'B',q15:'B'};
+const userAnswers={};
+
+function respQ(qId,el,letra,isCorrect){
+  const ops=document.getElementById(qId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  userAnswers[qId]=letra;
+  const correta=correctAnswers[qId];
+  ops.querySelectorAll('.q-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    const l=op.querySelector('.q-letra').textContent.trim();
+    if(l===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const gab=document.getElementById(qId+'-gab');
+  gab.style.background=isCorrect?'rgba(74,222,128,.07)':'rgba(239,68,68,.07)';
+  gab.style.border=isCorrect?'1px solid rgba(74,222,128,.2)':'1px solid rgba(239,68,68,.2)';
+  gab.style.color=isCorrect?'rgba(134,239,172,.9)':'rgba(252,165,165,.9)';
+  gab.classList.add('show');
+}
+
+function calcScore(){
+  const total=Object.keys(correctAnswers).length;
+  let correct=0;
+  for(const[q,ans] of Object.entries(userAnswers)){if(ans===correctAnswers[q])correct++;}
+  const unanswered=total-Object.keys(userAnswers).length;
+  const box=document.getElementById('score-box');
+  const num=document.getElementById('score-num');
+  const msg=document.getElementById('score-msg');
+  box.style.display='block';
+  num.textContent=`${correct}/${total}`;
+  const pct=Math.round(correct/total*100);
+  if(pct>=80){num.style.color='#4ade80';msg.textContent=`${pct}% — Excelente! Você está pronto para a P4.`;}
+  else if(pct>=60){num.style.color='#fbbf24';msg.textContent=`${pct}% — Bom! Revise os blocos com mais erros antes da prova.`;}
+  else{num.style.color='#f87171';msg.textContent=`${pct}% — Atenção! Volte aos blocos com mais erros e revise os pontos-chave.`;}
+  if(unanswered>0)msg.textContent+=` (${unanswered} não respondida(s))`;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar modelo de resposta'
+    :'<i class="fas fa-lightbulb"></i> ver modelo de resposta';
+}
+
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').innerHTML=el.classList.contains('checked')?'✓':'';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.check-item').length;
+  const checked=document.querySelectorAll('.check-item.checked').length;
+  const pct=Math.round(checked/total*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=`${checked} / ${total} conceitos`;
+}
+</script>
+</body>
+</html>

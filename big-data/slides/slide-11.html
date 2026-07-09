@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 11 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── ETL vs ELT flow ── */
+.flow-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.flow-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.flow-etl{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.flow-elt{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.flow-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.75rem;}
+.flow-etl .flow-titulo{color:#60a5fa;}
+.flow-elt .flow-titulo{color:#4ade80;}
+.flow-steps{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin-bottom:.7rem;}
+.flow-step{padding:.35rem .7rem;border-radius:7px;font-size:.72rem;font-weight:700;font-family:'Montserrat',sans-serif;}
+.flow-etl .flow-step{background:rgba(59,130,246,.12);color:#93c5fd;}
+.flow-elt .flow-step{background:rgba(74,222,128,.12);color:#86efac;}
+.flow-step.highlight{background:rgba(251,146,60,.2);color:var(--accent-300);border:1px solid rgba(251,146,60,.35);}
+.flow-arrow-sm{color:var(--text-muted);font-size:.7rem;}
+.flow-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.flow-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* ── dbt DAG ── */
+.dbt-dag{display:flex;flex-direction:column;gap:0;margin:.75rem 0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);padding:1.25rem;}
+.dbt-layer{display:flex;gap:.75rem;justify-content:center;margin-bottom:.75rem;flex-wrap:wrap;}
+.dbt-layer:last-child{margin-bottom:0;}
+.dbt-node{padding:.6rem 1rem;border-radius:9px;font-size:.78rem;font-weight:600;font-family:'JetBrains Mono',monospace;text-align:center;border:1px solid;}
+.dbt-staging{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.25);color:#93c5fd;}
+.dbt-int{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25);color:#c4b5fd;}
+.dbt-mart{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:#86efac;}
+.dbt-layer-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);text-align:center;margin-bottom:.4rem;font-weight:700;}
+.dbt-arrows{display:flex;justify-content:center;color:rgba(251,146,60,.3);font-size:.9rem;margin:.3rem 0;}
+
+/* ── test badges ── */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0;}
+.test-card{padding:.85rem 1rem;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:var(--card-bg);}
+.test-name{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent-300);margin-bottom:.3rem;font-weight:600;}
+.test-desc{font-size:.78rem;color:var(--text-secondary);}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.flow-compare,.test-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">11</div>
+    <h1 class="capa-titulo">ETL vs ELT<br>e <em>dbt</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · A transformação como código versionado e testável</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exchange-alt"></i></div><span>ETL vs ELT — onde a transformação acontece e por quê isso mudou</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-history"></i></div><span>Por que o ELT dominou a era do cloud data warehouse</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>O que é dbt e por que ele virou o padrão de mercado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Modelos dbt: staging, intermediate e marts</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-vial"></i></div><span>Testes de qualidade no dbt — unique, not_null, relationships</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>ref(), source() e o DAG automático de dependências</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: criar modelos dbt com testes para um pipeline real</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Criar modelos dbt em camadas (staging → marts) com testes de qualidade configurados para um conjunto de dados de e-commerce.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 10</div>
+      <ul class="info-lista">
+        <li>Catalyst Optimizer otimiza automaticamente o plano de execução</li>
+        <li>explain() mostra o plano sem executar — PushedFilters, BroadcastHashJoin</li>
+        <li>cache()/persist() evitam recalcular DataFrames reutilizados</li>
+        <li>UDFs bloqueiam otimizações — prefira funções nativas</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 11 de 6 antes da P2 (Semana 13)</li>
+        <li>P2 cobre: ingestão, Spark, PySpark, Spark SQL, ETL/ELT, Airflow</li>
+        <li>Próxima semana: Apache Airflow — orquestração de tudo isso</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>dbt Core (open-source): <code>pip install dbt-core dbt-duckdb</code></li>
+        <li>DuckDB como warehouse local (gratuito, sem cloud)</li>
+        <li>Alternativa: dbt Cloud com BigQuery sandbox gratuito</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: ETL vs ELT ────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">ETL vs ELT — onde a transformação acontece e por que isso mudou</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semanas 7 e 8–10</div>
+      <p>Você já sabe como os dados <strong>chegam</strong> (ingestão, Semana 7) e como o Spark <strong>processa</strong> grandes volumes (Semanas 8-10). Agora a pergunta é: <strong>onde</strong> e <strong>como</strong> organizamos as transformações de negócio de forma sustentável, testável e versionada?</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>ETL — Extract, Transform, Load (o modelo clássico)</div>
+      <p>Por décadas, o padrão foi <strong>ETL</strong>: extrair os dados da fonte, transformá-los <strong>fora</strong> do destino (em um servidor de processamento separado) e só então carregar o resultado já limpo no Data Warehouse.</p>
+      <div class="flow-compare">
+        <div class="flow-card flow-etl">
+          <div class="flow-titulo">🔵 ETL — transforma ANTES de carregar</div>
+          <div class="flow-steps">
+            <span class="flow-step">Extract</span><span class="flow-arrow-sm">→</span>
+            <span class="flow-step highlight">Transform</span><span class="flow-arrow-sm">→</span>
+            <span class="flow-step">Load</span>
+          </div>
+          <div class="flow-item">Transformação roda em servidor de ETL dedicado (Informatica, Talend, SSIS)</div>
+          <div class="flow-item">O Data Warehouse só recebe dados já limpos e modelados</div>
+          <div class="flow-item">Surgiu quando storage e compute eram caros — economiza espaço no DW</div>
+          <div class="flow-item">Mudar a lógica de transformação exige reprocessar a pipeline inteira</div>
+        </div>
+        <div class="flow-card flow-elt">
+          <div class="flow-titulo">🟢 ELT — transforma DEPOIS de carregar</div>
+          <div class="flow-steps">
+            <span class="flow-step">Extract</span><span class="flow-arrow-sm">→</span>
+            <span class="flow-step">Load</span><span class="flow-arrow-sm">→</span>
+            <span class="flow-step highlight">Transform</span>
+          </div>
+          <div class="flow-item">Dados brutos são carregados primeiro (igual à zona Raw que você já conhece!)</div>
+          <div class="flow-item">Transformação roda DENTRO do próprio Data Warehouse (SQL)</div>
+          <div class="flow-item">Surgiu com cloud warehouses baratos e poderosos (Snowflake, BigQuery)</div>
+          <div class="flow-item">Mudar a lógica é só mudar uma query SQL — reprocessamento rápido</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Conexão com o que você já sabe:</strong> ELT é, na prática, o mesmo princípio das zonas Raw → Silver → Gold do Data Lake (Semana 3)! Você carrega os dados brutos primeiro (Raw/Load) e depois transforma dentro do mesmo ambiente (Silver/Gold = Transform). dbt é a ferramenta que organiza exatamente essa etapa "T" do ELT.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-rocket"></i>Por que o ELT dominou — três forças que mudaram o jogo</div>
+      <div class="grid-3">
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.5rem;">💰 Storage barato</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">S3/GCS custam centavos por GB. Não há mais razão para evitar guardar dados brutos.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem;">⚡ Compute elástico</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Snowflake, BigQuery e Databricks processam terabytes em SQL com paralelismo automático.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">🔄 Iteração rápida</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Analistas e engenheiros podem ajustar a lógica de negócio direto em SQL, sem reingerir nada.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Quando ainda usar ETL tradicional</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th><span class="badge-blue">ETL</span></th><th><span class="badge-green">ELT</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Compliance / dados sensíveis</strong></td><td>Mascarar/anonimizar ANTES de chegar ao DW (LGPD, dados de saúde)</td><td>Risco de expor dados sensíveis brutos no destino</td></tr>
+            <tr><td><strong>Volume de transformação</strong></td><td>Quando o destino não tem poder de processamento</td><td>Quando o warehouse é elástico (cloud)</td></tr>
+            <tr><td><strong>Velocidade de iteração</strong></td><td>Lenta — exige reprocessar pipeline</td><td>Rápida — só ajustar SQL e re-rodar</td></tr>
+            <tr><td><strong>Onde a lógica fica</strong></td><td>Código em servidor de ETL (caixa preta às vezes)</td><td>SQL versionado em Git (dbt) — visível e auditável</td></tr>
+            <tr><td><strong>Padrão de mercado hoje</strong></td><td>Legado, sistemas regulados</td><td><strong>Dominante</strong> em novos projetos (2020+)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque-green"><strong>Resumo prático:</strong> hoje a maioria dos times de dados usa ELT — Airbyte/Kafka para o "EL" (Extract + Load para o Data Lake/Warehouse) e dbt para o "T" (Transform). É exatamente a stack que você está aprendendo neste curso!</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — uma empresa de saúde precisa anonimizar CPFs de pacientes antes que os dados toquem qualquer sistema de analytics, por exigência regulatória. Qual abordagem é mais adequada?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">ETL — anonimizar os dados antes de carregá-los no Data Warehouse</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">ELT — carregar os CPFs brutos e anonimizar depois com dbt</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Não importa — anonimização pode acontecer em qualquer momento</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Usar streaming em vez de batch para resolver o problema</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · dbt — O que é e por que importa</span></div>
+
+  <!-- ── AULA 2: dbt fundamentos ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">dbt — transformação como software de engenharia</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cogs"></i>O que é o dbt (data build tool)</div>
+      <p>dbt é uma ferramenta que permite escrever transformações de dados em <strong>SQL puro</strong> (com um pouco de templating Jinja), versioná-las em Git, testá-las automaticamente e documentá-las — trazendo práticas de engenharia de software para o mundo de analytics que antes era dominado por scripts SQL avulsos e sem controle.</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ Antes do dbt</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Scripts SQL soltos em pastas, sem versionamento</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem testes — descobrir erro só quando o relatório quebra</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Dependências entre tabelas só na cabeça de quem escreveu</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Documentação inexistente ou desatualizada</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ Com dbt</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Cada transformação é um arquivo .sql versionado em Git</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Testes automáticos (unique, not_null, relationships)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>DAG de dependências gerado automaticamente via ref()</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Documentação e linhagem geradas automaticamente</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>A grande ideia do dbt:</strong> "Engineers shouldn't write pipelines, they should write SQL — and let the tool handle the pipeline." Você escreve apenas <em>o que</em> cada tabela deve conter (a query SELECT); o dbt resolve a ordem de execução, materializa as tabelas e roda os testes.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Estrutura em camadas — Staging, Intermediate e Marts</div>
+      <p>A convenção da comunidade dbt organiza os modelos em três camadas, espelhando exatamente o que você já conhece das zonas Raw/Silver/Gold:</p>
+      <div class="dbt-dag">
+        <div class="dbt-layer-label">staging — 1:1 com a fonte, limpeza mínima (≈ Silver)</div>
+        <div class="dbt-layer">
+          <div class="dbt-node dbt-staging">stg_orders</div>
+          <div class="dbt-node dbt-staging">stg_customers</div>
+          <div class="dbt-node dbt-staging">stg_products</div>
+        </div>
+        <div class="dbt-arrows"><i class="fas fa-arrow-down"></i></div>
+        <div class="dbt-layer-label">intermediate — joins e lógica de negócio intermediária</div>
+        <div class="dbt-layer">
+          <div class="dbt-node dbt-int">int_orders_joined</div>
+          <div class="dbt-node dbt-int">int_customer_metrics</div>
+        </div>
+        <div class="dbt-arrows"><i class="fas fa-arrow-down"></i></div>
+        <div class="dbt-layer-label">marts — modelos finais por área de negócio (≈ Gold)</div>
+        <div class="dbt-layer">
+          <div class="dbt-node dbt-mart">fct_revenue_daily</div>
+          <div class="dbt-node dbt-mart">dim_customers</div>
+          <div class="dbt-node dbt-mart">fct_customer_ltv</div>
+        </div>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Camada</th><th>Convenção de nome</th><th>Responsabilidade</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Staging</strong></td><td><code>stg_*</code></td><td>Renomeia colunas, converte tipos, filtra nulos óbvios. Espelha a fonte 1:1.</td></tr>
+            <tr><td><strong>Intermediate</strong></td><td><code>int_*</code></td><td>Joins entre staging models, cálculos intermediários reutilizáveis.</td></tr>
+            <tr><td><strong>Marts</strong></td><td><code>fct_*</code> (fato) / <code>dim_*</code> (dimensão)</td><td>Modelos finais, organizados por área de negócio (finance, marketing).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Anatomia de um modelo dbt — ref() e source()</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — models/staging/stg_orders.sql</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- models/staging/stg_orders.sql
+-- source() aponta para a tabela BRUTA (zona Raw) declarada em sources.yml</span>
+
+<span class="kw">SELECT</span>
+    order_id,
+    customer_id,
+    <span class="kw">CAST</span>(total <span class="kw">AS</span> DECIMAL(<span class="num">10</span>,<span class="num">2</span>)) <span class="kw">AS</span> total,
+    <span class="kw">CAST</span>(order_date <span class="kw">AS</span> DATE) <span class="kw">AS</span> order_date,
+    <span class="kw">LOWER</span>(<span class="kw">TRIM</span>(status)) <span class="kw">AS</span> status
+<span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'raw'</span>, <span class="str">'orders'</span>) }}
+<span class="kw">WHERE</span> order_id <span class="kw">IS NOT NULL</span></code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — models/marts/fct_revenue_daily.sql</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- models/marts/fct_revenue_daily.sql
+-- ref() aponta para OUTRO MODELO dbt — cria a dependência no DAG automaticamente</span>
+
+<span class="kw">SELECT</span>
+    order_date,
+    <span class="kw">COUNT</span>(order_id)      <span class="kw">AS</span> total_pedidos,
+    <span class="kw">SUM</span>(total)            <span class="kw">AS</span> receita_total,
+    <span class="kw">ROUND</span>(<span class="kw">AVG</span>(total), <span class="num">2</span>) <span class="kw">AS</span> ticket_medio
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}   <span class="cm">-- ← dbt sabe que precisa rodar stg_orders ANTES</span>
+<span class="kw">WHERE</span> status = <span class="str">'paid'</span>
+<span class="kw">GROUP BY</span> order_date</code></pre>
+      </div>
+      <div class="destaque-green"><strong>Por que ref() é revolucionário:</strong> ao usar <code>ref('stg_orders')</code> em vez do nome literal da tabela, o dbt constrói automaticamente o DAG de dependências. Ele sabe que precisa rodar <code>stg_orders</code> antes de <code>fct_revenue_daily</code> — sem você escrever nenhum orquestrador manual. Compare isso com escrever scripts SQL soltos: lá, você teria que controlar manualmente a ordem de execução.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a função do ref() dentro de um modelo dbt?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Apontar para uma tabela bruta externa ao dbt (zona Raw)</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Referenciar outro modelo dbt, criando uma dependência automática no DAG</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Executar testes automáticos de qualidade nos dados</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Gerar a documentação HTML do projeto dbt</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Testes de Qualidade no dbt</span></div>
+
+  <!-- ── AULA 3: Testes ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Testes de qualidade — confiança automatizada nos dados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-vial"></i>Os 4 testes genéricos nativos do dbt</div>
+      <p>O dbt vem com quatro testes prontos para uso — basta declará-los em um arquivo YAML, sem escrever SQL. Eles cobrem os problemas de qualidade mais comuns de qualquer pipeline de dados.</p>
+      <div class="test-grid">
+        <div class="test-card">
+          <div class="test-name">unique</div>
+          <div class="test-desc">Garante que não há valores duplicados na coluna. Essencial em chaves primárias (order_id, customer_id).</div>
+        </div>
+        <div class="test-card">
+          <div class="test-name">not_null</div>
+          <div class="test-desc">Garante que a coluna nunca está vazia. Útil em chaves e campos obrigatórios para o negócio.</div>
+        </div>
+        <div class="test-card">
+          <div class="test-name">accepted_values</div>
+          <div class="test-desc">Garante que a coluna só contém valores de uma lista pré-definida (ex: status só pode ser "paid", "pending", "cancelled").</div>
+        </div>
+        <div class="test-card">
+          <div class="test-name">relationships</div>
+          <div class="test-desc">Garante integridade referencial — todo customer_id em orders deve existir na tabela customers (como uma FK).</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — models/staging/schema.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">version</span>: <span class="num">2</span>
+
+<span class="kw">models</span>:
+  - <span class="kw">name</span>: stg_orders
+    <span class="kw">description</span>: <span class="str">"Pedidos limpos e padronizados"</span>
+    <span class="kw">columns</span>:
+      - <span class="kw">name</span>: order_id
+        <span class="kw">description</span>: <span class="str">"Chave primária do pedido"</span>
+        <span class="kw">tests</span>:
+          - unique
+          - not_null
+
+      - <span class="kw">name</span>: customer_id
+        <span class="kw">tests</span>:
+          - not_null
+          - <span class="kw">relationships</span>:
+              <span class="kw">to</span>: <span class="fn">ref</span>(<span class="str">'stg_customers'</span>)
+              <span class="kw">field</span>: customer_id
+
+      - <span class="kw">name</span>: status
+        <span class="kw">tests</span>:
+          - <span class="kw">accepted_values</span>:
+              <span class="kw">values</span>: [<span class="str">'paid'</span>, <span class="str">'pending'</span>, <span class="str">'cancelled'</span>, <span class="str">'refunded'</span>]
+
+      - <span class="kw">name</span>: total
+        <span class="kw">tests</span>:
+          - not_null
+          - dbt_utils.accepted_range:    <span class="cm"># pacote dbt_utils — teste extra</span>
+              min_value: <span class="num">0</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-pencil-ruler"></i>Testes customizados (singular tests) — SQL que vira asserção</div>
+      <p>Quando os testes genéricos não cobrem uma regra de negócio específica, você escreve um <strong>teste singular</strong>: uma query SQL que <em>deve retornar zero linhas</em>. Se retornar alguma linha, o teste falha.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — tests/assert_no_negative_revenue.sql</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- tests/assert_no_negative_revenue.sql
+-- Regra de negócio: receita diária nunca pode ser negativa
+-- Se esta query retornar QUALQUER linha, o teste FALHA</span>
+
+<span class="kw">SELECT</span>
+    order_date,
+    receita_total
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'fct_revenue_daily'</span>) }}
+<span class="kw">WHERE</span> receita_total < <span class="num">0</span></code></pre>
+      </div>
+      <div class="destaque"><strong>Quando usar cada tipo:</strong> testes genéricos (unique, not_null) para validações estruturais simples e reutilizáveis. Testes singulares para regras de negócio específicas daquele projeto — "receita nunca negativa", "estoque nunca abaixo de zero", "data de entrega sempre depois da data de pedido".</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Rodando o dbt — comandos essenciais</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — comandos dbt</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Rodar TODOS os modelos (na ordem correta do DAG)</span>
+dbt run
+
+<span class="cm"># Rodar apenas um modelo específico e suas dependências</span>
+dbt run <span class="flag">--select</span> fct_revenue_daily
+
+<span class="cm"># Rodar um modelo e tudo que depende dele (+) ou que ele depende (+...)</span>
+dbt run <span class="flag">--select</span> stg_orders+      <span class="cm"># stg_orders + tudo que depende dele</span>
+dbt run <span class="flag">--select</span> +fct_revenue_daily  <span class="cm"># tudo que fct_revenue_daily precisa</span>
+
+<span class="cm"># Rodar TODOS os testes</span>
+dbt test
+
+<span class="cm"># Rodar testes de um modelo específico</span>
+dbt test <span class="flag">--select</span> stg_orders
+
+<span class="cm"># Gerar documentação + visualizar o DAG no navegador</span>
+dbt docs generate
+dbt docs serve
+
+<span class="cm"># Rodar tudo de uma vez: modelos + testes</span>
+dbt build</code></pre>
+      </div>
+      <div class="aviso-accent"><i class="fas fa-lightbulb"></i><span><strong>dbt build</strong> é o comando mais usado em produção: ele roda cada modelo e, imediatamente após, os testes daquele modelo — interrompendo o pipeline se um teste falhar, antes de prosseguir para os modelos que dependem dele. Isso evita propagar dados ruins pelo DAG inteiro.</span></div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — você precisa garantir que a coluna "discount_percent" nunca seja maior que 100. Qual abordagem é mais adequada?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Usar o teste genérico "unique" na coluna</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Usar o teste genérico "relationships" apontando para a tabela de descontos</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Escrever um teste singular — uma query SQL que retorna linhas onde discount_percent > 100, esperando zero resultados</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Não é possível testar isso no dbt — precisa de validação manual</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Atividade Prática</span></div>
+
+  <!-- ── AULA 4: Atividade ────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Construindo um projeto dbt completo do zero</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-folder-open"></i>Estrutura de um projeto dbt</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura de diretórios — projeto dbt</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>meu_projeto_dbt/
+├── dbt_project.yml          <span class="cm"># configuração principal</span>
+├── profiles.yml             <span class="cm"># credenciais de conexão (fora do projeto, em ~/.dbt/)</span>
+├── models/
+│   ├── staging/
+│   │   ├── stg_orders.sql
+│   │   ├── stg_customers.sql
+│   │   ├── stg_products.sql
+│   │   └── schema.yml        <span class="cm"># testes e descrições da camada staging</span>
+│   ├── intermediate/
+│   │   └── int_orders_enriched.sql
+│   └── marts/
+│       ├── fct_revenue_daily.sql
+│       ├── dim_customers.sql
+│       └── schema.yml        <span class="cm"># testes e descrições da camada marts</span>
+├── tests/
+│   └── assert_no_negative_revenue.sql   <span class="cm"># teste singular customizado</span>
+└── sources.yml              <span class="cm"># declaração das tabelas brutas (zona Raw)</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>Declarando as fontes (sources.yml)</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — models/sources.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">version</span>: <span class="num">2</span>
+
+<span class="kw">sources</span>:
+  - <span class="kw">name</span>: raw
+    <span class="kw">description</span>: <span class="str">"Dados brutos da zona Raw do Data Lake"</span>
+    <span class="kw">tables</span>:
+      - <span class="kw">name</span>: orders
+        <span class="kw">description</span>: <span class="str">"Pedidos brutos, sem transformação"</span>
+      - <span class="kw">name</span>: customers
+        <span class="kw">description</span>: <span class="str">"Cadastro de clientes"</span>
+      - <span class="kw">name</span>: products
+        <span class="kw">description</span>: <span class="str">"Catálogo de produtos"</span></code></pre>
+      </div>
+      <div class="destaque"><strong>Por que declarar sources?</strong> Isso permite usar <code>{{ source('raw', 'orders') }}</code> em vez do nome literal da tabela. Se a tabela física mudar de nome ou esquema, você só ajusta em um lugar — e o dbt também rastreia a "freshness" (atualidade) dos dados de origem automaticamente.</div>
+    </div>
+
+    <!-- Atividade -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Prática individual</div>
+        <div class="secao-titulo">Criar modelos dbt com testes para dados de e-commerce</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>O professor vai disponibilizar um banco DuckDB com 3 tabelas brutas: orders, customers, products. Instale com <code>pip install dbt-core dbt-duckdb</code> e siga os exercícios em ordem.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Setup e primeiro modelo staging (15 min)</div>
+      <p>Inicialize um projeto dbt com <code>dbt init</code>. Declare as 3 tabelas em <code>sources.yml</code>. Crie o modelo <code>stg_orders.sql</code> usando <code>source()</code>, fazendo: cast de tipos, padronização de status (lowercase/trim), e remoção de linhas com <code>order_id</code> nulo. Rode com <code>dbt run --select stg_orders</code>.</p>
+      <span class="dif-basico">Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Modelos staging completos + testes (20 min)</div>
+      <p>Crie <code>stg_customers.sql</code> e <code>stg_products.sql</code> seguindo o mesmo padrão. No <code>schema.yml</code> da camada staging, adicione testes: <code>unique</code> e <code>not_null</code> nas chaves primárias de cada tabela, <code>accepted_values</code> na coluna de status dos pedidos, e <code>relationships</code> garantindo que todo <code>customer_id</code> em orders existe em customers. Rode <code>dbt test</code> e corrija qualquer falha.</p>
+      <span class="dif-medio">Modelagem + Qualidade</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: mart com teste singular (15 min)</div>
+      <p>Crie o modelo <code>fct_revenue_daily.sql</code> na camada marts, usando <code>ref()</code> para consumir <code>stg_orders</code>, agregando receita e quantidade de pedidos por dia. Escreva um teste singular em <code>tests/assert_no_negative_revenue.sql</code> garantindo que a receita diária nunca é negativa. Rode <code>dbt build</code> para executar tudo de uma vez (modelos + testes) e confira a ordem de execução no log.</p>
+      <span class="dif-desafio">Pipeline completo</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução completa</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução — fct_revenue_daily.sql</div>
+          <div class="code-block">
+            <pre style="padding:1rem;"><code><span class="kw">SELECT</span>
+    order_date,
+    <span class="kw">COUNT</span>(order_id)      <span class="kw">AS</span> total_pedidos,
+    <span class="kw">SUM</span>(total)            <span class="kw">AS</span> receita_total,
+    <span class="kw">ROUND</span>(<span class="kw">AVG</span>(total), <span class="num">2</span>) <span class="kw">AS</span> ticket_medio
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+<span class="kw">WHERE</span> status = <span class="str">'paid'</span>
+<span class="kw">GROUP BY</span> order_date</code></pre>
+          </div>
+          <div style="font-size:.85rem;color:var(--text-secondary);margin-top:.75rem;">
+            <strong>Ordem de execução esperada no <code>dbt build</code>:</strong> stg_customers, stg_products, stg_orders (camada staging, sem dependências entre si) → testes da staging → fct_revenue_daily (depende de stg_orders) → teste singular assert_no_negative_revenue. O dbt determina essa ordem automaticamente a partir dos <code>ref()</code> usados.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 11</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 11</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>ETL vs ELT</strong>
+        <p>ETL transforma antes de carregar (servidor dedicado). ELT carrega bruto e transforma dentro do warehouse. ELT domina hoje.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Camadas dbt</strong>
+        <p>Staging (1:1 com fonte) → Intermediate (joins) → Marts (fato/dimensão). Espelha Raw/Silver/Gold.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>ref() e source()</strong>
+        <p>source() aponta para tabela bruta. ref() aponta para outro modelo dbt — gera o DAG de dependências automaticamente.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-vial"></i>
+        <strong>Testes</strong>
+        <p>Genéricos: unique, not_null, accepted_values, relationships. Singulares: SQL customizado que deve retornar zero linhas.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar quando usar ETL vs ELT? Consegue descrever as 3 camadas de modelos dbt? Sabe a diferença entre ref() e source()? Consegue escrever um teste genérico e um teste singular? Se sim para os quatro — você está pronto para a Semana 12.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-12-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 12 — Apache Airflow: DAGs, operadores, sensores, agendamento e monitoramento</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar solução'
+    :'<i class="fas fa-lightbulb"></i> ver solução completa';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'A',msg:'✅ Correto! Quando há exigência regulatória de anonimizar dados sensíveis ANTES de chegarem a qualquer sistema de analytics (LGPD, HIPAA, dados de saúde), a abordagem ETL é mais segura: a transformação (anonimização) acontece antes de carregar os dados no destino, garantindo que dados sensíveis brutos nunca fiquem expostos, mesmo temporariamente, no Data Warehouse.'},
+  quiz2:{correct:'B',msg:'✅ Correto! ref() é usado para referenciar OUTRO modelo dbt (não uma tabela bruta externa — essa é a função do source()). Quando você escreve ref(\'stg_orders\') dentro de outro modelo, o dbt automaticamente entende essa dependência e constrói o DAG de execução correto, garantindo que stg_orders seja materializado antes do modelo que o referencia.'},
+  quiz3:{correct:'C',msg:'✅ Correto! Regras de negócio específicas como "discount_percent nunca maior que 100" não se encaixam nos testes genéricos nativos (unique, not_null, accepted_values, relationships). A solução é um teste singular: uma query SQL salva em tests/ que seleciona linhas onde a condição de erro é verdadeira (discount_percent > 100). Se a query retornar QUALQUER linha, o teste falha — sinalizando que a regra de negócio foi violada.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

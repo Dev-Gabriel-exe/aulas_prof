@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 07 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══════════════════════════ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-blue{padding:1rem 1.25rem;border-radius:10px;background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-blue strong{color:#60a5fa;}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Ingestão flow ── */
+.ing-flow{display:flex;align-items:stretch;gap:0;border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.12);margin:.75rem 0;}
+.ing-col{flex:1;padding:1.1rem;display:flex;flex-direction:column;gap:.4rem;}
+.ing-col-batch{background:rgba(59,130,246,.05);border-right:1px solid rgba(59,130,246,.12);}
+.ing-col-stream{background:rgba(74,222,128,.05);}
+.ing-col-title{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;display:flex;align-items:center;gap:6px;}
+.ing-col-batch .ing-col-title{color:#60a5fa;}
+.ing-col-stream .ing-col-title{color:#4ade80;}
+.ing-item{font-size:.8rem;color:var(--text-secondary);padding-left:.65rem;position:relative;line-height:1.5;margin-bottom:.2rem;}
+.ing-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;color:var(--text-muted);margin-top:2px;}
+
+/* ── CDC visual ── */
+.cdc-visual{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.12);margin:.75rem 0;}
+.cdc-header{padding:.7rem 1.25rem;background:rgba(251,146,60,.08);font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(251,146,60,.1);}
+.cdc-body{padding:1.25rem;background:rgba(0,0,0,.15);}
+.cdc-table{width:100%;border-collapse:collapse;font-size:.78rem;font-family:'JetBrains Mono',monospace;margin-bottom:.5rem;}
+.cdc-table th{padding:.4rem .7rem;background:rgba(251,146,60,.1);color:var(--accent-300);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(251,146,60,.15);}
+.cdc-table td{padding:.4rem .7rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.04);}
+.cdc-table tr.changed{background:rgba(74,222,128,.07);}
+.cdc-table tr.changed td{color:#86efac;}
+.cdc-table tr.deleted{background:rgba(239,68,68,.07);}
+.cdc-table tr.deleted td{color:#fca5a5;}
+.cdc-table tr.inserted{background:rgba(59,130,246,.07);}
+.cdc-table tr.inserted td{color:#93c5fd;}
+.cdc-op{padding:1px 6px;border-radius:4px;font-size:.65rem;font-weight:700;}
+.op-insert{background:rgba(59,130,246,.2);color:#60a5fa;}
+.op-update{background:rgba(74,222,128,.2);color:#4ade80;}
+.op-delete{background:rgba(239,68,68,.2);color:#f87171;}
+.cdc-arrow{display:flex;justify-content:center;padding:.5rem;color:rgba(251,146,60,.4);font-size:1rem;}
+
+/* ── Comparação cards ── */
+.tool-card{border-radius:14px;padding:1.25rem;border:1px solid;margin-bottom:0;}
+.tool-airbyte{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.tool-sqoop{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);}
+.tool-kafka{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.tool-kinesis{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2);}
+.tool-titulo{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.tool-airbyte .tool-titulo{color:#60a5fa;}
+.tool-sqoop .tool-titulo{color:#fbbf24;}
+.tool-kafka .tool-titulo{color:#4ade80;}
+.tool-kinesis .tool-titulo{color:#a78bfa;}
+.tool-tag{font-size:.65rem;padding:1px 7px;border-radius:4px;font-weight:600;margin-left:auto;}
+.tool-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.tool-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+.tool-use{display:block;margin-top:.65rem;padding:.5rem .7rem;border-radius:7px;font-size:.75rem;}
+.tool-airbyte .tool-use{background:rgba(59,130,246,.08);color:#93c5fd;}
+.tool-sqoop .tool-use{background:rgba(251,191,36,.08);color:#fde68a;}
+.tool-kafka .tool-use{background:rgba(74,222,128,.08);color:#86efac;}
+.tool-kinesis .tool-use{background:rgba(167,139,250,.08);color:#c4b5fd;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+/* Terminal */
+.terminal{background:#0a0a0a;border:1px solid rgba(74,222,128,.2);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.terminal-header{background:#111;padding:.45rem .9rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(74,222,128,.1);}
+.terminal-dot{width:10px;height:10px;border-radius:50%;}
+.terminal-body{padding:1rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;}
+.t-prompt{color:#4ade80;}.t-cmd{color:#fde68a;}.t-out{color:rgba(255,255,255,.55);}.t-acc{color:#fb923c;}.t-blue{color:#60a5fa;}.t-comment{color:#374151;font-style:italic;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.ing-flow{flex-direction:column;}
+  .ing-flow{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">07</div>
+    <h1 class="capa-titulo">Ingestão em<br><em>Larga Escala</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Como bilhões de registros chegam ao Data Lake</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>O que é ingestão de dados e por que ela importa</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-boxes"></i></div><span>Batch — Airbyte e Sqoop: mover dados em volume</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Streaming — Kafka e Kinesis: dados em tempo real</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exchange-alt"></i></div><span>CDC — Change Data Capture: capturar só o que mudou</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Batch vs Streaming — comparativo e decisão por cenário</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Padrões modernos de ingestão: full load, incremental, CDC</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-ruler"></i></div><span>Atividade: escolher estratégia de ingestão para 4 cenários</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Comparar estratégias de ingestão para diferentes cenários reais — batch, streaming ou CDC — e justificar a escolha com critérios técnicos.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Após a P1</div>
+      <ul class="info-lista">
+        <li>Voltamos com o Bloco 2 do semestre: semanas 7–12</li>
+        <li>P2 cobre: ingestão, Spark, PySpark, Spark SQL, ETL/ELT, Airflow</li>
+        <li>Esta semana inicia o tema de como os dados entram no pipeline</li>
+        <li>Conexão direta com Data Lake (Semana 3) e Kafka (Semana 5)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Ferramentas desta semana</div>
+      <ul class="info-lista">
+        <li>Airbyte — plataforma open-source de integração de dados (batch)</li>
+        <li>Apache Sqoop — ingestão de BD relacionais para HDFS (legado)</li>
+        <li>Apache Kafka — streaming de eventos (revisão aplicada)</li>
+        <li>AWS Kinesis — alternativa gerenciada ao Kafka na AWS</li>
+        <li>Debezium — CDC open-source para bancos relacionais</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 7 de 6 antes da P2 (Semana 13)</li>
+        <li>Próximas: Spark (Sem 8), PySpark avançado (Sem 9), Spark SQL (Sem 10)</li>
+        <li>ETL/ELT com dbt (Sem 11), Airflow (Sem 12), P2 (Sem 13)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: O que é ingestão ─────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O que é ingestão de dados — o primeiro passo de todo pipeline</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semanas 3–5</div>
+      <p>Nas semanas anteriores vimos onde os dados ficam armazenados (Data Lake, HDFS, S3) e como fluem em tempo real (Kafka). Mas ainda não respondemos: <strong>como os dados chegam até lá?</strong> Qualquer pipeline começa com a ingestão — e a escolha errada aqui compromete tudo que vem depois.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-download"></i>Definição e o problema central</div>
+      <p><strong>Ingestão de dados</strong> é o processo de mover dados de sistemas de origem (bancos de dados, APIs, arquivos, sensores) para o sistema de destino (Data Lake, Data Warehouse, Kafka). Parece simples, mas em larga escala envolve decisões críticas:</p>
+      <div class="grid-3" style="margin-top:.75rem;">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.4rem;">⏱ Frequência</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Mover tudo de uma vez (full load), só o que mudou (incremental) ou dado a dado em tempo real (streaming)?</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.4rem;">📦 Volume</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Como mover 10 TB de um banco Oracle legado para o S3 sem derrubar o sistema de origem?</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">🔄 Confiabilidade</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">O que acontece se a ingestão falhar no meio? Como garantir que nenhum registro seja perdido ou duplicado?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>O mapa completo das estratégias</div>
+      <div class="ing-flow">
+        <div class="ing-col ing-col-batch">
+          <div class="ing-col-title"><i class="fas fa-boxes"></i>Batch (lote)</div>
+          <div class="ing-item">Dados movidos em blocos periódicos (hora, dia, semana)</div>
+          <div class="ing-item">Full Load: copia tudo — simples mas pesado</div>
+          <div class="ing-item">Incremental: copia só o que mudou — eficiente</div>
+          <div class="ing-item">Ferramentas: Airbyte, Sqoop, AWS Glue, Fivetran</div>
+          <div style="margin-top:.5rem;padding:.5rem .7rem;border-radius:7px;background:rgba(59,130,246,.08);font-size:.75rem;color:#93c5fd;">✅ Relatórios diários, migração de BD, cargas noturnas</div>
+        </div>
+        <div class="ing-col ing-col-stream">
+          <div class="ing-col-title"><i class="fas fa-stream"></i>Streaming (evento a evento)</div>
+          <div class="ing-item">Dados movidos continuamente conforme chegam</div>
+          <div class="ing-item">Latência de milissegundos a segundos</div>
+          <div class="ing-item">CDC: captura cada INSERT/UPDATE/DELETE do BD de origem</div>
+          <div class="ing-item">Ferramentas: Kafka, Kinesis, Debezium, Flink</div>
+          <div style="margin-top:.5rem;padding:.5rem .7rem;border-radius:7px;background:rgba(74,222,128,.08);font-size:.75rem;color:#86efac;">✅ Detecção de fraude, dashboards ao vivo, IoT, audit trail</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Regra prática:</strong> começa com batch. Se a latência de batch (horas) não resolver o problema de negócio, evolui para streaming. Streaming é mais complexo e caro — só use quando realmente necessário.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>De onde os dados vêm — fontes comuns</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Tipo de Fonte</th><th>Exemplos</th><th>Estratégia Típica</th><th>Desafio</th></tr></thead>
+          <tbody>
+            <tr><td><strong>BD Relacional</strong></td><td>PostgreSQL, MySQL, Oracle, SQL Server</td><td>Batch incremental ou CDC</td><td>Não sobrecarregar o BD de produção</td></tr>
+            <tr><td><strong>API REST</strong></td><td>Salesforce, HubSpot, Stripe, Google Ads</td><td>Batch periódico (paginado)</td><td>Rate limits, autenticação, paginação</td></tr>
+            <tr><td><strong>Arquivos</strong></td><td>CSV, Excel, JSON, Parquet no S3/GCS/FTP</td><td>Batch (detectar arquivos novos)</td><td>Schema inconsistente, erros de encoding</td></tr>
+            <tr><td><strong>Eventos de App</strong></td><td>Cliques, logs, sessões, erros</td><td>Streaming (Kafka)</td><td>Volume alto, dados fora de ordem</td></tr>
+            <tr><td><strong>IoT / Sensores</strong></td><td>Temperatura, GPS, acelerômetro</td><td>Streaming (MQTT → Kafka)</td><td>Conectividade intermitente, dados duplicados</td></tr>
+            <tr><td><strong>SaaS</strong></td><td>Shopify, SAP, Zendesk, Jira</td><td>Airbyte (conectores prontos)</td><td>APIs proprietárias, mudanças de schema</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> Pense em um sistema que você já usou ou viu — um e-commerce, app bancário, plataforma de streaming. De onde vêm os dados que alimentam o analytics desses sistemas? Qual seria a frequência de atualização necessária?</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Batch: Airbyte e Sqoop</span></div>
+
+  <!-- ── AULA 2: Airbyte e Sqoop ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Ingestão Batch — Airbyte e Sqoop na prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>Os três modos de ingestão batch</div>
+      <div class="grid-3">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">Full Load</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-arrow-right" style="color:#f87171;"></i><span>Copia a tabela inteira toda vez</span></li>
+            <li><i class="fas fa-arrow-right" style="color:#f87171;"></i><span>Simples de implementar</span></li>
+            <li><i class="fas fa-arrow-right" style="color:#f87171;"></i><span>Pesado: uma tabela com 500M linhas copiada toda noite?</span></li>
+            <li><i class="fas fa-arrow-right" style="color:#f87171;"></i><span>Útil para tabelas pequenas ou que não têm coluna de timestamp</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">Incremental (Append)</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Copia só os registros novos desde a última execução</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Usa coluna updated_at ou id sequencial como cursor</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Muito mais eficiente que full load</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não captura deleções ou updates antigos</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.5rem;">Incremental (Dedup)</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Igual ao anterior, mas faz upsert no destino</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Detecta registros que mudaram e os atualiza</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Usa chave primária para identificar duplicatas</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Padrão do Airbyte para a maioria dos conectores</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="tool-card tool-airbyte">
+        <div class="tool-titulo"><i class="fas fa-plug"></i>Airbyte <span class="tool-tag" style="background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.2);">Open-source</span></div>
+        <div class="tool-item">Plataforma de integração com +300 conectores prontos (APIs, BDs, SaaS)</div>
+        <div class="tool-item">UI visual para configurar pipelines sem código</div>
+        <div class="tool-item">Suporte a full load, incremental e incremental dedup</div>
+        <div class="tool-item">Pode ser self-hosted (Docker) ou cloud (Airbyte Cloud)</div>
+        <div class="tool-item">Escrito em Java/Python; conectores customizáveis</div>
+        <div class="tool-item">Alternativas comerciais: Fivetran, Stitch, AWS Glue</div>
+        <span class="tool-use"><strong>Melhor para:</strong> conectar SaaS (Salesforce, Stripe, HubSpot), APIs REST e bancos relacionais ao Data Lake com mínimo de código.</span>
+      </div>
+      <div class="tool-card tool-sqoop">
+        <div class="tool-titulo"><i class="fas fa-database"></i>Apache Sqoop <span class="tool-tag" style="background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2);">Legado</span></div>
+        <div class="tool-item">Ferramenta para importar/exportar dados entre RDBMS e HDFS</div>
+        <div class="tool-item">Usa MapReduce por baixo — paralelismo automático</div>
+        <div class="tool-item">Divide a tabela em chunks e lê em paralelo com múltiplos mappers</div>
+        <div class="tool-item">Muito eficiente para grandes volumes de dados tabulares</div>
+        <div class="tool-item">Legado: ativamente mantido mas superado por Airbyte/Spark JDBC</div>
+        <div class="tool-item">Alternativa moderna: Spark com JDBC ou Airbyte</div>
+        <span class="tool-use"><strong>Melhor para:</strong> migrações de bancos legados (Oracle, Teradata) para HDFS em ambientes Hadoop tradicionais.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Ingestão incremental com Airbyte — conceito e exemplo</div>
+      <p>A ideia central do incremental é usar um <strong>cursor</strong> — uma coluna que cresce monotonicamente, como <code>updated_at</code> ou um ID sequencial. O Airbyte salva o último valor lido e, na próxima execução, começa dali.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Lógica do incremental manual (o que o Airbyte faz por baixo)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Última execução: cursor_value = '2024-01-14 23:59:59'
+-- Próxima execução lê somente o que mudou depois disso</span>
+
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> updated_at > <span class="str">'2024-01-14 23:59:59'</span>   <span class="cm">-- cursor da última run</span>
+<span class="kw">ORDER BY</span> updated_at <span class="kw">ASC</span>;
+
+<span class="cm">-- Airbyte salva o novo cursor: MAX(updated_at) desta execução
+-- Próxima run usará esse novo valor como ponto de partida
+
+-- Cuidado com o problema do "late arriving data":
+-- Registros com updated_at no passado (chegam atrasados) serão ignorados!
+-- Para resolver: usar janela de segurança (overlap de 1-2 horas)</span>
+
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> updated_at > (<span class="str">'2024-01-14 23:59:59'</span> - INTERVAL <span class="str">'2 hours'</span>)
+<span class="cm">-- overlap de 2h para capturar dados com atraso</span></code></pre>
+      </div>
+      <div class="destaque"><strong>Late arriving data:</strong> um pedido criado às 23:58 mas processado pelo sistema de origem às 00:05 terá updated_at = 00:05 — fora da janela da última run. A solução é adicionar um overlap de segurança e usar deduplicação no destino.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — uma tabela de 800 milhões de linhas precisa ser sincronizada diariamente. Full Load leva 6 horas e sobrecarrega o banco. Qual alternativa é mais adequada?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Manter o Full Load mas rodar de madrugada para não afetar usuários</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Incremental com cursor em updated_at — copia somente os registros alterados desde a última execução</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Streaming — enviar cada registro individualmente via Kafka em tempo real</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Reduzir o Full Load para rodar semanalmente em vez de diariamente</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Streaming e CDC</span></div>
+
+  <!-- ── AULA 3: Streaming + CDC ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Ingestão Streaming e CDC — capturando cada mudança em tempo real</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="tool-card tool-kafka" style="margin-bottom:0;">
+        <div class="tool-titulo"><i class="fas fa-stream"></i>Apache Kafka <span class="tool-tag" style="background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Open-source</span></div>
+        <div class="tool-item">Log distribuído para streaming de alta escala</div>
+        <div class="tool-item">Producers publicam; consumers leem com offset próprio</div>
+        <div class="tool-item">Retenção configurável: horas a anos</div>
+        <div class="tool-item">Throughput: milhões de mensagens por segundo por cluster</div>
+        <div class="tool-item">Kafka Connect: conectores prontos para fontes e destinos</div>
+        <div class="tool-item">Kafka Streams / ksqlDB: processamento dentro do Kafka</div>
+        <span class="tool-use"><strong>Melhor para:</strong> eventos de aplicação (cliques, pedidos, logs), CDC de bancos, arquitetura Kappa, pipelines de ML em tempo real.</span>
+      </div>
+      <div class="tool-card tool-kinesis" style="margin-bottom:0;">
+        <div class="tool-titulo"><i class="fab fa-aws"></i>AWS Kinesis <span class="tool-tag" style="background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Managed</span></div>
+        <div class="tool-item">Alternativa gerenciada ao Kafka dentro da AWS</div>
+        <div class="tool-item">Kinesis Data Streams: streaming de eventos (como Kafka)</div>
+        <div class="tool-item">Kinesis Data Firehose: entrega direta para S3/Redshift/Elasticsearch</div>
+        <div class="tool-item">Zero operação: sem brokers para gerenciar, escala automática</div>
+        <div class="tool-item">Retenção: 24h padrão, até 365 dias (pago)</div>
+        <div class="tool-item">Integração nativa com Lambda, EMR, Redshift</div>
+        <span class="tool-use"><strong>Melhor para:</strong> workloads 100% na AWS onde zero operação é prioridade. Kafka é mais flexível e portável entre clouds.</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>CDC — Change Data Capture: a evolução da ingestão incremental</div>
+      <p>O incremental com cursor tem uma limitação grave: ele não captura <strong>deleções</strong>. Se um registro for deletado do banco de origem, o incremental jamais saberá — o registro simplesmente some. O CDC resolve isso capturando diretamente do <strong>transaction log do banco de dados</strong>.</p>
+      <p>Todo banco relacional mantém um log de transações (Write-Ahead Log no PostgreSQL, Binary Log no MySQL, Redo Log no Oracle). O CDC lê esse log em tempo real e emite um evento para cada INSERT, UPDATE e DELETE — exatamente como aconteceram, na ordem exata.</p>
+    </div>
+
+    <!-- CDC Visual -->
+    <div class="cdc-visual">
+      <div class="cdc-header"><i class="fas fa-exchange-alt" style="margin-right:8px;"></i>CDC em ação — antes e depois no banco de origem</div>
+      <div class="cdc-body">
+        <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;">Tabela orders no PostgreSQL (banco de origem)</div>
+        <table class="cdc-table">
+          <tr><th>id</th><th>customer_id</th><th>total</th><th>status</th><th>Operação CDC</th></tr>
+          <tr><td>1</td><td>C001</td><td>299.90</td><td>paid</td><td></td></tr>
+          <tr class="changed"><td>2</td><td>C002</td><td>89.00</td><td><span style="text-decoration:line-through;opacity:.5;">pending</span> → <strong>paid</strong></td><td><span class="cdc-op op-update">UPDATE</span></td></tr>
+          <tr class="deleted"><td>3</td><td>C003</td><td>450.00</td><td>cancelled</td><td><span class="cdc-op op-delete">DELETE</span></td></tr>
+          <tr class="inserted"><td>4</td><td>C004</td><td>175.50</td><td>pending</td><td><span class="cdc-op op-insert">INSERT</span></td></tr>
+        </table>
+
+        <div class="cdc-arrow"><i class="fas fa-arrow-down"></i><span style="font-size:.7rem;color:rgba(251,146,60,.5);margin-left:.5rem;">Debezium lê o WAL do PostgreSQL e emite eventos no Kafka</span></div>
+
+        <div style="font-size:.72rem;color:var(--text-muted);margin:.5rem 0;font-family:'JetBrains Mono',monospace;">Eventos gerados no tópico Kafka "orders.public.orders"</div>
+        <table class="cdc-table">
+          <tr><th>op</th><th>before</th><th>after</th><th>ts_ms</th></tr>
+          <tr class="changed"><td><span class="cdc-op op-update">u</span></td><td>{id:2, status:"pending"}</td><td>{id:2, status:"paid"}</td><td>1705345201000</td></tr>
+          <tr class="deleted"><td><span class="cdc-op op-delete">d</span></td><td>{id:3, total:450.00}</td><td>null</td><td>1705345202000</td></tr>
+          <tr class="inserted"><td><span class="cdc-op op-insert">c</span></td><td>null</td><td>{id:4, total:175.50}</td><td>1705345203000</td></tr>
+        </table>
+        <div style="font-size:.72rem;color:var(--text-muted);margin-top:.5rem;">op: c=create(insert), u=update, d=delete, r=read(snapshot). O campo "before" contém o estado anterior; "after" o novo estado.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tools"></i>Debezium — o CDC open-source</div>
+      <p><strong>Debezium</strong> é a ferramenta CDC mais usada do mercado. Roda como um conector do Kafka Connect e lê o transaction log do banco de origem sem impacto significativo de performance.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">JSON — Configuração do conector Debezium para PostgreSQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>{
+  <span class="str">"name"</span>: <span class="str">"orders-cdc-connector"</span>,
+  <span class="str">"config"</span>: {
+    <span class="str">"connector.class"</span>: <span class="str">"io.debezium.connector.postgresql.PostgresConnector"</span>,
+    <span class="str">"database.hostname"</span>: <span class="str">"postgres-prod"</span>,
+    <span class="str">"database.port"</span>:     <span class="str">"5432"</span>,
+    <span class="str">"database.user"</span>:     <span class="str">"debezium"</span>,
+    <span class="str">"database.password"</span>: <span class="str">"${file:/opt/kafka/secrets:db.password}"</span>,
+    <span class="str">"database.dbname"</span>:   <span class="str">"ecommerce"</span>,
+    <span class="str">"database.server.name"</span>: <span class="str">"orders"</span>,        <span class="cm">// prefixo do tópico Kafka</span>
+    <span class="str">"table.include.list"</span>: <span class="str">"public.orders,public.customers"</span>,
+    <span class="str">"plugin.name"</span>:       <span class="str">"pgoutput"</span>,          <span class="cm">// replication plugin do PG</span>
+    <span class="str">"slot.name"</span>:         <span class="str">"debezium_orders"</span>,   <span class="cm">// replication slot</span>
+    <span class="str">"publication.name"</span>:  <span class="str">"dbz_publication"</span>,
+
+    <span class="cm">// Snapshot inicial: ler todos os dados existentes antes de iniciar o CDC</span>
+    <span class="str">"snapshot.mode"</span>:     <span class="str">"initial"</span>,
+
+    <span class="cm">// Converter para Avro (Schema Registry)</span>
+    <span class="str">"value.converter"</span>:   <span class="str">"io.confluent.kafka.serializers.KafkaAvroSerializer"</span>,
+    <span class="str">"schema.registry.url"</span>: <span class="str">"http://schema-registry:8081"</span>
+  }
+}</code></pre>
+      </div>
+      <div class="destaque-green"><strong>Snapshot mode:</strong> na primeira execução, o Debezium faz um snapshot completo da tabela (lê tudo como eventos "r" - read) antes de começar a capturar mudanças em tempo real. Isso garante que o destino começa com o estado atual do banco.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Batch Incremental vs CDC — diferenças críticas</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th><span class="badge-blue">Batch Incremental</span></th><th><span class="badge-green">CDC (Debezium)</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Captura deleções?</strong></td><td>❌ Não — registro deletado some silenciosamente</td><td>✅ Sim — evento "d" é emitido imediatamente</td></tr>
+            <tr><td><strong>Latência</strong></td><td>Minutos a horas (frequência da execução)</td><td>Milissegundos a segundos</td></tr>
+            <tr><td><strong>Impacto na origem</strong></td><td>Query pesada na tabela (lê linhas modificadas)</td><td>Muito baixo (lê o WAL, não a tabela)</td></tr>
+            <tr><td><strong>Complexidade</strong></td><td>Baixa — configuração simples no Airbyte</td><td>Média-alta — replication slot, WAL retention</td></tr>
+            <tr><td><strong>Requer timestamp?</strong></td><td>✅ Sim — precisa de coluna updated_at ou ID sequencial</td><td>❌ Não — lê diretamente do log de transações</td></tr>
+            <tr><td><strong>Custo operacional</strong></td><td>Baixo</td><td>Médio (replication slot ocupa espaço no WAL)</td></tr>
+            <tr><td><strong>Melhor para</strong></td><td>Dados que raramente são deletados, latência não crítica</td><td>Audit trail, dados financeiros, sincronização em tempo real</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um sistema financeiro precisa manter um audit trail completo de todas as mudanças em contratos: criações, edições E cancelamentos. Qual estratégia de ingestão é obrigatória?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Full Load diário — copia tudo e compara com a versão anterior</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Batch incremental com updated_at — captura atualizações eficientemente</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">CDC com Debezium — único método que captura INSERTs, UPDATEs E DELETEs com before/after states</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">API REST polling a cada 5 minutos — simples e sem configuração de CDC</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Comparativo e Atividade Prática</span></div>
+
+  <!-- ── AULA 4: Decisão + Atividade ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Guia de decisão — escolhendo a estratégia certa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Árvore de decisão para ingestão</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;">
+        <div style="padding:.75rem 1rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.2);">
+          <div style="font-size:.82rem;color:var(--text-primary);font-weight:600;margin-bottom:.25rem;">❓ Latência aceitável &gt; 1 hora?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">→ <span class="badge-blue">Batch</span> — mais simples, menor custo. Escolha entre Full Load ou Incremental.</div>
+        </div>
+        <div style="padding:.75rem 1rem;border-radius:9px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);margin-left:1.5rem;">
+          <div style="font-size:.82rem;color:var(--text-primary);font-weight:600;margin-bottom:.25rem;">❓ Tabela tem coluna updated_at ou ID sequencial?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">→ Sim: <span class="badge-green">Incremental</span> — eficiente, não sobrecarrega a origem. Não: <span class="badge-red">Full Load</span> — sem jeito de saber o que mudou.</div>
+        </div>
+        <div style="padding:.75rem 1rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.2);">
+          <div style="font-size:.82rem;color:var(--text-primary);font-weight:600;margin-bottom:.25rem;">❓ Precisa capturar deleções ou latência &lt; 1 minuto?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">→ <span class="badge-green">CDC</span> com Debezium — captura INSERTs, UPDATEs e DELETEs diretamente do transaction log.</div>
+        </div>
+        <div style="padding:.75rem 1rem;border-radius:9px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);margin-left:1.5rem;">
+          <div style="font-size:.82rem;color:var(--text-primary);font-weight:600;margin-bottom:.25rem;">❓ A fonte são eventos de aplicação (cliques, sessões, logs) e não um BD?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">→ <span class="badge-green">Kafka direto</span> — o app publica no Kafka, sem intermediário. CDC é para bancos, não para eventos de app.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Comparativo completo — todas as estratégias</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Estratégia</th><th>Ferramenta</th><th>Latência</th><th>Captura DELETE</th><th>Impacto origem</th><th>Complexidade</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Full Load</strong></td><td>Airbyte, Sqoop</td><td>Horas</td><td>Sim (por comparação)</td><td>Alto</td><td>Baixa</td></tr>
+            <tr><td><strong>Incremental Append</strong></td><td>Airbyte, Spark JDBC</td><td>Minutos-Horas</td><td>❌ Não</td><td>Médio</td><td>Baixa</td></tr>
+            <tr><td><strong>Incremental Dedup</strong></td><td>Airbyte</td><td>Minutos-Horas</td><td>❌ Não</td><td>Médio</td><td>Baixa</td></tr>
+            <tr><td><strong>CDC</strong></td><td>Debezium + Kafka</td><td>Segundos</td><td>✅ Sim</td><td>Baixo</td><td>Alta</td></tr>
+            <tr><td><strong>Streaming de Eventos</strong></td><td>Kafka, Kinesis</td><td>Milissegundos</td><td>N/A</td><td>Nenhum (push)</td><td>Média</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ATIVIDADE -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Análise em grupos</div>
+        <div class="secao-titulo">Escolha de estratégia de ingestão para 4 cenários reais</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade em trios. Para cada cenário, o grupo deve: (a) identificar a estratégia mais adequada, (b) indicar a ferramenta específica e (c) justificar com critérios técnicos — latência, volume, necessidade de capturar deleções, impacto na fonte.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário 1 — Plataforma de Marketplace</div>
+      <p>Um marketplace com 2 milhões de produtos precisa sincronizar o catálogo do PostgreSQL de origem para o Data Lake no S3 diariamente. Os produtos raramente são deletados (sellers preferem desativar). A tabela tem coluna <code>updated_at</code>. Volume: ~50 mil updates por dia.</p>
+      <span class="dif-basico">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Incremental com Airbyte</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Estratégia:</strong> Incremental Dedup (Airbyte) usando <code>updated_at</code> como cursor</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que não Full Load?</strong> 2M produtos copiados diariamente é desnecessário quando só 50k mudam</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que não CDC?</strong> Deleções são raras e latência de horas é aceitável para catálogo</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Configuração:</strong> Airbyte com conector PostgreSQL → S3, sync_mode=incremental, cursor=updated_at, frequência=1h</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário 2 — Sistema de Pagamentos Financeiros</div>
+      <p>Uma fintech precisa manter um audit trail completo de todas as transações financeiras: criações, alterações de status (pending→paid→refunded) e cancelamentos (DELETE). Qualquer mudança no banco de produção deve aparecer no Data Lake em menos de 30 segundos. Conformidade regulatória exige rastreabilidade de todas as operações.</p>
+      <span class="dif-medio">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: CDC com Debezium + Kafka</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Estratégia:</strong> CDC via Debezium lendo o WAL do PostgreSQL → Kafka → S3 via Kafka Connect Sink</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que CDC?</strong> Dois requisitos obrigatórios: captura de DELETEs + latência &lt;30s. Apenas CDC atende ambos.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Formato:</strong> Avro com Schema Registry — cada evento tem before/after state para audit trail completo</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Impacto na origem:</strong> mínimo — Debezium lê o WAL, não executa queries na tabela</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário 3 — App de E-commerce (Events)</div>
+      <p>Um e-commerce quer capturar todos os eventos de comportamento do usuário no app: visualizações de produto, adição ao carrinho, início de checkout, abandono. São ~50 milhões de eventos por dia, gerados pelo frontend e backend do app em tempo real. Não há banco de dados de origem — os eventos são gerados diretamente pelo código.</p>
+      <span class="dif-medio">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Kafka direto (sem CDC)</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Estratégia:</strong> App publica diretamente no Kafka — producer no backend (Node.js/Python) envia evento a cada ação do usuário</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que não CDC?</strong> CDC é para bancos de dados. Aqui os eventos nascem no app, não existem num BD de origem</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que não Batch?</strong> 50M eventos/dia — armazenar no app e enviar em batch aumenta risco de perda</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Destino:</strong> Kafka → Kafka Connect Sink → S3 (Raw zone em Avro) → Spark para processar → Silver/Gold em Parquet</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Cenário 4 — Migração de ERP Legado</div>
+      <p>Uma indústria precisa migrar 10 anos de dados do SAP (Oracle) para um Data Lake moderno. São 500 GB de dados históricos, tabelas sem coluna <code>updated_at</code> (sistema legado dos anos 2000). Após a migração inicial, as sincronizações serão mensais e apenas para relatórios analíticos — sem necessidade de tempo real.</p>
+      <span class="dif-desafio">Análise + Estratégia de migração</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Solução: Full Load com Sqoop / Spark JDBC + Full Load mensal</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Migração inicial:</strong> Sqoop ou Spark com JDBC para Oracle — paralelismo automático divide a tabela em chunks e lê em paralelo, minimizando o tempo de migração</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Por que Full Load?</strong> Sem coluna updated_at, é impossível fazer incremental — não há como saber o que mudou</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Sincronizações mensais:</strong> Full Load (tabelas pequenas) ou comparação via hash de linha (tabelas maiores)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Horário:</strong> rodar fora do horário de pico (madrugada) para não impactar o SAP</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Consideração:</strong> após migrar, avaliar se vale adicionar updated_at nas tabelas do Oracle para futuras sincronizações incrementais</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — qual é a principal vantagem do CDC em relação ao Batch Incremental para sincronização de banco de dados?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">O CDC é mais fácil de configurar e requer menos código</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">O CDC tem melhor performance de throughput para grandes volumes</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,246,.15);color:#f472b6;">C</div><span class="quiz-texto">O CDC captura DELETEs e tem latência de segundos, sem precisar de coluna updated_at</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O CDC é gratuito enquanto o Batch Incremental exige licença paga</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 7</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 7</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-boxes"></i>
+        <strong>Batch Incremental</strong>
+        <p>Cursor em updated_at. Eficiente. Não captura DELETEs. Airbyte para SaaS, Sqoop para HDFS legado.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-stream"></i>
+        <strong>Streaming</strong>
+        <p>Kafka para eventos de app, Kinesis na AWS. Latência de ms. Producer publica, consumer lê com offset.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>CDC (Debezium)</strong>
+        <p>Lê o WAL do banco. Captura INSERT + UPDATE + DELETE. Latência segundos. Essencial para audit trail.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-compass"></i>
+        <strong>Decisão</strong>
+        <p>Latência ok? → Batch. DELETE necessário? → CDC. Eventos de app? → Kafka direto. Sem updated_at? → Full Load.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe a diferença entre Full Load, Incremental e CDC? Consegue dizer quando usar Airbyte vs Debezium? Sabe por que o CDC não precisa de coluna updated_at? Entende por que Kafka é diferente de CDC para eventos de app? Se sim para os quatro — você está pronto para a Semana 8.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-08-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 8 — Apache Spark: RDD, DataFrame, Spark SQL e primeiros comandos com PySpark</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar solução'
+    :'<i class="fas fa-lightbulb"></i> ver solução';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Com 800 milhões de linhas e apenas algumas milhares mudando por dia, Full Load é um desperdício enorme. O incremental com cursor em updated_at copia apenas as linhas modificadas desde a última execução — de horas de processamento para minutos. Streaming seria excessivo para uma sincronização diária sem requisito de tempo real.'},
+  quiz2:{correct:'C',msg:'✅ Correto! Dois requisitos tornam CDC obrigatório: (1) captura de DELETEs — o batch incremental simplesmente não vê registros deletados; (2) latência <30 segundos — batch roda periodicamente e não atinge essa latência. O Debezium lê o WAL do PostgreSQL e emite eventos com before/after state para cada operação, criando um audit trail completo e imutável.'},
+  quiz3:{correct:'C',msg:'✅ Correto! O CDC tem três vantagens sobre o batch incremental que justificam sua maior complexidade: (1) captura DELETEs — o batch incremental ignora registros deletados por não ter como detectá-los; (2) latência de segundos vs minutos/horas; (3) não depende de coluna updated_at — lê diretamente do transaction log, funcionando até em tabelas legadas sem timestamp.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

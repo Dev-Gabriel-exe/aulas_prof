@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 01 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-950:#1c0900;
+  --bg-900:#2a0f00;
+  --bg-800:#7c2d12;
+  --bg-700:#9a3412;
+  --accent-500:#f97316;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg-900);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ═══ CAPA ═══════════════════════════════════════ */
+.capa{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  position:relative;
+  overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:#431407;bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:#f97316;top:40%;left:40%;opacity:.1;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(251,146,60,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);
+  border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent-400);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+.topico:nth-child(6){animation-delay:.6s;}
+.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(251,146,60,.18);color:var(--accent-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--accent-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ═══════════════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;
+}
+.destaque strong{color:var(--accent-400);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-accent{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);
+  font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+
+/* tabela */
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;
+   font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+
+/* icon list */
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+/* badge */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(139,92,246,.12);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);}
+.badge-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+
+/* código */
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}
+
+/* comparação */
+.comp-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;overflow:hidden;margin:.75rem 0;}
+.comp-col{padding:1.25rem;}
+.comp-col:first-child{border-right:1px solid rgba(251,146,60,.1);}
+.comp-col:last-child{border-left:1px solid rgba(251,146,60,.1);}
+.comp-vs{display:flex;align-items:center;justify-content:center;padding:0 .5rem;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;color:rgba(251,146,60,.4);letter-spacing:.06em;writing-mode:vertical-rl;}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;}
+.comp-item{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--text-secondary);margin-bottom:.5rem;line-height:1.5;}
+.comp-item::before{content:'▸';color:var(--accent-400);font-size:.65rem;margin-top:4px;flex-shrink:0;}
+
+/* pipeline flow */
+.flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:1rem 0;}
+.flow-node{display:flex;flex-direction:column;align-items:center;gap:8px;padding:1rem 1.1rem;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.15);border-radius:12px;min-width:100px;text-align:center;}
+.flow-node__icon{width:44px;height:44px;border-radius:12px;background:rgba(251,146,60,.12);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.flow-node__label{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--white);}
+.flow-node__sub{font-size:.66rem;color:var(--text-muted);}
+.flow-arrow{display:flex;align-items:center;padding:0 .4rem;color:rgba(251,146,60,.35);font-size:1.1rem;}
+
+/* V card */
+.v-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;position:relative;overflow:hidden;}
+.v-card::before{content:attr(data-v);position:absolute;top:-10px;right:16px;font-family:'Montserrat',sans-serif;font-size:5rem;font-weight:800;color:rgba(251,146,60,.08);line-height:1;pointer-events:none;}
+.v-card:hover{border-color:rgba(251,146,60,.22);}
+.v-card-titulo{font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:700;color:var(--accent-400);margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.v-card p{font-size:.87rem;color:var(--text-secondary);line-height:1.65;}
+.v-metric{display:inline-block;margin-top:.5rem;padding:3px 10px;border-radius:6px;font-size:.78rem;font-weight:600;background:rgba(251,146,60,.12);color:var(--accent-300);border:1px solid rgba(251,146,60,.2);}
+
+/* scale bar */
+.scale-bar{display:flex;align-items:stretch;border-radius:10px;overflow:hidden;margin:.75rem 0;height:44px;}
+.scale-unit{display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;flex:1;letter-spacing:.04em;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:#86efac;}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.5rem;}
+.quiz-feedback.show{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+
+/* próxima */
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+
+/* separador */
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .comp-grid{grid-template-columns:1fr;}
+  .comp-vs{writing-mode:horizontal-tb;padding:.5rem 0;border:none !important;}
+  .comp-col:first-child,.comp-col:last-child{border:none;}
+  .flow{gap:.5rem;}
+  .flow-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ═══════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">01</div>
+    <h1 class="capa-titulo">Os <em>5 Vs</em><br>do Big Data</h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Do dado ao insight</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-rocket"></i></div><span>Apresentação da disciplina e do semestre</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-expand-arrows-alt"></i></div><span>V1 Volume — escala de TB/PB e por que o BD tradicional quebra</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>V2 Velocidade — batch vs. streaming em tempo real</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shapes"></i></div><span>V3 Variedade — estruturado, semiestruturado, não estruturado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-check-double"></i></div><span>V4 Veracidade + V5 Valor — qualidade e o objetivo final</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>BD Tradicional vs. Big Data — quando usar cada um</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-search"></i></div><span>Atividade: mapeamento de casos reais por setor</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Mapeamento e discussão de casos reais de Big Data em diferentes setores da economia.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do semestre</div>
+      <ul class="info-lista">
+        <li>P1 — Semana 6 · Conteúdo das semanas 1–5 (5 Vs, Lambda/Kappa, Data Lake, HDFS, Kafka)</li>
+        <li>P2 — Semana 13 · Conteúdo das semanas 7–12 (ingestão, Spark, PySpark, ETL/ELT, Airflow)</li>
+        <li>P3 — Semana 18 · Conteúdo das semanas 14–17 (Delta Lake, streaming, governança, IA)</li>
+        <li>P4 Final — Semana 19 · Projeto integrador: pipeline completo</li>
+        <li>Segunda Chamada — Semana 20</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Trilha do semestre</div>
+      <ul class="info-lista">
+        <li>5 Vs, arquiteturas Lambda/Kappa e Data Lake</li>
+        <li>Apache HDFS, Kafka — armazenamento e streaming</li>
+        <li>Apache Spark e PySpark — processamento distribuído</li>
+        <li>ETL/ELT, dbt, Airflow — transformação e orquestração</li>
+        <li>Delta Lake, governança, feature stores para IA</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Ferramentas do semestre</div>
+      <ul class="info-lista">
+        <li>Python e PySpark — linguagem principal</li>
+        <li>Apache Kafka, Spark, Airflow — ecossistema Big Data</li>
+        <li>Docker — ambientes reprodutíveis para todas as práticas</li>
+        <li>Google Colab ou Databricks Community (gratuito)</li>
+        <li>Pré-requisito: Python básico e lógica de programação</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Apresentação ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Apresentação da Disciplina — por que Big Data importa para IA</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Onde você está pisando</div>
+      <p>Você está no terceiro período de um curso de Inteligência Artificial. Até agora você aprendeu a programar, modelar bancos de dados e entender algoritmos. Este semestre dá um salto de escala: em vez de milhares de registros, vamos lidar com <strong>bilhões</strong>.</p>
+      <p><strong>Big Data e Engenharia de Dados</strong> é a disciplina que responde à pergunta que todo projeto de IA real enfrenta: <em>"nosso modelo funcionou no notebook com 10 mil linhas — e agora, com 10 bilhões?"</em>. A resposta envolve arquiteturas distribuídas, frameworks específicos e uma mentalidade completamente diferente de como processar dados.</p>
+      <div class="destaque">
+        <strong>Por que Big Data é inseparável de IA?</strong> Modelos de machine learning são tão bons quanto os dados que os treinaram. GPT-4 foi treinado com ~1 trilhão de tokens. O sistema de recomendação do Netflix usa dados de 238 milhões de usuários. Sem Big Data, IA de escala real simplesmente não existe.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-road"></i>Trilha das 20 semanas</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 1–5:</strong> Os 5 Vs, arquiteturas Lambda/Kappa, Data Lake, HDFS, Kafka</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 7–12:</strong> Ingestão em larga escala, Apache Spark, PySpark, ETL/ELT, Airflow</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 14–17:</strong> Delta Lake, streaming, governança, Big Data para IA</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 19:</strong> Projeto final: pipeline completo de ingestão, transformação e análise</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-clipboard-list"></i>Avaliações</div>
+        <div class="tabela-wrap">
+          <table>
+            <thead><tr><th>Prova</th><th>Semana</th><th>Peso</th><th>Formato</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge">P1</span></td><td>6</td><td>25%</td><td>Escrita e/ou prática</td></tr>
+              <tr><td><span class="badge">P2</span></td><td>13</td><td>25%</td><td>Escrita e/ou prática</td></tr>
+              <tr><td><span class="badge">P3</span></td><td>18</td><td>25%</td><td>Escrita e/ou prática</td></tr>
+              <tr><td><span class="badge">P4 Final</span></td><td>19</td><td>25%</td><td>Projeto integrador</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Pipeline de dados de ponta a ponta — o que você vai construir</div>
+      <p style="margin-bottom:1rem;">Ao final do semestre você vai entender e construir cada etapa deste pipeline:</p>
+      <div class="flow">
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-database"></i></div>
+          <div class="flow-node__label">Fonte</div>
+          <div class="flow-node__sub">BD, API, sensor</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-download"></i></div>
+          <div class="flow-node__label">Ingestão</div>
+          <div class="flow-node__sub">Kafka, Airbyte</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-layer-group"></i></div>
+          <div class="flow-node__label">Data Lake</div>
+          <div class="flow-node__sub">HDFS, S3, Delta</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-bolt"></i></div>
+          <div class="flow-node__label">Processamento</div>
+          <div class="flow-node__sub">Spark, dbt</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-brain"></i></div>
+          <div class="flow-node__label">IA / Análise</div>
+          <div class="flow-node__sub">MLflow, Features</div>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="flow-node">
+          <div class="flow-node__icon"><i class="fas fa-chart-line"></i></div>
+          <div class="flow-node__label">Dashboard</div>
+          <div class="flow-node__sub">Relatório, alerta</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> Qual é a maior quantidade de dados com que você já trabalhou? Excel, banco de dados, CSV? Quantas linhas tinha? Vamos usar esse número para entender o salto de escala que vem.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Volume e Velocidade</span></div>
+
+  <!-- ── AULA 2: V1 Volume + V2 Velocidade ────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">V1 Volume e V2 Velocidade — quando a escala muda tudo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-expand-arrows-alt"></i>V1 — Volume: o primeiro problema</div>
+      <p>Volume é o V mais intuitivo: a quantidade de dados gerada cresce em ritmo que os bancos de dados tradicionais não conseguem acompanhar. Não é só uma questão de armazenamento — é uma questão de processamento, custo e arquitetura.</p>
+
+      <!-- Escala de unidades -->
+      <p style="margin-bottom:.75rem;font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Escala de unidades de dados</p>
+      <div class="scale-bar">
+        <div class="scale-unit" style="background:rgba(251,146,60,.08);color:rgba(253,186,116,.5);font-size:.65rem;">KB<br><span style="font-size:.55rem;opacity:.6">10³</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.12);color:rgba(253,186,116,.6);font-size:.65rem;">MB<br><span style="font-size:.55rem;opacity:.6">10⁶</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.18);color:rgba(253,186,116,.7);font-size:.65rem;">GB<br><span style="font-size:.55rem;opacity:.6">10⁹</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.28);color:rgba(253,186,116,.85);font-size:.65rem;">TB<br><span style="font-size:.55rem;opacity:.6">10¹²</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.42);color:#fb923c;font-size:.65rem;font-weight:800;">PB<br><span style="font-size:.55rem;">10¹⁵</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.55);color:#fdba74;font-size:.65rem;font-weight:800;">EB<br><span style="font-size:.55rem;">10¹⁸</span></div>
+        <div class="scale-unit" style="background:rgba(251,146,60,.7);color:#fff;font-size:.65rem;font-weight:800;">ZB<br><span style="font-size:.55rem;">10²¹</span></div>
+      </div>
+      <p style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem;">← Excel aguenta alguns MB · BD tradicional aguenta GB/poucos TB · Big Data começa a fazer sentido a partir de TB →</p>
+    </div>
+
+    <div class="grid-3">
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;">
+        <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.75rem;">🔍 Google</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-caret-right"></i><span><strong>8,5 bilhões</strong> de buscas/dia</span></li>
+          <li><i class="fas fa-caret-right"></i><span>~100 PB de índice de busca</span></li>
+          <li><i class="fas fa-caret-right"></i><span>20+ anos de dados de clique</span></li>
+        </ul>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;">
+        <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.75rem;">🎬 Netflix</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-caret-right"></i><span><strong>238 milhões</strong> de assinantes</span></li>
+          <li><i class="fas fa-caret-right"></i><span>~15 PB de dados de visualização</span></li>
+          <li><i class="fas fa-caret-right"></i><span>Cada play gera eventos a cada segundo</span></li>
+        </ul>
+      </div>
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem;">
+        <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.75rem;">🚗 Tesla</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-caret-right"></i><span><strong>4 TB de dados</strong> por carro/dia</span></li>
+          <li><i class="fas fa-caret-right"></i><span>Câmeras, radar, acelerômetro, GPS</span></li>
+          <li><i class="fas fa-caret-right"></i><span>Alimenta modelos de piloto automático</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>Por que o PostgreSQL não aguenta?</div>
+      <p>Um banco de dados relacional como PostgreSQL ou MySQL é incrível para dezenas de GB ou poucos TB — e você vai continuar usando eles para isso. O problema começa quando os dados crescem além da capacidade de <strong>uma única máquina</strong>.</p>
+      <div class="comp-grid">
+        <div class="comp-col">
+          <div class="comp-titulo">🐘 PostgreSQL — o que acontece com 10 TB</div>
+          <div class="comp-item">Query que rodava em 2 segundos passa a demorar 20 minutos</div>
+          <div class="comp-item">Backup demora horas — janela de manutenção impossível</div>
+          <div class="comp-item">INSERT/UPDATE durante carga pesada causa lock e timeout</div>
+          <div class="comp-item">Adicionar RAM e disco tem limite físico e fica caro demais</div>
+          <div class="comp-item">Solução: escala vertical (máquina maior) — mas tem teto</div>
+        </div>
+        <div class="comp-vs">VS</div>
+        <div class="comp-col">
+          <div class="comp-titulo">⚡ Spark + HDFS — o que muda</div>
+          <div class="comp-item">Os 10 TB são divididos em blocos de 128 MB espalhados em 100 máquinas</div>
+          <div class="comp-item">Query processada em paralelo por todas as máquinas ao mesmo tempo</div>
+          <div class="comp-item">Falha de uma máquina? Os dados existem em 3 cópias (replicação)</div>
+          <div class="comp-item">Precisou de mais capacidade? Adiciona máquinas ao cluster</div>
+          <div class="comp-item">Solução: escala horizontal — sem teto prático</div>
+        </div>
+      </div>
+      <div class="destaque">
+        <strong>Escala vertical vs. horizontal:</strong> trocar o servidor por um maior (vertical) tem limite físico e custo exponencial. Adicionar mais servidores comuns ao cluster (horizontal) é como contratar mais funcionários — você divide o trabalho e o custo é linear.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>V2 — Velocidade: a dimensão do tempo</div>
+      <p>Velocidade não é só "os dados chegam rápido". É sobre <strong>qual é o tempo máximo aceitável entre a geração do dado e a tomada de decisão</strong>. Esse tempo muda tudo na arquitetura.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead>
+            <tr><th>Modelo</th><th>Latência aceitável</th><th>Tecnologia típica</th><th>Exemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge-blue">Batch</span></td>
+              <td>Horas a dias</td>
+              <td>Hadoop MapReduce, Spark batch</td>
+              <td>Relatório de vendas do mês</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Micro-batch</span></td>
+              <td>Segundos a minutos</td>
+              <td>Spark Structured Streaming</td>
+              <td>Dashboard de pedidos por hora</td>
+            </tr>
+            <tr>
+              <td><span class="badge-red">Streaming</span></td>
+              <td>Milissegundos</td>
+              <td>Kafka + Flink / Storm</td>
+              <td>Detecção de fraude no cartão</td>
+            </tr>
+            <tr>
+              <td><span class="badge-purple">Real-time</span></td>
+              <td>&lt; 1ms</td>
+              <td>Hardware dedicado, FPGA</td>
+              <td>Trading de alta frequência</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Exemplo concreto — detecção de fraude no Nubank:</strong> quando você passa o cartão, o sistema tem <strong>menos de 200ms</strong> para decidir aprovar ou recusar. Isso significa que o modelo de ML precisa rodar, o resultado precisa chegar ao terminal e a resposta precisa aparecer — tudo em menos de um piscar de olhos. Isso só é possível com processamento em streaming.
+      </div>
+    </div>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — uma empresa quer analisar os logs do servidor para detectar ataques em andamento. Qual modelo de processamento é adequado?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Batch — processa os logs uma vez por dia em relatório</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Streaming — analisa cada log no momento em que chega</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Qualquer um serve — velocidade não impacta detecção de ataque</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Micro-batch de 6 horas — detectar dentro de 6h é suficiente</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Aula 3 · Variedade, Veracidade, Valor + BD vs Big Data</span></div>
+
+  <!-- ── AULA 3: V3/V4/V5 + Comparativo ──────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">V3, V4 e V5 — Variedade, Veracidade e Valor</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="v-card" data-v="V3">
+        <div class="v-card-titulo"><i class="fas fa-shapes"></i>V3 — Variedade</div>
+        <p>Os dados do mundo real não chegam arrumados em tabelas. Eles chegam em dezenas de formatos diferentes — e um sistema de Big Data precisa lidar com todos eles juntos.</p>
+        <div style="margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem;">
+          <div style="padding:.6rem .9rem;border-radius:9px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);">
+            <div style="font-size:.72rem;font-weight:700;color:#4ade80;margin-bottom:3px;">ESTRUTURADO</div>
+            <div style="font-size:.8rem;color:var(--text-secondary);">Tabelas SQL, planilhas Excel, CSVs com schema fixo. Fácil de consultar.</div>
+          </div>
+          <div style="padding:.6rem .9rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.15);">
+            <div style="font-size:.72rem;font-weight:700;color:var(--accent-400);margin-bottom:3px;">SEMIESTRUTURADO</div>
+            <div style="font-size:.8rem;color:var(--text-secondary);">JSON, XML, Parquet, logs de sistema. Tem estrutura, mas flexível.</div>
+          </div>
+          <div style="padding:.6rem .9rem;border-radius:9px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);">
+            <div style="font-size:.72rem;font-weight:700;color:#f87171;margin-bottom:3px;">NÃO ESTRUTURADO</div>
+            <div style="font-size:.8rem;color:var(--text-secondary);">Imagens, vídeos, áudios, textos livres. Representa ~80% dos dados existentes.</div>
+          </div>
+        </div>
+        <span class="v-metric">~80% dos dados do mundo são não estruturados</span>
+      </div>
+
+      <div class="v-card" data-v="V4">
+        <div class="v-card-titulo"><i class="fas fa-check-double"></i>V4 — Veracidade</div>
+        <p>Veracidade é sobre a <strong>confiabilidade dos dados</strong>. A questão não é só se o dado está lá — é se ele é correto, consistente e confiável o suficiente para tomar decisões.</p>
+        <ul class="icon-list" style="margin-top:.5rem;">
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sensor com defeito transmitindo temperatura de -999°C</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Usuário digitando "aaaa" no campo de nome</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Data de nascimento futura: 15/03/2089</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Duplicatas: mesma transação registrada três vezes</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Solução: validação na ingestão + regras de qualidade no dbt</span></li>
+        </ul>
+        <div class="destaque" style="margin-top:.75rem;">
+          <strong>Garbage in, garbage out:</strong> se o dado de entrada for ruim, o modelo de IA treinado nele vai ser ruim — não importa quão sofisticado seja o algoritmo.
+        </div>
+      </div>
+    </div>
+
+    <div class="v-card" data-v="V5" style="margin-bottom:1.25rem;">
+      <div class="v-card-titulo"><i class="fas fa-gem"></i>V5 — Valor: o único V que realmente importa no final</div>
+      <p>Volume, velocidade, variedade e veracidade são desafios técnicos. Valor é o <strong>objetivo de negócio</strong>. Ter petabytes de dados não tem nenhum valor por si só — o valor está no que você consegue extrair deles.</p>
+      <div class="grid-3" style="margin-top:.75rem;">
+        <div style="padding:.75rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.1);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">📊</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--white);margin-bottom:3px;">Insight</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">"Nossa taxa de churn é maior às quintas-feiras para usuários do plano básico"</div>
+        </div>
+        <div style="padding:.75rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.1);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">🤖</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--white);margin-bottom:3px;">Predição</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">"Este cliente tem 87% de probabilidade de cancelar nos próximos 30 dias"</div>
+        </div>
+        <div style="padding:.75rem;border-radius:9px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.1);text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:.4rem;">⚡</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--white);margin-bottom:3px;">Ação</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">"Disparar oferta personalizada de upgrade antes que ele cancele"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>BD Tradicional vs. Big Data — o mapa completo</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>BD Tradicional (PostgreSQL, MySQL)</th><th>Big Data (Spark, HDFS, Kafka)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Volume</strong></td><td>MB a alguns TB (1 máquina)</td><td>TB a ZB (centenas de máquinas)</td></tr>
+            <tr><td><strong>Velocidade</strong></td><td>Batch, queries pontuais</td><td>Batch + streaming em tempo real</td></tr>
+            <tr><td><strong>Variedade</strong></td><td>Dados estruturados, schema fixo</td><td>Estruturado, semi e não estruturado</td></tr>
+            <tr><td><strong>Escalabilidade</strong></td><td>Vertical (máquina maior)</td><td>Horizontal (mais máquinas)</td></tr>
+            <tr><td><strong>Consistência</strong></td><td>ACID forte (transações garantidas)</td><td>Eventual consistency (BASE)</td></tr>
+            <tr><td><strong>Schema</strong></td><td>Schema-on-write (defina antes de inserir)</td><td>Schema-on-read (define ao ler)</td></tr>
+            <tr><td><strong>Linguagem</strong></td><td>SQL padrão</td><td>SQL + Python/Scala + APIs específicas</td></tr>
+            <tr><td><strong>Custo inicial</strong></td><td>Baixo (1 servidor)</td><td>Alto (cluster de máquinas)</td></tr>
+            <tr><td><strong>Maturidade</strong></td><td>50+ anos de mercado</td><td>15–20 anos, ecossistema em evolução</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Não caia na armadilha:</strong> Big Data não substitui banco de dados relacional. Uma startup com 50 mil clientes que usa Kafka + Spark está gastando dinheiro à toa e adicionando complexidade desnecessária. Use Big Data quando o problema realmente exige — e não antes.</span>
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual dos 5 Vs representa o OBJETIVO FINAL de qualquer projeto de Big Data?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Volume — quanto mais dados, melhor o projeto</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Velocidade — processar o mais rápido possível</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Variedade — trabalhar com todos os formatos de dados</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Valor — extrair insights e decisões úteis dos dados</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Aula 4 · Casos Reais + Atividade</span></div>
+
+  <!-- ── AULA 4: Casos Reais + Atividade ──────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Big Data na prática — casos reais por setor</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-globe-americas"></i>Casos reais por setor</div>
+      <div class="grid-2" style="margin-bottom:0;">
+        <div style="background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.1);border-radius:12px;padding:1.1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.7rem;">💊 Saúde</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span><strong>Diagnóstico por imagem:</strong> redes neurais treinadas com milhões de exames de raio-X e ressonância</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Epidemiologia:</strong> cruzamento de dados de pacientes para mapear surtos antes de se espalharem</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Wearables:</strong> Apple Watch coleta dados cardíacos de 100M+ usuários para detecção de arritmia</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.1);border-radius:12px;padding:1.1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.7rem;">💰 Finanças</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span><strong>Nubank:</strong> modelo de fraude analisa 200+ variáveis em menos de 200ms por transação</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Itaú/Bradesco:</strong> scoring de crédito com histórico de milhões de clientes em tempo real</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>B3:</strong> processamento de milhões de ordens por segundo com latência de microssegundos</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.1);border-radius:12px;padding:1.1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.7rem;">🛒 Varejo e E-commerce</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span><strong>Mercado Livre:</strong> recomendação personalizada baseada em histórico de 220M+ usuários</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Amazon:</strong> 35% da receita vem de recomendações geradas por Big Data + ML</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Precificação dinâmica:</strong> preços ajustados a cada segundo com base em demanda e estoque</span></li>
+          </ul>
+        </div>
+        <div style="background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.1);border-radius:12px;padding:1.1rem;">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:var(--accent-400);margin-bottom:.7rem;">🚗 Mobilidade e Logística</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-caret-right"></i><span><strong>Uber:</strong> preço dinâmico calculado em tempo real com dados de 5M+ motoristas e 130M+ usuários</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>iFood:</strong> ETA de entrega atualizado a cada 30 segundos com streaming de dados de GPS</span></li>
+            <li><i class="fas fa-caret-right"></i><span><strong>Fretes:</strong> roteirização com dados históricos de tráfego, clima e capacidade dos veículos</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Big Data como combustível da IA — o pipeline real</div>
+      <p>Modelos de IA não surgem do nada — eles são treinados, validados e monitorados em dados. A engenharia de dados é a infraestrutura invisível que torna tudo isso possível.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Pipeline de dados para IA — visão geral</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># 1. INGESTÃO — dados brutos chegam de várias fontes</span>
+<span class="dir">kafka</span>: eventos de clique do app → tópico "user_events"
+<span class="dir">airbyte</span>: sincroniza banco de dados transacional → Data Lake (raw)
+
+<span class="cm"># 2. TRANSFORMAÇÃO — limpeza e enriquecimento (dbt ou Spark)</span>
+<span class="kw">SELECT</span>
+  user_id,
+  COUNT(event) <span class="kw">AS</span> clicks_today,
+  MAX(timestamp) <span class="kw">AS</span> last_active,
+  AVG(session_duration) <span class="kw">AS</span> avg_session_sec
+<span class="kw">FROM</span> raw.user_events
+<span class="kw">WHERE</span> DATE(timestamp) = CURRENT_DATE
+<span class="kw">GROUP BY</span> user_id
+
+<span class="cm"># 3. FEATURE STORE — features prontas para treino e inferência</span>
+<span class="dir">feast</span>.materialize(feature_views=[<span class="str">"user_engagement"</span>], start=yesterday)
+
+<span class="cm"># 4. TREINO — modelo consome features históricas</span>
+df = <span class="dir">feast</span>.get_historical_features(entity_df, feature_refs)
+model.<span class="fn">fit</span>(df[features], df[<span class="str">"target_churn"</span>])
+
+<span class="cm"># 5. INFERÊNCIA — modelo usa features em tempo real</span>
+features_live = <span class="dir">feast</span>.<span class="fn">get_online_features</span>(user_id=<span class="num">12345</span>)
+prediction = model.<span class="fn">predict</span>(features_live)  <span class="cm"># → 0.87 (87% churn risk)</span></code></pre>
+      </div>
+      <div class="destaque">
+        <strong>Feature Store:</strong> é o "supermercado" de features para IA. Você calcula as features uma vez usando Big Data e as reutiliza tanto no treino (dados históricos) quanto na inferência em produção (dados em tempo real). Vamos construir isso na Semana 17.
+      </div>
+    </div>
+
+    <!-- Atividade prática -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Discussão em grupo</div>
+        <div class="secao-titulo">Mapeamento de casos reais de Big Data por setor</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade em trios. Cada grupo recebe um setor e deve analisar um caso real de Big Data. Ao final, cada grupo apresenta por 3 minutos para a turma.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 1 — Escolha o setor (5 min)</div>
+      <p>Cada trio escolhe um setor: <strong>saúde, finanças, varejo, mobilidade, agronegócio, educação, indústria ou entretenimento</strong>. Evite setores que outros grupos já escolheram.</p>
+      <span class="dificuldade dif-basico">Organização</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 2 — Mapeamento dos 5 Vs (20 min)</div>
+      <p>Para o caso real escolhido pelo grupo, identifique e justifique cada V:</p>
+      <ul class="icon-list" style="margin-top:.5rem;">
+        <li><i class="fas fa-expand-arrows-alt"></i><span><strong>Volume:</strong> qual é a escala dos dados? (KB, MB, GB, TB, PB)</span></li>
+        <li><i class="fas fa-tachometer-alt"></i><span><strong>Velocidade:</strong> batch, micro-batch ou streaming? Qual latência é aceitável?</span></li>
+        <li><i class="fas fa-shapes"></i><span><strong>Variedade:</strong> quais tipos de dados estão envolvidos? (estruturado, semiestruturado, não estruturado)</span></li>
+        <li><i class="fas fa-check-double"></i><span><strong>Veracidade:</strong> quais problemas de qualidade de dados existem nesse contexto?</span></li>
+        <li><i class="fas fa-gem"></i><span><strong>Valor:</strong> qual é o insight, predição ou ação gerada pelos dados?</span></li>
+      </ul>
+      <span class="dificuldade dif-medio">Análise crítica</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 3 — Desafio: qual seria o maior risco? (10 min)</div>
+      <p>Para o caso do seu grupo: <strong>se a veracidade dos dados fosse comprometida</strong> (dados corrompidos, sensor com defeito, dados maliciosamente manipulados), qual seria o impacto real no negócio e nas pessoas? Quem seria prejudicado? Como isso poderia ser mitigado?</p>
+      <span class="dificuldade dif-desafio">Ética e impacto</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver exemplo resolvido — agronegócio</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-seedling"></i>Exemplo: Agricultura de precisão — Big Data no campo</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-expand-arrows-alt" style="color:var(--accent-400);"></i><span><strong>Volume:</strong> 1 sensor por 2 hectares em uma fazenda de 10.000 ha = 5.000 sensores × 1 leitura/minuto = ~7M leituras/dia (~500 MB/dia)</span></li>
+            <li><i class="fas fa-tachometer-alt" style="color:var(--accent-400);"></i><span><strong>Velocidade:</strong> micro-batch de 15 minutos — dados de umidade do solo chegam e ativam irrigação. Streaming para alertas de chuva ou geada.</span></li>
+            <li><i class="fas fa-shapes" style="color:var(--accent-400);"></i><span><strong>Variedade:</strong> sensores (estruturado), imagens de drone (não estruturado), previsão do tempo via API (semiestruturado/JSON), histórico de safras (planilhas)</span></li>
+            <li><i class="fas fa-check-double" style="color:var(--accent-400);"></i><span><strong>Veracidade:</strong> sensor com defeito transmitindo umidade 0% — sistema liga irrigação desnecessariamente → desperdício de água e custo elevado</span></li>
+            <li><i class="fas fa-gem" style="color:var(--accent-400);"></i><span><strong>Valor:</strong> redução de 30% no consumo de água, aumento de 15% na produtividade, alerta precoce de pragas com modelo de visão computacional</span></li>
+          </ul>
+          <div class="destaque" style="margin-top:.75rem;">
+            <strong>Risco de veracidade:</strong> se sensores de umidade falharem silenciosamente (leituras incorretas mas plausíveis), o modelo de irrigação vai tomar decisões erradas. A mitigação é validação cruzada entre sensores próximos + alertas de anomalia estatística. Isso é V4 — Veracidade — na prática.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — uma startup com 5.000 usuários quer "adotar Big Data com Spark e Kafka para modernizar a infraestrutura". Qual é o diagnóstico correto?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Ótima ideia — Big Data é sempre melhor que BD tradicional</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Depende do volume — com 5.000 usuários provavelmente é desnecessário por ora</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Overengineering — adiciona custo e complexidade sem resolver um problema real de escala</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Deve adotar Kafka imediatamente, Spark pode esperar</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 1</span></div>
+
+  <!-- ── RESUMO ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 1</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-expand-arrows-alt"></i>
+        <strong>Volume</strong>
+        <p>Escala que uma máquina não aguenta. BD tradicional → vertical. Big Data → horizontal.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <strong>Velocidade</strong>
+        <p>Batch (horas), micro-batch (minutos) ou streaming (ms). Latência define a arquitetura.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shapes"></i>
+        <strong>Variedade</strong>
+        <p>Estruturado, semiestruturado e não estruturado. ~80% dos dados do mundo são não estruturados.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-check-double"></i>
+        <strong>Veracidade</strong>
+        <p>Dados ruins → decisões ruins. Qualidade na entrada é tão importante quanto o algoritmo.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-gem"></i>
+        <strong>Valor</strong>
+        <p>O único objetivo final. Dado sem valor extraído é custo, não ativo.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue explicar os 5 Vs com um exemplo concreto para cada? Sabe dizer em qual situação Big Data é necessário e quando é exagero? Entende por que escala horizontal é diferente de vertical? Se sim para os três — você está pronto para a Semana 2.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-02-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 2 — Arquiteturas Lambda e Kappa: como sistemas de Big Data são desenhados</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c = btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML = c.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar exemplo'
+    : '<i class="fas fa-lightbulb"></i> ver exemplo resolvido — agronegócio';
+}
+
+function copiar(btn){
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+
+const quizData = {
+  quiz1:{
+    correct:'B',
+    msg:'✅ Correto! Detecção de ataques em andamento exige resposta imediata — cada segundo conta. O modelo de streaming analisa cada log no momento em que chega, permitindo alertas e bloqueios antes que o ataque progrida. Batch diário descobriria o ataque apenas depois que o estrago já tivesse sido feito.'
+  },
+  quiz2:{
+    correct:'D',
+    msg:'✅ Correto! Valor é o único V que realmente justifica o investimento em Big Data. Volume, velocidade, variedade e veracidade são desafios técnicos que precisam ser resolvidos — mas a razão de existir do projeto é sempre extrair valor: insights, predições e ações que impactam o negócio.'
+  },
+  quiz3:{
+    correct:'C',
+    msg:'✅ Correto! Isso é overengineering clássico. Com 5.000 usuários, um PostgreSQL bem configurado aguenta com folga. Adotar Kafka + Spark adiciona custo de infraestrutura, complexidade operacional e curva de aprendizado da equipe sem resolver nenhum problema real. Big Data resolve problemas de escala — e escala precisa existir primeiro.'
+  }
+};
+
+function responder(quizId, el, isCorrect, letra){
+  const ops = document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered) return;
+  ops.dataset.answered = '1';
+  const correta = quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta) op.classList.add('correto');
+  });
+  if(letra!==correta) el.classList.add('errado');
+  const fb = document.getElementById(quizId+'-feedback');
+  fb.textContent = quizData[quizId].msg;
+  fb.style.background = isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border = isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color = isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

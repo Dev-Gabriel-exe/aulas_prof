@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 04 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══════════════════════════ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-blue{padding:1rem 1.25rem;border-radius:10px;background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-blue strong{color:#60a5fa;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Diagrama HDFS ── */
+.hdfs-diagram{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;}
+.hdfs-title{padding:.75rem 1.25rem;background:rgba(251,146,60,.08);font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid rgba(251,146,60,.1);}
+.hdfs-body{padding:1.5rem;background:rgba(0,0,0,.2);}
+.hdfs-row{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;}
+.hdfs-row:last-child{margin-bottom:0;}
+
+/* NameNode */
+.namenode{flex-shrink:0;width:200px;border-radius:12px;padding:1rem;background:rgba(251,146,60,.1);border:2px solid rgba(251,146,60,.4);}
+.namenode-title{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;text-align:center;}
+.nn-item{font-size:.75rem;color:var(--text-secondary);margin-bottom:.25rem;padding-left:.65rem;position:relative;}
+.nn-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;color:var(--accent-400);margin-top:2px;}
+
+/* DataNodes */
+.datanodes{flex:1;display:flex;flex-direction:column;gap:.5rem;}
+.datanode-row{display:flex;gap:.5rem;}
+.rack{flex:1;border-radius:10px;padding:.75rem;border:1px solid rgba(255,255,255,.06);}
+.rack-1{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.15);}
+.rack-2{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.15);}
+.rack-title{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.5rem;}
+.rack-1 .rack-title{color:#60a5fa;}
+.rack-2 .rack-title{color:#4ade80;}
+.datanode{display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);margin-bottom:.3rem;}
+.datanode:last-child{margin-bottom:0;}
+.datanode-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;}
+.rack-1 .datanode-icon{background:rgba(59,130,246,.15);color:#60a5fa;}
+.rack-2 .datanode-icon{background:rgba(74,222,128,.15);color:#4ade80;}
+.datanode-label{font-size:.72rem;color:var(--text-secondary);}
+.datanode-blocks{display:flex;gap:2px;margin-left:auto;}
+.block{width:14px;height:14px;border-radius:3px;font-size:.55rem;display:flex;align-items:center;justify-content:center;font-weight:700;}
+
+/* Arrows between NN and DN */
+.hdfs-arrows{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;padding:0 .5rem;flex-shrink:0;}
+.hdfs-arrow-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--text-muted);}
+.hdfs-arrow-item i{color:var(--accent-400);font-size:.7rem;}
+
+/* Block replication visual */
+.replication-demo{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:.75rem 0;}
+.rep-node{border-radius:10px;padding:.85rem;border:1px solid;}
+.rep-1{background:rgba(251,146,60,.07);border-color:rgba(251,146,60,.25);}
+.rep-2{background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.2);}
+.rep-3{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);}
+.rep-title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.rep-1 .rep-title{color:var(--accent-400);}
+.rep-2 .rep-title{color:#60a5fa;}
+.rep-3 .rep-title{color:#4ade80;}
+.rep-block{padding:.4rem .6rem;border-radius:6px;font-size:.75rem;margin-bottom:.3rem;font-family:'JetBrains Mono',monospace;}
+.rep-1 .rep-block{background:rgba(251,146,60,.1);color:var(--accent-300);}
+.rep-2 .rep-block{background:rgba(59,130,246,.1);color:#93c5fd;}
+.rep-3 .rep-block{background:rgba(74,222,128,.1);color:#86efac;}
+
+/* Write/Read pipeline */
+.pipeline-steps{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.pipeline-step{display:flex;align-items:flex-start;gap:.75rem;padding:.7rem .9rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);}
+.step-num{width:24px;height:24px;border-radius:50%;background:rgba(251,146,60,.15);color:var(--accent-400);font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:.83rem;color:var(--text-secondary);line-height:1.5;}
+.step-text strong{color:var(--text-primary);}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* Resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+/* Terminal output */
+.terminal{background:#0a0a0a;border:1px solid rgba(74,222,128,.2);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.terminal-header{background:#111;padding:.45rem .9rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(74,222,128,.1);}
+.terminal-dot{width:10px;height:10px;border-radius:50%;}
+.terminal-body{padding:1rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.7;}
+.t-prompt{color:#4ade80;}
+.t-cmd{color:#fde68a;}
+.t-out{color:rgba(255,255,255,.55);}
+.t-out-acc{color:#fb923c;}
+.t-comment{color:#374151;font-style:italic;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.replication-demo{grid-template-columns:1fr;}
+  .hdfs-row{flex-direction:column;}
+  .namenode{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">04</div>
+    <h1 class="capa-titulo"><em>Apache HDFS</em><br>Armazenamento Distribuído</h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Como bilhões de arquivos ficam seguros em clusters</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que precisamos de um sistema de arquivos distribuído?</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Arquitetura HDFS — NameNode e DataNode</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-th"></i></div><span>Blocos de 128 MB e replicação com fator 3</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-route"></i></div><span>Pipelines de leitura e escrita — como os dados fluem</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Comandos HDFS — operações no sistema de arquivos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud"></i></div><span>AWS S3, GCS e Azure ADLS — HDFS na nuvem</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fab fa-docker"></i></div><span>Prática: HDFS local com Docker + transferência de arquivos</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Subir um cluster HDFS local com Docker Compose e executar operações de leitura, escrita e verificação de blocos.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 3</div>
+      <ul class="info-lista">
+        <li>Data Lake (schema-on-read) vs Data Warehouse vs Lakehouse</li>
+        <li>Zonas Raw/Bronze → Silver → Gold e suas regras</li>
+        <li>Parquet (colunar, analytics) vs Avro (row, streaming)</li>
+        <li>Data Swamp — o perigo de um Data Lake sem governança</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 4 de 5 antes da P1 (Semana 6)</li>
+        <li>P1 cobre: 5 Vs, Lambda/Kappa, Data Lake, <strong>HDFS</strong>, Kafka</li>
+        <li>Próxima semana: Apache Kafka — streaming de eventos</li>
+        <li>Semana 6: P1 — preparação e avaliação</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>Docker e Docker Compose (instalar antes da aula 4)</li>
+        <li>Terminal (bash/zsh/PowerShell)</li>
+        <li>Imagem oficial Apache Hadoop 3.x</li>
+        <li>Opcional: Hadoop Web UI na porta 9870</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Por que precisamos de um DFS ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que um sistema de arquivos comum não aguenta Big Data</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 3</div>
+      <p>Na semana passada vimos que um Data Lake armazena dados em zonas (Raw/Silver/Gold), em formatos como Parquet e Avro. Mas surgiu uma pergunta implícita: <strong>onde fisicamente esses arquivos ficam?</strong> A resposta para escala de TB e PB é o HDFS — ou sua equivalente em nuvem.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O problema que precisava ser resolvido</div>
+      <p>Imagine que você tem <strong>500 TB de dados de logs</strong> para analisar. Cada servidor de alta performance em 2024 tem no máximo 20–30 TB de disco. Você poderia comprar um servidor maior, mas há um limite físico — e o custo cresce exponencialmente.</p>
+      <p>A solução óbvia é: <strong>distribuir os dados entre muitos servidores comuns e baratos</strong>. Mas isso cria novos problemas que o sistema de arquivos tradicional (ext4, NTFS) não resolve:</p>
+      <div class="grid-3" style="margin-top:.75rem;">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❓ Como localizar um arquivo?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Se um arquivo está dividido entre 50 servidores, quem sabe onde cada pedaço está? Como você monta o arquivo completo?</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❓ E se um servidor cair?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Em um cluster de 200 servidores, é estatisticamente certo que algum vai falhar. Como não perder dados?</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❓ Como processar eficientemente?</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Ler 500 TB pela rede é lento. Como fazer o processamento acontecer próximo dos dados?</div>
+        </div>
+      </div>
+      <div class="destaque">
+        <strong>O HDFS responde às três perguntas:</strong> um servidor central (NameNode) sabe onde cada pedaço de cada arquivo está; replicação em 3 cópias garante que a falha de um servidor não perde dados; e o Spark consegue processar os dados <em>onde eles estão</em>, sem mover tudo para uma máquina central.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-history"></i>Da Google para o mundo — a origem do HDFS</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Ano</th><th>Evento</th><th>Impacto</th></tr></thead>
+          <tbody>
+            <tr><td><strong>2003</strong></td><td>Google publica o paper do Google File System (GFS)</td><td>Primeira descrição de sistema de arquivos distribuído de grande escala</td></tr>
+            <tr><td><strong>2004</strong></td><td>Google publica o paper do MapReduce</td><td>Modelo de processamento distribuído sobre dados do GFS</td></tr>
+            <tr><td><strong>2006</strong></td><td>Doug Cutting e Mike Cafarella criam o Hadoop (Yahoo!)</td><td>Implementação open-source do GFS (HDFS) + MapReduce</td></tr>
+            <tr><td><strong>2008</strong></td><td>Apache Hadoop torna-se projeto top-level da Apache Foundation</td><td>Adoção massiva — Facebook, Twitter, LinkedIn migram para Hadoop</td></tr>
+            <tr><td><strong>2012</strong></td><td>Hadoop 2.0 — YARN substitui o MapReduce como gerenciador de recursos</td><td>HDFS passa a suportar qualquer framework (Spark, Flink, Tez)</td></tr>
+            <tr><td><strong>2019+</strong></td><td>Cloud storage (S3, GCS) começa a substituir HDFS</td><td>Separação de compute e storage — nova arquitetura dominante</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> Qual é a diferença entre um sistema de arquivos (como o Windows Explorer) e um banco de dados? O HDFS é mais parecido com qual dos dois, e por quê?</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Arquitetura HDFS</span></div>
+
+  <!-- ── AULA 2: Arquitetura NameNode/DataNode ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Arquitetura HDFS — NameNode, DataNode, Blocos e Replicação</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Visão geral: arquitetura master-worker</div>
+      <p>O HDFS segue um modelo <strong>master-worker</strong> (também chamado de master-slave): um nó central coordena e muitos nós de trabalho armazenam os dados. Essa separação é fundamental para entender como o sistema funciona.</p>
+    </div>
+
+    <!-- Diagrama HDFS -->
+    <div class="hdfs-diagram">
+      <div class="hdfs-title"><i class="fas fa-project-diagram" style="margin-right:8px;"></i>Arquitetura HDFS — NameNode + DataNodes em dois racks</div>
+      <div class="hdfs-body">
+        <div class="hdfs-row">
+          <!-- NameNode -->
+          <div class="namenode">
+            <div class="namenode-title"><i class="fas fa-crown" style="margin-right:5px;"></i>NameNode</div>
+            <div style="font-size:.65rem;color:var(--text-muted);text-align:center;margin-bottom:.5rem;">Master — Metadados apenas</div>
+            <div class="nn-item">FsImage (snapshot do FS)</div>
+            <div class="nn-item">EditLog (operações recentes)</div>
+            <div class="nn-item">Mapa: arquivo → lista de blocos</div>
+            <div class="nn-item">Mapa: bloco → DataNodes</div>
+            <div class="nn-item">Recebe heartbeat dos DN</div>
+            <div style="margin-top:.6rem;padding:.4rem .6rem;border-radius:6px;background:rgba(251,146,60,.08);font-size:.72rem;color:var(--accent-400);text-align:center;">Tudo em RAM — rápido!</div>
+          </div>
+
+          <!-- Arrows -->
+          <div class="hdfs-arrows">
+            <div class="hdfs-arrow-item"><i class="fas fa-arrow-right"></i><span>localização dos blocos</span></div>
+            <div class="hdfs-arrow-item"><i class="fas fa-arrow-left"></i><span>heartbeat a cada 3s</span></div>
+            <div class="hdfs-arrow-item"><i class="fas fa-arrow-left"></i><span>block report periódico</span></div>
+          </div>
+
+          <!-- DataNodes -->
+          <div class="datanodes">
+            <div class="datanode-row">
+              <div class="rack rack-1">
+                <div class="rack-title"><i class="fas fa-server" style="margin-right:4px;"></i>Rack 1 — Datacenter A</div>
+                <div class="datanode">
+                  <div class="datanode-icon"><i class="fas fa-hdd"></i></div>
+                  <div class="datanode-label">DataNode 1 (Primary)</div>
+                  <div class="datanode-blocks">
+                    <div class="block" style="background:rgba(251,146,60,.25);color:var(--accent-400);" title="Bloco A">A</div>
+                    <div class="block" style="background:rgba(59,130,246,.25);color:#60a5fa;" title="Bloco B">B</div>
+                    <div class="block" style="background:rgba(74,222,128,.25);color:#4ade80;" title="Bloco C">C</div>
+                  </div>
+                </div>
+                <div class="datanode">
+                  <div class="datanode-icon"><i class="fas fa-hdd"></i></div>
+                  <div class="datanode-label">DataNode 2</div>
+                  <div class="datanode-blocks">
+                    <div class="block" style="background:rgba(251,146,60,.25);color:var(--accent-400);">A</div>
+                    <div class="block" style="background:rgba(167,139,250,.25);color:#a78bfa;">D</div>
+                  </div>
+                </div>
+              </div>
+              <div class="rack rack-2">
+                <div class="rack-title"><i class="fas fa-server" style="margin-right:4px;"></i>Rack 2 — Datacenter B</div>
+                <div class="datanode">
+                  <div class="datanode-icon"><i class="fas fa-hdd"></i></div>
+                  <div class="datanode-label">DataNode 3 (Réplica)</div>
+                  <div class="datanode-blocks">
+                    <div class="block" style="background:rgba(59,130,246,.25);color:#60a5fa;">B</div>
+                    <div class="block" style="background:rgba(251,146,60,.25);color:var(--accent-400);">A</div>
+                  </div>
+                </div>
+                <div class="datanode">
+                  <div class="datanode-icon"><i class="fas fa-hdd"></i></div>
+                  <div class="datanode-label">DataNode 4</div>
+                  <div class="datanode-blocks">
+                    <div class="block" style="background:rgba(74,222,128,.25);color:#4ade80;">C</div>
+                    <div class="block" style="background:rgba(167,139,250,.25);color:#a78bfa;">D</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:.72rem;color:var(--text-muted);margin-top:.75rem;text-align:center;">Cada letra representa um bloco de 128 MB. Blocos com a mesma cor são réplicas do mesmo bloco original.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-titulo"><i class="fas fa-crown"></i>NameNode — o índice do sistema</div>
+        <p>O NameNode <strong>não armazena dados</strong>. Ele armazena apenas <strong>metadados</strong> — informações sobre os arquivos. Todo esse mapeamento fica em memória RAM para acesso ultrarrápido.</p>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>FsImage:</strong> snapshot completo do sistema de arquivos no disco</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>EditLog:</strong> log de todas as operações desde o último snapshot</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Sabe: "arquivo /user/dados.csv tem blocos B001, B002, B003"</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Sabe: "bloco B001 está nos DataNodes DN1, DN2, DN4"</span></li>
+          <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>NÃO armazena o conteúdo dos arquivos</span></li>
+        </ul>
+        <div class="destaque" style="margin-top:.75rem;"><strong>Single Point of Failure:</strong> se o NameNode cair sem proteção, o cluster inteiro para — os DataNodes têm os dados mas ninguém sabe onde. Solução: Secondary NameNode (checkpoint) ou HA NameNode (active/standby com ZooKeeper).</div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-titulo"><i class="fas fa-hdd"></i>DataNode — onde os dados vivem</div>
+        <p>Os DataNodes são os <strong>servidores de armazenamento</strong>. Eles armazenam os blocos físicos e reportam sua saúde ao NameNode continuamente.</p>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Heartbeat:</strong> envia sinal ao NameNode a cada <strong>3 segundos</strong></span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Block report:</strong> lista todos os blocos que possui periodicamente</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Se o NameNode não recebe heartbeat em <strong>10 minutos</strong> → considera o DataNode morto e inicia re-replicação</span></li>
+          <li><i class="fas fa-check-circle"></i><span>Escala horizontal: adicionar DataNodes aumenta capacidade do cluster sem downtime</span></li>
+        </ul>
+        <div class="destaque" style="margin-top:.75rem;"><strong>Commodity hardware:</strong> DataNodes são intencionalmente servidores comuns e baratos. A falha é esperada e tratada pelo sistema — não é um problema, é uma feature.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-titulo"><i class="fas fa-th"></i>Blocos — por que 128 MB?</div>
+      <p>Um arquivo de 1 GB no HDFS é dividido em <strong>8 blocos de 128 MB</strong> (ou 16 blocos de 64 MB na configuração antiga). Mas por que 128 MB e não 4 KB como nos sistemas de arquivos tradicionais?</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ Blocos pequenos (4 KB como ext4)</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>1 GB de arquivo = <strong>262.144 blocos</strong></span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>NameNode precisa de 262.144 entradas de metadados em RAM</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Para 500 TB: bilhões de entradas de metadados → NameNode não cabe em RAM</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.12);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ Blocos grandes (128 MB)</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>1 GB de arquivo = <strong>8 blocos</strong></span></li>
+            <li><i class="fas fa-check-circle"></i><span>500 TB = ~4 milhões de blocos — cabe em RAM no NameNode</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Leitura sequencial eficiente (disco adora ler grandes blocos contíguos)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-copy"></i>Replicação — rack awareness e tolerância a falhas</div>
+      <p>Por padrão, o HDFS mantém <strong>3 cópias de cada bloco</strong> (fator de replicação = 3). Mas a distribuição dessas cópias não é aleatória — o HDFS usa <strong>Rack Awareness</strong> para garantir que uma falha de rack inteiro não cause perda de dados.</p>
+      <div class="replication-demo">
+        <div class="rep-node rep-1">
+          <div class="rep-title"><i class="fas fa-star" style="margin-right:5px;"></i>Réplica 1 (Primary)</div>
+          <div class="rep-block">DataNode 1 — Rack A</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-top:.3rem;">Mesma máquina do cliente que escreveu (data locality)</div>
+        </div>
+        <div class="rep-node rep-2">
+          <div class="rep-title"><i class="fas fa-copy" style="margin-right:5px;"></i>Réplica 2</div>
+          <div class="rep-block">DataNode 3 — Rack B</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-top:.3rem;">Rack diferente — se o Rack A cair, essa cópia sobrevive</div>
+        </div>
+        <div class="rep-node rep-3">
+          <div class="rep-title"><i class="fas fa-copy" style="margin-right:5px;"></i>Réplica 3</div>
+          <div class="rep-block">DataNode 4 — Rack B</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-top:.3rem;">Mesmo rack da réplica 2 — reduz tráfego inter-rack</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Lógica do Rack Awareness:</strong> 1ª réplica no nó local (ou aleatório no Rack A), 2ª réplica em um DataNode de outro rack (Rack B), 3ª réplica no mesmo rack da 2ª (Rack B, DataNode diferente). Isso garante sobrevivência a falha de um nó OU de um rack inteiro completo.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um DataNode falha e o NameNode não recebe heartbeat por 10 minutos. O que o HDFS faz automaticamente?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Suspende todas as operações do cluster até o DataNode ser reiniciado</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Re-replica os blocos que estavam naquele DataNode para outros nós do cluster</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Apaga os dados que estavam no DataNode falho permanentemente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Notifica o administrador por e-mail e aguarda intervenção manual</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Leitura, Escrita e Alternativas Cloud</span></div>
+
+  <!-- ── AULA 3: Pipelines + S3/GCS ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Como os dados fluem — leitura, escrita e cloud storage</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-pencil-alt"></i>Pipeline de escrita — como um arquivo entra no HDFS</div>
+      <div class="pipeline-steps">
+        <div class="pipeline-step"><div class="step-num">1</div><div class="step-text"><strong>Cliente contata o NameNode:</strong> "quero escrever o arquivo /dados/vendas.parquet de 384 MB"</div></div>
+        <div class="pipeline-step"><div class="step-num">2</div><div class="step-text"><strong>NameNode responde:</strong> "seu arquivo terá 3 blocos. Escreva o Bloco 1 em DN1→DN3→DN4, Bloco 2 em DN2→DN3→DN1, Bloco 3 em DN1→DN4→DN2". Atualiza o EditLog.</div></div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-text"><strong>Cliente escreve em pipeline:</strong> envia o Bloco 1 para DN1. DN1 simultaneamente encaminha para DN3. DN3 encaminha para DN4. As 3 réplicas são escritas em paralelo.</div></div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-text"><strong>Acknowledgment reverso:</strong> DN4 confirma para DN3 → DN3 confirma para DN1 → DN1 confirma para o Cliente. Só quando o cliente recebe a confirmação dos 3 DataNodes é que o bloco é considerado persistido.</div></div>
+        <div class="pipeline-step"><div class="step-num">5</div><div class="step-text"><strong>Processo se repete</strong> para os Blocos 2 e 3. Ao final, o cliente avisa o NameNode: "escrita concluída". NameNode fecha o arquivo nos metadados.</div></div>
+      </div>
+      <div class="destaque"><strong>Data locality:</strong> note que o Spark, ao processar o arquivo, solicita ao NameNode onde estão os blocos e tenta agendar as tarefas <em>nos próprios DataNodes que hospedam os dados</em>. Isso elimina tráfego de rede e é um dos maiores ganhos de performance do HDFS sobre soluções de rede compartilhada.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-book-open"></i>Pipeline de leitura — como um arquivo sai do HDFS</div>
+      <div class="pipeline-steps">
+        <div class="pipeline-step"><div class="step-num">1</div><div class="step-text"><strong>Cliente solicita ao NameNode:</strong> "quero ler /dados/vendas.parquet"</div></div>
+        <div class="pipeline-step"><div class="step-num">2</div><div class="step-text"><strong>NameNode retorna localização dos blocos:</strong> "Bloco 1 está em DN1, DN3, DN4 — mais próximo de você é DN1. Bloco 2 está em DN2, DN3, DN1 — mais próximo é DN2." etc.</div></div>
+        <div class="pipeline-step"><div class="step-num">3</div><div class="step-text"><strong>Cliente lê diretamente dos DataNodes:</strong> sem passar pelo NameNode. Lê Bloco 1 de DN1, Bloco 2 de DN2, Bloco 3 de DN1. Os DataNodes lidos são os mais próximos da rede (rack awareness).</div></div>
+        <div class="pipeline-step"><div class="step-num">4</div><div class="step-text"><strong>Se um DataNode falhar durante a leitura:</strong> o cliente usa a próxima réplica disponível na lista fornecida pelo NameNode. Transparente para a aplicação.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>HDFS na nuvem — S3, GCS e Azure ADLS</div>
+      <p>Desde 2015, uma tendência clara se consolidou: empresas estão <strong>substituindo HDFS por object storage em nuvem</strong> (AWS S3, Google Cloud Storage, Azure Data Lake Storage). O Apache Spark lê e escreve no S3 exatamente como leria no HDFS, via o conector <code>s3a://</code>.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th><span class="badge">HDFS</span></th><th><span class="badge-blue">AWS S3</span></th><th><span class="badge-green">Google GCS</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tipo</strong></td><td>Block storage distribuído</td><td>Object storage</td><td>Object storage</td></tr>
+            <tr><td><strong>Compute + Storage</strong></td><td>Acoplados (mesmo cluster)</td><td>Desacoplados</td><td>Desacoplados</td></tr>
+            <tr><td><strong>Custo storage</strong></td><td>Alto (servidores 24/7)</td><td>~$0.023/GB/mês</td><td>~$0.020/GB/mês</td></tr>
+            <tr><td><strong>Escalabilidade</strong></td><td>Manual (add DataNodes)</td><td>Infinita automática</td><td>Infinita automática</td></tr>
+            <tr><td><strong>Durabilidade</strong></td><td>3x replicação (~99.99%)</td><td>99.999999999% (11 9s)</td><td>99.999999999% (11 9s)</td></tr>
+            <tr><td><strong>Data locality</strong></td><td>✅ Excelente (Spark lê local)</td><td>⚠️ Menor (rede)</td><td>⚠️ Menor (rede)</td></tr>
+            <tr><td><strong>Latência</strong></td><td>Baixa (rede local)</td><td>Maior (internet/VPC)</td><td>Maior (internet/VPC)</td></tr>
+            <tr><td><strong>Operação</strong></td><td>Complexa (NameNode, DN)</td><td>Zero ops (managed)</td><td>Zero ops (managed)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso"><i class="fas fa-lightbulb"></i><span><strong>Por que o mercado está migrando para S3?</strong> Custo e operação. Com HDFS você paga o cluster 24/7 mesmo que o Spark só rode 2h por dia. Com S3 + Spark no EMR/Databricks, você paga o cluster só quando ele roda e paga storage separado. Para a maioria das empresas, é 3–10x mais barato.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Lendo S3 com Spark — é igual ao HDFS</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — HDFS vs S3 vs GCS</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ── HDFS local ou on-premise ─────────────────────────────────</span>
+df = spark.read.<span class="fn">parquet</span>(<span class="str">"hdfs://namenode:9000/datalake/silver/orders/"</span>)
+
+<span class="cm"># ── AWS S3 (via conector s3a) ─────────────────────────────────</span>
+df = spark.read.<span class="fn">parquet</span>(<span class="str">"s3a://meu-bucket/datalake/silver/orders/"</span>)
+
+<span class="cm"># ── Google Cloud Storage ──────────────────────────────────────</span>
+df = spark.read.<span class="fn">parquet</span>(<span class="str">"gs://meu-bucket/datalake/silver/orders/"</span>)
+
+<span class="cm"># ── Azure Data Lake Storage Gen2 ──────────────────────────────</span>
+df = spark.read.<span class="fn">parquet</span>(<span class="str">"abfss://container@account.dfs.core.windows.net/silver/"</span>)
+
+<span class="cm"># A API do Spark é idêntica para todos — só o prefixo muda!
+# O Spark abstrai completamente o sistema de armazenamento subjacente.</span>
+
+<span class="cm"># Configurar credenciais AWS para o S3A connector</span>
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.hadoop.fs.s3a.access.key"</span>, <span class="str">"SUA_KEY"</span>)
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.hadoop.fs.s3a.secret.key"</span>, <span class="str">"SUA_SECRET"</span>)
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.hadoop.fs.s3a.endpoint"</span>, <span class="str">"s3.amazonaws.com"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — por que o HDFS oferece melhor "data locality" do que o AWS S3 para processamento com Spark?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Porque o S3 não suporta o formato Parquet</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Porque no HDFS o Spark pode processar dados no mesmo nó onde estão armazenados, sem tráfego de rede</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Porque o HDFS comprime os dados automaticamente antes de processar</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Porque o S3 não tem suporte para múltiplas réplicas</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Comandos HDFS + Prática com Docker</span></div>
+
+  <!-- ── AULA 4: Comandos + Prática Docker ────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Comandos HDFS na prática — subindo o cluster com Docker</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Comandos essenciais — hdfs dfs</div>
+      <p>Todos os comandos HDFS seguem o padrão <code>hdfs dfs -comando /caminho</code>. A sintaxe é intencionalmente parecida com o shell Unix.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">HDFS — Comandos essenciais</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ── Navegação e listagem ────────────────────────────────────</span>
+hdfs dfs <span class="flag">-ls</span> /                          <span class="cm"># listar diretório raiz</span>
+hdfs dfs <span class="flag">-ls</span> <span class="flag">-R</span> /user/dados             <span class="cm"># listar recursivamente</span>
+hdfs dfs <span class="flag">-du</span> <span class="flag">-s</span> <span class="flag">-h</span> /datalake/silver    <span class="cm"># tamanho total (human-readable)</span>
+hdfs dfs <span class="flag">-df</span> <span class="flag">-h</span>                          <span class="cm"># espaço livre no cluster</span>
+
+<span class="cm"># ── Criar e remover diretórios ─────────────────────────────</span>
+hdfs dfs <span class="flag">-mkdir</span> <span class="flag">-p</span> /datalake/raw/orders   <span class="cm"># criar (com -p cria pais)</span>
+hdfs dfs <span class="flag">-rm</span> <span class="flag">-r</span> /datalake/raw/tmp        <span class="cm"># remover recursivamente</span>
+
+<span class="cm"># ── Upload e download ──────────────────────────────────────</span>
+hdfs dfs <span class="flag">-put</span> vendas.csv /datalake/raw/   <span class="cm"># upload local → HDFS</span>
+hdfs dfs <span class="flag">-put</span> <span class="flag">-f</span> vendas.csv /datalake/raw/ <span class="cm"># forçar sobrescrita</span>
+hdfs dfs <span class="flag">-get</span> /datalake/silver/orders.parquet ./  <span class="cm"># download HDFS → local</span>
+hdfs dfs <span class="flag">-copyToLocal</span> /hdfs/file.txt ./  <span class="cm"># equivalente ao -get</span>
+
+<span class="cm"># ── Leitura e manipulação ─────────────────────────────────</span>
+hdfs dfs <span class="flag">-cat</span> /datalake/raw/config.txt    <span class="cm"># ler conteúdo</span>
+hdfs dfs <span class="flag">-tail</span> /datalake/raw/events.log   <span class="cm"># últimas linhas</span>
+hdfs dfs <span class="flag">-cp</span> /datalake/raw/ /backup/raw/   <span class="cm"># copiar dentro do HDFS</span>
+hdfs dfs <span class="flag">-mv</span> /datalake/raw/tmp/ /datalake/archive/  <span class="cm"># mover</span>
+
+<span class="cm"># ── Verificação e administração ───────────────────────────</span>
+hdfs fsck /datalake <span class="flag">-files</span> <span class="flag">-blocks</span>       <span class="cm"># verificar saúde do FS</span>
+hdfs dfsadmin <span class="flag">-report</span>                   <span class="cm"># status do cluster</span>
+hdfs dfsadmin <span class="flag">-safemode</span> get             <span class="cm"># verificar modo seguro</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fab fa-docker"></i>Subindo HDFS local com Docker Compose</div>
+      <p>Vamos criar um cluster HDFS mínimo (1 NameNode + 2 DataNodes) em Docker para praticar os comandos sem precisar de infraestrutura real.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">docker-compose.yml — cluster HDFS mínimo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">version</span>: <span class="str">'3.8'</span>
+<span class="kw">services</span>:
+
+  <span class="dir">namenode</span>:
+    <span class="kw">image</span>: apache/hadoop:<span class="num">3</span>
+    <span class="kw">container_name</span>: namenode
+    <span class="kw">hostname</span>: namenode
+    <span class="kw">environment</span>:
+      - ENSURE_NAMENODE_DIR=<span class="str">/tmp/hadoop-root/dfs/name</span>
+    <span class="kw">command</span>: [<span class="str">"hdfs"</span>, <span class="str">"namenode"</span>]
+    <span class="kw">ports</span>:
+      - <span class="str">"9870:9870"</span>   <span class="cm"># Web UI do NameNode</span>
+      - <span class="str">"9000:9000"</span>   <span class="cm"># RPC port</span>
+    <span class="kw">volumes</span>:
+      - namenode_data:/tmp/hadoop-root/dfs/name
+      - ./hadoop.env:/opt/hadoop/etc/hadoop/core-site.xml
+
+  <span class="dir">datanode1</span>:
+    <span class="kw">image</span>: apache/hadoop:<span class="num">3</span>
+    <span class="kw">container_name</span>: datanode1
+    <span class="kw">command</span>: [<span class="str">"hdfs"</span>, <span class="str">"datanode"</span>]
+    <span class="kw">depends_on</span>: [namenode]
+    <span class="kw">volumes</span>:
+      - datanode1_data:/tmp/hadoop-root/dfs/data
+
+  <span class="dir">datanode2</span>:
+    <span class="kw">image</span>: apache/hadoop:<span class="num">3</span>
+    <span class="kw">container_name</span>: datanode2
+    <span class="kw">command</span>: [<span class="str">"hdfs"</span>, <span class="str">"datanode"</span>]
+    <span class="kw">depends_on</span>: [namenode]
+    <span class="kw">volumes</span>:
+      - datanode2_data:/tmp/hadoop-root/dfs/data
+
+<span class="kw">volumes</span>:
+  namenode_data:
+  datanode1_data:
+  datanode2_data:</code></pre>
+      </div>
+
+      <!-- Terminal demo -->
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dot" style="background:#f87171;"></div>
+          <div class="terminal-dot" style="background:#fbbf24;"></div>
+          <div class="terminal-dot" style="background:#4ade80;"></div>
+          <span style="font-size:.65rem;color:rgba(255,255,255,.3);margin-left:.5rem;">Terminal — cluster HDFS com Docker</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker compose up -d</span></div>
+          <div class="t-out">[+] Running 3/3</div>
+          <div class="t-out"> ✔ Container namenode   Started</div>
+          <div class="t-out"> ✔ Container datanode1  Started</div>
+          <div class="t-out"> ✔ Container datanode2  Started</div>
+          <div style="height:.5rem;"></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker exec -it namenode hdfs dfsadmin -report</span></div>
+          <div class="t-out-acc">Configured Capacity: 60 GB</div>
+          <div class="t-out-acc">DFS Used: 0 B (0%)</div>
+          <div class="t-out-acc">Live datanodes (2):</div>
+          <div class="t-out">  datanode1: 30 GB capacity, 0 B used</div>
+          <div class="t-out">  datanode2: 30 GB capacity, 0 B used</div>
+          <div style="height:.5rem;"></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker exec -it namenode hdfs dfs -mkdir -p /datalake/raw</span></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">echo "id,produto,valor" > vendas.csv</span></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">echo "1,Tênis,299" >> vendas.csv</span></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker cp vendas.csv namenode:/tmp/vendas.csv</span></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker exec -it namenode hdfs dfs -put /tmp/vendas.csv /datalake/raw/</span></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker exec -it namenode hdfs dfs -ls /datalake/raw/</span></div>
+          <div class="t-out-acc">Found 1 items</div>
+          <div class="t-out">-rw-r--r-- 3 root supergroup 34 2024-01-15 /datalake/raw/vendas.csv</div>
+          <div style="height:.5rem;"></div>
+          <div><span class="t-prompt">$</span> <span class="t-cmd">docker exec -it namenode hdfs fsck /datalake/raw/vendas.csv -files -blocks</span></div>
+          <div class="t-out">/datalake/raw/vendas.csv 34 bytes, 1 block(s)</div>
+          <div class="t-out-acc">OK: 1 block(s) total, 1 block(s) with all replicas</div>
+          <div class="t-comment"># O arquivo tem só 34 bytes — fica em 1 bloco com 3 réplicas distribuídas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atividade -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Prática hands-on</div>
+        <div class="secao-titulo">Explorar o cluster HDFS — transferência e verificação de arquivos</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade individual ou em dupla. Pré-requisito: Docker instalado. O professor faz o setup inicial e os alunos executam os exercícios nos próprios terminais. Tempo: 25–30 minutos.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Setup e exploração (8 min)</div>
+      <p>Suba o cluster com <code>docker compose up -d</code>. Em seguida: (a) verifique se os DataNodes estão registrados com <code>hdfs dfsadmin -report</code>, (b) acesse a Web UI em <code>localhost:9870</code> e anote quantos DataNodes aparecem na aba "Datanodes", (c) liste o diretório raiz do HDFS com <code>hdfs dfs -ls /</code>.</p>
+      <span class="dif-basico">Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Upload e verificação de blocos (12 min)</div>
+      <p>Crie um arquivo CSV de pelo menos 100 linhas na sua máquina local (pode usar Python ou copiar um dataset). Faça o upload para <code>/datalake/raw/</code> no HDFS. Em seguida: (a) use <code>hdfs fsck</code> para verificar o número de blocos e réplicas do arquivo, (b) use <code>hdfs dfs -du -h</code> para ver o tamanho reportado, (c) explique por que o tamanho pode aparecer multiplicado por 3 no relatório do cluster.</p>
+      <span class="dif-medio">Análise</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver resposta do item (c)</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Por que o tamanho aparece multiplicado por 3</div>
+          <p>O HDFS reporta o espaço consumido no disco levando em conta as réplicas. Se seu arquivo tem 10 MB e o fator de replicação é 3, o HDFS ocupa 30 MB no cluster (10 MB × 3 réplicas). O comando <code>hdfs dfs -du -s /path</code> mostra dois valores: o tamanho real do arquivo e o tamanho total no disco (incluindo réplicas). Isso é intencional — o HDFS está sendo transparente sobre o custo real de armazenamento.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: simular falha de DataNode (10 min)</div>
+      <p>Faça o upload de um arquivo e anote em quais DataNodes seus blocos estão (use <code>hdfs fsck -locations</code>). Em seguida, pare um dos DataNodes com <code>docker stop datanode1</code>. Espere 2 minutos e verifique com <code>hdfs dfsadmin -report</code>. Responda: (a) o que aconteceu com os blocos que estavam no datanode1? (b) o arquivo ainda pode ser lido? Tente com <code>hdfs dfs -cat</code>. (c) suba o datanode1 novamente — o que o cluster faz?</p>
+      <span class="dif-desafio">Tolerância a falhas</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver resposta esperada</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Comportamento esperado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>(a)</strong> Após ~10 minutos (ou mais rápido em ambiente de teste), o NameNode detecta o DataNode como dead. Inicia re-replicação automática dos blocos que estavam nele para outros DataNodes disponíveis. O fator de replicação volta para 3.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(b)</strong> Sim! O arquivo ainda pode ser lido imediatamente — as outras 2 réplicas estão em datanode2 (e possivelmente datanode3 se tiver). O <code>hdfs dfs -cat</code> lê das réplicas disponíveis sem interrupção.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>(c)</strong> Quando o datanode1 volta, o NameNode o reconhece pelo heartbeat. Recebe o block report com os blocos que ele ainda tem. Se o fator de replicação foi restaurado durante a ausência, alguns blocos no datanode1 podem ser marcados como "excess" e removidos. O cluster se auto-balanceia.</span></li>
+          </ul>
+          <div class="destaque" style="margin-top:.75rem;"><strong>Conclusão prática:</strong> este exercício demonstra o pilar mais importante do HDFS — fault tolerance automático. Nenhuma intervenção humana foi necessária para manter os dados disponíveis durante a falha do DataNode.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — qual componente do HDFS, se falhar sem proteção, derruba todo o cluster mesmo com todos os DataNodes funcionando?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">DataNode — os dados só existem nos DataNodes</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">NameNode — sem o índice de metadados, ninguém sabe onde estão os blocos</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O rack inteiro — HDFS depende de um rack central ativo</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Nenhum — o HDFS foi projetado para funcionar sem ponto central</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 4</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 4</div>
+        <div class="secao-titulo">O que você precisa ter gravado antes da P1</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-crown"></i>
+        <strong>NameNode</strong>
+        <p>Só metadados. Todo em RAM. Single point of failure. Conhece onde cada bloco está.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-hdd"></i>
+        <strong>DataNode</strong>
+        <p>Armazena blocos reais. Heartbeat a cada 3s. Se ficar 10 min sem heartbeat → considerado morto.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-th"></i>
+        <strong>Blocos + Replicação</strong>
+        <p>128 MB por bloco. Fator 3: réplica 1 local, réplica 2 em outro rack, réplica 3 no mesmo rack da 2ª.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cloud"></i>
+        <strong>HDFS vs S3</strong>
+        <p>HDFS: compute+storage acoplados, data locality. S3: mais barato, desacoplado, durabilidade 11 9s.</p>
+      </div>
+    </div>
+
+    <div class="aviso" style="margin-top:1.5rem;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>P1 é na semana que vem!</strong> Revisão rápida do que será cobrado: 5 Vs do Big Data (semana 1), Arquiteturas Lambda e Kappa (semana 2), Data Lake e zonas Raw/Silver/Gold e formatos Parquet/Avro (semana 3), e HDFS — NameNode, DataNode, blocos e replicação (semana 4). A semana 5 (Kafka) também entra na P1.</span>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:.75rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue explicar o papel do NameNode sem consultar nada? Sabe por que os blocos têm 128 MB e não 4 KB? Entende por que uma falha de DataNode não causa perda de dados? Sabe a diferença prática de HDFS vs S3? Se sim para os quatro — você está pronto para a Semana 5 e para a P1.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-05-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana · Última antes da P1</div>
+        <div class="proxima-titulo">Semana 5 — Apache Kafka: tópicos, partições, producers/consumers e streaming em tempo real</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver resposta';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! O HDFS usa a replicação para tolerância a falhas automática. Quando o NameNode não recebe o heartbeat de um DataNode por 10 minutos, ele o marca como "dead" e verifica quais blocos ficaram com menos de 3 réplicas. Em seguida, instrui outros DataNodes a fazer cópias desses blocos para restaurar o fator de replicação — tudo automaticamente, sem intervenção humana.'},
+  quiz2:{correct:'B',msg:'✅ Correto! No HDFS, o Spark pode ser executado nos mesmos nós físicos onde os dados estão (DataNodes). O NameNode informa onde cada bloco está e o Spark scheduler tenta executar as tarefas no nó que já possui o dado localmente. No S3, os dados sempre precisam ser transferidos pela rede antes do processamento — o que adiciona latência e custos de transferência, mas permite escalar compute independentemente de storage.'},
+  quiz3:{correct:'B',msg:'✅ Correto! O NameNode é o ponto central do HDFS — ele é o único que sabe onde cada bloco de cada arquivo está armazenado. Se o NameNode cair, os DataNodes continuam vivos com todos os dados intactos, mas ninguém sabe onde está nada. O cluster fica completamente inacessível. Por isso, em produção, sempre se usa HA NameNode (Active/Standby com ZooKeeper e JournalNodes) para evitar esse único ponto de falha.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

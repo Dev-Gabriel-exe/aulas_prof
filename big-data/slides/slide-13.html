@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 13 — AVALIAÇÃO P2 · Big Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --exam-red:#dc2626;
+  --exam-red-acc:#f87171;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c0a0a;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#dc2626;top:38%;left:42%;opacity:.12;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.2);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--exam-red-acc);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.1;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--exam-red-acc);}
+.capa-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--exam-red-acc);border-radius:2px;margin-bottom:2rem;}
+.cobertura{display:flex;flex-direction:column;gap:.65rem;}
+.cob-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.83rem;animation:slideIn .5s ease both;}
+.cob-item:nth-child(1){animation-delay:.1s;}.cob-item:nth-child(2){animation-delay:.2s;}.cob-item:nth-child(3){animation-delay:.3s;}.cob-item:nth-child(4){animation-delay:.4s;}.cob-item:nth-child(5){animation-delay:.5s;}.cob-item:nth-child(6){animation-delay:.6s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.cob-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.15);color:var(--exam-red-acc);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:800;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--exam-red-acc);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--exam-red-acc);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.65rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.aviso-exam{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-exam i{color:var(--exam-red-acc);flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-pink{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.22);}
+
+/* ── Semana cards ── */
+.semanas-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.s-card{border-radius:14px;padding:1.25rem;border:1px solid;}
+.s7{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.s8{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.s9{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.s10{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.18);}
+.s11{background:rgba(244,114,182,.04);border-color:rgba(244,114,182,.18);}
+.s12{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.s-titulo{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+.s7 .s-titulo{color:#60a5fa;}
+.s8 .s-titulo{color:#4ade80;}
+.s9 .s-titulo{color:#a78bfa;}
+.s10 .s-titulo{color:#fbbf24;}
+.s11 .s-titulo{color:#f472b6;}
+.s12 .s-titulo{color:#fb923c;}
+.s-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.s-item::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+.s-armadilha{font-size:.74rem;margin-top:.65rem;padding:.5rem .75rem;border-radius:7px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:rgba(252,165,165,.8);}
+.s-armadilha::before{content:'⚠ ';font-weight:700;}
+
+/* ── Questões ── */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s;}
+.questao:hover{border-color:rgba(239,68,68,.2);}
+.q-header{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:1rem;}
+.q-num{width:32px;height:32px;border-radius:9px;background:rgba(239,68,68,.12);color:var(--exam-red-acc);font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-texto{font-size:.92rem;color:var(--text-primary);line-height:1.6;font-weight:500;}
+.q-semana{font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:600;margin-top:6px;flex-shrink:0;}
+.q-opcoes{display:flex;flex-direction:column;gap:.45rem;}
+.q-op{display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .85rem;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:all .2s;font-size:.85rem;color:var(--text-secondary);}
+.q-op:hover{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);}
+.q-op.correto{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35);color:#86efac;}
+.q-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.q-letra{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;margin-top:1px;}
+.q-gabarito{display:none;margin-top:.85rem;padding:.85rem 1rem;border-radius:9px;font-size:.83rem;line-height:1.6;}
+.q-gabarito.show{display:block;}
+
+/* ── Dissertativas ── */
+.dissertativa{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.d-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.d-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1rem;padding:.85rem 1rem;border-radius:9px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:.5rem 1rem;color:var(--exam-red-acc);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(239,68,68,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+.modelo-resposta{padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.modelo-resposta strong{color:#4ade80;}
+
+/* ── Checklist ── */
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;}
+.check-item:hover{border-color:rgba(74,222,128,.3);}
+.check-item.checked{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;}
+.check-item.checked .check-box{background:rgba(74,222,128,.3);border-color:#4ade80;color:#4ade80;}
+.check-label{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+.check-item.checked .check-label{color:rgba(134,239,172,.8);}
+.progress-bar-wrap{margin:1rem 0;padding:1rem 1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-label span{font-size:.78rem;color:var(--text-secondary);}
+.progress-label strong{font-size:.82rem;color:var(--text-primary);}
+.progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#fb923c);border-radius:4px;transition:width .4s ease;}
+
+/* Score */
+.score-box{display:none;margin-top:1rem;padding:1.25rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#4ade80;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#4ade80;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.semanas-grid,.checklist-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔴 Avaliação P2</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">13</div>
+    <h1 class="capa-titulo"><em>Avaliação P2</em></h1>
+    <p class="capa-sub">Semana de prova · Conteúdo das semanas 7 a 12</p>
+    <div class="divider"></div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">Guia completo de preparação para a P2. Use o simulado de 12 questões, os gabaritos das dissertativas e o checklist interativo.</p>
+    <div class="cobertura">
+      <div class="cob-item"><div class="cob-num">S7</div><span>Ingestão em larga escala — Full Load, Incremental, CDC, Airbyte, Kafka</span></div>
+      <div class="cob-item"><div class="cob-num">S8</div><span>Apache Spark — MapReduce vs in-memory, RDD, Lazy Eval, DataFrame, Spark SQL</span></div>
+      <div class="cob-item"><div class="cob-num">S9</div><span>PySpark avançado — Narrow/Wide transforms, joins, shuffle, particionamento</span></div>
+      <div class="cob-item"><div class="cob-num">S10</div><span>Spark SQL e Otimização — Catalyst Optimizer, explain(), cache, Tungsten</span></div>
+      <div class="cob-item"><div class="cob-num">S11</div><span>ETL vs ELT e dbt — camadas, ref(), source(), testes genéricos e singulares</span></div>
+      <div class="cob-item"><div class="cob-num">S12</div><span>Apache Airflow — DAGs, operadores, sensores, retries, catchup</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Formato da P2</div>
+      <ul class="info-lista">
+        <li>Questões de múltipla escolha — conceito e análise de cenário</li>
+        <li>Questões dissertativas — comparação, projeto e justificativa</li>
+        <li>Pode incluir leitura de código PySpark ou SQL dbt</li>
+        <li>Consulta: sem consulta (prova fechada)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Temas mais importantes</div>
+      <ul class="info-lista">
+        <li>Broadcast Join vs Shuffle Hash Join — quando e por quê</li>
+        <li>Catalyst Optimizer — as 4 fases e o explain()</li>
+        <li>dbt ref() vs source() — diferença e uso</li>
+        <li>Airflow — DAG, operador e sensor — diferença e uso</li>
+        <li>ETL vs ELT — critérios de escolha</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dica de ouro</div>
+      <ul class="info-lista">
+        <li>Conecte os temas: ingestão → Spark → dbt → Airflow é a stack completa</li>
+        <li>Para cenários de performance Spark, pergunte: tem shuffle? tem broadcast possível?</li>
+        <li>Para dbt: ref() cria dependências, source() aponta para dados brutos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>começar a revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── REVISÃO RÁPIDA ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">①</div>
+      <div class="secao-info">
+        <div class="secao-label">Revisão rápida</div>
+        <div class="secao-titulo">Os 6 temas — pontos-chave e armadilhas comuns</div>
+      </div>
+    </div>
+
+    <div class="semanas-grid">
+      <div class="s-card s7">
+        <div class="s-titulo">Semana 7 — Ingestão</div>
+        <div class="s-item"><strong>Full Load:</strong> copia tudo. Simples, pesado, sem cursor necessário</div>
+        <div class="s-item"><strong>Incremental:</strong> cursor em updated_at. Eficiente. Não captura DELETEs</div>
+        <div class="s-item"><strong>CDC:</strong> lê WAL do banco. Captura INSERT/UPDATE/DELETE. Latência segundos. Sem cursor necessário</div>
+        <div class="s-item"><strong>Streaming:</strong> eventos de app → Kafka direto. Produtor publica, consumer lê com offset</div>
+        <div class="s-item"><strong>Airbyte:</strong> conectores prontos para SaaS/APIs. Batch. Airbyte ≠ CDC</div>
+        <div class="s-armadilha">Armadilha: Incremental não vê DELETEs. Sem updated_at → só Full Load ou CDC.</div>
+      </div>
+      <div class="s-card s8">
+        <div class="s-titulo">Semana 8 — Apache Spark</div>
+        <div class="s-item"><strong>In-memory:</strong> Spark mantém dados em RAM entre etapas — 10-100x mais rápido que MapReduce</div>
+        <div class="s-item"><strong>RDD:</strong> Resilient (lineage), Distributed, Dataset. Lazy evaluation</div>
+        <div class="s-item"><strong>Transformação (lazy):</strong> map, filter, select — não executam</div>
+        <div class="s-item"><strong>Action (eager):</strong> count, collect, show — disparam execução do DAG</div>
+        <div class="s-item"><strong>DataFrame:</strong> schema definido + Catalyst Optimizer. Supera RDD</div>
+        <div class="s-item"><strong>Spark SQL:</strong> createOrReplaceTempView + spark.sql() — resultado é DataFrame</div>
+        <div class="s-armadilha">Armadilha: collect() traz TUDO para o driver — crashes em datasets grandes. Use take(n).</div>
+      </div>
+      <div class="s-card s9">
+        <div class="s-titulo">Semana 9 — PySpark Avançado</div>
+        <div class="s-item"><strong>Narrow:</strong> map, filter, select — sem shuffle, rápido</div>
+        <div class="s-item"><strong>Wide:</strong> groupBy, join, orderBy, distinct — exige shuffle, caro</div>
+        <div class="s-item"><strong>Broadcast Join:</strong> tabela pequena → copiada para todos executors → sem shuffle</div>
+        <div class="s-item"><strong>Shuffle Hash Join:</strong> ambas tabelas grandes → ambas são redistribuídas pela rede</div>
+        <div class="s-item"><strong>repartition(n):</strong> shuffle completo, pode aumentar partições</div>
+        <div class="s-item"><strong>coalesce(n):</strong> só diminui, sem shuffle completo, mais barato</div>
+        <div class="s-armadilha">Armadilha: broadcast() na tabela PEQUENA, não na grande. Skew = uma partição vira gargalo.</div>
+      </div>
+      <div class="s-card s10">
+        <div class="s-titulo">Semana 10 — Spark SQL + Otimização</div>
+        <div class="s-item"><strong>Catalyst:</strong> 4 fases: Análise → Otimiz. Lógica → Planej. Físico → Code Gen</div>
+        <div class="s-item"><strong>Predicate Pushdown:</strong> filtros empurrados até o FileScan — lê menos dados</div>
+        <div class="s-item"><strong>Column Pruning:</strong> lê só as colunas necessárias</div>
+        <div class="s-item"><strong>explain():</strong> mostra o plano sem executar. PushedFilters + BroadcastHashJoin = bom</div>
+        <div class="s-item"><strong>cache()/persist():</strong> evita recalcular quando DataFrame é reutilizado em múltiplas actions</div>
+        <div class="s-item"><strong>UDF:</strong> opaca para o Catalyst → PushedFilters: [] → evitar</div>
+        <div class="s-armadilha">Armadilha: cache() é lazy — só materializa na 1ª action após o persist. Sempre unpersist() ao final.</div>
+      </div>
+      <div class="s-card s11">
+        <div class="s-titulo">Semana 11 — ETL vs ELT e dbt</div>
+        <div class="s-item"><strong>ETL:</strong> transforma antes de carregar — para dados sensíveis/regulados</div>
+        <div class="s-item"><strong>ELT:</strong> carrega bruto, transforma dentro do warehouse. Padrão moderno</div>
+        <div class="s-item"><strong>Camadas dbt:</strong> staging (stg_*) → intermediate (int_*) → marts (fct_*, dim_*)</div>
+        <div class="s-item"><strong>source():</strong> aponta para tabela bruta externa ao dbt (zona Raw)</div>
+        <div class="s-item"><strong>ref():</strong> aponta para outro modelo dbt — cria dependência no DAG</div>
+        <div class="s-item"><strong>Testes:</strong> genéricos (unique, not_null, accepted_values, relationships) e singulares (SQL custom)</div>
+        <div class="s-armadilha">Armadilha: ref() ≠ source(). Teste singular = SQL que deve retornar ZERO linhas para passar.</div>
+      </div>
+      <div class="s-card s12">
+        <div class="s-titulo">Semana 12 — Apache Airflow</div>
+        <div class="s-item"><strong>DAG:</strong> grafo direcionado acíclico. Operator >> define dependência</div>
+        <div class="s-item"><strong>BashOperator:</strong> executa shell. PythonOperator: executa função Python</div>
+        <div class="s-item"><strong>Sensor:</strong> espera condição (arquivo, S3, outra DAG). Não confundir com Operator</div>
+        <div class="s-item"><strong>poke vs reschedule:</strong> poke ocupa worker, reschedule libera entre verificações</div>
+        <div class="s-item"><strong>catchup=True:</strong> dispara TODAS execuções perdidas desde start_date</div>
+        <div class="s-item"><strong>retries:</strong> tentativas antes de marcar failed. SLA: alerta por demora (não falha)</div>
+        <div class="s-armadilha">Armadilha: catchup=False em produção para evitar avalanche. Sensor ≠ Operator — sensor espera, operator executa.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Simulado — 12 questões</span></div>
+
+  <!-- ── SIMULADO ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">②</div>
+      <div class="secao-info">
+        <div class="secao-label">Simulado</div>
+        <div class="secao-titulo">12 questões de múltipla escolha — clique para revelar o gabarito</div>
+      </div>
+    </div>
+
+    <div class="aviso-exam">
+      <i class="fas fa-stopwatch"></i>
+      <span>Para simular a prova, tente responder todas sem ver o gabarito primeiro. Marque mentalmente e depois revele. O score aparece ao final.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">1</div>
+        <span class="q-semana badge-blue">Semana 7</span>
+        <div class="q-texto">Um sistema legado (Oracle, anos 2000) não tem coluna <code>updated_at</code> em suas tabelas de faturamento. A empresa precisa sincronizar esses dados mensalmente para analytics. Qual estratégia de ingestão é obrigatória?</div>
+      </div>
+      <div class="q-opcoes" id="q1-ops">
+        <div class="q-op" onclick="respQ('q1',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Incremental com cursor em ID sequencial</div>
+        <div class="q-op" onclick="respQ('q1',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>CDC com Debezium — não precisa de cursor</div>
+        <div class="q-op" onclick="respQ('q1',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Full Load — sem coluna de cursor e sem necessidade de tempo real, é a única opção viável</div>
+        <div class="q-op" onclick="respQ('q1',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Streaming via Kafka — mais eficiente para grandes volumes</div>
+      </div>
+      <div class="q-gabarito" id="q1-gab"><strong>✅ C.</strong> Sem coluna updated_at e sem ID sequencial confiável, o Incremental com cursor não é possível. O CDC seria tecnicamente viável (lê o Redo Log do Oracle), mas a empresa pediu sincronização mensal — não há necessidade de latência de segundos. Para cargas mensais de um sistema legado sem cursor, Full Load é a solução mais simples e adequada.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">2</div>
+        <span class="q-semana badge-blue">Semana 7</span>
+        <div class="q-texto">Um sistema de pedidos deleta registros cancelados da tabela de produção. O Data Lake precisa rastrear esses cancelamentos para relatórios de devolução. Qual estratégia OBRIGATORIAMENTE deve ser usada?</div>
+      </div>
+      <div class="q-opcoes" id="q2-ops">
+        <div class="q-op" onclick="respQ('q2',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Full Load diário — a comparação entre os snapshots detecta o que foi deletado</div>
+        <div class="q-op" onclick="respQ('q2',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Incremental com cursor em updated_at — eficiente para detectar mudanças</div>
+        <div class="q-op" onclick="respQ('q2',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>CDC — único método nativo que captura eventos DELETE com before/after state em tempo real</div>
+        <div class="q-op" onclick="respQ('q2',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Airbyte com modo incremental dedup — detecta registros removidos automaticamente</div>
+      </div>
+      <div class="q-gabarito" id="q2-gab"><strong>✅ C.</strong> O Incremental (Airbyte ou cursor) não captura DELETEs — o registro simplesmente desaparece silenciosamente. O Full Load por comparação funcionaria mas é caro e complexo. O CDC lê diretamente o transaction log do banco e emite um evento explícito de DELETE com o estado anterior do registro (before state), sendo o único método que resolve esse problema nativamente.</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">3</div>
+        <span class="q-semana badge-green">Semana 8</span>
+        <div class="q-texto">Um engenheiro escreveu: <code>df2 = df1.filter(col("total") > 100)</code> seguido de <code>df3 = df2.groupBy("cat").agg(sum("total"))</code>. Quantas vezes o Spark leu os dados do disco ao executar essas duas linhas?</div>
+      </div>
+      <div class="q-opcoes" id="q3-ops">
+        <div class="q-op" onclick="respQ('q3',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Duas vezes — uma para o filter e uma para o groupBy</div>
+        <div class="q-op" onclick="respQ('q3',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Nenhuma — o Spark armazena tudo em memória automaticamente</div>
+        <div class="q-op" onclick="respQ('q3',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Nenhuma — essas linhas são transformações lazy, o Spark não executou nada ainda</div>
+        <div class="q-op" onclick="respQ('q3',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Uma vez — o filter executa imediatamente ao ser chamado</div>
+      </div>
+      <div class="q-gabarito" id="q3-gab"><strong>✅ C.</strong> filter() e groupBy().agg() são transformações lazy — elas apenas adicionam operações ao DAG, sem executar nada. Nenhuma leitura de disco acontece nessas duas linhas. O Spark só lê os dados e executa o pipeline inteiro quando uma action é chamada (count, show, collect, write). Esse é o conceito central de lazy evaluation.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">4</div>
+        <span class="q-semana badge-purple">Semana 9</span>
+        <div class="q-texto">Você está fazendo join entre uma tabela fato de 2 bilhões de linhas e uma tabela de 150 países (com ~150 linhas). O Spark está usando SortMergeJoin e o job demora 40 minutos. Qual é a correção mais impactante?</div>
+      </div>
+      <div class="q-opcoes" id="q4-ops">
+        <div class="q-op" onclick="respQ('q4',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Aumentar o número de partições com repartition() para ter mais paralelismo</div>
+        <div class="q-op" onclick="respQ('q4',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Forçar broadcast() na tabela de países — elimina o shuffle dos 2 bilhões de linhas</div>
+        <div class="q-op" onclick="respQ('q4',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Converter o DataFrame para RDD antes do join para mais controle</div>
+        <div class="q-op" onclick="respQ('q4',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Usar coalesce() para reduzir o número de partições antes do join</div>
+      </div>
+      <div class="q-gabarito" id="q4-gab"><strong>✅ B.</strong> 150 linhas é uma tabela minúscula. O Catalyst não usou broadcast automático possivelmente porque a tabela excede o limite padrão de 10MB (ou porque o tamanho não foi inferido corretamente). Forçar broadcast(df_paises) copia as 150 linhas inteiras para cada executor, eliminando completamente o shuffle de 2 bilhões de linhas. Essa é a otimização mais impactante disponível neste cenário.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">5</div>
+        <span class="q-semana badge-purple">Semana 9</span>
+        <div class="q-texto">Você tem um DataFrame com 200 partições após um groupBy() pesado, mas o resultado tem apenas 5 MB de dados. Você precisa salvá-lo em Parquet com no máximo 2 arquivos. Qual comando é mais adequado?</div>
+      </div>
+      <div class="q-opcoes" id="q5-ops">
+        <div class="q-op" onclick="respQ('q5',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><code>df.repartition(2).write.parquet("output/")</code></div>
+        <div class="q-op" onclick="respQ('q5',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><code>df.coalesce(2).write.parquet("output/")</code></div>
+        <div class="q-op" onclick="respQ('q5',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>São equivalentes — qualquer um resolve</div>
+        <div class="q-op" onclick="respQ('q5',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><code>df.persist(StorageLevel.DISK_ONLY).write.parquet("output/")</code></div>
+      </div>
+      <div class="q-gabarito" id="q5-gab"><strong>✅ B.</strong> coalesce(2) é mais eficiente que repartition(2) quando o objetivo é REDUZIR o número de partições. coalesce() combina partições adjacentes sem fazer um shuffle completo — mais barato. repartition() sempre faz um shuffle completo redistribuindo todos os dados, o que é desnecessário aqui. Ambos resultariam em 2 arquivos, mas coalesce() chegará lá gastando menos recursos.</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">6</div>
+        <span class="q-semana badge-yellow">Semana 10</span>
+        <div class="q-texto">Você analisa o plano de execução com <code>df.explain("formatted")</code> e encontra o nó <code>BatchEvalPython</code> e o campo <code>PushedFilters: []</code>. O que isso indica?</div>
+      </div>
+      <div class="q-opcoes" id="q6-ops">
+        <div class="q-op" onclick="respQ('q6',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O Spark está usando broadcast join automaticamente — sinal de boa otimização</div>
+        <div class="q-op" onclick="respQ('q6',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Uma UDF Python está sendo usada, bloqueando o predicate pushdown e lendo todas as colunas desnecessariamente</div>
+        <div class="q-op" onclick="respQ('q6',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>O Spark não conseguiu achar o arquivo Parquet e está usando um caminho alternativo</div>
+        <div class="q-op" onclick="respQ('q6',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>O DataFrame foi cacheado corretamente e a leitura virá da memória</div>
+      </div>
+      <div class="q-gabarito" id="q6-gab"><strong>✅ B.</strong> BatchEvalPython é o nó que aparece quando o Spark precisa chamar código Python externo (UDF). PushedFilters: [] significa que o filtro NÃO foi empurrado até o FileScan — o Catalyst não consegue "ver" o que a UDF faz internamente, então não pode otimizar. O resultado é que todos os dados são lidos do disco antes de qualquer filtragem. Solução: substituir a UDF por funções nativas do pyspark.sql.functions.</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">7</div>
+        <span class="q-semana badge-yellow">Semana 10</span>
+        <div class="q-texto">Um DataFrame resultado de um join pesado será usado em 4 análises diferentes (count, show, groupBy e write). Qual é a estratégia correta?</div>
+      </div>
+      <div class="q-opcoes" id="q7-ops">
+        <div class="q-op" onclick="respQ('q7',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Não fazer nada — o Spark já cacheia automaticamente resultados usados mais de uma vez</div>
+        <div class="q-op" onclick="respQ('q7',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Chamar .cache() após o join e disparar uma action para materializar, depois executar as 4 análises</div>
+        <div class="q-op" onclick="respQ('q7',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Salvar em Parquet e reler 4 vezes — mais seguro que cache</div>
+        <div class="q-op" onclick="respQ('q7',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Converter para RDD antes das análises — RDD é cacheado automaticamente</div>
+      </div>
+      <div class="q-gabarito" id="q7-gab"><strong>✅ B.</strong> O Spark NÃO cacheia automaticamente. Sem cache, cada uma das 4 actions recalcula todo o DAG desde o início — incluindo o join pesado — desperdiçando recursos. Com .cache(), o join é calculado uma única vez (na 1ª action após o cache) e os resultados ficam em memória para as próximas 3 análises. Lembre-se: cache() é lazy — só materializa quando uma action é chamada explicitamente após o persist.</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">8</div>
+        <span class="q-semana badge-pink">Semana 11</span>
+        <div class="q-texto">Em um modelo dbt, você escreve <code>FROM {{ ref('stg_orders') }}</code>. O que acontece quando o dbt executa <code>dbt run</code>?</div>
+      </div>
+      <div class="q-opcoes" id="q8-ops">
+        <div class="q-op" onclick="respQ('q8',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>O dbt simplesmente substitui ref() pelo nome literal da tabela stg_orders</div>
+        <div class="q-op" onclick="respQ('q8',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>O dbt registra a dependência no DAG e garante que stg_orders seja materializado ANTES deste modelo</div>
+        <div class="q-op" onclick="respQ('q8',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>ref() executa testes de qualidade no modelo referenciado antes de continuar</div>
+        <div class="q-op" onclick="respQ('q8',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>ref() aponta para a tabela bruta na zona Raw do Data Lake</div>
+      </div>
+      <div class="q-gabarito" id="q8-gab"><strong>✅ B.</strong> ref() é muito mais que uma substituição de nome. Ele sinaliza ao dbt que este modelo DEPENDE de stg_orders, o que faz o dbt: (1) construir o DAG de dependências completo, (2) garantir que stg_orders seja executado antes deste modelo, (3) resolver o nome correto da tabela no schema/banco configurado. É essa função que elimina a necessidade de gerenciar manualmente a ordem de execução de transformações SQL.</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">9</div>
+        <span class="q-semana badge-pink">Semana 11</span>
+        <div class="q-texto">Você precisa garantir que a coluna <code>email</code> em <code>stg_customers</code> não tenha valores duplicados. Como configurar isso no dbt?</div>
+      </div>
+      <div class="q-opcoes" id="q9-ops">
+        <div class="q-op" onclick="respQ('q9',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Escrever uma query SQL customizada no model que verifica duplicatas durante a transformação</div>
+        <div class="q-op" onclick="respQ('q9',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Usar o teste genérico <code>not_null</code> na coluna email do schema.yml</div>
+        <div class="q-op" onclick="respQ('q9',this,'C',true)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Usar o teste genérico <code>unique</code> na coluna email no schema.yml — basta declarar, sem escrever SQL</div>
+        <div class="q-op" onclick="respQ('q9',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Criar um teste singular em tests/ com uma query que conta duplicatas</div>
+      </div>
+      <div class="q-gabarito" id="q9-gab"><strong>✅ C.</strong> O teste genérico unique é exatamente para isso: garante que todos os valores em uma coluna são distintos. Você o declara no schema.yml com apenas 2 linhas (- unique sob a coluna). O dbt gera o SQL internamente e executa ao rodar dbt test. Não é necessário escrever SQL. D seria uma alternativa válida mas mais trabalhosa — o teste singular é mais adequado para regras de negócio complexas que os genéricos não cobrem.</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">10</div>
+        <span class="q-semana badge">Semana 12</span>
+        <div class="q-texto">Em uma DAG Airflow, você tem: <code>ingest >> [dbt_staging, validate_schema] >> dbt_marts >> notify</code>. Quando <code>notify</code> vai executar?</div>
+      </div>
+      <div class="q-opcoes" id="q10-ops">
+        <div class="q-op" onclick="respQ('q10',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Assim que a primeira das duas tasks paralelas terminar (dbt_staging OU validate_schema)</div>
+        <div class="q-op" onclick="respQ('q10',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>Somente depois que dbt_staging E validate_schema terminarem com sucesso, e dbt_marts também terminar</div>
+        <div class="q-op" onclick="respQ('q10',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Independente das outras tasks — notify não tem dependências</div>
+        <div class="q-op" onclick="respQ('q10',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>notify não será executado — o Airflow não aceita listas como dependência intermediária</div>
+      </div>
+      <div class="q-gabarito" id="q10-gab"><strong>✅ B.</strong> O operador >> com lista [dbt_staging, validate_schema] cria dependência para AMBAS as tasks em paralelo. dbt_marts espera que as DUAS terminem com sucesso (trigger_rule padrão = all_success). notify, por sua vez, espera que dbt_marts também termine com sucesso. A ordem completa é: ingest → {dbt_staging e validate_schema em paralelo} → dbt_marts → notify.</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">11</div>
+        <span class="q-semana badge">Semana 12</span>
+        <div class="q-texto">Um FileSensor configurado com <code>mode="poke"</code> está esperando um arquivo que demora 4 horas para aparecer. Qual é o problema e a solução?</div>
+      </div>
+      <div class="q-opcoes" id="q11-ops">
+        <div class="q-op" onclick="respQ('q11',this,'A',false)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>Não há problema — poke é o modo mais eficiente para esperas longas</div>
+        <div class="q-op" onclick="respQ('q11',this,'B',true)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>No modo poke, o sensor ocupa um worker inteiro por 4 horas — usar mode="reschedule" libera o worker entre verificações</div>
+        <div class="q-op" onclick="respQ('q11',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>FileSensor não suporta esperas de mais de 1 hora — usar um cron externo</div>
+        <div class="q-op" onclick="respQ('q11',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>Aumentar o timeout para 8 horas — o modo poke fica mais eficiente com timeout maior</div>
+      </div>
+      <div class="q-gabarito" id="q11-gab"><strong>✅ B.</strong> No modo poke, o sensor cria uma task que fica ativa continuamente verificando a condição — ocupando um slot de worker inteiro durante todo o período de espera. Com 4 horas de espera, isso bloqueia um worker que poderia estar processando outras tasks. O modo reschedule resolve isso: o sensor verifica a condição, se não estiver pronta, marca a task como "reschedule" e libera o worker, reativando a verificação após o poke_interval.</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="questao">
+      <div class="q-header">
+        <div class="q-num">12</div>
+        <span class="q-semana badge-pink">Semana 11</span>
+        <div class="q-texto">Uma empresa de saúde precisa sincronizar dados de prontuários (com CPF, CID e diagnósticos) de um sistema legado para um Data Warehouse moderno na nuvem, com frequência mensal para analytics. Qual abordagem é obrigatória por compliance (LGPD)?</div>
+      </div>
+      <div class="q-opcoes" id="q12-ops">
+        <div class="q-op" onclick="respQ('q12',this,'A',true)"><div class="q-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div>ETL — anonimizar/pseudonimizar os dados sensíveis ANTES de chegarem ao Data Warehouse na nuvem</div>
+        <div class="q-op" onclick="respQ('q12',this,'B',false)"><div class="q-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div>ELT — carregar os dados brutos e anonimizar com dbt dentro do warehouse</div>
+        <div class="q-op" onclick="respQ('q12',this,'C',false)"><div class="q-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div>Streaming — menor latência reduz o tempo de exposição dos dados sensíveis</div>
+        <div class="q-op" onclick="respQ('q12',this,'D',false)"><div class="q-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div>ELT com dbt — ref() permite aplicar anonimização no primeiro modelo staging antes de qualquer análise</div>
+      </div>
+      <div class="q-gabarito" id="q12-gab"><strong>✅ A.</strong> Por exigência da LGPD e de regulações de saúde (como a HIPAA internacionalmente), dados sensíveis como CPF e diagnósticos médicos devem ser anonimizados ou pseudonimizados ANTES de trafegarem para sistemas de terceiros ou cloud. No ELT (incluindo D), os dados brutos com CPFs reais chegariam ao Data Warehouse na nuvem — violando o princípio de minimização de dados da LGPD. O ETL (anonimização no servidor de integração, antes do upload) é a única abordagem compliance.</div>
+    </div>
+
+    <!-- Score -->
+    <div class="score-box" id="score-box">
+      <div class="score-num" id="score-num">0/12</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:.25rem;" id="score-msg"></div>
+    </div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="calcScore()" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--exam-red-acc);padding:.7rem 2rem;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.15)'">
+        <i class="fas fa-calculator" style="margin-right:8px;"></i>Ver meu score
+      </button>
+    </div>
+  </section>
+
+  <div class="sep"><span>Questões Dissertativas</span></div>
+
+  <!-- ── DISSERTATIVAS ──────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">③</div>
+      <div class="secao-info">
+        <div class="secao-label">Questões dissertativas</div>
+        <div class="secao-titulo">4 questões abertas — modelo de resposta completo</div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 1 — Semanas 8, 9 e 10</div>
+      <div class="d-enunciado">Um job Spark que faz join entre uma tabela de 500M pedidos (50 GB) e uma tabela de 200 produtos demora 45 minutos. Você analisa com explain() e vê SortMergeJoin, PushedFilters: [] e o plano lê todas as 80 colunas da tabela de pedidos. Identifique os três problemas e proponha as correções com código PySpark.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Problema 1 — SortMergeJoin em vez de BroadcastHashJoin:</strong> a tabela de produtos tem 200 linhas (~poucos KB). O Catalyst não usou broadcast automaticamente (talvez por falta de estatísticas). Correção: <code>df_pedidos.join(broadcast(df_produtos), "product_id")</code>.
+          <br><br>
+          <strong>Problema 2 — PushedFilters: []:</strong> um filtro no pipeline depende de uma UDF Python, que é opaca para o Catalyst. Resultado: lê os 50 GB completos antes de filtrar. Correção: substituir a UDF por funções nativas (<code>when(), col()</code> etc.) para o Catalyst poder aplicar predicate pushdown no FileScan.
+          <br><br>
+          <strong>Problema 3 — Column Pruning ausente (lê 80 colunas):</strong> o código não seleciona apenas as colunas necessárias antes de operações pesadas. Correção: adicionar <code>.select("order_id", "product_id", "total", "order_date")</code> antes do join, reduzindo o volume de dados transferidos no shuffle.
+          <br><br>
+          <strong>Código corrigido:</strong>
+          <pre style="background:rgba(0,0,0,.3);padding:.75rem;border-radius:8px;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;overflow-x:auto;">
+resultado = (df_pedidos
+    .filter(col("total") > 0)           # filtro nativo → PushedFilters preenchido
+    .select("order_id","product_id","total")  # column pruning
+    .join(broadcast(df_produtos), "product_id")  # BroadcastHashJoin
+    .groupBy("product_name")
+    .agg(sum("total").alias("receita"))
+)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 2 — Semanas 7 e 11</div>
+      <div class="d-enunciado">Uma startup de e-commerce está construindo seu primeiro Data Lake. Eles têm: (a) um banco PostgreSQL de pedidos com 200M de linhas e coluna updated_at, (b) uma integração com Stripe (pagamentos via API REST), (c) eventos de clique do app mobile. Para cada fonte, indique a estratégia de ingestão e, após o dado chegar ao Data Lake, qual seria a estrutura de modelos dbt (camadas e nomes de modelos).</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>(a) PostgreSQL — pedidos:</strong> ingestão incremental com cursor em updated_at via Airbyte (ou dbt_source + query incremental). Sem necessidade de CDC pois não há requisito de capturar DELETEs e a latência de horas é aceitável.
+          <br>Modelos dbt: <code>stg_orders</code> (limpa tipos, padroniza status) → <code>int_orders_with_items</code> (join com linhas do pedido) → <code>fct_revenue_daily</code> e <code>fct_orders_by_category</code> (marts).
+          <br><br>
+          <strong>(b) Stripe (API REST):</strong> batch periódico via Airbyte (tem conector nativo para Stripe). Frequência: a cada hora ou dia dependendo da necessidade.
+          <br>Modelos dbt: <code>stg_stripe_payments</code> (padroniza campos, trata refunds) → <code>fct_payments_daily</code> (receita líquida por dia após descontar refunds).
+          <br><br>
+          <strong>(c) Eventos de clique mobile:</strong> streaming direto via Kafka. O app mobile publica um evento no Kafka a cada clique, sem banco de dados de origem intermediário (não é CDC).
+          <br>Modelos dbt: <code>stg_clickstream</code> (parseia JSON, filtra bots, sessioniza) → <code>fct_funnel_conversion</code> (taxa de conversão por etapa) e <code>fct_product_views</code> (produtos mais visualizados).
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 3 — Semana 12</div>
+      <div class="d-enunciado">Descreva como um pipeline de dados completo seria orquestrado com Airflow para o seguinte fluxo: (1) extrair dados do PostgreSQL, (2) esperar o arquivo aparecer no S3, (3) rodar os modelos dbt de staging e marts em paralelo após a espera, (4) rodar os testes dbt, (5) notificar o time via e-mail em caso de sucesso. Esboce a estrutura da DAG em pseudocódigo e justifique as escolhas de operador para cada task.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>Estrutura da DAG:</strong>
+          <pre style="background:rgba(0,0,0,.3);padding:.75rem;border-radius:8px;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;overflow-x:auto;">
+extract_postgres  →  wait_s3  →  [dbt_staging, dbt_marts]  →  dbt_test  →  notify_email</pre>
+          <br>
+          <strong>Task 1 — extract_postgres (BashOperator):</strong> executa o script de extração que usa psycopg2 ou Airbyte CLI. BashOperator é adequado pois é uma chamada a um script externo.
+          <br><br>
+          <strong>Task 2 — wait_s3 (S3KeySensor):</strong> sensor que verifica se o arquivo Parquet apareceu no bucket S3. Deve usar mode="reschedule" para não ocupar worker durante a espera. poke_interval=60, timeout=3600.
+          <br><br>
+          <strong>Tasks 3a/3b — dbt_staging e dbt_marts (BashOperator em paralelo):</strong> dois BashOperators rodando em paralelo. Nota: tecnicamente dbt_marts depende de dbt_staging — se estiverem no mesmo projeto dbt, basta um único <code>dbt run</code>. Para paralelismo real, seria necessário que staging e marts fossem projetos separados ou usar seletores distintos garantindo que staging já foi materializado.
+          <br><br>
+          <strong>Task 4 — dbt_test (BashOperator):</strong> executa <code>dbt test</code>. Depende de dbt_staging e dbt_marts (ambos devem ter terminado). Se falhar, dbt_test fica failed e notify_email recebe status upstream_failed.
+          <br><br>
+          <strong>Task 5 — notify_email (EmailOperator ou PythonOperator):</strong> dispara apenas se todas as tasks anteriores tiveram sucesso (trigger_rule=all_success, padrão). Para garantir notificação mesmo em falha, adicionar on_failure_callback no default_args.
+        </div>
+      </div>
+    </div>
+
+    <div class="dissertativa">
+      <div class="d-num">Questão Dissertativa 4 — Semanas 8, 9 e 12</div>
+      <div class="d-enunciado">Compare MapReduce e Apache Spark em termos de: (a) onde os resultados intermediários são armazenados, (b) como cada um lida com algoritmos iterativos (ex: k-means que passa pelos dados 50 vezes), e (c) o que são "stages" no Spark e o que determina a fronteira entre dois stages.</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver modelo de resposta</button>
+      <div class="gabarito-content">
+        <div class="modelo-resposta">
+          <strong>(a) Armazenamento de resultados intermediários:</strong> no MapReduce, após cada fase Map e cada fase Reduce, os resultados são escritos obrigatoriamente no HDFS (disco distribuído). Na próxima etapa, os dados são lidos de volta do disco. Em um pipeline com N etapas, há 2N operações de I/O em disco. O Spark mantém os resultados intermediários em memória RAM entre as etapas — só lê do disco uma vez (a entrada) e escreve uma vez (a saída final). Se os dados não couberem na RAM, o Spark "derrama" (spill) para disco, mas o design favorece memória.
+          <br><br>
+          <strong>(b) Algoritmos iterativos:</strong> no MapReduce, cada iteração do k-means é um job separado que lê do HDFS e escreve de volta no HDFS. Com 50 iterações, são 100 ciclos de I/O completos. A diferença de performance pode ser de 100x ou mais para esse tipo de workload. No Spark, os dados podem ser cacheados em memória com .cache() ou .persist(), e cada iteração simplesmente lê da RAM — sem tocar o disco. O MLlib do Spark usa esse modelo para todos os algoritmos iterativos (k-means, regressão logística, SVD).
+          <br><br>
+          <strong>(c) Stages no Spark:</strong> um stage é um conjunto de tasks que podem ser executadas em paralelo sem precisar de comunicação entre partições (sem shuffle). A fronteira entre dois stages é sempre uma wide transformation — uma operação que exige redistribuição dos dados entre executors (shuffle), como groupBy(), join(), orderBy() ou distinct(). Dentro de um stage, todas as transformações são narrow (map, filter, select) e cada task processa sua partição independentemente. Minimizar o número de stages (e portanto o número de shuffles) é a principal alavanca de performance em Spark.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist de Preparação</span></div>
+
+  <!-- ── CHECKLIST ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">④</div>
+      <div class="secao-info">
+        <div class="secao-label">Checklist interativo</div>
+        <div class="secao-titulo">Marque o que você já domina</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso de revisão</span>
+        <strong id="progress-text">0 / 24 conceitos</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    </div>
+
+    <div class="checklist-grid" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei escolher entre Full Load, Incremental e CDC por critérios técnicos</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar Airbyte vs Debezium vs Kafka (sem banco)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo por que Incremental não captura DELETEs</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Explico o conceito de lazy evaluation e sei a diferença entre transformação e action</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre RDD e DataFrame e por que DataFrame é preferido</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo criar uma SparkSession, ler CSV/Parquet, filtrar, agrupar e escrever</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei diferenciar narrow transformation (sem shuffle) de wide (com shuffle)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando e como usar broadcast() — e que deve ser na tabela pequena</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo explicar data skew e uma forma de mitigá-lo</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre repartition() e coalesce() — quando usar cada um</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei as 4 fases do Catalyst Optimizer e o que cada uma faz</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo ler um explain() e identificar: PushedFilters, BroadcastHashJoin, UDF</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei quando usar cache() e como materializar o cache com uma action</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo por que UDFs bloqueiam otimizações do Catalyst</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre ETL e ELT — critérios de escolha e casos de uso</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo as 3 camadas dbt (staging, intermediate, marts) e suas responsabilidades</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre ref() e source() — e quando usar cada um</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Conheço os 4 testes genéricos do dbt e sei escrever um teste singular</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o que é uma DAG Airflow e como usar o operador >> para dependências</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre Operator e Sensor — e exemplos de cada tipo</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei a diferença entre poke e reschedule em sensores</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entendo catchup e por que usar catchup=False em produção</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo configurar retries, retry_delay e SLA em uma DAG</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Consigo conectar os temas: ingestão → Spark → dbt → Airflow como uma stack completa</div></div>
+    </div>
+
+    <div class="aviso-green" style="margin-top:1.25rem;">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Dica final:</strong> para cada item não marcado, volte à semana correspondente e leia o card de resumo. Tente explicar o conceito em voz alta como se estivesse ensinando alguém. Boa P2!</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-14-bigdata.html'">
+      <div>
+        <div class="proxima-label">Após a P2 · Semana 14</div>
+        <div class="proxima-titulo">Semana 14 — Delta Lake: ACID no Data Lake, time travel e arquitetura Lakehouse moderna</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const correctAnswers={q1:'C',q2:'C',q3:'C',q4:'B',q5:'B',q6:'B',q7:'B',q8:'B',q9:'C',q10:'B',q11:'B',q12:'A'};
+const userAnswers={};
+
+function respQ(qId,el,letra,isCorrect){
+  const ops=document.getElementById(qId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  userAnswers[qId]=letra;
+  const correta=correctAnswers[qId];
+  ops.querySelectorAll('.q-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    const l=op.querySelector('.q-letra').textContent.trim();
+    if(l===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const gab=document.getElementById(qId+'-gab');
+  gab.style.background=isCorrect?'rgba(74,222,128,.07)':'rgba(239,68,68,.07)';
+  gab.style.border=isCorrect?'1px solid rgba(74,222,128,.2)':'1px solid rgba(239,68,68,.2)';
+  gab.style.color=isCorrect?'rgba(134,239,172,.9)':'rgba(252,165,165,.9)';
+  gab.classList.add('show');
+}
+
+function calcScore(){
+  const total=Object.keys(correctAnswers).length;
+  let correct=0;
+  for(const[q,ans] of Object.entries(userAnswers)){if(ans===correctAnswers[q])correct++;}
+  const unanswered=total-Object.keys(userAnswers).length;
+  const box=document.getElementById('score-box');
+  const num=document.getElementById('score-num');
+  const msg=document.getElementById('score-msg');
+  box.style.display='block';
+  num.textContent=`${correct}/${total}`;
+  const pct=Math.round(correct/total*100);
+  if(pct>=80){num.style.color='#4ade80';msg.textContent=`${pct}% — Excelente! Você está pronto para a P2.`;}
+  else if(pct>=60){num.style.color='#fbbf24';msg.textContent=`${pct}% — Bom! Revise os temas que errou antes da prova.`;}
+  else{num.style.color='#f87171';msg.textContent=`${pct}% — Atenção! Volte às semanas com mais erros e revise os pontos-chave.`;}
+  if(unanswered>0)msg.textContent+=` (${unanswered} não respondida(s))`;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar modelo de resposta'
+    :'<i class="fas fa-lightbulb"></i> ver modelo de resposta';
+}
+
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').innerHTML=el.classList.contains('checked')?'✓':'';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.check-item').length;
+  const checked=document.querySelectorAll('.check-item.checked').length;
+  const pct=Math.round(checked/total*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=`${checked} / ${total} conceitos`;
+}
+</script>
+</body>
+</html>

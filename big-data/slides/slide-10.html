@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 10 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-blue{padding:1rem 1.25rem;border-radius:10px;background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-blue strong{color:#60a5fa;}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Catalyst phases ── */
+.catalyst-flow{display:flex;flex-direction:column;gap:0;margin:.75rem 0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+.cat-phase{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.cat-phase:last-child{border-bottom:none;}
+.cat-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:800;flex-shrink:0;}
+.cat-1{background:rgba(59,130,246,.12);color:#60a5fa;}
+.cat-2{background:rgba(74,222,128,.12);color:#4ade80;}
+.cat-3{background:rgba(167,139,250,.12);color:#a78bfa;}
+.cat-4{background:rgba(251,146,60,.12);color:var(--accent-400);}
+.cat-content{flex:1;}
+.cat-title{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);margin-bottom:.2rem;}
+.cat-desc{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.cat-bg-1{background:rgba(59,130,246,.03);}
+.cat-bg-2{background:rgba(74,222,128,.03);}
+.cat-bg-3{background:rgba(167,139,250,.03);}
+.cat-bg-4{background:rgba(251,146,60,.03);}
+
+/* ── Explain plan visual ── */
+.explain-box{background:#0a0a0a;border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.1rem 1.25rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;font-size:.76rem;line-height:1.65;overflow-x:auto;}
+.ex-header{color:rgba(251,146,60,.6);font-size:.68rem;margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.ex-op{color:#fb923c;font-weight:600;}
+.ex-cond{color:#86efac;}
+.ex-table{color:#60a5fa;}
+.ex-num{color:#fca5a5;}
+.ex-indent{color:rgba(255,255,255,.3);}
+.ex-bad{background:rgba(239,68,68,.1);display:inline-block;padding:0 4px;border-radius:3px;}
+.ex-good{background:rgba(74,222,128,.1);display:inline-block;padding:0 4px;border-radius:3px;}
+
+/* ── Cache comparison ── */
+.cache-demo{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.cache-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.cache-no{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.18);}
+.cache-yes{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.cache-titulo{font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:.5rem;}
+.cache-no .cache-titulo{color:#f87171;}
+.cache-yes .cache-titulo{color:#4ade80;}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.cache-demo{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">10</div>
+    <h1 class="capa-titulo">Spark SQL e<br><em>Otimização</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Como o Spark decide a melhor forma de executar sua query</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Catalyst Optimizer — as 4 fases de otimização de uma query</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Plano de execução: explain() e como ler logical vs physical plan</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-filter"></i></div><span>Predicate Pushdown e Column Pruning — otimizações automáticas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-save"></i></div><span>Cache e Persist — quando vale a pena guardar dados em memória</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-broadcast-tower"></i></div><span>Broadcast Join revisitado — como o Catalyst escolhe a estratégia</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stopwatch"></i></div><span>Tungsten — execução otimizada em código nativo</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wrench"></i></div><span>Atividade: comparar planos de execução e otimizar consulta lenta</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Analisar o plano de execução de uma consulta lenta com explain(), identificar o problema e reescrever para otimizar o tempo de execução.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 9</div>
+      <ul class="info-lista">
+        <li>Narrow vs Wide transformations — shuffle é o que custa caro</li>
+        <li>Broadcast Join evita shuffle de tabelas grandes</li>
+        <li>repartition() vs coalesce() — controle de partições</li>
+        <li>Data skew — quando uma partição vira o gargalo</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Esta semana conecta tudo</div>
+      <ul class="info-lista">
+        <li>O Catalyst Optimizer é quem decide automaticamente usar broadcast join (Semana 9)</li>
+        <li>Entender explain() é a ferramenta nº1 para debugar performance</li>
+        <li>Última semana de conteúdo técnico puro antes de ETL/ELT (Semana 11)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 10 de 6 antes da P2 (Semana 13)</li>
+        <li>Próximas: ETL/ELT com dbt (Sem 11), Airflow (Sem 12), P2 (Sem 13)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Catalyst Optimizer ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Catalyst Optimizer — o cérebro por trás de toda query Spark</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 9</div>
+      <p>Você já sabe que broadcast join evita shuffle e que filtrar antes de juntar é mais rápido. Mas <strong>quem decide</strong> automaticamente essas otimizações quando você não as especifica manualmente? A resposta é o Catalyst Optimizer — o "cérebro" do Spark SQL.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>O que é o Catalyst — e por que ele existe</div>
+      <p>Toda vez que você escreve uma operação DataFrame ou uma query Spark SQL, o código não é executado diretamente. Primeiro, o Spark constrói uma <strong>árvore de operações</strong> (Abstract Syntax Tree) e passa por um pipeline de otimização chamado <strong>Catalyst</strong>. Ele analisa, reescreve e escolhe o plano de execução mais eficiente — tudo isso automaticamente, sem que você precise pensar nisso.</p>
+      <div class="destaque"><strong>Por que isso é poderoso?</strong> O mesmo código DataFrame pode gerar planos de execução completamente diferentes dependendo do tamanho dos dados, estatísticas das tabelas e configurações do cluster. Você escreve a <em>intenção</em>; o Catalyst decide o <em>como</em>.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>As 4 fases do Catalyst Optimizer</div>
+      <div class="catalyst-flow">
+        <div class="cat-phase cat-bg-1">
+          <div class="cat-num cat-1">1</div>
+          <div class="cat-content">
+            <div class="cat-title">Análise (Analysis)</div>
+            <div class="cat-desc">Resolve referências de colunas e tabelas, valida tipos. Transforma o código em um <strong>Unresolved Logical Plan</strong> e depois em um <strong>Resolved Logical Plan</strong>, consultando o catálogo de metadados (schema).</div>
+          </div>
+        </div>
+        <div class="cat-phase cat-bg-2">
+          <div class="cat-num cat-2">2</div>
+          <div class="cat-content">
+            <div class="cat-title">Otimização Lógica (Logical Optimization)</div>
+            <div class="cat-desc">Aplica regras baseadas em álgebra relacional: <strong>predicate pushdown</strong> (empurra filtros o mais perto possível da fonte), <strong>column pruning</strong> (remove colunas não usadas), <strong>constant folding</strong> (resolve expressões constantes em tempo de compilação).</div>
+          </div>
+        </div>
+        <div class="cat-phase cat-bg-3">
+          <div class="cat-num cat-3">3</div>
+          <div class="cat-content">
+            <div class="cat-title">Planejamento Físico (Physical Planning)</div>
+            <div class="cat-desc">Gera múltiplos <strong>Physical Plans</strong> candidatos (ex: diferentes estratégias de join) e usa um modelo de custo (<strong>Cost-Based Optimizer</strong>) para escolher o mais eficiente — decide aqui se usa Broadcast Hash Join ou Shuffle Hash Join.</div>
+          </div>
+        </div>
+        <div class="cat-phase cat-bg-4">
+          <div class="cat-num cat-4">4</div>
+          <div class="cat-content">
+            <div class="cat-title">Geração de Código (Code Generation)</div>
+            <div class="cat-desc">Usa o <strong>Tungsten</strong> para gerar bytecode Java otimizado diretamente — eliminando overhead de interpretação e aproveitando recursos de CPU como vetorização e gerenciamento de memória off-heap.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-filter"></i>Predicate Pushdown — a otimização mais comum</div>
+      <p>Quando você escreve um filtro depois de várias operações, o Catalyst frequentemente "empurra" esse filtro para o mais próximo possível da leitura dos dados — às vezes até para dentro do próprio arquivo Parquet, evitando ler dados que seriam descartados de qualquer forma.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — código que você escreve vs o que o Catalyst executa</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ── O QUE VOCÊ ESCREVE (lógica de negócio, ordem natural) ─────</span>
+resultado = (df
+    .<span class="fn">join</span>(df_clientes, <span class="str">"customer_id"</span>)
+    .<span class="fn">select</span>(<span class="str">"order_id"</span>, <span class="str">"total"</span>, <span class="str">"customer_name"</span>, <span class="str">"state"</span>)
+    .<span class="fn">filter</span>(col(<span class="str">"state"</span>) == <span class="str">"SP"</span>)   <span class="cm"># filtro escrito DEPOIS do join</span>
+)
+
+<span class="cm"># ── O QUE O CATALYST REALMENTE EXECUTA (otimizado) ────────────
+# O Catalyst detecta que o filtro de "state" só depende da tabela
+# de clientes, então ele MOVE o filtro para ANTES do join:</span>
+
+<span class="cm"># 1. Lê apenas as colunas necessárias (column pruning)</span>
+<span class="cm"># 2. Filtra clientes de SP ANTES de juntar (predicate pushdown)</span>
+<span class="cm"># 3. Junta um volume muito menor de dados</span>
+<span class="cm"># 4. Resultado final é IDÊNTICO, mas muito mais rápido</span></code></pre>
+      </div>
+      <div class="destaque-green"><strong>Você não precisa fazer isso manualmente!</strong> Diferente do que vimos na Semana 9 sobre "filtrar antes de juntar" — esse era um exemplo manual didático. Na prática, o Catalyst já reordena filtros automaticamente na maioria dos casos. Mas ele não é mágico: para joins complexos ou UDFs, vale a pena confirmar com <code>explain()</code> que a otimização realmente ocorreu.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — em qual fase do Catalyst Optimizer o Spark decide entre Broadcast Join e Shuffle Hash Join?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Análise — onde os tipos e colunas são validados</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Otimização Lógica — onde predicate pushdown acontece</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Planejamento Físico — onde o modelo de custo escolhe a estratégia de join mais eficiente</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Geração de Código — onde o bytecode Java é criado</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Lendo o Plano de Execução</span></div>
+
+  <!-- ── AULA 2: explain() ─────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">explain() — lendo o plano de execução como um mapa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>df.explain() — a ferramenta mais importante desta semana</div>
+      <p>O método <code>.explain()</code> mostra o plano de execução de qualquer DataFrame ou query SQL — sem executar nada de fato. É a forma de "ver" o que o Catalyst decidiu fazer antes de gastar tempo de cluster.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — modos do explain()</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>df.<span class="fn">explain</span>()                  <span class="cm"># plano físico simples (padrão)</span>
+df.<span class="fn">explain</span>(<span class="str">"extended"</span>)       <span class="cm"># mostra logical E physical plan</span>
+df.<span class="fn">explain</span>(<span class="str">"formatted"</span>)      <span class="cm"># formato legível, com numeração</span>
+df.<span class="fn">explain</span>(<span class="str">"cost"</span>)           <span class="cm"># inclui estimativas de custo (estatísticas)</span>
+df.<span class="fn">explain</span>(<span class="str">"codegen"</span>)        <span class="cm"># mostra o código Java gerado pelo Tungsten</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Lendo um plano de execução real</div>
+      <p>Vamos analisar o plano de uma query: <code>df_pedidos.filter(col("total") > 100).join(broadcast(df_categorias), "category_id")</code></p>
+      <div class="explain-box">
+        <div class="ex-header">== Physical Plan ==</div>
+<span class="ex-op">*(2) BroadcastHashJoin</span> [category_id], [category_id], <span class="ex-cond">LeftOuter</span>
+<span class="ex-indent">:- *(2) Project</span> [order_id#1, customer_id#2, total#3, category_id#4]
+<span class="ex-indent">:  +- *(2) </span><span class="ex-good">Filter (isnotnull(total#3) AND (total#3 > 100.0))</span>
+<span class="ex-indent">:     +- *(2) ColumnarToRow</span>
+<span class="ex-indent">:        +- FileScan </span><span class="ex-table">parquet orders</span> <span class="ex-good">PushedFilters: [IsNotNull(total), GreaterThan(total,100.0)]</span>
+<span class="ex-indent">:           ReadSchema: struct&lt;order_id:int,customer_id:int,total:double,category_id:int&gt;</span>
+<span class="ex-indent">+- BroadcastExchange </span><span class="ex-cond">HashedRelationBroadcastMode</span>
+<span class="ex-indent">   +- *(1) FileScan </span><span class="ex-table">parquet categories</span>
+      </div>
+      <div class="grid-2" style="margin-top:.75rem;">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">✅ Sinais bons neste plano</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span><strong>PushedFilters:</strong> o filtro foi empurrado até o FileScan — só lê linhas com total &gt; 100</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>BroadcastHashJoin:</strong> o Catalyst escolheu broadcast — sem shuffle pesado</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>ReadSchema reduzido:</strong> só as colunas necessárias foram lidas (column pruning)</span></li>
+          </ul>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:var(--accent-400);margin-bottom:.4rem;">🔍 O que observar</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-search"></i><span><strong>Exchange / ShuffleExchange:</strong> indica shuffle — procure por esses termos no plano</span></li>
+            <li><i class="fas fa-search"></i><span><strong>SortMergeJoin:</strong> join sem broadcast — geralmente mais caro</span></li>
+            <li><i class="fas fa-search"></i><span><strong>BatchScan sem PushedFilters:</strong> sinal de que o filtro não foi otimizado</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Quando o Predicate Pushdown FALHA — o problema das UDFs</div>
+      <p>Lembra das UDFs (Semana 9)? Elas são uma "caixa preta" para o Catalyst. Ele não consegue analisar o que está dentro de uma função Python customizada — então não pode otimizar filtros que dependem dela.</p>
+      <div class="explain-box">
+        <div class="ex-header">== Physical Plan com UDF (SEM otimização) ==</div>
+<span class="ex-op">*(1) Filter</span> <span class="ex-bad">pythonUDF0#15</span>
+<span class="ex-indent">+- BatchEvalPython</span> [classificar_cliente(total#3)], [pythonUDF0#15]
+<span class="ex-indent">   +- *(1) FileScan </span><span class="ex-table">parquet orders</span> <span class="ex-bad">PushedFilters: []</span>
+<span class="ex-indent">      ReadSchema: struct&lt;order_id:int,...,total:double,...todas_colunas&gt;</span>
+      </div>
+      <div class="destaque-blue"><strong>Repare:</strong> <code>PushedFilters: []</code> está vazio e todas as colunas foram lidas — o Catalyst não conseguiu otimizar nada porque o filtro depende de uma UDF opaca. Isso confirma a lição da semana passada: evite UDFs quando uma função nativa do <code>pyspark.sql.functions</code> resolver o mesmo problema.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — você analisa o explain() de uma query e vê "PushedFilters: []" mesmo tendo escrito um filter(). O que provavelmente está acontecendo?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">É normal — Spark nunca empurra filtros para o FileScan</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">O filtro provavelmente depende de uma UDF, que é opaca para o Catalyst Optimizer</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O arquivo de origem não é Parquet, então não há como aplicar filtros</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O cluster não tem memória suficiente para aplicar o filtro</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Cache, Persist e Tungsten</span></div>
+
+  <!-- ── AULA 3: Cache/Persist ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Cache e Persist — evitando recomputar o que já foi calculado</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-redo"></i>O problema: lazy evaluation recalcula tudo</div>
+      <p>Lembre-se da Semana 8: transformações são lazy. Isso significa que se você usar o <strong>mesmo DataFrame em múltiplas actions</strong>, o Spark recalcula <strong>todo o DAG desde o início</strong> cada vez — incluindo leitura do disco e todas as transformações anteriores.</p>
+      <div class="cache-demo">
+        <div class="cache-card cache-no">
+          <div class="cache-titulo">❌ Sem cache — recalcula tudo</div>
+          <div class="code-block" style="margin-top:0;"><pre style="padding:.7rem;"><code>df_caro = df.<span class="fn">join</span>(...).<span class="fn">groupBy</span>(...).<span class="fn">agg</span>(...)
+
+df_caro.<span class="fn">count</span>()      <span class="cm"># executa TUDO (1ª vez)</span>
+df_caro.<span class="fn">show</span>()       <span class="cm"># executa TUDO de novo!</span>
+df_caro.write.<span class="fn">parquet</span>(<span class="str">"out/"</span>)  <span class="cm"># executa TUDO 3ª vez!</span></code></pre></div>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-top:.5rem;">O join pesado e o groupBy são recalculados <strong>3 vezes</strong> — desperdício de tempo de cluster.</div>
+        </div>
+        <div class="cache-card cache-yes">
+          <div class="cache-titulo">✅ Com cache — calcula uma vez</div>
+          <div class="code-block" style="margin-top:0;"><pre style="padding:.7rem;"><code>df_caro = df.<span class="fn">join</span>(...).<span class="fn">groupBy</span>(...).<span class="fn">agg</span>(...)
+df_caro.<span class="fn">cache</span>()      <span class="cm"># marca para cachear</span>
+
+df_caro.<span class="fn">count</span>()      <span class="cm"># executa E guarda em memória</span>
+df_caro.<span class="fn">show</span>()       <span class="cm"># usa o cache — rápido!</span>
+df_caro.write.<span class="fn">parquet</span>(<span class="str">"out/"</span>)  <span class="cm"># usa o cache!</span></code></pre></div>
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-top:.5rem;">O resultado é calculado <strong>uma única vez</strong> e reutilizado nas próximas actions.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>cache() vs persist() — níveis de armazenamento</div>
+      <p><code>cache()</code> é um atalho para <code>persist(StorageLevel.MEMORY_AND_DISK)</code>. Mas o <code>persist()</code> permite escolher exatamente onde guardar os dados.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>StorageLevel</th><th>Onde guarda</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><strong>MEMORY_ONLY</strong></td><td>Só RAM. Se não couber, recalcula</td><td>Dataset pequeno que cabe na memória, acesso rápido</td></tr>
+            <tr><td><strong>MEMORY_AND_DISK</strong></td><td>RAM, e se não couber, derrama pro disco</td><td><strong>Padrão recomendado</strong> — equilíbrio entre velocidade e segurança</td></tr>
+            <tr><td><strong>DISK_ONLY</strong></td><td>Só disco</td><td>Dataset muito grande, memória limitada</td></tr>
+            <tr><td><strong>MEMORY_ONLY_SER</strong></td><td>RAM, mas serializado (mais compacto)</td><td>Economizar memória ao custo de CPU para des/serializar</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — persist com nível customizado e unpersist</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark <span class="kw">import</span> StorageLevel
+
+df_caro = df.<span class="fn">join</span>(df2, <span class="str">"id"</span>).<span class="fn">groupBy</span>(<span class="str">"categoria"</span>).<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>))
+
+<span class="cm"># Persist com nível específico</span>
+df_caro.<span class="fn">persist</span>(StorageLevel.MEMORY_AND_DISK)
+
+<span class="cm"># IMPORTANTE: cache/persist é lazy também! Só materializa na 1ª action</span>
+df_caro.<span class="fn">count</span>()    <span class="cm"># aqui sim o cache é preenchido</span>
+
+<span class="cm"># ... usar df_caro várias vezes ...</span>
+
+<span class="cm"># SEMPRE libere a memória quando não precisar mais!</span>
+df_caro.<span class="fn">unpersist</span>()</code></pre>
+      </div>
+      <div class="aviso"><i class="fas fa-exclamation-triangle"></i><span><strong>Erro comum:</strong> cachear DataFrames pequenos ou que são usados só uma vez. Cache tem overhead — só use quando o DataFrame for reutilizado <strong>múltiplas vezes</strong> e for caro de recalcular (após joins, agregações pesadas). Cachear tudo "por garantia" desperdiça memória do cluster.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bolt"></i>Tungsten — a camada de execução nativa</div>
+      <p><strong>Tungsten</strong> é o projeto que revolucionou a performance do Spark a partir da versão 1.5, focando em três pilares: gerenciamento de memória eficiente (off-heap), geração de código (whole-stage code generation) e algoritmos cache-friendly (vetorização de CPU).</p>
+      <div class="grid-3">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:var(--accent-400);margin-bottom:.4rem;">Memória off-heap</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Spark gerencia memória diretamente em formato binário, evitando overhead do garbage collector da JVM.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#60a5fa;margin-bottom:.4rem;">Whole-Stage CodeGen</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Combina várias operações em uma única função Java compilada, eliminando overhead de chamadas virtuais.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">Cache-aware</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Algoritmos desenhados para aproveitar o cache da CPU (L1/L2/L3), reduzindo acessos à RAM.</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Você não precisa configurar nada manualmente</strong> — o Tungsten roda automaticamente em todo DataFrame/Spark SQL. Mencionar isso é importante para entender por que DataFrame é tão mais rápido que RDD: RDD não passa pelo Tungsten, só pelo Catalyst (parcial); DataFrame passa pelos dois.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — você tem um DataFrame resultado de um join pesado que será usado em 5 actions diferentes. O que você deve fazer?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Nada — o Spark já cacheia automaticamente resultados reutilizados</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Usar .cache() ou .persist() após o join, e chamar uma action para materializar antes das próximas 5 actions</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Salvar em Parquet e ler de novo a cada action</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Converter para RDD para evitar reprocessamento</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Atividade Prática</span></div>
+
+  <!-- ── AULA 4: Atividade ────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Comparando planos de execução e otimizando uma consulta lenta</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-vials"></i>Caso de estudo — query lenta para diagnosticar</div>
+      <p>O professor vai apresentar a seguinte query lenta. Sua missão: usar <code>explain()</code> para identificar os problemas antes de otimizar.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — query original (lenta)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> udf
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> StringType
+
+<span class="op">@udf</span>(returnType=StringType())
+<span class="kw">def</span> <span class="fn">categoria_valor</span>(total):
+    <span class="kw">if</span> total > <span class="num">1000</span>: <span class="kw">return</span> <span class="str">"alto"</span>
+    <span class="kw">elif</span> total > <span class="num">100</span>: <span class="kw">return</span> <span class="str">"medio"</span>
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="str">"baixo"</span>
+
+<span class="cm"># Lê TODAS as colunas de duas tabelas grandes</span>
+df_pedidos = spark.read.<span class="fn">parquet</span>(<span class="str">"data/pedidos/"</span>)    <span class="cm"># 5M linhas</span>
+df_produtos = spark.read.<span class="fn">parquet</span>(<span class="str">"data/produtos/"</span>)   <span class="cm"># 200 linhas (!)</span>
+
+<span class="cm"># Join SEM broadcast explícito + UDF + filtro depois do join</span>
+resultado = (df_pedidos
+    .<span class="fn">join</span>(df_produtos, <span class="str">"product_id"</span>)
+    .<span class="fn">withColumn</span>(<span class="str">"faixa"</span>, <span class="fn">categoria_valor</span>(col(<span class="str">"total"</span>)))
+    .<span class="fn">filter</span>(col(<span class="str">"faixa"</span>) == <span class="str">"alto"</span>)
+    .<span class="fn">groupBy</span>(<span class="str">"product_name"</span>)
+    .<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"receita"</span>))
+)
+resultado.<span class="fn">show</span>()</code></pre>
+      </div>
+
+      <div class="aviso-accent"><i class="fas fa-search"></i><span><strong>Sua tarefa:</strong> execute <code>resultado.explain("formatted")</code> e identifique pelo menos 3 problemas de performance neste código antes de ver a solução.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tools"></i>Solução otimizada — comparando lado a lado</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — query otimizada</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, when, sum, broadcast
+
+df_pedidos = spark.read.<span class="fn">parquet</span>(<span class="str">"data/pedidos/"</span>)
+df_produtos = spark.read.<span class="fn">parquet</span>(<span class="str">"data/produtos/"</span>)
+
+resultado = (df_pedidos
+    .<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">1000</span>)              <span class="cm"># filtro ANTES, sem UDF</span>
+    .<span class="fn">select</span>(<span class="str">"product_id"</span>, <span class="str">"total"</span>)         <span class="cm"># só colunas necessárias</span>
+    .<span class="fn">join</span>(<span class="fn">broadcast</span>(df_produtos), <span class="str">"product_id"</span>)  <span class="cm"># broadcast explícito</span>
+    .<span class="fn">groupBy</span>(<span class="str">"product_name"</span>)
+    .<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"receita"</span>))
+)
+resultado.<span class="fn">show</span>()</code></pre>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Problema na versão original</th><th>Correção aplicada</th><th>Impacto</th></tr></thead>
+          <tbody>
+            <tr><td>UDF Python opaca para classificar valor</td><td>Substituída por filtro direto <code>total &gt; 1000</code></td><td>Catalyst pode fazer predicate pushdown</td></tr>
+            <tr><td>Filtro de "faixa" aplicado DEPOIS do join</td><td>Filtro de total aplicado ANTES do join</td><td>Junta muito menos linhas</td></tr>
+            <tr><td>Join sem broadcast em tabela de 200 linhas</td><td><code>broadcast(df_produtos)</code> explícito</td><td>Elimina shuffle dos 5M de pedidos</td></tr>
+            <tr><td>select() implícito de todas as colunas</td><td><code>select("product_id", "total")</code> antes do join</td><td>Reduz volume de dados transferidos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque-green"><strong>Resultado esperado:</strong> de um plano com <code>SortMergeJoin</code>, <code>Exchange</code> (shuffle) e UDF opaca, para um plano com <code>BroadcastHashJoin</code>, <code>PushedFilters</code> preenchido e zero UDFs. Ganho típico: 5-10x mais rápido nesse padrão de query.</div>
+    </div>
+
+    <!-- Atividade -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Prática individual</div>
+        <div class="secao-titulo">Diagnosticar, comparar e otimizar</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Leitura de plano (10 min)</div>
+      <p>Execute <code>resultado.explain("formatted")</code> na query lenta do professor. Identifique no plano: (a) há algum <code>BatchEvalPython</code> (indicando UDF)? (b) o join usa <code>SortMergeJoin</code> ou <code>BroadcastHashJoin</code>? (c) o campo <code>PushedFilters</code> está vazio ou preenchido?</p>
+      <span class="dif-basico">Diagnóstico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Reescrever e comparar (20 min)</div>
+      <p>Reescreva a query aplicando as 4 correções da tabela acima, uma por vez. Após cada correção, execute <code>explain()</code> de novo e observe a mudança no plano. Meça o tempo total de execução antes e depois com <code>%%time</code> (Jupyter) ou <code>time.time()</code>.</p>
+      <span class="dif-medio">Otimização incremental</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: cache estratégico (15 min)</div>
+      <p>Imagine que o resultado otimizado será usado em 3 relatórios diferentes (top produtos, receita por mês, receita por região). Adicione <code>.cache()</code> no ponto certo do pipeline e demonstre, usando a Spark UI, que a segunda e terceira execução são muito mais rápidas que a primeira.</p>
+      <span class="dif-desafio">Cache + medição</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver dica de implementação</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Dica de implementação</div>
+          <div class="code-block">
+            <pre style="padding:1rem;"><code>df_base = (df_pedidos
+    .<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">1000</span>)
+    .<span class="fn">join</span>(<span class="fn">broadcast</span>(df_produtos), <span class="str">"product_id"</span>)
+    .<span class="fn">cache</span>()  <span class="cm"># ← cache ANTES das 3 agregações diferentes</span>
+)
+df_base.<span class="fn">count</span>()  <span class="cm"># materializa o cache (1ª execução, mais lenta)</span>
+
+<span class="cm"># Essas 3 reutilizam o cache (muito mais rápidas):</span>
+top_produtos = df_base.<span class="fn">groupBy</span>(<span class="str">"product_name"</span>).<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>))
+por_mes      = df_base.<span class="fn">groupBy</span>(<span class="str">"mes"</span>).<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>))
+por_regiao   = df_base.<span class="fn">groupBy</span>(<span class="str">"regiao"</span>).<span class="fn">agg</span>(<span class="fn">sum</span>(<span class="str">"total"</span>))</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 10</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 10</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-brain"></i>
+        <strong>Catalyst Optimizer</strong>
+        <p>4 fases: Análise → Otimização Lógica → Planejamento Físico → Geração de Código. Decide automaticamente a melhor estratégia.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-map"></i>
+        <strong>explain()</strong>
+        <p>Mostra o plano sem executar. Procure por PushedFilters, BroadcastHashJoin vs SortMergeJoin, e UDFs opacas.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-save"></i>
+        <strong>Cache/Persist</strong>
+        <p>Evita recalcular DataFrames reutilizados. cache() = MEMORY_AND_DISK. Sempre unpersist() quando não precisar mais.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Tungsten</strong>
+        <p>Execução nativa em JVM: memória off-heap, code generation, cache-aware. Automático em DataFrames.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe as 4 fases do Catalyst Optimizer? Consegue ler um plano de explain() e identificar predicate pushdown? Sabe quando usar cache() e como verificar se está funcionando? Entende por que UDFs bloqueiam otimizações? Se sim para os quatro — você está pronto para a Semana 11.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-11-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 11 — ETL vs ELT: quando usar cada abordagem, dbt para transformação e testes de qualidade</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar dica'
+    :'<i class="fas fa-lightbulb"></i> ver dica de implementação';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'C',msg:'✅ Correto! É na fase de Planejamento Físico (Physical Planning) que o Catalyst gera múltiplos planos físicos candidatos e usa o Cost-Based Optimizer (estatísticas de tamanho das tabelas) para decidir, por exemplo, se vale usar Broadcast Hash Join (quando uma tabela é pequena) ou Shuffle Hash Join / Sort Merge Join (quando ambas são grandes).'},
+  quiz2:{correct:'B',msg:'✅ Correto! UDFs Python são funções opacas para o Catalyst — ele não consegue "ver" a lógica interna delas, então não pode aplicar predicate pushdown nem otimizar com base no que a função faz. Isso é uma das razões mais importantes para preferir funções nativas do pyspark.sql.functions sempre que possível: elas são totalmente visíveis e otimizáveis pelo Catalyst.'},
+  quiz3:{correct:'B',msg:'✅ Correto! Quando um DataFrame caro de computar (resultado de join, agregação) será reutilizado em múltiplas actions, a estratégia correta é usar .cache() ou .persist() seguido de uma action (como count()) para materializar o resultado uma única vez. As próximas actions reaproveitam o resultado em memória, evitando recalcular todo o DAG repetidamente. O Spark NÃO cacheia automaticamente — isso precisa ser feito explicitamente pelo desenvolvedor.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

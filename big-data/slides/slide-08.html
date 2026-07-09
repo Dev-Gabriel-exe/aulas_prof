@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 08 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-blue{padding:1rem 1.25rem;border-radius:10px;background:rgba(59,130,246,.07);border-left:3px solid #3b82f6;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-blue strong{color:#60a5fa;}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Spark ecosystem ── */
+.ecosystem{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.eco-item{padding:.75rem .9rem;border-radius:10px;border:1px solid;text-align:center;}
+.eco-core{background:rgba(251,146,60,.07);border-color:rgba(251,146,60,.2);}
+.eco-sql{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.2);}
+.eco-stream{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.2);}
+.eco-ml{background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.2);}
+.eco-graph{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.2);}
+.eco-engine{grid-column:1/-1;background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);}
+.eco-titulo{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.2rem;}
+.eco-core .eco-titulo{color:var(--accent-400);}
+.eco-sql .eco-titulo{color:#60a5fa;}
+.eco-stream .eco-titulo{color:#4ade80;}
+.eco-ml .eco-titulo{color:#a78bfa;}
+.eco-graph .eco-titulo{color:#fbbf24;}
+.eco-engine .eco-titulo{color:rgba(255,255,255,.5);font-size:.65rem;}
+.eco-desc{font-size:.72rem;color:var(--text-muted);}
+
+/* ── Lazy eval visual ── */
+.lazy-flow{display:flex;flex-direction:column;gap:0;margin:.75rem 0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+.lazy-step{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.lazy-step:last-child{border-bottom:none;}
+.lazy-tag{font-size:.62rem;padding:2px 6px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;width:90px;text-align:center;}
+.lazy-transform{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
+.lazy-action{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3);}
+.lazy-code{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#fde68a;flex:1;}
+.lazy-note{font-size:.75rem;color:var(--text-muted);margin-left:auto;flex-shrink:0;}
+.lazy-exec{background:rgba(74,222,128,.05);border-top:1px solid rgba(74,222,128,.15);}
+
+/* ── RDD vs DataFrame ── */
+.comp-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin:.75rem 0;}
+.comp-col{padding:1.1rem;}
+.comp-col-rdd{background:rgba(239,68,68,.04);border-right:1px solid rgba(255,255,255,.05);}
+.comp-col-df{background:rgba(74,222,128,.04);}
+.comp-vs{display:flex;align-items:center;justify-content:center;padding:0 .4rem;font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.2);writing-mode:vertical-rl;}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;}
+.comp-col-rdd .comp-titulo{color:#f87171;}
+.comp-col-df .comp-titulo{color:#4ade80;}
+.comp-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.65rem;position:relative;line-height:1.5;}
+.comp-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* ── Output visual ── */
+.spark-output{background:#0a0a0a;border:1px solid rgba(251,146,60,.15);border-radius:10px;padding:1rem 1.25rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.7;}
+.out-header{color:rgba(251,146,60,.6);font-size:.7rem;margin-bottom:.4rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.out-sep{color:rgba(255,255,255,.15);}
+.out-val{color:rgba(255,255,255,.7);}
+.out-col{color:#fb923c;}
+.out-num{color:#fca5a5;}
+.out-str{color:#86efac;}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.ecosystem,.comp-wrap{grid-template-columns:1fr;}
+  .comp-vs{writing-mode:horizontal-tb;padding:.5rem;border:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">08</div>
+    <h1 class="capa-titulo"><em>Apache Spark</em><br>Fundamentos</h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Do MapReduce lento ao processamento em memória</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Por que o Spark — MapReduce vs in-memory processing</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Ecossistema Spark: Core, SQL, Streaming, MLlib, GraphX</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cubes"></i></div><span>RDD — Resilient Distributed Dataset, lazy evaluation e DAG</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-table"></i></div><span>DataFrame — tabela distribuída com schema e Catalyst Optimizer</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>Spark SQL — queries SQL sobre DataFrames distribuídos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fab fa-python"></i></div><span>PySpark na prática — SparkSession, leitura, exploração, escrita</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: carregar e explorar dataset com PySpark DataFrame</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Carregar um dataset CSV com PySpark, explorar o schema, fazer transformações básicas e escrever o resultado em Parquet.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 7</div>
+      <ul class="info-lista">
+        <li>Full Load: copia tudo — simples, pesado</li>
+        <li>Incremental: cursor em updated_at — eficiente, não captura DELETEs</li>
+        <li>CDC (Debezium): lê WAL, captura INSERT/UPDATE/DELETE, latência segundos</li>
+        <li>Streaming (Kafka): eventos de app publicados diretamente, ms de latência</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que você vai precisar</div>
+      <ul class="info-lista">
+        <li>Python 3.8+ instalado</li>
+        <li>PySpark: <code>pip install pyspark</code></li>
+        <li>Jupyter Notebook (opcional mas recomendado)</li>
+        <li>Alternativa: Google Colab (já tem PySpark disponível)</li>
+        <li>Dataset: será fornecido pelo professor (CSV de vendas)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Por que Spark importa</div>
+      <ul class="info-lista">
+        <li>Ferramenta dominante em engenharia de dados há 10 anos</li>
+        <li>Toda oferta de emprego em Big Data exige Spark/PySpark</li>
+        <li>Usado por Netflix, Uber, Airbnb, LinkedIn, Databricks</li>
+        <li>Base para semanas 9–10 (PySpark avançado e Spark SQL)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Por que Spark ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que o Spark — o problema com o MapReduce</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 4</div>
+      <p>Na semana 4 vimos que o HDFS armazena dados em blocos distribuídos. Mas como <em>processar</em> esses dados? A primeira resposta foi o MapReduce — funcional, mas lento. O Spark nasceu para resolver exatamente isso.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-turtle"></i>O problema do MapReduce — o disco como gargalo</div>
+      <p>O MapReduce (base do Hadoop 1.x) processa dados em duas fases: <strong>Map</strong> (transforma dados em pares chave-valor) e <strong>Reduce</strong> (agrega os pares). Mas entre cada fase, os resultados intermediários são <strong>escritos no disco (HDFS)</strong>. Para pipelines com múltiplas etapas, isso significa:</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">🐌 MapReduce — ciclo por etapa</div>
+          <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.35rem;">
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.1);color:#fca5a5;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Lê HDFS</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.1);color:#fca5a5;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Map</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.15);color:#f87171;font-size:.72rem;font-family:'JetBrains Mono',monospace;border:1px solid rgba(239,68,68,.3);">Escreve disco</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.1);color:#fca5a5;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Lê disco</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.1);color:#fca5a5;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Reduce</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(239,68,68,.15);color:#f87171;font-size:.72rem;font-family:'JetBrains Mono',monospace;border:1px solid rgba(239,68,68,.3);">Escreve disco</div>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.6rem;">Cada etapa adicional = mais leituras e escritas em disco. Pipeline com 10 etapas = 20 ciclos de I/O.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">⚡ Spark — in-memory pipeline</div>
+          <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.35rem;">
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(74,222,128,.1);color:#86efac;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Lê HDFS/S3</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(74,222,128,.12);color:#4ade80;font-size:.72rem;font-family:'JetBrains Mono',monospace;border:1px solid rgba(74,222,128,.25);">RAM</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(74,222,128,.1);color:#86efac;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Etapa 1</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(74,222,128,.1);color:#86efac;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Etapa 2...N</div>
+            <div style="color:var(--text-muted);font-size:.7rem;">→</div>
+            <div style="padding:.3rem .6rem;border-radius:5px;background:rgba(74,222,128,.1);color:#86efac;font-size:.72rem;font-family:'JetBrains Mono',monospace;">Escreve final</div>
+          </div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.6rem;">Dados ficam em memória entre etapas. Pipeline com 10 etapas = apenas 1 leitura + 1 escrita em disco.</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Resultado:</strong> o Spark é <strong>10x–100x mais rápido</strong> que MapReduce para a maioria dos workloads. Para algoritmos iterativos de ML (que passam pelos dados dezenas de vezes), a diferença pode ser 1000x.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>O ecossistema Spark — uma plataforma unificada</div>
+      <p>Além da velocidade, o Spark trouxe algo que o MapReduce não tinha: <strong>uma plataforma unificada</strong> para diferentes tipos de processamento.</p>
+      <div class="ecosystem">
+        <div class="eco-item eco-sql">
+          <div class="eco-titulo">Spark SQL</div>
+          <div class="eco-desc">SQL + DataFrames. Catalyst Optimizer. Esta semana.</div>
+        </div>
+        <div class="eco-item eco-stream">
+          <div class="eco-titulo">Structured Streaming</div>
+          <div class="eco-desc">Streaming em tempo real sobre a API de batch. Semana 15.</div>
+        </div>
+        <div class="eco-item eco-ml">
+          <div class="eco-titulo">MLlib</div>
+          <div class="eco-desc">ML distribuído: classificação, regressão, clustering, recomendação.</div>
+        </div>
+        <div class="eco-item eco-graph">
+          <div class="eco-titulo">GraphX</div>
+          <div class="eco-desc">Processamento de grafos distribuído. PageRank, componentes conectados.</div>
+        </div>
+        <div class="eco-item eco-core">
+          <div class="eco-titulo">Spark Core</div>
+          <div class="eco-desc">RDD, scheduler, memória. Base de tudo.</div>
+        </div>
+        <div class="eco-item eco-engine" style="grid-column:1/-1;">
+          <div class="eco-titulo">Cluster Manager: YARN · Kubernetes · Mesos · Standalone</div>
+        </div>
+      </div>
+      <div class="destaque-blue"><strong>Databricks:</strong> a empresa fundada pelo criador do Spark oferece o Databricks — plataforma cloud que une Spark, Delta Lake e ferramentas de ML numa interface gerenciada. É o ambiente mais usado em produção hoje.</div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-hand-paper"></i>
+      <span><strong>Pergunta para a turma:</strong> MapReduce foi lançado em 2004 e dominou Big Data por anos mesmo sendo lento. O que isso nos ensina sobre timing de tecnologia e adoção? (Resposta: o Spark só foi possível quando a RAM ficou barata o suficiente para manter TBs em memória.)</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · RDD e Lazy Evaluation</span></div>
+
+  <!-- ── AULA 2: RDD ────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">RDD — Resilient Distributed Dataset e Lazy Evaluation</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cubes"></i>O que é um RDD — os três adjetivos que definem tudo</div>
+      <p>RDD é a abstração fundamental do Spark. Entender o nome é entender o conceito:</p>
+      <div class="grid-3">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:#f87171;margin-bottom:.4rem;">🛡 Resilient</div>
+          <div style="font-size:.82rem;color:var(--text-secondary);">Tolerante a falhas. Se uma partição se perde (nó cai), o Spark reconstrói a partir do <strong>lineage</strong> — o histórico de operações que criou aquela partição. Não precisa de réplica explícita.</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:#60a5fa;margin-bottom:.4rem;">🌐 Distributed</div>
+          <div style="font-size:.82rem;color:var(--text-secondary);">Particionado entre múltiplos executors no cluster. Cada executor processa sua partição em paralelo. Mais partições = mais paralelismo (até o limite de cores).</div>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">📦 Dataset</div>
+          <div style="font-size:.82rem;color:var(--text-secondary);">Coleção de objetos Python/Scala/Java. Pode ser qualquer tipo: strings, tuplas, dicionários. Sem schema definido — ao contrário do DataFrame.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>Lazy Evaluation — o segredo da performance</div>
+      <p>O conceito mais importante do Spark é a <strong>avaliação preguiçosa (lazy evaluation)</strong>. Quando você chama uma transformação (map, filter, groupBy…), o Spark <strong>não executa nada imediatamente</strong>. Ele apenas registra a operação no DAG (Directed Acyclic Graph). Somente quando uma <strong>action</strong> é chamada (collect, count, show, save…) é que o Spark otimiza e executa toda a cadeia.</p>
+
+      <div class="lazy-flow">
+        <div class="lazy-step"><span class="lazy-tag lazy-transform">Transformação</span><span class="lazy-code">rdd2 = rdd.filter(lambda x: x[<span style="color:#fca5a5;">'total'</span>] > <span style="color:#fca5a5;">100</span>)</span><span class="lazy-note">❌ Não executa</span></div>
+        <div class="lazy-step"><span class="lazy-tag lazy-transform">Transformação</span><span class="lazy-code">rdd3 = rdd2.map(lambda x: (x[<span style="color:#fca5a5;">'category'</span>], x[<span style="color:#fca5a5;">'total'</span>]))</span><span class="lazy-note">❌ Não executa</span></div>
+        <div class="lazy-step"><span class="lazy-tag lazy-transform">Transformação</span><span class="lazy-code">rdd4 = rdd3.reduceByKey(lambda a, b: a + b)</span><span class="lazy-note">❌ Não executa</span></div>
+        <div class="lazy-step lazy-exec"><span class="lazy-tag lazy-action">Action ⚡</span><span class="lazy-code">resultado = rdd4.collect()</span><span class="lazy-note" style="color:#4ade80;">✅ Executa TUDO agora</span></div>
+      </div>
+
+      <div class="destaque"><strong>Por que lazy é melhor?</strong> O Spark pode otimizar o DAG inteiro antes de executar. Se você filtra 90% dos dados na primeira etapa e depois faz um join pesado, o Catalyst pode reorganizar para fazer o join com menos dados — impossível se cada operação executasse imediatamente.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Transformações vs Actions — o guia completo</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.07em;">Transformações (lazy)</div>
+          <div class="code-block" style="margin-top:0;">
+            <pre style="padding:.85rem;"><code><span class="cm"># Cada linha retorna um NOVO RDD — lazy</span>
+rdd.<span class="fn">map</span>(<span class="kw">lambda</span> x: x * <span class="num">2</span>)
+rdd.<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="num">0</span>)
+rdd.<span class="fn">flatMap</span>(<span class="kw">lambda</span> x: x.<span class="fn">split</span>(<span class="str">" "</span>))
+rdd.<span class="fn">distinct</span>()
+rdd.<span class="fn">sortBy</span>(<span class="kw">lambda</span> x: x[<span class="num">1</span>])
+rdd.<span class="fn">reduceByKey</span>(<span class="kw">lambda</span> a, b: a + b)
+rdd.<span class="fn">groupByKey</span>()   <span class="cm"># evitar!</span>
+rdd1.<span class="fn">union</span>(rdd2)
+rdd1.<span class="fn">join</span>(rdd2)
+rdd.<span class="fn">repartition</span>(<span class="num">8</span>)
+rdd.<span class="fn">coalesce</span>(<span class="num">4</span>)    <span class="cm"># reduz partições</span></code></pre>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.07em;">Actions (trigger execution) ⚡</div>
+          <div class="code-block" style="margin-top:0;">
+            <pre style="padding:.85rem;"><code><span class="cm"># Cada uma dessas EXECUTA o DAG completo</span>
+rdd.<span class="fn">collect</span>()        <span class="cm"># ⚠ traz tudo pro driver</span>
+rdd.<span class="fn">count</span>()          <span class="cm"># conta elementos</span>
+rdd.<span class="fn">first</span>()          <span class="cm"># primeiro elemento</span>
+rdd.<span class="fn">take</span>(<span class="num">10</span>)         <span class="cm"># primeiros 10</span>
+rdd.<span class="fn">takeSample</span>(<span class="kw">False</span>, <span class="num">100</span>) <span class="cm"># amostra</span>
+rdd.<span class="fn">reduce</span>(<span class="kw">lambda</span> a,b: a+b)
+rdd.<span class="fn">sum</span>()
+rdd.<span class="fn">max</span>() / rdd.<span class="fn">min</span>()
+rdd.<span class="fn">foreach</span>(<span class="fn">print</span>)   <span class="cm"># executa f em cada</span>
+rdd.<span class="fn">saveAsTextFile</span>(<span class="str">"/path"</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="aviso"><i class="fas fa-exclamation-triangle"></i><span><strong>Cuidado com collect():</strong> traz todos os dados para a memória do driver (seu notebook/script). Em um RDD de 10 GB, isso vai crashar o driver. Use <code>take(n)</code> ou <code>show(n)</code> para inspecionar amostras.</span></div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual das seguintes operações faz o Spark executar o DAG imediatamente?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">rdd.filter(lambda x: x > 0)</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">rdd.map(lambda x: x * 2)</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">rdd.count()</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">rdd.reduceByKey(lambda a, b: a + b)</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · DataFrame e Spark SQL</span></div>
+
+  <!-- ── AULA 3: DataFrame + Spark SQL ────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">DataFrame e Spark SQL — a API moderna do Spark</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>RDD vs DataFrame — por que o DataFrame ganhou</div>
+      <div class="comp-wrap">
+        <div class="comp-col comp-col-rdd">
+          <div class="comp-titulo">🔴 RDD (modo antigo)</div>
+          <div class="comp-item">Sem schema — você manipula objetos Python genéricos</div>
+          <div class="comp-item">Sem otimização automática — você é responsável pela eficiência</div>
+          <div class="comp-item">API verbosa — muito código para operações simples</div>
+          <div class="comp-item">Python lento: cada elemento passa pelo Python GIL</div>
+          <div class="comp-item">Difícil de debugar — erros de tipo aparecem em runtime</div>
+          <div class="comp-item" style="margin-top:.4rem;"><code style="font-size:.72rem;color:#fca5a5;">rdd.map(lambda r: (r['cat'], r['total'])).reduceByKey(lambda a,b: a+b)</code></div>
+        </div>
+        <div class="comp-vs">VS</div>
+        <div class="comp-col comp-col-df">
+          <div class="comp-titulo">🟢 DataFrame (API moderna)</div>
+          <div class="comp-item">Schema definido — tipos validados, autocomplete no IDE</div>
+          <div class="comp-item">Catalyst Optimizer otimiza automaticamente o plano de execução</div>
+          <div class="comp-item">API expressiva — SQL ou Python fluente</div>
+          <div class="comp-item">Tungsten executa em JVM — muito mais rápido que RDD Python</div>
+          <div class="comp-item">Erros de tipo em tempo de compilação (schema validation)</div>
+          <div class="comp-item" style="margin-top:.4rem;"><code style="font-size:.72rem;color:#86efac;">df.groupBy("cat").agg(sum("total"))</code></div>
+        </div>
+      </div>
+      <div class="destaque-green"><strong>Regra hoje:</strong> use DataFrame (ou Dataset em Scala). RDD é legado — você vai encontrar em código antigo, mas para código novo, DataFrame é sempre a escolha certa.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Operações essenciais com DataFrame</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — operações DataFrame</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, sum, count, avg, max, min, round, when, lit, to_date
+
+spark = SparkSession.<span class="fn">builder</span>.<span class="fn">appName</span>(<span class="str">"Vendas"</span>).<span class="fn">getOrCreate</span>()
+df = spark.read.<span class="fn">parquet</span>(<span class="str">"s3://bucket/silver/orders/"</span>)
+
+<span class="cm"># ── Exploração ────────────────────────────────────────────────</span>
+df.<span class="fn">show</span>(<span class="num">5</span>)              <span class="cm"># primeiras 5 linhas</span>
+df.<span class="fn">printSchema</span>()       <span class="cm"># estrutura e tipos</span>
+df.<span class="fn">describe</span>().<span class="fn">show</span>()  <span class="cm"># estatísticas básicas</span>
+df.<span class="fn">count</span>()             <span class="cm"># total de linhas</span>
+df.columns             <span class="cm"># lista de colunas</span>
+df.dtypes              <span class="cm"># lista de (coluna, tipo)</span>
+
+<span class="cm"># ── Seleção e filtragem ───────────────────────────────────────</span>
+df.<span class="fn">select</span>(<span class="str">"order_id"</span>, <span class="str">"customer_id"</span>, <span class="str">"total"</span>)
+df.<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">100</span>)
+df.<span class="fn">filter</span>((col(<span class="str">"status"</span>) == <span class="str">"paid"</span>) & (col(<span class="str">"total"</span>) > <span class="num">50</span>))
+df.<span class="fn">where</span>(<span class="str">"total > 100 AND status = 'paid'"</span>)  <span class="cm"># sintaxe SQL</span>
+
+<span class="cm"># ── Transformações ───────────────────────────────────────────</span>
+df.<span class="fn">withColumn</span>(<span class="str">"total_com_frete"</span>, col(<span class="str">"total"</span>) + col(<span class="str">"shipping"</span>))
+df.<span class="fn">withColumn</span>(<span class="str">"categoria_preco"</span>,
+    <span class="fn">when</span>(col(<span class="str">"total"</span>) < <span class="num">100</span>, <span class="str">"baixo"</span>)
+    .<span class="fn">when</span>(col(<span class="str">"total"</span>) < <span class="num">500</span>, <span class="str">"medio"</span>)
+    .<span class="fn">otherwise</span>(<span class="str">"alto"</span>))
+df.<span class="fn">withColumnRenamed</span>(<span class="str">"total"</span>, <span class="str">"valor_pedido"</span>)
+df.<span class="fn">drop</span>(<span class="str">"coluna_desnecessaria"</span>)
+df.<span class="fn">dropDuplicates</span>([<span class="str">"order_id"</span>])
+df.<span class="fn">fillna</span>({<span class="str">"shipping"</span>: <span class="num">0</span>, <span class="str">"discount"</span>: <span class="num">0</span>})
+
+<span class="cm"># ── Agregações ───────────────────────────────────────────────</span>
+df.<span class="fn">groupBy</span>(<span class="str">"category"</span>).<span class="fn">agg</span>(
+    <span class="fn">sum</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"receita_total"</span>),
+    <span class="fn">count</span>(<span class="str">"order_id"</span>).<span class="fn">alias</span>(<span class="str">"qtd_pedidos"</span>),
+    <span class="fn">avg</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"ticket_medio"</span>),
+    <span class="fn">max</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"maior_pedido"</span>)
+).<span class="fn">orderBy</span>(col(<span class="str">"receita_total"</span>).<span class="fn">desc</span>()).<span class="fn">show</span>()
+
+<span class="cm"># ── Joins ────────────────────────────────────────────────────</span>
+df_clientes = spark.read.<span class="fn">parquet</span>(<span class="str">"s3://bucket/silver/customers/"</span>)
+df_completo = df.<span class="fn">join</span>(df_clientes, on=<span class="str">"customer_id"</span>, how=<span class="str">"left"</span>)
+
+<span class="cm"># ── Escrita ──────────────────────────────────────────────────</span>
+df.<span class="fn">write</span>.<span class="fn">mode</span>(<span class="str">"overwrite"</span>).<span class="fn">parquet</span>(<span class="str">"s3://bucket/gold/revenue/"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-database"></i>Spark SQL — SQL sobre DataFrames distribuídos</div>
+      <p>Uma das funcionalidades mais poderosas do Spark é a integração com SQL. Você pode registrar um DataFrame como uma <strong>view temporária</strong> e usar SQL puro para consultá-la — exatamente a mesma sintaxe que você usaria no PostgreSQL ou BigQuery.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — Spark SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Registrar DataFrame como view temporária (só dura enquanto a sessão existir)</span>
+df.<span class="fn">createOrReplaceTempView</span>(<span class="str">"orders"</span>)
+df_clientes.<span class="fn">createOrReplaceTempView</span>(<span class="str">"customers"</span>)
+
+<span class="cm"># Usar SQL puro — mesma sintaxe do PostgreSQL</span>
+resultado = spark.<span class="fn">sql</span>(<span class="str">"""
+    SELECT
+        c.state,
+        o.category,
+        COUNT(o.order_id)      AS qtd_pedidos,
+        SUM(o.total)           AS receita,
+        ROUND(AVG(o.total), 2) AS ticket_medio,
+        MAX(o.total)           AS maior_pedido
+    FROM orders o
+    LEFT JOIN customers c ON o.customer_id = c.id
+    WHERE o.status = 'paid'
+      AND o.order_date >= '2024-01-01'
+    GROUP BY c.state, o.category
+    HAVING COUNT(o.order_id) > 10
+    ORDER BY receita DESC
+    LIMIT 20
+"""</span>)
+
+resultado.<span class="fn">show</span>()
+
+<span class="cm"># Resultado é um DataFrame normal — pode continuar transformando</span>
+resultado.<span class="fn">write</span>.<span class="fn">mode</span>(<span class="str">"overwrite"</span>).<span class="fn">parquet</span>(<span class="str">"s3://bucket/gold/ranking_estado/"</span>)</code></pre>
+      </div>
+      <div class="destaque"><strong>DataFrame API vs SQL:</strong> ambas produzem exatamente o mesmo plano de execução após o Catalyst Optimizer. A escolha é de preferência pessoal — analistas tendem a preferir SQL; engenheiros de dados tendem a preferir a API encadeada. Em times mistos, Spark SQL facilita a colaboração.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual componente do Spark otimiza automaticamente o plano de execução de um DataFrame antes de rodar?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">O programador — o Spark executa o código na ordem escrita</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Catalyst Optimizer — analisa o DAG e reorganiza as operações para melhor performance</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">O YARN — o cluster manager decide a melhor ordem de execução</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O Python — a engine Python otimiza as operações antes de chamar o Spark</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · PySpark na Prática</span></div>
+
+  <!-- ── AULA 4: Prática ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">PySpark na prática — carregar, explorar e transformar</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-play"></i>SparkSession — o ponto de entrada de tudo</div>
+      <p>Toda aplicação PySpark começa com a criação de uma <code>SparkSession</code>. É ela que gerencia a conexão com o cluster, a configuração e o acesso a todas as funcionalidades do Spark.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — SparkSession e configurações essenciais</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+
+<span class="cm"># Criação básica — local (usa todos os cores da máquina)</span>
+spark = (SparkSession.<span class="fn">builder</span>
+    .<span class="fn">appName</span>(<span class="str">"AnaliseVendas"</span>)
+    .<span class="fn">master</span>(<span class="str">"local[*]"</span>)               <span class="cm"># local[*] = todos os cores</span>
+    .<span class="fn">config</span>(<span class="str">"spark.sql.shuffle.partitions"</span>, <span class="str">"8"</span>)  <span class="cm"># padrão=200, reduzir p/ dev</span>
+    .<span class="fn">config</span>(<span class="str">"spark.driver.memory"</span>, <span class="str">"2g"</span>)
+    .<span class="fn">getOrCreate</span>()
+)
+
+<span class="cm"># Verificar a versão</span>
+<span class="fn">print</span>(spark.version)            <span class="cm"># ex: 3.5.0</span>
+<span class="fn">print</span>(spark.sparkContext.master) <span class="cm"># local[*]</span>
+
+<span class="cm"># Ao terminar (libera recursos)</span>
+spark.<span class="fn">stop</span>()</code></pre>
+      </div>
+      <div class="aviso-accent"><i class="fas fa-lightbulb"></i><span><strong>spark.sql.shuffle.partitions:</strong> valor padrão é 200 — excelente para produção com grandes clusters, mas muito lento para desenvolvimento local com datasets pequenos. Reduza para 8 ou 16 ao desenvolver localmente.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-import"></i>Pipeline completo — do CSV ao Parquet</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — pipeline de exploração completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, sum, count, avg, round, to_date, year, month, when
+
+spark = SparkSession.<span class="fn">builder</span>.<span class="fn">appName</span>(<span class="str">"Vendas"</span>).<span class="fn">master</span>(<span class="str">"local[*]"</span>).<span class="fn">getOrCreate</span>()
+
+<span class="cm"># ── 1. CARREGAR ──────────────────────────────────────────────</span>
+df = (spark.read
+    .<span class="fn">option</span>(<span class="str">"header"</span>, <span class="str">"true"</span>)        <span class="cm"># primeira linha = cabeçalho</span>
+    .<span class="fn">option</span>(<span class="str">"inferSchema"</span>, <span class="str">"true"</span>)   <span class="cm"># detectar tipos automaticamente</span>
+    .<span class="fn">option</span>(<span class="str">"sep"</span>, <span class="str">";"</span>)              <span class="cm"># separador ponto-e-vírgula</span>
+    .<span class="fn">option</span>(<span class="str">"encoding"</span>, <span class="str">"UTF-8"</span>)
+    .<span class="fn">csv</span>(<span class="str">"data/vendas_2024.csv"</span>)
+)
+
+<span class="cm"># ── 2. EXPLORAR ──────────────────────────────────────────────</span>
+<span class="fn">print</span>(<span class="str">f"Total de linhas: {df.count()}"</span>)
+<span class="fn">print</span>(<span class="str">f"Total de colunas: {len(df.columns)}"</span>)
+df.<span class="fn">printSchema</span>()
+df.<span class="fn">show</span>(<span class="num">5</span>, truncate=<span class="kw">False</span>)
+df.<span class="fn">describe</span>([<span class="str">"total"</span>, <span class="str">"quantidade"</span>]).<span class="fn">show</span>()
+
+<span class="cm"># Verificar nulos</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> isnull
+df.<span class="fn">select</span>([<span class="fn">count</span>(<span class="fn">when</span>(<span class="fn">isnull</span>(c), c)).<span class="fn">alias</span>(c) <span class="kw">for</span> c <span class="kw">in</span> df.columns]).<span class="fn">show</span>()
+
+<span class="cm"># ── 3. LIMPAR (Raw → Silver) ──────────────────────────────────</span>
+df_silver = (df
+    .<span class="fn">dropDuplicates</span>([<span class="str">"order_id"</span>])
+    .<span class="fn">dropna</span>(subset=[<span class="str">"order_id"</span>, <span class="str">"total"</span>])
+    .<span class="fn">withColumn</span>(<span class="str">"total"</span>, col(<span class="str">"total"</span>).<span class="fn">cast</span>(<span class="str">"double"</span>))
+    .<span class="fn">withColumn</span>(<span class="str">"order_date"</span>, <span class="fn">to_date</span>(col(<span class="str">"order_date"</span>), <span class="str">"dd/MM/yyyy"</span>))
+    .<span class="fn">withColumn</span>(<span class="str">"ano"</span>,  <span class="fn">year</span>(<span class="str">"order_date"</span>))
+    .<span class="fn">withColumn</span>(<span class="str">"mes"</span>,  <span class="fn">month</span>(<span class="str">"order_date"</span>))
+    .<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">0</span>)
+    .<span class="fn">fillna</span>({<span class="str">"shipping"</span>: <span class="num">0.0</span>, <span class="str">"discount"</span>: <span class="num">0.0</span>})
+)
+
+<span class="fn">print</span>(<span class="str">f"Após limpeza: {df_silver.count()} linhas"</span>)
+
+<span class="cm"># ── 4. AGREGAR (Silver → Gold) ────────────────────────────────</span>
+df_gold = (df_silver
+    .<span class="fn">groupBy</span>(<span class="str">"ano"</span>, <span class="str">"mes"</span>, <span class="str">"category"</span>)
+    .<span class="fn">agg</span>(
+        <span class="fn">sum</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"receita"</span>),
+        <span class="fn">count</span>(<span class="str">"order_id"</span>).<span class="fn">alias</span>(<span class="str">"pedidos"</span>),
+        <span class="fn">round</span>(<span class="fn">avg</span>(<span class="str">"total"</span>), <span class="num">2</span>).<span class="fn">alias</span>(<span class="str">"ticket_medio"</span>)
+    )
+    .<span class="fn">orderBy</span>(<span class="str">"ano"</span>, <span class="str">"mes"</span>, col(<span class="str">"receita"</span>).<span class="fn">desc</span>())
+)
+
+df_gold.<span class="fn">show</span>(<span class="num">20</span>)
+
+<span class="cm"># ── 5. SALVAR ────────────────────────────────────────────────</span>
+(df_silver.write
+    .<span class="fn">mode</span>(<span class="str">"overwrite"</span>)
+    .<span class="fn">partitionBy</span>(<span class="str">"ano"</span>, <span class="str">"mes"</span>)
+    .<span class="fn">option</span>(<span class="str">"compression"</span>, <span class="str">"snappy"</span>)
+    .<span class="fn">parquet</span>(<span class="str">"output/silver/orders/"</span>)
+)
+
+(df_gold.write
+    .<span class="fn">mode</span>(<span class="str">"overwrite"</span>)
+    .<span class="fn">parquet</span>(<span class="str">"output/gold/revenue_monthly/"</span>)
+)</code></pre>
+      </div>
+    </div>
+
+    <!-- Exercícios -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Prática individual</div>
+        <div class="secao-titulo">Carregar e explorar dataset de vendas com PySpark</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>O professor vai disponibilizar o dataset <code>vendas_2024.csv</code> (100 mil linhas). Instale o PySpark com <code>pip install pyspark</code> ou use o Google Colab. Siga os exercícios em ordem — cada um constrói sobre o anterior.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Carregar e inspecionar (10 min)</div>
+      <p>Crie uma SparkSession local. Carregue o CSV com <code>header=True</code> e <code>inferSchema=True</code>. Responda: (a) quantas linhas e colunas tem o dataset? (b) quais são os tipos de cada coluna? (c) existe alguma coluna com valores nulos? Use <code>printSchema()</code>, <code>count()</code> e <code>describe()</code>.</p>
+      <span class="dif-basico">Exploração</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Transformações (15 min)</div>
+      <p>Aplique as seguintes transformações e explique o que cada uma faz: (a) remova duplicatas pela coluna <code>order_id</code>, (b) filtre pedidos com <code>total > 0</code> e <code>status = "paid"</code>, (c) crie uma nova coluna <code>total_com_frete</code> somando <code>total</code> e <code>shipping</code>, (d) crie uma coluna <code>faixa_valor</code> com "baixo" (&lt;100), "médio" (100-500) e "alto" (&gt;500). Mostre o resultado com <code>show(10)</code>.</p>
+      <span class="dif-medio">Transformação</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Agregação e Spark SQL (15 min)</div>
+      <p>Use <strong>tanto a API DataFrame quanto o Spark SQL</strong> para responder: qual categoria teve maior receita total? Qual o ticket médio por categoria? Quantos pedidos por mês? Verifique que os dois métodos produzem o mesmo resultado. Salve o resultado em Parquet na pasta <code>output/gold/</code>.</p>
+      <span class="dif-desafio">Análise + SQL</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução do Spark SQL</button>
+      <div class="gabarito-content">
+        <div class="code-block" style="margin-top:.75rem;">
+          <div class="code-header"><span class="code-lang">PySpark — solução Spark SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Registrar view</span>
+df_silver.<span class="fn">createOrReplaceTempView</span>(<span class="str">"orders"</span>)
+
+<span class="cm"># Receita e ticket médio por categoria</span>
+spark.<span class="fn">sql</span>(<span class="str">"""
+    SELECT
+        category,
+        ROUND(SUM(total), 2)  AS receita_total,
+        ROUND(AVG(total), 2)  AS ticket_medio,
+        COUNT(order_id)       AS qtd_pedidos
+    FROM orders
+    GROUP BY category
+    ORDER BY receita_total DESC
+"""</span>).<span class="fn">show</span>()
+
+<span class="cm"># Equivalente com API DataFrame:</span>
+(df_silver
+    .<span class="fn">groupBy</span>(<span class="str">"category"</span>)
+    .<span class="fn">agg</span>(
+        <span class="fn">round</span>(<span class="fn">sum</span>(<span class="str">"total"</span>), <span class="num">2</span>).<span class="fn">alias</span>(<span class="str">"receita_total"</span>),
+        <span class="fn">round</span>(<span class="fn">avg</span>(<span class="str">"total"</span>), <span class="num">2</span>).<span class="fn">alias</span>(<span class="str">"ticket_medio"</span>),
+        <span class="fn">count</span>(<span class="str">"order_id"</span>).<span class="fn">alias</span>(<span class="str">"qtd_pedidos"</span>)
+    )
+    .<span class="fn">orderBy</span>(col(<span class="str">"receita_total"</span>).<span class="fn">desc</span>())
+).<span class="fn">show</span>()</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — por que o Spark é muito mais rápido que o MapReduce para pipelines com múltiplas etapas?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Porque o Spark usa linguagem Python que é mais rápida que o Java do MapReduce</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Porque o Spark usa mais máquinas no cluster por padrão</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Porque o Spark mantém dados em memória entre etapas, evitando leituras e escritas em disco a cada passo</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Porque o Spark comprime os dados automaticamente antes de processar</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 8</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 8</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Spark vs MapReduce</strong>
+        <p>In-memory entre etapas. 10–100x mais rápido. Suporte a batch, streaming, SQL e ML em uma plataforma.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cubes"></i>
+        <strong>RDD + Lazy Eval</strong>
+        <p>Resilient (lineage), Distributed, Dataset. Transformações são lazy — só executam quando uma action é chamada.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-table"></i>
+        <strong>DataFrame</strong>
+        <p>Substitui RDD na prática. Schema definido. Catalyst Optimizer automático. API fluente e Spark SQL.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fab fa-python"></i>
+        <strong>PySpark</strong>
+        <p>SparkSession → read → transformações → agg → write. Parquet como formato de saída padrão.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue explicar a diferença entre transformação (lazy) e action (eager)? Sabe criar uma SparkSession, carregar um CSV, filtrar, agrupar e salvar em Parquet? Entende por que DataFrame supera RDD para o uso atual? Se sim para os três — você está pronto para a Semana 9.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-09-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 9 — PySpark avançado: transformações, lazy evaluation em profundidade, particionamento</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar solução'
+    :'<i class="fas fa-lightbulb"></i> ver solução do Spark SQL';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'C',msg:'✅ Correto! count() é uma action — ela força o Spark a executar todo o DAG acumulado. filter() e map() são transformações lazy (registram a operação mas não executam). reduceByKey() também é uma transformação lazy — só executa quando uma action é chamada sobre o resultado.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O Catalyst Optimizer é o componente responsável por otimizar o plano de execução lógico e físico de um DataFrame antes da execução. Ele pode reordenar operações (ex: fazer filtros antes de joins pesados), eliminar colunas desnecessárias, pushdown de predicados para o storage e escolher o algoritmo de join mais eficiente. Isso acontece automaticamente, sem intervenção do programador.'},
+  quiz3:{correct:'C',msg:'✅ Correto! Esta é a diferença fundamental. No MapReduce, os resultados intermediários de cada fase Map e Reduce são escritos no HDFS (disco) antes da próxima fase ler. Para pipelines com 10 etapas, isso representa 20 ciclos de I/O em disco — lento por natureza. O Spark mantém os dados em memória RAM entre etapas, reduzindo o I/O em disco ao mínimo necessário (apenas a leitura inicial e a escrita final).'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

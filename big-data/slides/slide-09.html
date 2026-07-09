@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 09 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.07);border-left:3px solid #f87171;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-red strong{color:#f87171;}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+/* ── Join types visual ── */
+.join-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.join-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.join-inner{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);}
+.join-left{background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.2);}
+.join-broadcast{background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.2);}
+.join-shuffle{background:rgba(167,139,250,.05);border-color:rgba(167,139,250,.2);}
+.join-titulo{font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.join-inner .join-titulo{color:#4ade80;}
+.join-left .join-titulo{color:#60a5fa;}
+.join-broadcast .join-titulo{color:var(--accent-400);}
+.join-shuffle .join-titulo{color:#a78bfa;}
+.join-venn{display:flex;align-items:center;justify-content:center;gap:0;margin:.5rem 0;}
+.venn-circle{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;}
+
+/* ── Stages/DAG visual ── */
+.dag-flow{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.25rem;}
+.stage-box{border-radius:10px;border:1px solid;padding:.85rem 1rem;margin-bottom:0;}
+.stage-1{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2);}
+.stage-2{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.2);}
+.stage-3{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.2);}
+.stage-titulo{font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between;}
+.stage-1 .stage-titulo{color:#60a5fa;}
+.stage-2 .stage-titulo{color:#4ade80;}
+.stage-3 .stage-titulo{color:#a78bfa;}
+.stage-ops{font-size:.78rem;color:var(--text-secondary);font-family:'JetBrains Mono',monospace;}
+.shuffle-divider{display:flex;align-items:center;gap:.5rem;padding:.5rem 0;justify-content:center;}
+.shuffle-line{flex:1;height:1px;background:repeating-linear-gradient(90deg,rgba(239,68,68,.4) 0,rgba(239,68,68,.4) 4px,transparent 4px,transparent 8px);}
+.shuffle-label{font-size:.65rem;color:#f87171;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+
+/* ── Partitioning visual ── */
+.partition-vis{display:flex;gap:.4rem;margin:.75rem 0;flex-wrap:wrap;}
+.part-box{flex:1;min-width:60px;height:50px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;font-family:'JetBrains Mono',monospace;border:1px solid;}
+.part-normal{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:#4ade80;}
+.part-skewed{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.35);color:#f87171;}
+.part-empty{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);color:var(--text-muted);}
+
+/* Exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* Quiz */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+/* Terminal */
+.terminal{background:#0a0a0a;border:1px solid rgba(74,222,128,.2);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.terminal-header{background:#111;padding:.45rem .9rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(74,222,128,.1);}
+.terminal-dot{width:10px;height:10px;border-radius:50%;}
+.terminal-body{padding:1rem 1.25rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.75;}
+.t-prompt{color:#4ade80;}.t-cmd{color:#fde68a;}.t-out{color:rgba(255,255,255,.55);}.t-acc{color:#fb923c;}.t-comment{color:#374151;font-style:italic;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.join-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ════════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">09</div>
+    <h1 class="capa-titulo">PySpark<br><em>Avançado</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Joins, shuffle, particionamento e performance real</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Transformações em profundidade: map, filter, groupBy, join</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-handshake"></i></div><span>Tipos de Join: inner, left, broadcast — e o shuffle por trás</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Stages e Shuffle — o que realmente acontece no cluster</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-th-large"></i></div><span>Particionamento: repartition, coalesce e o problema de data skew</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Diagnosticando performance com a Spark UI</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-database"></i></div><span>Prática: pipeline completo em dataset de 1M+ linhas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-line"></i></div><span>Atividade: identificar e corrigir um join lento</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir um pipeline de transformação completo sobre dataset de mais de 1 milhão de linhas, otimizando joins e particionamento.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 8</div>
+      <ul class="info-lista">
+        <li>Spark é in-memory entre etapas — 10-100x mais rápido que MapReduce</li>
+        <li>RDD: Resilient, Distributed, Dataset. Lazy evaluation com transformações e actions</li>
+        <li>DataFrame: schema + Catalyst Optimizer — a API moderna</li>
+        <li>SparkSession, read, transformações, agg, write — o pipeline básico</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle" style="color:#fbbf24;"></i>Tema mais cobrado</div>
+      <ul class="info-lista">
+        <li>Joins e shuffle são o assunto que mais aparece em entrevistas de emprego</li>
+        <li>Entender por que um job "trava" é a habilidade prática mais valiosa</li>
+        <li>Esta semana é fundamental para a P2 (Semana 13)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que você vai precisar</div>
+      <ul class="info-lista">
+        <li>PySpark já instalado (semana anterior)</li>
+        <li>Acesso à Spark UI: localhost:4040 durante execução local</li>
+        <li>Dataset de 1M+ linhas (fornecido pelo professor ou gerado em aula)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Transformações em profundidade ───────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Transformações em profundidade — map, filter, groupBy e join</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 8</div>
+      <p>Na semana passada você aprendeu o básico de DataFrame e Spark SQL. Hoje vamos entender <strong>o que realmente acontece</strong> quando você chama essas operações — porque algumas são quase grátis e outras podem travar seu cluster inteiro.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-divide"></i>Narrow vs Wide Transformations — a distinção mais importante</div>
+      <p>Toda transformação do Spark se encaixa em uma de duas categorias, e essa categoria determina se a operação é rápida ou cara:</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">🟢 Narrow Transformation</div>
+          <p style="font-size:.82rem;margin-bottom:.5rem;">Cada partição de entrada contribui para <strong>no máximo uma</strong> partição de saída. Não precisa mover dados entre máquinas.</p>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span><code>map()</code>, <code>filter()</code>, <code>select()</code>, <code>withColumn()</code></span></li>
+            <li><i class="fas fa-check-circle"></i><span>Executa dentro do mesmo executor, sem rede</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Muito rápido — sem shuffle</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">🔴 Wide Transformation</div>
+          <p style="font-size:.82rem;margin-bottom:.5rem;">Uma partição de saída depende de <strong>múltiplas</strong> partições de entrada — possivelmente de outras máquinas. Exige <strong>shuffle</strong>.</p>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span><code>groupBy()</code>, <code>join()</code>, <code>distinct()</code>, <code>orderBy()</code></span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Move dados pela rede entre executors</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Caro — é a principal causa de jobs lentos</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Por que isso importa?</strong> Um <code>filter()</code> antes de um <code>join()</code> reduz o volume de dados que precisa ser embaralhado (shuffled) pela rede. Essa é a otimização mais básica e mais impactante em Spark: filtre o máximo possível antes de qualquer wide transformation.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>map() vs select() — quando usar cada um</div>
+      <p>Em DataFrames modernos, você raramente usa <code>map()</code> diretamente (isso é mais comum em RDD). Mas é importante saber a diferença conceitual:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — map em RDD vs select em DataFrame</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ── RDD: map() aplica função Python a CADA elemento ──────────</span>
+<span class="cm"># Lento: serializa/desserializa entre JVM e processo Python</span>
+rdd2 = rdd.<span class="fn">map</span>(<span class="kw">lambda</span> row: (row[<span class="num">0</span>], row[<span class="num">1</span>] * <span class="num">1.1</span>))
+
+<span class="cm"># ── DataFrame: select()/withColumn() usa funções nativas do Spark</span>
+<span class="cm"># Rápido: executa dentro da JVM com Tungsten (sem Python overhead)</span>
+df2 = df.<span class="fn">withColumn</span>(<span class="str">"total_ajustado"</span>, col(<span class="str">"total"</span>) * <span class="num">1.1</span>)
+
+<span class="cm"># Se PRECISAR de lógica Python customizada em DataFrame, use UDF
+# (mas UDFs também têm overhead — evite quando possível)</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> udf
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> StringType
+
+<span class="op">@udf</span>(returnType=StringType())
+<span class="kw">def</span> <span class="fn">classificar_cliente</span>(total_gasto):
+    <span class="kw">if</span> total_gasto > <span class="num">10000</span>: <span class="kw">return</span> <span class="str">"VIP"</span>
+    <span class="kw">elif</span> total_gasto > <span class="num">1000</span>: <span class="kw">return</span> <span class="str">"Regular"</span>
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="str">"Novo"</span>
+
+df.<span class="fn">withColumn</span>(<span class="str">"segmento"</span>, <span class="fn">classificar_cliente</span>(col(<span class="str">"total_gasto"</span>)))</code></pre>
+      </div>
+      <div class="destaque-red"><strong>Cuidado com UDFs:</strong> funções Python customizadas (UDF) quebram a otimização do Catalyst e forçam serialização entre JVM e Python a cada linha. Prefira sempre as funções nativas (<code>pyspark.sql.functions</code>) — elas cobrem 95% dos casos sem precisar de UDF.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>groupBy() — o que acontece por trás</div>
+      <p>Quando você chama <code>df.groupBy("categoria").agg(sum("total"))</code>, o Spark precisa garantir que todas as linhas da mesma categoria estejam na mesma partição antes de somar. Isso exige um <strong>shuffle</strong>: os dados são redistribuídos pela rede com base no hash da chave de agrupamento.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — groupBy com múltiplas agregações</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> sum, count, avg, countDistinct, collect_list
+
+resultado = (df
+    .<span class="fn">groupBy</span>(<span class="str">"categoria"</span>, <span class="str">"regiao"</span>)
+    .<span class="fn">agg</span>(
+        <span class="fn">sum</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"receita"</span>),
+        <span class="fn">count</span>(<span class="str">"order_id"</span>).<span class="fn">alias</span>(<span class="str">"pedidos"</span>),
+        <span class="fn">countDistinct</span>(<span class="str">"customer_id"</span>).<span class="fn">alias</span>(<span class="str">"clientes_unicos"</span>),
+        <span class="fn">avg</span>(<span class="str">"total"</span>).<span class="fn">alias</span>(<span class="str">"ticket_medio"</span>)
+    )
+)
+<span class="cm"># Por trás: Spark faz "partial aggregation" em cada partição primeiro
+# (soma local), DEPOIS faz shuffle dos resultados parciais — não dos
+# dados brutos. Isso é chamado de "map-side combine" e reduz MUITO
+# o volume de dados transferidos pela rede.</span></code></pre>
+      </div>
+      <div class="destaque-green"><strong>Otimização automática:</strong> diferente do <code>groupByKey()</code> em RDD (que embaralha todos os dados brutos), o <code>groupBy().agg()</code> em DataFrame faz uma agregação parcial local antes do shuffle — reduzindo drasticamente o tráfego de rede. É uma das razões pelas quais DataFrame supera RDD.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual das seguintes operações é uma narrow transformation (não exige shuffle)?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">df.groupBy("categoria").count()</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">df.orderBy("total")</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">df.filter(col("total") > 100)</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">df1.join(df2, on="id")</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Joins e Shuffle</span></div>
+
+  <!-- ── AULA 2: Joins + Shuffle ───────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Joins e Shuffle — a operação que mais derruba clusters</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-handshake"></i>Tipos de Join no Spark</div>
+      <div class="join-grid">
+        <div class="join-card join-inner">
+          <div class="join-titulo"><i class="fas fa-circle-notch"></i>Inner Join</div>
+          <p style="font-size:.82rem;margin-bottom:0;">Retorna apenas linhas que têm correspondência em ambos os DataFrames. O mais comum e mais eficiente.</p>
+          <div class="code-block" style="margin-top:.6rem;"><pre style="padding:.6rem .85rem;"><code>df1.<span class="fn">join</span>(df2, on=<span class="str">"id"</span>, how=<span class="str">"inner"</span>)</code></pre></div>
+        </div>
+        <div class="join-card join-left">
+          <div class="join-titulo"><i class="fas fa-arrow-left"></i>Left Join</div>
+          <p style="font-size:.82rem;margin-bottom:0;">Retorna todas as linhas do DataFrame esquerdo, com NULL onde não há correspondência à direita.</p>
+          <div class="code-block" style="margin-top:.6rem;"><pre style="padding:.6rem .85rem;"><code>df1.<span class="fn">join</span>(df2, on=<span class="str">"id"</span>, how=<span class="str">"left"</span>)</code></pre></div>
+        </div>
+        <div class="join-card join-broadcast">
+          <div class="join-titulo"><i class="fas fa-broadcast-tower"></i>Broadcast Join</div>
+          <p style="font-size:.82rem;margin-bottom:0;">Quando uma tabela é pequena (&lt;10MB padrão), o Spark a copia inteira para TODOS os executors — evita shuffle completamente.</p>
+          <div class="code-block" style="margin-top:.6rem;"><pre style="padding:.6rem .85rem;"><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> broadcast
+df1.<span class="fn">join</span>(<span class="fn">broadcast</span>(df_pequena), <span class="str">"id"</span>)</code></pre></div>
+        </div>
+        <div class="join-card join-shuffle">
+          <div class="join-titulo"><i class="fas fa-random"></i>Shuffle Hash Join</div>
+          <p style="font-size:.82rem;margin-bottom:0;">Quando ambas as tabelas são grandes: ambas são particionadas pelo hash da chave de join e embaralhadas pela rede.</p>
+          <div class="code-block" style="margin-top:.6rem;"><pre style="padding:.6rem .85rem;"><code><span class="cm"># Acontece automaticamente quando
+# ambas tabelas são grandes</span>
+df_grande1.<span class="fn">join</span>(df_grande2, <span class="str">"id"</span>)</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-broadcast-tower"></i>Broadcast Join — a otimização mais impactante que existe</div>
+      <p>Imagine juntar uma tabela de 500 milhões de pedidos com uma tabela de 50 categorias de produto. Sem otimização, o Spark faria shuffle dos 500M de pedidos pela rede. Com Broadcast Join, ele copia as 50 categorias (poucos KB) para cada executor — e o join acontece localmente, sem mover os pedidos.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — Broadcast Join explícito</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> broadcast
+
+<span class="cm"># df_pedidos tem 500M linhas | df_categorias tem 50 linhas</span>
+df_pedidos = spark.read.<span class="fn">parquet</span>(<span class="str">"s3://bucket/silver/orders/"</span>)
+df_categorias = spark.read.<span class="fn">parquet</span>(<span class="str">"s3://bucket/silver/categories/"</span>)
+
+<span class="cm"># Forçar broadcast da tabela pequena — evita shuffle de 500M linhas</span>
+resultado = df_pedidos.<span class="fn">join</span>(
+    <span class="fn">broadcast</span>(df_categorias),
+    on=<span class="str">"category_id"</span>,
+    how=<span class="str">"left"</span>
+)
+
+<span class="cm"># O Spark também faz isso automaticamente se a tabela for menor
+# que spark.sql.autoBroadcastJoinThreshold (padrão: 10MB)
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.sql.autoBroadcastJoinThreshold"</span>, <span class="num">50</span> * <span class="num">1024</span> * <span class="num">1024</span>)  <span class="cm"># 50MB</span></code></pre>
+      </div>
+      <div class="destaque"><strong>Regra prática:</strong> sempre que você fizer join entre uma tabela "fato" (grande) e uma "dimensão" (pequena, tipo categoria, país, status), use broadcast explicitamente. Não confie só no automático — em produção, force com <code>broadcast()</code> para garantir previsibilidade.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>O problema do Join sem otimização — dois exemplos reais</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Cenário</th><th>Sem otimização</th><th>Com Broadcast Join</th></tr></thead>
+          <tbody>
+            <tr><td><strong>500M pedidos + 50 categorias</strong></td><td>Shuffle de 500M linhas pela rede — minutos</td><td>Categoria copiada (KB) para cada executor — segundos</td></tr>
+            <tr><td><strong>1B cliques + 10K usuários</strong></td><td>Shuffle de 1B linhas — pode travar o cluster</td><td>Tabela de usuários (MB) broadcast — rápido</td></tr>
+            <tr><td><strong>2 tabelas de 500M cada</strong></td><td>Ambas precisam shuffle (não há tabela pequena)</td><td>Broadcast não se aplica — usar particionamento por chave de join</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — você precisa juntar uma tabela de 800 milhões de transações com uma tabela de 30 países. Qual é a estratégia correta?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Deixar o Spark fazer shuffle hash join nas duas tabelas igualmente</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Usar broadcast() na tabela de países — ela é pequena e evita shuffle das 800M transações</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Usar broadcast() na tabela de transações para acelerar</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Fazer o join em duas etapas separadas usando RDD</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Stages, Shuffle e Particionamento</span></div>
+
+  <!-- ── AULA 3: Stages + Particionamento ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Stages, Shuffle e Particionamento — o que acontece dentro do cluster</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Jobs, Stages e Tasks — a hierarquia de execução</div>
+      <p>Quando você chama uma action, o Spark divide o trabalho em uma hierarquia: <strong>Job</strong> (toda a execução de uma action) → <strong>Stages</strong> (cada stage termina onde há um shuffle) → <strong>Tasks</strong> (uma task por partição dentro do stage).</p>
+
+      <div class="dag-flow">
+        <div class="stage-box stage-1">
+          <div class="stage-titulo"><span>Stage 1 — Narrow transformations</span><span class="badge-blue" style="font-size:.65rem;">8 tasks (8 partições)</span></div>
+          <div class="stage-ops">read.parquet() → filter() → withColumn() → select()</div>
+        </div>
+        <div class="shuffle-divider">
+          <div class="shuffle-line"></div>
+          <span class="shuffle-label">⚡ SHUFFLE — groupBy() exige reembaralhar dados</span>
+          <div class="shuffle-line"></div>
+        </div>
+        <div class="stage-box stage-2">
+          <div class="stage-titulo"><span>Stage 2 — Agregação pós-shuffle</span><span class="badge-green" style="font-size:.65rem;">200 tasks (200 partições)</span></div>
+          <div class="stage-ops">groupBy("categoria").agg(sum("total"))</div>
+        </div>
+        <div class="shuffle-divider">
+          <div class="shuffle-line"></div>
+          <span class="shuffle-label">⚡ SHUFFLE — orderBy() exige ordem global</span>
+          <div class="shuffle-line"></div>
+        </div>
+        <div class="stage-box stage-3">
+          <div class="stage-titulo"><span>Stage 3 — Ordenação final</span><span class="badge-purple" style="font-size:.65rem;">1 task (resultado final)</span></div>
+          <div class="stage-ops">orderBy(col("receita").desc()) → collect()</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Regra de ouro:</strong> cada vez que você vê o número de Stages aumentar na Spark UI, significa que houve um shuffle. Menos stages geralmente significa um job mais rápido — minimizar shuffles é a otimização mais valiosa em Spark.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th-large"></i>repartition() vs coalesce() — controlando o número de partições</div>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem;">repartition(n)</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Pode aumentar OU diminuir partições</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Faz full shuffle — redistribui tudo igualmente</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Resultado: partições de tamanho uniforme</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Caro — sempre causa shuffle</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.18);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">coalesce(n)</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Só DIMINUI partições (não aumenta)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Combina partições vizinhas — evita shuffle completo</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Mais barato que repartition</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Pode gerar partições desbalanceadas</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — quando usar cada um</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Cenário 1: você fez um filter() pesado e sobrou pouco dado
+# mas ainda tem 200 partições (herdadas do shuffle anterior)
+# → use coalesce para reduzir sem gastar com shuffle</span>
+df_filtrado = df.<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">10000</span>).<span class="fn">coalesce</span>(<span class="num">4</span>)
+
+<span class="cm"># Cenário 2: seus dados estão desbalanceados entre partições
+# (data skew) e você precisa redistribuir igualmente
+# → use repartition mesmo pagando o custo do shuffle</span>
+df_balanceado = df.<span class="fn">repartition</span>(<span class="num">16</span>, <span class="str">"customer_id"</span>)  <span class="cm"># particiona por chave</span>
+
+<span class="cm"># Cenário 3: antes de escrever em Parquet, controlar nº de arquivos</span>
+df.<span class="fn">coalesce</span>(<span class="num">1</span>).write.<span class="fn">parquet</span>(<span class="str">"output/"</span>)  <span class="cm"># 1 arquivo só (cuidado com volume!)</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale-right"></i>Data Skew — quando uma partição vira o gargalo</div>
+      <p><strong>Data skew</strong> acontece quando os dados não estão distribuídos uniformemente entre as partições. Se você particiona por <code>customer_id</code> e um cliente (ex: uma conta de teste) tem 40% de todos os pedidos, essa partição vai demorar muito mais que as outras — e o job inteiro espera por ela.</p>
+
+      <div style="margin:.75rem 0;">
+        <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;">8 partições particionadas por customer_id — uma está desbalanceada</div>
+        <div class="partition-vis">
+          <div class="part-box part-normal">P0<br>12%</div>
+          <div class="part-box part-normal">P1<br>11%</div>
+          <div class="part-box part-skewed">P2<br>42% ⚠</div>
+          <div class="part-box part-normal">P3<br>10%</div>
+          <div class="part-box part-normal">P4<br>9%</div>
+          <div class="part-box part-normal">P5<br>8%</div>
+          <div class="part-box part-normal">P6<br>5%</div>
+          <div class="part-box part-normal">P7<br>3%</div>
+        </div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:.4rem;">As 7 partições normais terminam em 2 minutos. A P2 sozinha demora 18 minutos — o job inteiro espera por ela.</div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Solução</th><th>Como funciona</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Salting</strong></td><td>Adiciona um sufixo aleatório à chave para espalhar a carga (ex: customer_id_0, customer_id_1...)</td><td>Quando poucas chaves dominam o volume</td></tr>
+            <tr><td><strong>Broadcast Join</strong></td><td>Evita o shuffle completamente para a tabela pequena</td><td>Quando uma das tabelas é pequena</td></tr>
+            <tr><td><strong>Adaptive Query Execution (AQE)</strong></td><td>Spark 3.x detecta e corrige skew automaticamente em runtime</td><td>Sempre — habilite por padrão</td></tr>
+            <tr><td><strong>repartition() manual</strong></td><td>Redistribui forçando um número maior de partições</td><td>Quando o skew é moderado</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — habilitar Adaptive Query Execution</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># AQE é o recurso mais importante do Spark 3.x para skew
+# Habilitado por padrão no Spark 3.2+, mas vale confirmar:</span>
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.sql.adaptive.enabled"</span>, <span class="str">"true"</span>)
+spark.conf.<span class="fn">set</span>(<span class="str">"spark.sql.adaptive.skewJoin.enabled"</span>, <span class="str">"true"</span>)
+
+<span class="cm"># O AQE detecta partições muito maiores que a média durante
+# a execução e as divide automaticamente em sub-tarefas menores</span></code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual a diferença fundamental entre repartition() e coalesce()?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">São idênticos — apenas nomes diferentes para a mesma operação</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">repartition() faz shuffle completo e pode aumentar partições; coalesce() só diminui e evita shuffle completo</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">coalesce() é mais lento porque sempre faz shuffle completo</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">repartition() só funciona em RDD; coalesce() só funciona em DataFrame</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Pipeline em Dataset de 1M+ Linhas</span></div>
+
+  <!-- ── AULA 4: Prática ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline completo em dataset de 1M+ linhas — diagnosticando com a Spark UI</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Spark UI — seu painel de diagnóstico</div>
+      <p>Toda aplicação Spark expõe uma interface web em <code>localhost:4040</code> (modo local) com informações detalhadas sobre Jobs, Stages, Tasks e uso de memória. É a primeira ferramenta para entender por que um job está lento.</p>
+      <div class="grid-3">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,146,60,.05);border:1px solid rgba(251,146,60,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:var(--accent-400);margin-bottom:.4rem;">Aba Jobs</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Lista todas as actions executadas, duração total e número de stages.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#60a5fa;margin-bottom:.4rem;">Aba Stages</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Mostra cada stage, quantas tasks, e se houve shuffle read/write.</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#4ade80;margin-bottom:.4rem;">Aba SQL</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Plano de execução visual (DAG) gerado pelo Catalyst Optimizer.</div>
+        </div>
+      </div>
+      <div class="aviso-accent"><i class="fas fa-lightbulb"></i><span><strong>Sinal de alerta na Spark UI:</strong> se uma task demora muito mais que as outras no mesmo stage (visível no gráfico de duração por task), você provavelmente tem data skew. Se o "Shuffle Read" de um stage é gigante, considere broadcast join ou reduzir dados antes do shuffle.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-database"></i>Pipeline completo — análise de 1M+ pedidos com join</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — pipeline otimizado de ponta a ponta</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, sum, count, avg, round, broadcast, year, month
+
+spark = (SparkSession.<span class="fn">builder</span>
+    .<span class="fn">appName</span>(<span class="str">"PipelineOtimizado"</span>)
+    .<span class="fn">config</span>(<span class="str">"spark.sql.adaptive.enabled"</span>, <span class="str">"true"</span>)
+    .<span class="fn">config</span>(<span class="str">"spark.sql.shuffle.partitions"</span>, <span class="str">"16"</span>)
+    .<span class="fn">getOrCreate</span>()
+)
+
+<span class="cm"># ── 1. CARREGAR (1M+ linhas) ──────────────────────────────────</span>
+df_pedidos = spark.read.<span class="fn">parquet</span>(<span class="str">"data/pedidos/"</span>)   <span class="cm"># ~1.2M linhas</span>
+df_clientes = spark.read.<span class="fn">parquet</span>(<span class="str">"data/clientes/"</span>)  <span class="cm"># ~50K linhas</span>
+df_categorias = spark.read.<span class="fn">parquet</span>(<span class="str">"data/categorias/"</span>) <span class="cm"># ~80 linhas</span>
+
+<span class="fn">print</span>(<span class="str">f"Pedidos: {df_pedidos.count():,} | Partições: {df_pedidos.rdd.getNumPartitions()}"</span>)
+
+<span class="cm"># ── 2. FILTRAR PRIMEIRO (reduz volume antes do shuffle) ────────</span>
+df_pedidos_validos = (df_pedidos
+    .<span class="fn">filter</span>(col(<span class="str">"status"</span>) == <span class="str">"paid"</span>)
+    .<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">0</span>)
+    .<span class="fn">filter</span>(col(<span class="str">"order_date"</span>) >= <span class="str">"2024-01-01"</span>)
+)
+<span class="cm"># Filtrar ANTES do join reduz o que precisa ser embaralhado</span>
+
+<span class="cm"># ── 3. JOIN com broadcast nas tabelas pequenas ─────────────────</span>
+df_completo = (df_pedidos_validos
+    .<span class="fn">join</span>(<span class="fn">broadcast</span>(df_categorias), <span class="str">"category_id"</span>, <span class="str">"left"</span>)  <span class="cm"># 80 linhas → broadcast</span>
+    .<span class="fn">join</span>(<span class="fn">broadcast</span>(df_clientes), <span class="str">"customer_id"</span>, <span class="str">"left"</span>)    <span class="cm"># 50K linhas → broadcast</span>
+)
+
+<span class="cm"># ── 4. AGREGAÇÃO (único shuffle necessário) ────────────────────</span>
+df_resultado = (df_completo
+    .<span class="fn">withColumn</span>(<span class="str">"ano"</span>, <span class="fn">year</span>(<span class="str">"order_date"</span>))
+    .<span class="fn">withColumn</span>(<span class="str">"mes"</span>, <span class="fn">month</span>(<span class="str">"order_date"</span>))
+    .<span class="fn">groupBy</span>(<span class="str">"ano"</span>, <span class="str">"mes"</span>, <span class="str">"category_name"</span>, <span class="str">"customer_state"</span>)
+    .<span class="fn">agg</span>(
+        <span class="fn">round</span>(<span class="fn">sum</span>(<span class="str">"total"</span>), <span class="num">2</span>).<span class="fn">alias</span>(<span class="str">"receita"</span>),
+        <span class="fn">count</span>(<span class="str">"order_id"</span>).<span class="fn">alias</span>(<span class="str">"pedidos"</span>),
+        <span class="fn">round</span>(<span class="fn">avg</span>(<span class="str">"total"</span>), <span class="num">2</span>).<span class="fn">alias</span>(<span class="str">"ticket_medio"</span>)
+    )
+)
+
+<span class="cm"># ── 5. ESCREVER (coalesce para evitar muitos arquivos pequenos) ─</span>
+(df_resultado
+    .<span class="fn">coalesce</span>(<span class="num">4</span>)
+    .write.<span class="fn">mode</span>(<span class="str">"overwrite"</span>)
+    .<span class="fn">partitionBy</span>(<span class="str">"ano"</span>, <span class="str">"mes"</span>)
+    .<span class="fn">parquet</span>(<span class="str">"output/gold/revenue_by_region/"</span>)
+)
+
+<span class="fn">print</span>(<span class="str">"Pipeline concluído! Verifique localhost:4040 para análise de performance."</span>)</code></pre>
+      </div>
+    </div>
+
+    <!-- Terminal showing Spark UI metrics -->
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background:#f87171;"></div>
+        <div class="terminal-dot" style="background:#fbbf24;"></div>
+        <div class="terminal-dot" style="background:#4ade80;"></div>
+        <span style="font-size:.65rem;color:rgba(255,255,255,.3);margin-left:.5rem;">Comparação: antes e depois da otimização</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-comment"># SEM otimização (join na ordem errada, sem broadcast, sem filtro antes)</div>
+        <div class="t-out">Stage 0: read parquet — 1,2M linhas — <span class="t-acc">2.1s</span></div>
+        <div class="t-out">Stage 1: shuffle join pedidos x clientes — <span style="color:#f87171;">847MB shuffle — 38.4s</span></div>
+        <div class="t-out">Stage 2: shuffle join + categorias — <span style="color:#f87171;">623MB shuffle — 22.1s</span></div>
+        <div class="t-out">Stage 3: groupBy + write — <span style="color:#f87171;">412MB shuffle — 19.8s</span></div>
+        <div class="t-acc" style="margin-top:.3rem;">TOTAL: 82.4 segundos</div>
+        <div style="height:.6rem;"></div>
+        <div class="t-comment"># COM otimização (filter antes, broadcast nas tabelas pequenas)</div>
+        <div class="t-out">Stage 0: read parquet + filter — 1,2M → 340K linhas — <span class="t-acc">2.3s</span></div>
+        <div class="t-out">Stage 1: broadcast join x2 (sem shuffle) — <span style="color:#4ade80;">0MB shuffle — 4.1s</span></div>
+        <div class="t-out">Stage 2: groupBy + write — <span style="color:#4ade80;">89MB shuffle — 6.2s</span></div>
+        <div class="t-acc" style="margin-top:.3rem;">TOTAL: 12.6 segundos <span style="color:#4ade80;">(6.5x mais rápido)</span></div>
+      </div>
+    </div>
+
+    <!-- Atividade -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Prática individual</div>
+        <div class="secao-titulo">Diagnosticar e corrigir um pipeline lento</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>O professor vai fornecer um pipeline PySpark "quebrado" (lento de propósito) e um dataset de 1M+ linhas. Sua missão é identificar os problemas usando a Spark UI e reescrever o código otimizado.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Diagnóstico (15 min)</div>
+      <p>Execute o pipeline fornecido pelo professor. Abra a Spark UI em <code>localhost:4040</code> enquanto ele roda. Identifique: (a) quantos stages o job tem, (b) qual stage tem o maior "Shuffle Read", (c) existe alguma task que demora muito mais que as outras no mesmo stage (sinal de skew)?</p>
+      <span class="dif-medio">Diagnóstico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Otimização com broadcast (15 min)</div>
+      <p>O pipeline faz join entre uma tabela de 1M+ linhas e duas tabelas pequenas (menos de 1000 linhas cada) sem usar broadcast. Reescreva o código adicionando <code>broadcast()</code> nas tabelas pequenas e meça a diferença de tempo de execução. Documente o ganho de performance.</p>
+      <span class="dif-medio">Otimização</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: reordenar operações (15 min)</div>
+      <p>O pipeline original faz o <code>join()</code> antes do <code>filter()</code> — processando muito mais dados do que necessário no shuffle. Reescreva movendo os filtros para antes do join. Compare o "Shuffle Read" reportado na Spark UI antes e depois da mudança.</p>
+      <span class="dif-desafio">Reescrita completa</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver checklist de otimização</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Checklist de otimização Spark</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>1.</strong> Filtre o máximo possível antes de qualquer join ou groupBy</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>2.</strong> Use broadcast() em tabelas pequenas (dimensões) antes de juntar com tabelas grandes (fatos)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>3.</strong> Selecione apenas as colunas necessárias antes de operações pesadas (reduz volume do shuffle)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>4.</strong> Habilite Adaptive Query Execution para correção automática de skew</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>5.</strong> Use coalesce() (não repartition) ao reduzir partições antes de escrever</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>6.</strong> Evite UDFs Python — prefira funções nativas do pyspark.sql.functions</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>7.</strong> Sempre confira a Spark UI após mudanças — meça, não suponha</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 9</span></div>
+
+  <!-- ── RESUMO ────────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 9</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-divide"></i>
+        <strong>Narrow vs Wide</strong>
+        <p>Narrow (map, filter) não exige shuffle. Wide (groupBy, join, orderBy) exige — é onde os jobs ficam lentos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-broadcast-tower"></i>
+        <strong>Broadcast Join</strong>
+        <p>Tabela pequena copiada para todos os executors. Evita shuffle da tabela grande. Use sempre que possível.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-th-large"></i>
+        <strong>Partições</strong>
+        <p>repartition() faz shuffle completo. coalesce() só diminui, mais barato. Data skew = uma partição vira gargalo.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <strong>Spark UI</strong>
+        <p>localhost:4040. Veja Jobs, Stages e Shuffle Read/Write para diagnosticar onde o tempo está sendo gasto.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você consegue explicar a diferença entre narrow e wide transformation? Sabe quando e como usar broadcast join? Entende a diferença entre repartition e coalesce? Consegue identificar um problema de data skew na Spark UI? Se sim para os quatro — você está pronto para a Semana 10.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-10-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 10 — Spark SQL e Otimização: Catalyst Optimizer, plano de execução, cache, broadcast join</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar checklist'
+    :'<i class="fas fa-lightbulb"></i> ver checklist de otimização';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'C',msg:'✅ Correto! filter() é uma narrow transformation — cada partição é filtrada independentemente, sem necessidade de mover dados entre máquinas. groupBy(), orderBy() e join() são todas wide transformations que exigem shuffle: groupBy precisa juntar linhas da mesma chave (possivelmente em outras partições), orderBy precisa de ordem global, e join precisa combinar linhas de duas fontes diferentes.'},
+  quiz2:{correct:'B',msg:'✅ Correto! A tabela de 30 países é pequena o suficiente para broadcast (cópia completa enviada para cada executor). Isso evita o shuffle das 800 milhões de transações — que seria extremamente caro. Fazer broadcast da tabela grande (alternativa C) seria o oposto do que se deve fazer e provavelmente esgotaria a memória dos executors.'},
+  quiz3:{correct:'B',msg:'✅ Correto! repartition(n) sempre faz um shuffle completo dos dados e pode tanto aumentar quanto diminuir o número de partições, resultando em partições de tamanho uniforme. coalesce(n) só pode diminuir partições e faz isso combinando partições adjacentes sem shuffle completo — é mais barato, mas pode resultar em partições desbalanceadas se os dados de origem já estiverem desbalanceados.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

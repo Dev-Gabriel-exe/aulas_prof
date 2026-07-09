@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 15 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.comp-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.comp-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.6rem;}
+.comp-a .comp-titulo{color:#60a5fa;}
+.comp-b .comp-titulo{color:#4ade80;}
+.comp-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.comp-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* Window/timeline visual */
+.window-box{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.5rem;}
+.window-track{position:relative;height:70px;margin-bottom:1rem;}
+.window-axis{position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,255,255,.1);}
+.window-block{position:absolute;top:10px;height:50px;border-radius:8px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;}
+.win-1{left:2%;width:28%;background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.35);color:#93c5fd;}
+.win-2{left:33%;width:28%;background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);color:#c4b5fd;}
+.win-3{left:64%;width:28%;background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);color:#86efac;}
+.window-legend{font-size:.72rem;color:var(--text-muted);text-align:center;}
+
+.sliding-track{position:relative;height:130px;margin-bottom:.5rem;}
+.sliding-block{position:absolute;height:26px;border-radius:6px;border:1px solid;display:flex;align-items:center;padding-left:8px;font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;}
+.sl-1{top:0;left:2%;width:40%;background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.35);color:#93c5fd;}
+.sl-2{top:30px;left:22%;width:40%;background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);color:#c4b5fd;}
+.sl-3{top:60px;left:42%;width:40%;background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);color:#86efac;}
+.sl-4{top:90px;left:62%;width:40%;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);color:#fde68a;}
+
+/* Sink cards */
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.op-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.op-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.op-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.op-c{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);}
+.op-d{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2);}
+.op-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.op-a .op-titulo{color:#60a5fa;}
+.op-b .op-titulo{color:#4ade80;}
+.op-c .op-titulo{color:#fbbf24;}
+.op-d .op-titulo{color:#a78bfa;}
+.op-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.op-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.comp-grid,.op-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">15</div>
+    <h1 class="capa-titulo">Structured<br><em>Streaming</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Processamento contínuo, janelas de tempo e watermarks</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-water"></i></div><span>Batch vs streaming — por que o Structured Streaming existe</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-infinity"></i></div><span>A abstração de "tabela infinita" e o modelo micro-batch</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-arrows-spin"></i></div><span>readStream/writeStream, output modes e triggers</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-floppy-disk"></i></div><span>Sinks e checkpointing — tolerância a falhas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-table-cells"></i></div><span>Window operations — tumbling e sliding windows</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clock"></i></div><span>Watermarks — lidando com eventos atrasados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: processar um stream de eventos e agregar por janela</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Processar um stream de eventos simulado, aplicar agregações em janelas de tempo e configurar watermark para descartar dados excessivamente atrasados.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 14</div>
+      <ul class="info-lista">
+        <li>Delta Lake traz ACID ao Data Lake via transaction log (_delta_log)</li>
+        <li>MERGE INTO permite upsert atômico; time travel consulta versões antigas</li>
+        <li>OPTIMIZE + ZORDER aceleram consultas; VACUUM limpa arquivos órfãos</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conectando tudo</div>
+      <ul class="info-lista">
+        <li>O Kafka da Semana 4 volta aqui como fonte típica de streaming</li>
+        <li>Structured Streaming usa o mesmo motor Spark SQL/Catalyst das Semanas 8-10</li>
+        <li>O resultado de um stream pode ser gravado direto em uma tabela Delta</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>PySpark (Structured Streaming já vem incluso, sem instalação extra)</li>
+        <li>Uma fonte simulada de eventos (rate source ou arquivos incrementais)</li>
+        <li>Console como sink para visualizar resultados durante a prática</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Batch vs streaming — a "tabela infinita"</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 14</div>
+      <p>Você aprendeu a garantir ACID em dados que já chegaram ao Data Lake (Delta Lake). Mas e os dados que estão chegando <strong>agora mesmo</strong>, continuamente? É disso que trata o processamento de streaming — a extensão natural de tudo que você já sabe sobre Spark.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-water"></i>Por que streaming não é só "batch mais rápido"</div>
+      <p>Até agora, todo processamento que você fez com Spark foi <strong>batch</strong>: um conjunto de dados finito e conhecido, processado do início ao fim. Streaming é fundamentalmente diferente — os dados <strong>nunca terminam de chegar</strong>.</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#60a5fa;margin-bottom:.5rem;">📦 Batch</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle" style="color:#60a5fa;"></i><span>Dataset finito, com início e fim conhecidos</span></li>
+            <li><i class="fas fa-check-circle" style="color:#60a5fa;"></i><span>Job roda, processa tudo, termina</span></li>
+            <li><i class="fas fa-check-circle" style="color:#60a5fa;"></i><span>Latência de minutos a horas é aceitável</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">🌊 Streaming</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Dataset infinito — dados continuam chegando indefinidamente</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Job roda continuamente, processando novos dados assim que chegam</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Latência de segundos é o objetivo (dashboards, alertas, fraude)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-infinity"></i>A grande ideia do Structured Streaming: tabela infinita</div>
+      <p>O Structured Streaming trata um stream como uma <strong>tabela que cresce infinitamente</strong> — cada novo evento que chega é como uma nova linha sendo inserida nessa tabela. Você escreve a mesma query DataFrame/SQL que já conhece do batch, e o motor cuida de aplicá-la incrementalmente a cada novo lote de dados.</p>
+      <div class="destaque"><strong>Isso significa que quase tudo que você já aprendeu se aplica aqui:</strong> select, filter, groupBy, joins — a sintaxe é praticamente idêntica ao DataFrame batch das Semanas 8-9. A diferença está em como o motor executa por baixo dos panos.</div>
+      <p>Por baixo dos panos, o Structured Streaming não processa evento por evento (isso seria streaming "puro", como no Kafka Streams) — ele usa um modelo de <strong>micro-batch</strong>: a cada intervalo curto (ex: 1 segundo), ele coleta os novos dados chegados, roda o mesmo pipeline Spark de sempre sobre esse pequeno lote, e produz o resultado incremental.</p>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a principal diferença conceitual entre processamento batch e streaming?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Streaming usa uma linguagem de programação diferente do batch</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Batch processa um dataset finito e conhecido; streaming processa um dataset que nunca termina de chegar</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Streaming não pode usar DataFrames, apenas RDDs</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Streaming só funciona com dados vindos do Kafka</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · readStream, writeStream, Sinks e Checkpointing</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Lendo, processando e escrevendo um stream</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>readStream e writeStream — a API básica</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline de streaming mínimo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, window
+
+spark = SparkSession.builder.appName(<span class="str">"streaming-demo"</span>).getOrCreate()
+
+<span class="cm"># LEITURA — readStream em vez de read</span>
+eventos = (spark.readStream
+    .format(<span class="str">"kafka"</span>)
+    .option(<span class="str">"kafka.bootstrap.servers"</span>, <span class="str">"localhost:9092"</span>)
+    .option(<span class="str">"subscribe"</span>, <span class="str">"cliques"</span>)
+    .load())
+
+<span class="cm"># PROCESSAMENTO — mesma sintaxe DataFrame do batch!</span>
+cliques_processados = (eventos
+    .selectExpr(<span class="str">"CAST(value AS STRING) as evento_json"</span>)
+    .select(<span class="fn">from_json</span>(col(<span class="str">"evento_json"</span>), schema).alias(<span class="str">"dados"</span>))
+    .select(<span class="str">"dados.*"</span>)
+    .filter(col(<span class="str">"pagina"</span>) != <span class="str">""</span>))
+
+<span class="cm"># ESCRITA — writeStream em vez de write</span>
+query = (cliques_processados.writeStream
+    .format(<span class="str">"console"</span>)
+    .outputMode(<span class="str">"append"</span>)
+    .start())
+
+query.awaitTermination()   <span class="cm"># mantém o processo rodando continuamente</span></code></pre>
+      </div>
+      <div class="destaque"><strong>Repare:</strong> a única diferença sintática real é <code>read</code> → <code>readStream</code>, <code>write</code> → <code>writeStream</code>, e o uso de <code>.start()</code> em vez de <code>.save()</code> (que retorna uma query em execução contínua, não uma ação que termina).</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-arrows-spin"></i>Output modes — como o resultado é entregue a cada micro-batch</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Output mode</th><th>Comportamento</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><strong>append</strong></td><td>Só emite linhas NOVAS desde o último micro-batch</td><td>Padrão. Não funciona com agregações sem watermark</td></tr>
+            <tr><td><strong>complete</strong></td><td>Reemite a tabela de resultado INTEIRA a cada micro-batch</td><td>Agregações pequenas (ex: contagem total por categoria)</td></tr>
+            <tr><td><strong>update</strong></td><td>Emite apenas as linhas que MUDARAM desde o último micro-batch</td><td>Agregações onde só interessa o que mudou (dashboards)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso"><i class="fas fa-triangle-exclamation"></i><span>Armadilha comum: usar <code>outputMode("append")</code> em uma agregação sem watermark gera erro — o Spark não sabe quando uma linha agregada está "definitivamente pronta" para ser emitida sem descartar a possibilidade dela ainda mudar.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-floppy-disk"></i>Sinks e checkpointing — tolerância a falhas</div>
+      <div class="op-grid">
+        <div class="op-card op-a">
+          <div class="op-titulo"><i class="fas fa-terminal"></i>console</div>
+          <div class="op-item">Imprime o resultado no terminal</div>
+          <div class="op-item">Só para debug e desenvolvimento local</div>
+        </div>
+        <div class="op-card op-b">
+          <div class="op-titulo"><i class="fas fa-database"></i>delta / parquet</div>
+          <div class="op-item">Grava o resultado como tabela Delta ou Parquet</div>
+          <div class="op-item">O sink mais comum para pipelines de produção</div>
+        </div>
+        <div class="op-card op-c">
+          <div class="op-titulo"><i class="fas fa-network-wired"></i>kafka</div>
+          <div class="op-item">Republica o resultado processado em outro tópico</div>
+          <div class="op-item">Comum em arquiteturas de streaming encadeado</div>
+        </div>
+        <div class="op-card op-d">
+          <div class="op-titulo"><i class="fas fa-memory"></i>memory</div>
+          <div class="op-item">Mantém o resultado em uma tabela temporária em memória</div>
+          <div class="op-item">Útil para testes e notebooks interativos</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — writeStream com checkpoint</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>query = (cliques_processados.writeStream
+    .format(<span class="str">"delta"</span>)
+    .outputMode(<span class="str">"append"</span>)
+    .option(<span class="str">"checkpointLocation"</span>, <span class="str">"s3://meu-bucket/checkpoints/cliques/"</span>)
+    .trigger(processingTime=<span class="str">"30 seconds"</span>)   <span class="cm"># roda um micro-batch a cada 30s</span>
+    .start(<span class="str">"s3://meu-bucket/delta/cliques_processados/"</span>))</code></pre>
+      </div>
+      <div class="destaque-green"><strong>checkpointLocation</strong> é obrigatório em produção: o Spark grava ali o progresso da leitura (offsets já processados) e o estado das agregações. Se o job cair e reiniciar, ele retoma exatamente de onde parou — sem duplicar nem perder dados (garantia exactly-once).</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — por que o checkpointLocation é essencial em um job de streaming em produção?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Ele acelera o processamento de cada micro-batch</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Ele registra o progresso e o estado, permitindo retomar exatamente de onde parou após uma falha</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Ele define o formato de saída do sink (console, delta, kafka)</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Ele é necessário apenas em output mode "complete"</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Window Operations e Watermarks</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Agregando por janelas de tempo e lidando com atraso</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table-cells"></i>Tumbling windows — janelas fixas e não sobrepostas</div>
+      <p>Quando você quer agregar eventos em blocos de tempo fixos (ex: "quantos cliques por minuto"), usa uma <strong>tumbling window</strong> — janelas de tamanho fixo que não se sobrepõem, cobrindo a linha do tempo de ponta a ponta.</p>
+      <div class="window-box">
+        <div class="window-track">
+          <div class="window-axis"></div>
+          <div class="window-block win-1">[10:00–10:05)</div>
+          <div class="window-block win-2">[10:05–10:10)</div>
+          <div class="window-block win-3">[10:10–10:15)</div>
+        </div>
+        <div class="window-legend">tumbling window de 5 minutos — cada evento cai em exatamente UMA janela</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — tumbling window</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>resultado = (eventos
+    .groupBy(window(col(<span class="str">"timestamp_evento"</span>), <span class="str">"5 minutes"</span>))
+    .count())
+
+<span class="cm"># Cada linha do resultado terá: window.start, window.end, count</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Sliding windows — janelas sobrepostas</div>
+      <p>Quando você quer uma métrica mais suave, atualizada com mais frequência (ex: "média móvel dos últimos 10 minutos, recalculada a cada 5 minutos"), usa uma <strong>sliding window</strong> — as janelas se sobrepõem, e cada evento pode contribuir para múltiplas janelas.</p>
+      <div class="window-box">
+        <div class="sliding-track">
+          <div class="sliding-block sl-1">[10:00–10:10)</div>
+          <div class="sliding-block sl-2">[10:05–10:15)</div>
+          <div class="sliding-block sl-3">[10:10–10:20)</div>
+          <div class="sliding-block sl-4">[10:15–10:25)</div>
+        </div>
+        <div class="window-legend">sliding window de 10 minutos, deslizando a cada 5 minutos — um mesmo evento pode cair em até 2 janelas</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — sliding window</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>resultado = (eventos
+    .groupBy(window(col(<span class="str">"timestamp_evento"</span>), <span class="str">"10 minutes"</span>, <span class="str">"5 minutes"</span>))
+    <span class="cm">#                                       ^tamanho da janela  ^intervalo de deslizamento</span>
+    .agg(<span class="fn">sum</span>(<span class="str">"valor"</span>).alias(<span class="str">"total"</span>)))</code></pre>
+      </div>
+      <div class="destaque"><strong>window(coluna, "10 minutes")</strong> = tumbling (o segundo parâmetro de deslizamento é omitido, então equivale ao próprio tamanho da janela). <strong>window(coluna, "10 minutes", "5 minutes")</strong> = sliding.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>Watermarks — o que fazer com eventos atrasados</div>
+      <p>Em sistemas distribuídos, eventos podem chegar fora de ordem ou atrasados (problema de rede, app offline, etc). Sem um limite, o Spark teria que manter <strong>estado infinito</strong> na memória, esperando por eventos atrasados de qualquer janela, para sempre.</p>
+      <p>O <strong>watermark</strong> define até quanto tempo de atraso o Spark tolera antes de considerar uma janela "fechada" e liberar o estado da memória:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — window + watermark</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>resultado = (eventos
+    .withWatermark(<span class="str">"timestamp_evento"</span>, <span class="str">"10 minutes"</span>)   <span class="cm"># tolera até 10min de atraso</span>
+    .groupBy(window(col(<span class="str">"timestamp_evento"</span>), <span class="str">"5 minutes"</span>))
+    .count())
+
+<span class="cm"># Um evento com timestamp de 10:03 só é aceito na janela [10:00-10:05)
+# se chegar até 10:05 + 10min de watermark = 10:15.
+# Depois disso, a janela é fechada e o evento atrasado é DESCARTADO.</span></code></pre>
+      </div>
+      <div class="grid-2">
+        <div class="destaque-green"><strong>Watermark curto:</strong> libera memória mais rápido, resultados ficam disponíveis antes, mas descarta mais eventos atrasados.</div>
+        <div class="aviso"><i class="fas fa-triangle-exclamation"></i><span><strong>Watermark longo:</strong> aceita mais eventos atrasados, mas consome mais memória e atrasa a finalização das janelas.</span></div>
+      </div>
+      <div class="destaque"><strong>Watermark é o que viabiliza outputMode("append") com agregações:</strong> só quando o Spark tem certeza (via watermark) que uma janela não vai mais receber dados, ele pode emiti-la de forma definitiva no modo append.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — qual é a função do watermark em uma agregação por janela?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Acelerar o processamento de cada micro-batch</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Definir até quanto tempo de atraso é tolerado antes de fechar uma janela e liberar o estado da memória</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Definir o formato do sink de saída</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Garantir que o job nunca falhe</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Construindo um pipeline de streaming completo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hammer"></i>Pipeline final — eventos, janela e watermark juntos</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline de streaming completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, window, count
+
+spark = SparkSession.builder.appName(<span class="str">"pipeline-eventos"</span>).getOrCreate()
+
+<span class="cm"># Fonte simulada — gera 1 evento por segundo (ótima para testes locais)</span>
+eventos_raw = (spark.readStream
+    .format(<span class="str">"rate"</span>)
+    .option(<span class="str">"rowsPerSecond"</span>, <span class="num">1</span>)
+    .load())
+
+<span class="cm"># Transformação: simula uma categoria e um timestamp de evento</span>
+eventos = eventos_raw.selectExpr(
+    <span class="str">"timestamp as timestamp_evento"</span>,
+    <span class="str">"CAST(value % 3 AS STRING) as categoria"</span>
+)
+
+<span class="cm"># Agregação: contagem de eventos por categoria, em janelas de 1 minuto,
+# tolerando até 2 minutos de atraso</span>
+resultado = (eventos
+    .withWatermark(<span class="str">"timestamp_evento"</span>, <span class="str">"2 minutes"</span>)
+    .groupBy(
+        window(col(<span class="str">"timestamp_evento"</span>), <span class="str">"1 minute"</span>),
+        col(<span class="str">"categoria"</span>)
+    )
+    .agg(count(<span class="str">"*"</span>).alias(<span class="str">"total_eventos"</span>)))
+
+query = (resultado.writeStream
+    .format(<span class="str">"console"</span>)
+    .outputMode(<span class="str">"update"</span>)
+    .option(<span class="str">"truncate"</span>, <span class="str">"false"</span>)
+    .trigger(processingTime=<span class="str">"10 seconds"</span>)
+    .start())
+
+query.awaitTermination()</code></pre>
+      </div>
+      <div class="destaque"><strong>Fonte "rate":</strong> gera dados sintéticos automaticamente (um contador incremental + timestamp), sem precisar configurar Kafka — ideal para testar conceitos de streaming localmente antes de conectar a uma fonte real.</div>
+    </div>
+
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Hands-on individual</div>
+        <div class="secao-titulo">Processar um stream de eventos e agregar por janela</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Use a fonte "rate" do Spark para simular eventos — não é necessário instalar ou configurar Kafka para esta atividade.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Primeiro stream (15 min)</div>
+      <p>Crie um pipeline que lê da fonte "rate" (1 evento/segundo), sem nenhuma transformação, e escreve no console com <code>outputMode("append")</code>. Rode por 30 segundos e observe os micro-batches aparecendo no terminal. Pare a execução e identifique quantas linhas cada micro-batch trouxe.</p>
+      <span class="dif-basico">Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Agregação com tumbling window (20 min)</div>
+      <p>Modifique o pipeline para simular uma coluna "categoria" (como no exemplo da Aula 4) e agrupe por tumbling window de 30 segundos + categoria, contando eventos. Use <code>outputMode("update")</code> e observe como os totais de cada janela vão aumentando a cada micro-batch, até a janela "fechar".</p>
+      <span class="dif-medio">Window + Agregação</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: watermark e append mode (15 min)</div>
+      <p>Adicione <code>withWatermark</code> com 1 minuto de tolerância ao pipeline do Exercício 2, e troque para <code>outputMode("append")</code>. Observe que agora os resultados só aparecem depois que uma janela é definitivamente fechada (após o watermark expirar) — mais lento para aparecer, porém definitivo (não muda mais depois).</p>
+      <span class="dif-desafio">Watermark + Append</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver comportamento esperado</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Comportamento esperado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Com <code>update</code> (Exercício 2): cada janela aparece MÚLTIPLAS vezes no console, com o total crescendo a cada micro-batch, até a janela ser considerada completa.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Com <code>append</code> + watermark (Exercício 3): cada janela aparece UMA ÚNICA vez no console — só depois que o watermark garante que ela não vai mais receber dados.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Sem watermark, tentar usar <code>append</code> com agregação geraria um erro do Spark, pois ele não teria como saber quando uma janela está "definitivamente pronta".</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 15</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 15</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-infinity"></i>
+        <strong>Tabela infinita</strong>
+        <p>Structured Streaming trata um stream como uma tabela que cresce continuamente. Motor micro-batch aplica a mesma query incrementalmente.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-arrows-spin"></i>
+        <strong>Output modes</strong>
+        <p>append (só novo), complete (tudo de novo) e update (só o que mudou). Cada um tem restrições sobre agregações.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-table-cells"></i>
+        <strong>Windows</strong>
+        <p>Tumbling (fixas, sem sobreposição) e sliding (sobrepostas). window(col, tamanho[, deslizamento]).</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-clock"></i>
+        <strong>Watermark</strong>
+        <p>Define a tolerância a atraso, libera memória e viabiliza outputMode append em agregações.</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar a diferença entre batch e streaming em termos do dataset? Consegue escrever um readStream/writeStream básico? Sabe a diferença entre tumbling e sliding window? Entende por que o watermark é necessário para outputMode append com agregações? Se sim para os quatro — você está pronto para a Semana 16.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-16-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 16 — Governança de Dados: Data Catalog, linhagem e LGPD</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver comportamento esperado';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! A diferença fundamental é conceitual: batch trabalha com um dataset finito e conhecido de antemão, processado do início ao fim. Streaming trabalha com um dataset que nunca termina de chegar — o job roda continuamente, processando novos dados assim que aparecem. O Structured Streaming usa a mesma API DataFrame do batch, aplicada incrementalmente via micro-batches.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O checkpointLocation registra o progresso da leitura (quais offsets já foram processados) e o estado das agregações em andamento. Se o job cair e precisar reiniciar, ele usa essas informações para retomar exatamente de onde parou, sem duplicar nem perder dados — essa é a garantia de tolerância a falhas do Structured Streaming.'},
+  quiz3:{correct:'B',msg:'✅ Correto! O watermark define até quanto tempo de atraso o Spark tolera antes de considerar uma janela definitivamente fechada. Isso permite liberar o estado da memória (sem guardar informação de janelas antigas para sempre) e é o que viabiliza o uso de outputMode("append") em agregações — sem watermark, o Spark nunca teria certeza de quando uma janela está pronta para ser emitida de forma definitiva.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>

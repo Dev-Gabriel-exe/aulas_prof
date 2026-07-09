@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 20 — Segunda Chamada · Big Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --exam-red:#dc2626;
+  --exam-red-acc:#f87171;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c0a0a;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#dc2626;top:38%;left:42%;opacity:.12;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.2);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--exam-red-acc);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.1rem;font-weight:800;color:var(--white);line-height:1.1;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--exam-red-acc);}
+.capa-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--exam-red-acc);border-radius:2px;margin-bottom:2rem;}
+.cobertura{display:flex;flex-direction:column;gap:.65rem;}
+.cob-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.83rem;animation:slideIn .5s ease both;}
+.cob-item:nth-child(1){animation-delay:.1s;}.cob-item:nth-child(2){animation-delay:.2s;}.cob-item:nth-child(3){animation-delay:.3s;}.cob-item:nth-child(4){animation-delay:.4s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.cob-num{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.15);color:var(--exam-red-acc);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:800;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--exam-red-acc);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:var(--exam-red-acc);border:1px solid rgba(239,68,68,.35);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--exam-red-acc);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--exam-red-acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.65rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.aviso-exam{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-exam i{color:var(--exam-red-acc);flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-teal{background:rgba(45,212,191,.12);color:#2dd4bf;border:1px solid rgba(45,212,191,.22);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--exam-red-acc);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+td strong{color:var(--text-primary);}
+
+/* Prova cards linking back */
+.prova-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.prova-card{border-radius:14px;padding:1.25rem;border:1px solid;cursor:pointer;transition:transform .15s,border-color .15s;}
+.prova-card:hover{transform:translateY(-2px);}
+.p-p1{background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.18);}
+.p-p1:hover{border-color:rgba(45,212,191,.4);}
+.p-p2{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.p-p2:hover{border-color:rgba(59,130,246,.4);}
+.p-p3{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.p-p3:hover{border-color:rgba(167,139,250,.4);}
+.p-p4{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.p-p4:hover{border-color:rgba(251,146,60,.4);}
+.prova-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;}
+.p-p1 .prova-titulo{color:#2dd4bf;}
+.p-p2 .prova-titulo{color:#60a5fa;}
+.p-p3 .prova-titulo{color:#a78bfa;}
+.p-p4 .prova-titulo{color:#fb923c;}
+.prova-cobertura{font-size:.78rem;color:var(--text-secondary);margin-bottom:.6rem;line-height:1.5;}
+.prova-link{font-size:.72rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;}
+
+/* Consolidated review grid */
+.semanas-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.s-card{border-radius:14px;padding:1.25rem;border:1px solid;}
+.s1{background:rgba(45,212,191,.04);border-color:rgba(45,212,191,.18);}
+.s2{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.18);}
+.s3{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.s4{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.s-titulo{font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+.s1 .s-titulo{color:#2dd4bf;}
+.s2 .s-titulo{color:#60a5fa;}
+.s3 .s-titulo{color:#a78bfa;}
+.s4 .s-titulo{color:#fb923c;}
+.s-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.s-item::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:var(--text-muted);}
+
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .8rem;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;}
+.check-item:hover{border-color:rgba(74,222,128,.3);}
+.check-item.checked{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.check-box{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s;}
+.check-item.checked .check-box{background:rgba(74,222,128,.3);border-color:#4ade80;color:#4ade80;}
+.check-label{font-size:.8rem;color:var(--text-secondary);line-height:1.45;}
+.check-item.checked .check-label{color:rgba(134,239,172,.8);}
+.progress-bar-wrap{margin:1rem 0;padding:1rem 1.25rem;border-radius:12px;background:var(--card-bg);border:1px solid var(--card-border);}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-label span{font-size:.78rem;color:var(--text-secondary);}
+.progress-label strong{font-size:.82rem;color:var(--text-primary);}
+.progress-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#dc2626,#fb923c);border-radius:4px;transition:width .4s ease;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.encerramento{text-align:center;padding:2.5rem 1.5rem;border-radius:16px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);margin-top:3rem;}
+.encerramento i{font-size:2rem;color:#4ade80;margin-bottom:1rem;display:block;}
+.encerramento-titulo{font-family:'Montserrat',sans-serif;font-size:1.15rem;font-weight:700;color:var(--white);margin-bottom:.5rem;}
+.encerramento p{font-size:.88rem;color:var(--text-secondary);max-width:520px;margin:0 auto;line-height:1.65;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.semanas-grid,.checklist-grid,.prova-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔴 Segunda Chamada</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">20</div>
+    <h1 class="capa-titulo"><em>Segunda Chamada</em></h1>
+    <p class="capa-sub">Prova substitutiva · Última semana do semestre</p>
+    <div class="divider"></div>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">Esta semana é reservada para alunos com frequência válida que precisam repor uma das avaliações do semestre (P1, P2, P3 ou P4). Use esta página como um hub central de revisão, com atalhos para o material de cada prova.</p>
+    <div class="cobertura">
+      <div class="cob-item"><div class="cob-num">P1</div><span>Semanas 1 a 5 — Fundamentos de Big Data, Lambda/Kappa, Data Lake, HDFS, Kafka</span></div>
+      <div class="cob-item"><div class="cob-num">P2</div><span>Semanas 7 a 12 — Ingestão, Spark/PySpark, Spark SQL, ETL/ELT+dbt, Airflow</span></div>
+      <div class="cob-item"><div class="cob-num">P3</div><span>Semanas 14 a 17 — Delta Lake, Structured Streaming, Governança, Big Data para IA</span></div>
+      <div class="cob-item"><div class="cob-num">P4</div><span>Conteúdo cumulativo — todo o semestre + projeto final</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-circle-question"></i>O que é a Segunda Chamada</div>
+      <ul class="info-lista">
+        <li>Prova substitutiva para quem perdeu uma avaliação por motivo justificado</li>
+        <li>Disponível apenas para alunos com frequência válida na disciplina</li>
+        <li>Confirme com a coordenação qual(is) prova(s) você está apto a repor e a documentação exigida</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Como se preparar</div>
+      <ul class="info-lista">
+        <li>Identifique exatamente qual prova (P1, P2, P3 ou P4) você vai repor</li>
+        <li>Use o material de revisão daquela semana de avaliação específica</li>
+        <li>Se for repor a P4, revise também o guia de apresentação do projeto final</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dica de ouro</div>
+      <ul class="info-lista">
+        <li>Não tente revisar o semestre inteiro na véspera — foque na prova específica que você vai fazer</li>
+        <li>As armadilhas destacadas nos materiais de P1-P4 são os pontos historicamente mais cobrados</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>ver hub de revisão</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">①</div>
+      <div class="secao-info">
+        <div class="secao-label">Hub de revisão</div>
+        <div class="secao-titulo">Qual prova você vai repor?</div>
+      </div>
+    </div>
+
+    <div class="aviso-exam">
+      <i class="fas fa-circle-info"></i>
+      <span>Cada card abaixo leva ao material de revisão completo (resumo por tema, simulado com gabarito e checklist) daquela avaliação específica. Clique na prova que você precisa repor.</span>
+    </div>
+
+    <div class="prova-grid">
+      <div class="prova-card p-p1" onclick="window.location.href='slide-06.html'">
+        <div class="prova-titulo">P1 <i class="fas fa-arrow-right"></i></div>
+        <div class="prova-cobertura">Semanas 1-5: os 5 Vs, arquiteturas Lambda e Kappa, Data Lake e Lakehouse, HDFS, Apache Kafka.</div>
+        <div class="prova-link"><i class="fas fa-file-lines"></i> slide-06.html</div>
+      </div>
+      <div class="prova-card p-p2" onclick="window.location.href='slide-13.html'">
+        <div class="prova-titulo">P2 <i class="fas fa-arrow-right"></i></div>
+        <div class="prova-cobertura">Semanas 7-12: ingestão (Full Load/Incremental/CDC), Spark, PySpark, Spark SQL, ETL/ELT+dbt, Airflow.</div>
+        <div class="prova-link"><i class="fas fa-file-lines"></i> slide-13.html</div>
+      </div>
+      <div class="prova-card p-p3" onclick="window.location.href='slide-18.html'">
+        <div class="prova-titulo">P3 <i class="fas fa-arrow-right"></i></div>
+        <div class="prova-cobertura">Semanas 14-17: Delta Lake, Structured Streaming, Governança de Dados, Big Data para IA.</div>
+        <div class="prova-link"><i class="fas fa-file-lines"></i> slide-18.html</div>
+      </div>
+      <div class="prova-card p-p4" onclick="window.location.href='slide-19.html'">
+        <div class="prova-titulo">P4 <i class="fas fa-arrow-right"></i></div>
+        <div class="prova-cobertura">Conteúdo cumulativo de todo o semestre, mais o guia de entrega e apresentação do projeto final.</div>
+        <div class="prova-link"><i class="fas fa-file-lines"></i> slide-19.html</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Revisão consolidada</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">②</div>
+      <div class="secao-info">
+        <div class="secao-label">Panorama do semestre</div>
+        <div class="secao-titulo">Os 4 blocos de conteúdo em uma página só</div>
+      </div>
+    </div>
+
+    <div class="semanas-grid">
+      <div class="s-card s1">
+        <div class="s-titulo">Bloco P1 — Fundamentos (S1-5)</div>
+        <div class="s-item"><strong>5 Vs:</strong> volume, velocidade, variedade, veracidade, valor</div>
+        <div class="s-item"><strong>Lambda:</strong> batch+speed+serving. <strong>Kappa:</strong> streaming puro</div>
+        <div class="s-item"><strong>Data Lake:</strong> zonas raw/bronze → silver → gold; Lakehouse combina Lake+Warehouse</div>
+        <div class="s-item"><strong>HDFS:</strong> blocos replicados, NameNode/DataNode</div>
+        <div class="s-item"><strong>Kafka:</strong> tópicos, partições, offset, consumer groups</div>
+      </div>
+      <div class="s-card s2">
+        <div class="s-titulo">Bloco P2 — Ingestão, Spark e Orquestração (S7-12)</div>
+        <div class="s-item"><strong>Ingestão:</strong> Full Load (sem cursor), Incremental (não pega DELETE), CDC (log de transação)</div>
+        <div class="s-item"><strong>Spark:</strong> in-memory, lazy evaluation, narrow/wide, broadcast na tabela pequena</div>
+        <div class="s-item"><strong>Catalyst:</strong> explain() revela PushedFilters e tipo de join; UDF bloqueia otimização</div>
+        <div class="s-item"><strong>dbt:</strong> staging→marts, ref()/source(), testes genéricos/singulares</div>
+        <div class="s-item"><strong>Airflow:</strong> DAG, sensor vs operator, catchup=False em produção</div>
+      </div>
+      <div class="s-card s3">
+        <div class="s-titulo">Bloco P3 — Armazenamento Moderno e IA (S14-17)</div>
+        <div class="s-item"><strong>Delta Lake:</strong> _delta_log = ACID; MERGE INTO = upsert atômico; time travel</div>
+        <div class="s-item"><strong>OPTIMIZE+ZORDER</strong> aceleram leitura; VACUUM remove órfãos (cuidado com retenção)</div>
+        <div class="s-item"><strong>Streaming:</strong> micro-batch; tumbling vs sliding window; watermark viabiliza append</div>
+        <div class="s-item"><strong>Governança:</strong> Data Catalog; linhagem upstream (origem) vs downstream (impacto); LGPD</div>
+        <div class="s-item"><strong>Feature Store:</strong> elimina treino-serving skew; offline (treino) vs online (serving)</div>
+      </div>
+      <div class="s-card s4">
+        <div class="s-titulo">Bloco P4 — Integração Cumulativa</div>
+        <div class="s-item">Pipeline completo: ingestão → armazenamento → processamento → transformação → orquestração → governança → serving para IA</div>
+        <div class="s-item">Questões de banca tendem a pedir justificativa de arquitetura, não só definição de termos</div>
+        <div class="s-item">Projeto final é a demonstração prática de toda essa cadeia — use-o como guia de estudo</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Checklist de Preparo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">③</div>
+      <div class="secao-info">
+        <div class="secao-label">Checklist interativo</div>
+        <div class="secao-titulo">Antes de ir para a prova substitutiva</div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso de preparo</span>
+        <strong id="progress-text">0 / 8 itens</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%;"></div></div>
+    </div>
+
+    <div class="checklist-grid" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Confirmei com a coordenação qual prova (P1/P2/P3/P4) estou apto a repor</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Entreguei a documentação exigida para justificar a ausência</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Revisei o material específico da semana daquela prova (S6, S13, S18 ou S19)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Refiz o simulado da prova correspondente e revisei os erros</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Revisei as "armadilhas" destacadas nos cards de resumo daquele bloco</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Se for P4: revisei também o guia de apresentação do projeto final</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Sei o horário, local e formato exatos da prova substitutiva</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Descansei bem e revisei sem tentar cobrir o semestre inteiro na véspera</div></div>
+    </div>
+
+    <div class="aviso-green" style="margin-top:1.25rem;">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Lembrete:</strong> a segunda chamada normalmente cobre o MESMO conteúdo da P4, pode optar por um trabalho extra para acumulação de pontos, mas a prova é presencial e  objetiva.</span>
+    </div>
+  </section>
+
+  <div class="encerramento">
+    <i class="fas fa-graduation-cap"></i>
+    <div class="encerramento-titulo">Fim do semestre de Big Data e Engenharia de Dados</div>
+    <p>Da ingestão de dados brutos até o serving de features para modelos de IA, você percorreu a stack completa de um engenheiro de dados moderno. Boa prova substitutiva, e bons projetos daqui para frente!</p>
+  </div>
+
+</main>
+
+<script>
+function toggleCheck(el){
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').innerHTML=el.classList.contains('checked')?'✓':'';
+  updateProgress();
+}
+function updateProgress(){
+  const total=document.querySelectorAll('.check-item').length;
+  const checked=document.querySelectorAll('.check-item.checked').length;
+  const pct=Math.round(checked/total*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-text').textContent=`${checked} / ${total} itens`;
+}
+</script>
+</body>
+</html>

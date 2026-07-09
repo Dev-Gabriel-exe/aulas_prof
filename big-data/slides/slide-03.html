@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 03 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+  --raw:#1a1a2e; --raw-acc:#818cf8;
+  --silver:#0f2027; --silver-acc:#38bdf8;
+  --gold:#2a1500; --gold-acc:#fbbf24;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ═══ CAPA ═══════════════════════════ */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ═══ CONTEÚDO ════════════════════════ */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.07);border-left:3px solid #f87171;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-red strong{color:#f87171;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.22);}
+.badge-purple{background:rgba(129,140,248,.12);color:#818cf8;border:1px solid rgba(129,140,248,.22);}
+.badge-yellow{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}
+
+/* ── Zonas do Data Lake ── */
+.zona-flow{display:flex;flex-direction:column;gap:0;margin:.75rem 0;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
+.zona{padding:1.25rem 1.5rem;transition:background .2s;}
+.zona-raw{background:rgba(26,26,46,.6);border-bottom:1px solid rgba(129,140,248,.1);}
+.zona-silver{background:rgba(15,32,39,.6);border-bottom:1px solid rgba(56,189,248,.1);}
+.zona-gold{background:rgba(42,21,0,.6);}
+.zona-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem;}
+.zona-titulo{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;display:flex;align-items:center;gap:8px;}
+.zona-raw .zona-titulo{color:#818cf8;}
+.zona-silver .zona-titulo{color:#38bdf8;}
+.zona-gold .zona-titulo{color:#fbbf24;}
+.zona-badge{font-size:.68rem;padding:2px 8px;border-radius:6px;font-weight:600;}
+.zona-raw .zona-badge{background:rgba(129,140,248,.12);color:#818cf8;border:1px solid rgba(129,140,248,.22);}
+.zona-silver .zona-badge{background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.22);}
+.zona-gold .zona-badge{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.zona-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+.zona-col-titulo{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.4rem;opacity:.7;}
+.zona-raw .zona-col-titulo{color:#818cf8;}
+.zona-silver .zona-col-titulo{color:#38bdf8;}
+.zona-gold .zona-col-titulo{color:#fbbf24;}
+.zona-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.65rem;position:relative;line-height:1.5;}
+.zona-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;margin-top:2px;opacity:.5;}
+.zona-arrow{display:flex;align-items:center;justify-content:center;padding:.5rem;background:rgba(251,146,60,.04);}
+.zona-arrow span{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-400);margin-right:.5rem;}
+
+/* ── Formato visual ── */
+.formato-card{border-radius:14px;padding:1.25rem;border:1px solid;margin-bottom:0;}
+.fmt-parquet{background:rgba(56,189,248,.04);border-color:rgba(56,189,248,.2);}
+.fmt-avro{background:rgba(129,140,248,.04);border-color:rgba(129,140,248,.2);}
+.fmt-orc{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.fmt-titulo{font-family:'Montserrat',sans-serif;font-size:.88rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.fmt-parquet .fmt-titulo{color:#38bdf8;}
+.fmt-avro .fmt-titulo{color:#818cf8;}
+.fmt-orc .fmt-titulo{color:#4ade80;}
+.fmt-tag{font-size:.65rem;padding:1px 7px;border-radius:4px;font-weight:600;margin-left:.25rem;}
+.fmt-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.fmt-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;margin-top:2px;opacity:.5;}
+
+/* ── Colunar vs Row ── */
+.storage-demo{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.storage-table{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.07);}
+.storage-title{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.5rem .75rem;text-align:center;}
+.storage-table.row-based .storage-title{background:rgba(239,68,68,.12);color:#f87171;}
+.storage-table.col-based .storage-title{background:rgba(56,189,248,.12);color:#38bdf8;}
+.storage-row{display:flex;font-size:.75rem;font-family:'JetBrains Mono',monospace;}
+.storage-cell{padding:.35rem .5rem;flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);}
+.storage-cell:last-child{border-right:none;}
+.hl-row{background:rgba(239,68,68,.15);}
+.hl-col{background:rgba(56,189,248,.15);}
+.storage-legend{font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:.4rem;}
+
+/* ── Compressão bar ── */
+.compress-bar{margin:.75rem 0;}
+.compress-item{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;}
+.compress-label{font-size:.78rem;font-family:'JetBrains Mono',monospace;color:var(--text-secondary);width:80px;flex-shrink:0;}
+.compress-track{flex:1;height:14px;background:rgba(255,255,255,.05);border-radius:7px;overflow:hidden;}
+.compress-fill{height:100%;border-radius:7px;transition:width .8s ease;}
+.compress-pct{font-size:.72rem;color:var(--text-muted);width:35px;text-align:right;flex-shrink:0;}
+
+/* ── Exercícios ── */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* ── Quiz ── */
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+/* ── Resumo / próxima ── */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.38);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--accent-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.resumo-grid,.storage-demo,.zona-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CAPA ═══════════════════════════════════════════════════════════ -->
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">03</div>
+    <h1 class="capa-titulo"><em>Data Lakes</em><br>Zonas e Formatos</h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Onde os dados moram e como são armazenados</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-water"></i></div><span>Data Lake vs. Data Warehouse vs. Data Lakehouse</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Zona Raw/Bronze — dados brutos e imutáveis</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-broom"></i></div><span>Zona Silver — dados limpos e transformados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-star"></i></div><span>Zona Gold — dados prontos para consumo e IA</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-file-code"></i></div><span>Formatos: Parquet, Avro, ORC — colunar vs. row-based</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-skull-crossbones"></i></div><span>Data Swamp — o Data Lake que deu errado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-ruler"></i></div><span>Atividade: projetar estrutura de zonas para e-commerce</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Projetar a estrutura completa de zonas de um Data Lake para um e-commerce fictício — desde a ingestão até as features de IA.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 2</div>
+      <ul class="info-lista">
+        <li>Lambda: Batch Layer + Speed Layer + Serving Layer</li>
+        <li>Kappa: tudo é stream, Kafka como log imutável universal</li>
+        <li>Lakehouse: arquitetura moderna que tende a substituir ambas</li>
+        <li>Escolha depende do caso: latência, reprocessamento, complexidade</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Posição no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 3 de 5 antes da P1 (Semana 6)</li>
+        <li>P1 cobre: 5 Vs, Lambda/Kappa, Data Lake, HDFS, Kafka</li>
+        <li>Próxima semana: HDFS — o sistema de arquivos distribuído</li>
+        <li>Semana 5: Apache Kafka — streaming em profundidade</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Tecnologias desta semana</div>
+      <ul class="info-lista">
+        <li>AWS S3 / Google Cloud Storage / Azure Data Lake Storage</li>
+        <li>Apache Parquet, Apache Avro, Apache ORC</li>
+        <li>Apache Spark (para ler/escrever formatos)</li>
+        <li>Delta Lake (menção à Semana 14)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══ CONTEÚDO ════════════════════════════════════════════════════════ -->
+<main class="conteudo" id="conteudo">
+
+  <!-- ── AULA 1: Data Lake vs DW vs Lakehouse ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Data Lake, Data Warehouse e Data Lakehouse — as três gerações</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 2</div>
+      <p>Nas semanas 1 e 2 entendemos <em>por que</em> Big Data existe e <em>como</em> arquitetar o fluxo de processamento (Lambda/Kappa). Agora a pergunta é: <strong>onde os dados ficam armazenados?</strong> A resposta evoluiu em três gerações ao longo de 30 anos.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-building"></i>Geração 1: Data Warehouse — o armazém organizado</div>
+      <p>O Data Warehouse surgiu nos anos 1990 como solução para consolidar dados de diferentes sistemas transacionais (ERP, CRM, POS) em um único lugar para análise. A lógica é <strong>schema-on-write</strong>: você define rigorosamente a estrutura dos dados <em>antes</em> de carregá-los.</p>
+      <div class="grid-2">
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>SQL rápido e otimizado para analytics</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Schema forte — dados sempre consistentes</span></li>
+            <li><i class="fas fa-check-circle"></i><span>ACID transactions garantidas</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Fácil de usar para analistas de negócio</span></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Só aceita dados estruturados (sem imagens, textos livres)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Custo muito alto em escala de PB</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Schema rígido — mudanças são lentas e caras</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não suporta dados de ML diretamente</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Exemplos:</strong> Amazon Redshift, Google BigQuery, Snowflake, Microsoft Azure Synapse, IBM Db2 Warehouse. Ainda amplamente usados — especialmente para BI e relatórios estruturados.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-water"></i>Geração 2: Data Lake — o lago de dados brutos</div>
+      <p>Em 2010, James Dixon (Pentaho) cunhou o termo <strong>Data Lake</strong>: em vez de um armazém onde tudo deve entrar organizado, um lago onde você despeja os dados brutos como chegam e decide o que fazer com eles depois. A lógica é <strong>schema-on-read</strong>: a estrutura é aplicada na hora da leitura, não da escrita.</p>
+      <div class="destaque">
+        <strong>Metáfora do próprio James Dixon:</strong> "Se você pensar em um Data Mart como um reservatório de água engarrafada — limpa, embalada e estruturada para consumo fácil — um Data Lake é um grande corpo de água natural. O conteúdo flui de uma fonte para o lago; vários usuários podem examinar, mergulhar e buscar amostras."
+      </div>
+      <div class="grid-2">
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span>Aceita qualquer tipo de dado: estruturado, semiestruturado, não estruturado</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Custo muito baixo — armazena em S3/HDFS (commodity storage)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Flexível — schema aplicado só quando necessário</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Ideal para ML — dados de treino ficam aqui</span></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem ACID — updates e deletes são complexos</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Consultas lentas sem otimização (sem índices nativos)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Risco de virar "Data Swamp" sem governança</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Difícil para analistas de negócio sem ferramentas</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-rocket"></i>Geração 3: Data Lakehouse — o melhor dos dois mundos</div>
+      <p>Proposto pela Databricks em 2019 com o <strong>Delta Lake</strong>, o Lakehouse combina o baixo custo e a flexibilidade do Data Lake com a confiabilidade e performance do Data Warehouse. A tecnologia central é uma camada de metadados transacional sobre o armazenamento de objetos (S3/HDFS).</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th><span class="badge-blue">Data Warehouse</span></th><th><span class="badge-purple">Data Lake</span></th><th><span class="badge-yellow">Data Lakehouse</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Schema</strong></td><td>Schema-on-write (rígido)</td><td>Schema-on-read (flexível)</td><td>Ambos (enforcement opcional)</td></tr>
+            <tr><td><strong>Tipos de dado</strong></td><td>Só estruturado</td><td>Qualquer tipo</td><td>Qualquer tipo</td></tr>
+            <tr><td><strong>ACID</strong></td><td>✅ Sim</td><td>❌ Não</td><td>✅ Sim (Delta Lake)</td></tr>
+            <tr><td><strong>Custo de storage</strong></td><td>Alto</td><td>Baixo</td><td>Baixo</td></tr>
+            <tr><td><strong>Performance SQL</strong></td><td>Alta</td><td>Baixa sem otimização</td><td>Alta (com Z-ordering)</td></tr>
+            <tr><td><strong>Suporte a ML</strong></td><td>Limitado</td><td>Excelente</td><td>Excelente</td></tr>
+            <tr><td><strong>Time travel</strong></td><td>Não</td><td>Não</td><td>✅ Sim</td></tr>
+            <tr><td><strong>Exemplos</strong></td><td>Snowflake, Redshift, BigQuery</td><td>S3+Parquet, HDFS</td><td>Delta Lake, Apache Iceberg, Apache Hudi</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque"><strong>Tendência 2024:</strong> a maioria dos novos projetos começa com Lakehouse. É mais simples que Lambda/Kappa, mais barato que Data Warehouse puro e mais confiável que Data Lake tradicional. Vamos explorar Delta Lake a fundo na Semana 14.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um cientista de dados precisa treinar um modelo com imagens de produtos, textos de avaliações e dados de clique. Qual opção de armazenamento é mais adequada?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Data Warehouse — é o mais performático para consultas</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Data Lake ou Lakehouse — aceita qualquer tipo de dado, incluindo imagens e textos</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Banco de dados relacional (PostgreSQL) — mais simples de usar</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Qualquer um serve — o tipo de dado não interfere na escolha</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · As Zonas do Data Lake</span></div>
+
+  <!-- ── AULA 2: Zonas Raw / Silver / Gold ────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">As zonas do Data Lake — Raw, Silver e Gold</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-oil-can"></i>A metáfora da refinaria de petróleo</div>
+      <p>Um Data Lake sem organização é inútil — ninguém sabe o que há lá dentro, ninguém confia nos dados e ninguém consegue encontrar o que precisa. A solução é organizar o Data Lake em <strong>zonas de maturidade dos dados</strong>, exatamente como uma refinaria de petróleo processa o óleo bruto em produtos cada vez mais refinados.</p>
+      <div class="grid-3">
+        <div style="padding:.85rem;border-radius:10px;background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.15);text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:.35rem;">🛢️</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#818cf8;">Petróleo Bruto</div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem;">= Zona Raw/Bronze</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:.35rem;">⚗️</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#38bdf8;">Refinado Intermediário</div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem;">= Zona Silver</div>
+        </div>
+        <div style="padding:.85rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:.35rem;">⛽</div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#fbbf24;">Produto Final</div>
+          <div style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem;">= Zona Gold</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagrama das Zonas -->
+    <div class="zona-flow">
+      <!-- Raw -->
+      <div class="zona zona-raw">
+        <div class="zona-header">
+          <div class="zona-titulo"><i class="fas fa-database"></i>Zona Raw / Bronze <span class="zona-badge">Imutável</span></div>
+          <div style="font-size:.78rem;color:var(--text-muted);">s3://datalake/raw/ · hdfs://datalake/bronze/</div>
+        </div>
+        <div class="zona-grid">
+          <div>
+            <div class="zona-col-titulo">O que entra</div>
+            <div class="zona-item">Dados exatamente como chegaram da fonte</div>
+            <div class="zona-item">CSV, JSON, Avro, XML, imagens, logs</div>
+            <div class="zona-item">Sem transformação alguma</div>
+            <div class="zona-item">Particionado por data/hora de ingestão</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Regras</div>
+            <div class="zona-item">NUNCA modifique dados aqui</div>
+            <div class="zona-item">Retenção longa (anos) ou indefinida</div>
+            <div class="zona-item">Fonte da verdade: se der erro, reprocesse daqui</div>
+            <div class="zona-item">Sem acesso direto para analistas</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Exemplo — e-commerce</div>
+            <div class="zona-item">raw/orders/2024/01/15/ → pedidos do dia em JSON</div>
+            <div class="zona-item">raw/clickstream/2024/01/15/ → logs de clique</div>
+            <div class="zona-item">raw/product_images/ → fotos dos produtos</div>
+            <div class="zona-item">raw/reviews/ → avaliações em texto livre</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="zona-arrow">
+        <span>transformação</span>
+        <i class="fas fa-arrow-down" style="color:var(--accent-400);"></i>
+        <span style="margin-left:.5rem;font-size:.7rem;color:var(--text-muted);">limpeza · padronização · deduplicação</span>
+      </div>
+
+      <!-- Silver -->
+      <div class="zona zona-silver">
+        <div class="zona-header">
+          <div class="zona-titulo"><i class="fas fa-broom"></i>Zona Silver <span class="zona-badge">Limpa e Confiável</span></div>
+          <div style="font-size:.78rem;color:var(--text-muted);">s3://datalake/silver/ · hdfs://datalake/silver/</div>
+        </div>
+        <div class="zona-grid">
+          <div>
+            <div class="zona-col-titulo">O que entra</div>
+            <div class="zona-item">Dados validados e padronizados</div>
+            <div class="zona-item">Schema consistente e documentado</div>
+            <div class="zona-item">Deduplicados e sem nulos críticos</div>
+            <div class="zona-item">Formato Parquet (comprimido)</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Transformações aplicadas</div>
+            <div class="zona-item">Limpeza de nulos, outliers, duplicatas</div>
+            <div class="zona-item">Padronização de datas (ISO 8601)</div>
+            <div class="zona-item">Normalização de strings (uppercase)</div>
+            <div class="zona-item">Joins com tabelas de referência</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Exemplo — e-commerce</div>
+            <div class="zona-item">silver/orders/ → pedidos limpos, schema fixo</div>
+            <div class="zona-item">silver/customers/ → clientes deduplicados + geocodificados</div>
+            <div class="zona-item">silver/products/ → catálogo normalizado</div>
+            <div class="zona-item">silver/events/ → clickstream parseado</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="zona-arrow">
+        <span>agregação</span>
+        <i class="fas fa-arrow-down" style="color:var(--accent-400);"></i>
+        <span style="margin-left:.5rem;font-size:.7rem;color:var(--text-muted);">joins · métricas · features</span>
+      </div>
+
+      <!-- Gold -->
+      <div class="zona zona-gold">
+        <div class="zona-header">
+          <div class="zona-titulo"><i class="fas fa-star"></i>Zona Gold <span class="zona-badge">Pronta para Consumo</span></div>
+          <div style="font-size:.78rem;color:var(--text-muted);">s3://datalake/gold/ · hdfs://datalake/gold/</div>
+        </div>
+        <div class="zona-grid">
+          <div>
+            <div class="zona-col-titulo">O que entra</div>
+            <div class="zona-item">Dados agregados por caso de uso</div>
+            <div class="zona-item">Métricas de negócio calculadas</div>
+            <div class="zona-item">Features para modelos de IA</div>
+            <div class="zona-item">Formato Parquet ou Delta</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Quem consome</div>
+            <div class="zona-item">Dashboards de BI (Power BI, Metabase)</div>
+            <div class="zona-item">Modelos de ML (feature store)</div>
+            <div class="zona-item">APIs de produto (recomendação)</div>
+            <div class="zona-item">Relatórios executivos</div>
+          </div>
+          <div>
+            <div class="zona-col-titulo">Exemplo — e-commerce</div>
+            <div class="zona-item">gold/revenue_by_day/ → receita diária por categoria</div>
+            <div class="zona-item">gold/user_features/ → features de churn para ML</div>
+            <div class="zona-item">gold/top_products/ → ranking de produtos por região</div>
+            <div class="zona-item">gold/cohort_retention/ → retenção por coorte de clientes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-titulo"><i class="fas fa-code"></i>Estrutura de pastas na prática — AWS S3</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura de diretórios — Data Lake e-commerce no S3</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>s3://meu-ecommerce-datalake/
+│
+├── <span class="dir">raw/</span>                          <span class="cm"># Zona Bronze — dados brutos, NUNCA modificar</span>
+│   ├── orders/
+│   │   ├── <span class="str">year=2024/month=01/day=15/</span>  <span class="cm"># particionamento por data</span>
+│   │   │   └── orders_20240115_143022.json
+│   ├── clickstream/
+│   │   └── <span class="str">year=2024/month=01/day=15/hour=14/</span>
+│   └── product_images/
+│       └── product_id=12345/image.jpg
+│
+├── <span class="dir">silver/</span>                       <span class="cm"># Zona Silver — limpa, Parquet, schema fixo</span>
+│   ├── orders/
+│   │   └── <span class="str">year=2024/month=01/</span>
+│   │       └── part-00001.parquet        <span class="cm"># comprimido com Snappy</span>
+│   ├── customers/
+│   └── products/
+│
+├── <span class="dir">gold/</span>                         <span class="cm"># Zona Gold — agregada, pronta para consumo</span>
+│   ├── revenue_daily/                    <span class="cm"># para dashboard</span>
+│   ├── user_features/                    <span class="cm"># para modelo de ML</span>
+│   └── cohort_analysis/                  <span class="cm"># para marketing</span>
+│
+└── <span class="dir">_catalog/</span>                     <span class="cm"># metadados, schemas, linhagem</span>
+    └── schemas/
+        ├── orders_silver_v2.json
+        └── user_features_gold_v1.json</code></pre>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — um engenheiro precisa corrigir um bug no cálculo da zona Silver. O que ele deve fazer com os dados da zona Raw?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Corrigir os dados na zona Raw e reprocessar</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Não mexer na Raw — reprocessar Silver a partir dos dados brutos originais</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Apagar a zona Raw e reingestir os dados</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Corrigir diretamente na zona Gold — é mais rápido</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Formatos de Arquivo</span></div>
+
+  <!-- ── AULA 3: Parquet, Avro, ORC ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Formatos de arquivo — por que CSV não serve para Big Data</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>O problema com CSV e JSON em escala</div>
+      <p>CSV e JSON são formatos universais, mas foram projetados para <em>legibilidade humana</em> e <em>intercâmbio de dados</em>, não para processamento analítico de bilhões de registros. Em escala, os problemas aparecem rapidamente.</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.6rem;">📄 CSV — o que dá errado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Para ler uma coluna, você lê o arquivo inteiro (row-based)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem schema — "1" pode ser número ou string</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem compressão nativa — 1 GB de dados → 1 GB no disco</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Não suporta tipos aninhados (arrays, objetos)</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.6rem;">📋 JSON — o que dá errado em escala</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Chaves repetidas em cada registro — 30-40% de overhead</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem compressão nativa eficiente</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Parse lento para bilhões de linhas</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Schema implícito — pode mudar a qualquer momento</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-columns"></i>Colunar vs. Row-based — a diferença que muda tudo</div>
+      <p>A inovação central dos formatos modernos é o <strong>armazenamento colunar</strong>. Em vez de armazenar os dados linha por linha (como o CSV), os dados são armazenados coluna por coluna. Isso parece detalhe, mas muda completamente a performance de queries analíticas.</p>
+
+      <div class="storage-demo">
+        <div class="storage-table row-based">
+          <div class="storage-title">Row-Based (CSV)</div>
+          <div style="padding:.5rem;">
+            <div style="font-size:.68rem;color:var(--text-muted);margin-bottom:.3rem;font-family:'JetBrains Mono',monospace;">Armazenado no disco:</div>
+            <div class="storage-row"><div class="storage-cell hl-row">id</div><div class="storage-cell hl-row">nome</div><div class="storage-cell hl-row">preço</div><div class="storage-cell hl-row">qtd</div></div>
+            <div class="storage-row"><div class="storage-cell hl-row">1</div><div class="storage-cell hl-row">Tênis</div><div class="storage-cell hl-row">299</div><div class="storage-cell hl-row">5</div></div>
+            <div class="storage-row"><div class="storage-cell hl-row">2</div><div class="storage-cell hl-row">Camiseta</div><div class="storage-cell hl-row">89</div><div class="storage-cell hl-row">12</div></div>
+            <div class="storage-row"><div class="storage-cell hl-row">3</div><div class="storage-cell hl-row">Calça</div><div class="storage-cell hl-row">199</div><div class="storage-cell hl-row">8</div></div>
+          </div>
+          <div class="storage-legend">Para calcular SUM(preço), você lê TUDO</div>
+        </div>
+        <div class="storage-table col-based">
+          <div class="storage-title">Colunar (Parquet)</div>
+          <div style="padding:.5rem;">
+            <div style="font-size:.68rem;color:var(--text-muted);margin-bottom:.3rem;font-family:'JetBrains Mono',monospace;">Armazenado no disco:</div>
+            <div class="storage-row"><div class="storage-cell" style="color:var(--text-muted);">id:</div><div class="storage-cell" style="color:var(--text-muted);flex:3;">1 · 2 · 3 · 4 · 5...</div></div>
+            <div class="storage-row"><div class="storage-cell" style="color:var(--text-muted);">nome:</div><div class="storage-cell" style="color:var(--text-muted);flex:3;">Tênis · Camiseta · Calça...</div></div>
+            <div class="storage-row"><div class="storage-cell hl-col">preço:</div><div class="storage-cell hl-col" style="flex:3;">299 · 89 · 199 · 149...</div></div>
+            <div class="storage-row"><div class="storage-cell" style="color:var(--text-muted);">qtd:</div><div class="storage-cell" style="color:var(--text-muted);flex:3;">5 · 12 · 8 · 3...</div></div>
+          </div>
+          <div class="storage-legend">Para calcular SUM(preço), você lê só a coluna preço</div>
+        </div>
+      </div>
+
+      <div class="destaque"><strong>Por que colunar é mais rápido para analytics?</strong> (1) Você lê só as colunas necessárias — em vez de ler 100 colunas, lê as 3 da sua query. (2) Dados do mesmo tipo comprimem muito melhor juntos — coluna de preços (float) comprime diferente de coluna de nomes (string). (3) Operações vetorizadas na CPU são mais eficientes em blocos de mesmo tipo.</div>
+    </div>
+
+    <!-- Os três formatos -->
+    <div class="grid-3">
+      <div class="formato-card fmt-parquet">
+        <div class="fmt-titulo"><i class="fas fa-table"></i>Apache Parquet <span class="fmt-tag" style="background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Colunar</span></div>
+        <div class="fmt-item">Armazenamento colunar com compressão por coluna</div>
+        <div class="fmt-item">Criado pelo Twitter e Cloudera em 2013</div>
+        <div class="fmt-item">Suporta tipos complexos: arrays, maps, structs</div>
+        <div class="fmt-item">Compressão padrão: Snappy (rápida) ou Gzip (menor)</div>
+        <div class="fmt-item">Predicate pushdown: filtra blocos antes de ler</div>
+        <div style="margin-top:.7rem;padding:.6rem;border-radius:8px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.1);">
+          <div style="font-size:.7rem;font-weight:700;color:#38bdf8;margin-bottom:.3rem;">✅ Use para:</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Zonas Silver e Gold, analytics SQL, features de ML, tudo que vai ser lido com Spark</div>
+        </div>
+      </div>
+      <div class="formato-card fmt-avro">
+        <div class="fmt-titulo"><i class="fas fa-stream"></i>Apache Avro <span class="fmt-tag" style="background:rgba(129,140,248,.15);color:#818cf8;border:1px solid rgba(129,140,248,.2);">Row-based</span></div>
+        <div class="fmt-item">Armazenamento por linha (como CSV, mas binário)</div>
+        <div class="fmt-item">Schema definido em JSON embutido no arquivo</div>
+        <div class="fmt-item">Excelente para schema evolution — campos opcionais</div>
+        <div class="fmt-item">Muito eficiente para serialização/deserialização</div>
+        <div class="fmt-item">Padrão do ecossistema Kafka para mensagens</div>
+        <div style="margin-top:.7rem;padding:.6rem;border-radius:8px;background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.1);">
+          <div style="font-size:.7rem;font-weight:700;color:#818cf8;margin-bottom:.3rem;">✅ Use para:</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Zona Raw, pipelines de ingestão (Kafka), dados com schema que muda com frequência</div>
+        </div>
+      </div>
+      <div class="formato-card fmt-orc">
+        <div class="fmt-titulo"><i class="fas fa-feather-alt"></i>Apache ORC <span class="fmt-tag" style="background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.2);">Colunar</span></div>
+        <div class="fmt-item">Colunar otimizado para Apache Hive</div>
+        <div class="fmt-item">Bloom filters e índices internos embutidos</div>
+        <div class="fmt-item">Suporte nativo a ACID no Hive (antes do Delta)</div>
+        <div class="fmt-item">Compressão muito eficiente (melhor que Parquet em alguns casos)</div>
+        <div class="fmt-item">Predominante em ecossistemas Hadoop/Hive legados</div>
+        <div style="margin-top:.7rem;padding:.6rem;border-radius:8px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.1);">
+          <div style="font-size:.7rem;font-weight:700;color:#4ade80;margin-bottom:.3rem;">✅ Use para:</div>
+          <div style="font-size:.78rem;color:var(--text-secondary);">Sistemas com Hive, ecossistemas Hadoop legados; em novos projetos prefira Parquet</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compress-alt"></i>Compressão — o impacto no tamanho e na velocidade</div>
+      <p>A escolha do algoritmo de compressão é um trade-off entre <strong>velocidade de leitura/escrita</strong> e <strong>taxa de compressão</strong>. Um arquivo menor economiza storage e acelera transferências de rede, mas compressão mais agressiva leva mais tempo de CPU.</p>
+      <div class="compress-bar">
+        <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Tamanho relativo de 1 GB de dados CSV depois de comprimir</div>
+        <div class="compress-item">
+          <div class="compress-label">CSV puro</div>
+          <div class="compress-track"><div class="compress-fill" style="width:100%;background:rgba(239,68,68,.6);"></div></div>
+          <div class="compress-pct">1.0 GB</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-label">JSON puro</div>
+          <div class="compress-track"><div class="compress-fill" style="width:95%;background:rgba(239,68,68,.5);"></div></div>
+          <div class="compress-pct">~1.3 GB</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-label">Parquet LZ4</div>
+          <div class="compress-track"><div class="compress-fill" style="width:30%;background:rgba(56,189,248,.5);"></div></div>
+          <div class="compress-pct">~300 MB</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-label">Parquet Snappy</div>
+          <div class="compress-track"><div class="compress-fill" style="width:22%;background:rgba(56,189,248,.65);"></div></div>
+          <div class="compress-pct">~220 MB</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-label">Parquet Zstd</div>
+          <div class="compress-track"><div class="compress-fill" style="width:16%;background:rgba(74,222,128,.6);"></div></div>
+          <div class="compress-pct">~160 MB</div>
+        </div>
+        <div class="compress-item">
+          <div class="compress-label">Parquet Gzip</div>
+          <div class="compress-track"><div class="compress-fill" style="width:13%;background:rgba(74,222,128,.75);"></div></div>
+          <div class="compress-pct">~130 MB</div>
+        </div>
+      </div>
+      <div class="destaque"><strong>Regra prática:</strong> use <span class="badge-blue">Snappy</span> para dados que serão lidos frequentemente (mais rápido de descomprimir) e <span class="badge-green">Zstd</span> para dados arquivados ou lidos raramente (menor tamanho). <span class="badge-purple">Gzip</span> é o mais compacto mas o mais lento — evite para analytics interativo.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Lendo e escrevendo Parquet com PySpark</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PySpark — operações com Parquet</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, to_date
+
+spark = SparkSession.<span class="fn">builder</span>.<span class="fn">appName</span>(<span class="str">"DataLake"</span>).<span class="fn">getOrCreate</span>()
+
+<span class="cm"># ── 1. Ler JSON da zona Raw ──────────────────────────────────</span>
+df_raw = spark.read.<span class="fn">json</span>(<span class="str">"s3://meu-ecommerce/raw/orders/year=2024/month=01/"</span>)
+
+<span class="cm"># ── 2. Transformações para zona Silver ───────────────────────</span>
+df_silver = (df_raw
+  .<span class="fn">dropDuplicates</span>([<span class="str">"order_id"</span>])             <span class="cm"># deduplicar</span>
+  .<span class="fn">dropna</span>(subset=[<span class="str">"order_id"</span>, <span class="str">"total"</span>])      <span class="cm"># remover nulos críticos</span>
+  .<span class="fn">withColumn</span>(<span class="str">"order_date"</span>, <span class="fn">to_date</span>(<span class="str">"created_at"</span>))  <span class="cm"># padronizar data</span>
+  .<span class="fn">filter</span>(col(<span class="str">"total"</span>) > <span class="num">0</span>)                  <span class="cm"># remover pedidos inválidos</span>
+)
+
+<span class="cm"># ── 3. Escrever Silver em Parquet com Snappy + particionamento</span>
+(df_silver
+  .write
+  .<span class="fn">mode</span>(<span class="str">"overwrite"</span>)
+  .<span class="fn">partitionBy</span>(<span class="str">"year"</span>, <span class="str">"month"</span>)             <span class="cm"># particionar por data</span>
+  .<span class="fn">option</span>(<span class="str">"compression"</span>, <span class="str">"snappy"</span>)
+  .<span class="fn">parquet</span>(<span class="str">"s3://meu-ecommerce/silver/orders/"</span>)
+)
+
+<span class="cm"># ── 4. Criar tabela Gold — receita diária por categoria ───────</span>
+df_gold = (df_silver
+  .<span class="fn">groupBy</span>(<span class="str">"order_date"</span>, <span class="str">"category"</span>)
+  .<span class="fn">agg</span>({<span class="str">"total"</span>: <span class="str">"sum"</span>, <span class="str">"order_id"</span>: <span class="str">"count"</span>})
+  .<span class="fn">withColumnRenamed</span>(<span class="str">"sum(total)"</span>,    <span class="str">"revenue"</span>)
+  .<span class="fn">withColumnRenamed</span>(<span class="str">"count(order_id)"</span>, <span class="str">"orders"</span>)
+)
+
+df_gold.write.<span class="fn">mode</span>(<span class="str">"overwrite"</span>).<span class="fn">parquet</span>(<span class="str">"s3://meu-ecommerce/gold/revenue_daily/"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Data Swamp + Atividade Prática</span></div>
+
+  <!-- ── AULA 4: Data Swamp + Atividade ───────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Data Swamp — o Data Lake que deu errado</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-skull-crossbones"></i>O que é um Data Swamp</div>
+      <p>Um <strong>Data Swamp</strong> (pântano de dados) é o que acontece com um Data Lake sem governança. Com o tempo, ninguém sabe o que há lá dentro, não há como confiar nos dados e o lago se torna inutilizável — um pântano.</p>
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><strong>Pesquisa Gartner (2022):</strong> mais de 60% dos projetos de Data Lake fracassam ou não entregam o valor esperado. A principal causa não é tecnologia — é falta de governança, catalogação e qualidade de dados.</span>
+      </div>
+      <div class="grid-2" style="margin-top:.75rem;">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.6rem;">🦟 Sinais de um Data Swamp</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Arquivos sem nome ou com nomes genéricos (data_final_v3.csv)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Ninguém sabe a origem de um arquivo</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Dados duplicados em vários diretórios sem documentação</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Formatos misturados sem padronização (CSV, JSON, Excel juntos)</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Dados sem data de criação ou fonte identificada</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.6rem;">✅ Como evitar o Data Swamp</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>Zonas claras:</strong> Raw/Silver/Gold com regras explícitas</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Catálogo:</strong> cada dataset documentado (OpenMetadata, Datahub)</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Linhagem:</strong> rastrear de onde cada dado veio e quem o transformou</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Testes de qualidade:</strong> regras automáticas no dbt ou Great Expectations</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>Data Owner:</strong> cada dataset tem um responsável nomeado</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATIVIDADE PRÁTICA -->
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Projeto em duplas</div>
+        <div class="secao-titulo">Projetar a estrutura de zonas de um Data Lake para e-commerce</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade em duplas. O cenário é um e-commerce brasileiro de médio porte com 500 mil pedidos/mês. Vocês são os engenheiros de dados contratados para projetar o Data Lake do zero. Ao final, cada dupla apresenta sua proposta.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 1 — Identificar as fontes de dados (10 min)</div>
+      <p>Liste pelo menos <strong>8 fontes de dados</strong> que este e-commerce provavelmente gera. Para cada fonte indique: (a) qual tipo de dado (estruturado/semiestruturado/não estruturado), (b) volume estimado por dia, (c) velocidade de chegada (batch, micro-batch ou streaming).</p>
+      <p style="margin-top:.5rem;"><em>Dica: pense em pedidos, pagamentos, navegação, estoque, avaliações, imagens, atendimento, campanhas…</em></p>
+      <span class="dif-basico">Inventário</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 2 — Projetar as zonas (20 min)</div>
+      <p>Para cada fonte identificada, defina: (a) em qual zona ela será ingerida primeiro (Raw), (b) quais transformações serão aplicadas para chegar à Silver, e (c) qual agregação ou feature será gerada para a Gold. Organize em um diagrama ou tabela.</p>
+      <p style="margin-top:.5rem;">Lembre-se: Raw é imutável, Silver é limpa e padronizada, Gold é pronta para consumo.</p>
+      <span class="dif-medio">Projeto técnico</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver exemplo de solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Exemplo de estrutura para o e-commerce</div>
+          <div class="tabela-wrap">
+            <table>
+              <thead><tr><th>Fonte</th><th>Tipo</th><th>Frequência</th><th>Raw → Silver (transformação)</th><th>Silver → Gold (agregação)</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Pedidos (ERP)</strong></td><td><span class="badge-green">Estruturado</span></td><td>Micro-batch 5min</td><td>Dedup por order_id, validar total > 0, padronizar status</td><td>Receita diária por categoria, ticket médio</td></tr>
+                <tr><td><strong>Clickstream</strong></td><td><span class="badge">Semiestruturado</span></td><td>Streaming</td><td>Parsear JSON, filtrar bots (user_agent), sessionizar</td><td>Funil de conversão, produtos mais visualizados</td></tr>
+                <tr><td><strong>Imagens de produtos</strong></td><td><span class="badge-red">Não estruturado</span></td><td>Batch (upload)</td><td>Normalizar tamanho, extrair metadata (resolução, tamanho)</td><td>Features para modelo de recomendação visual</td></tr>
+                <tr><td><strong>Avaliações de clientes</strong></td><td><span class="badge-red">Não estruturado</span></td><td>Micro-batch</td><td>Limpar HTML, normalizar encoding, detectar idioma</td><td>Sentimento médio por produto (NLP), palavras-chave</td></tr>
+                <tr><td><strong>Estoque (WMS)</strong></td><td><span class="badge-green">Estruturado</span></td><td>Batch noturno</td><td>Validar quantidades ≥ 0, cruzar com catálogo de produtos</td><td>Alerta de ruptura de estoque, previsão de reposição</td></tr>
+                <tr><td><strong>Pagamentos</strong></td><td><span class="badge-green">Estruturado</span></td><td>Streaming</td><td>Validar CPF/CNPJ, status de aprovação, remover dados sensíveis (PCI-DSS)</td><td>Taxa de aprovação por bandeira, chargeback por período</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Parte 3 — Desafio: governança anti-swamp (15 min)</div>
+      <p>Seu e-commerce cresceu e agora tem 15 engenheiros de dados. Três deles começaram a jogar arquivos CSV diretamente na zona Silver. Defina as <strong>3 regras técnicas</strong> e as <strong>3 regras de processo</strong> que você implementaria para evitar que o Data Lake se torne um Data Swamp.</p>
+      <span class="dif-desafio">Governança</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver solução</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-shield-alt"></i>Solução: Regras anti-Data Swamp</div>
+          <div class="grid-2">
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#38bdf8;margin-bottom:.6rem;">🔧 Regras Técnicas (IAC/automação)</div>
+              <ul class="icon-list">
+                <li><i class="fas fa-check-circle"></i><span><strong>IAM Policy no S3:</strong> só o pipeline de ingestão tem permissão de escrita na Silver — humanos podem apenas ler</span></li>
+                <li><i class="fas fa-check-circle"></i><span><strong>Schema validation no CI/CD:</strong> todo PR que adiciona uma nova tabela precisa ter schema documentado em JSON Schema ou Avro</span></li>
+                <li><i class="fas fa-check-circle"></i><span><strong>Testes automáticos de qualidade:</strong> Great Expectations ou dbt tests rodam em cada ingestão — falhou, o dado não entra na Silver</span></li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#fbbf24;margin-bottom:.6rem;">📋 Regras de Processo (cultura e governança)</div>
+              <ul class="icon-list">
+                <li><i class="fas fa-check-circle"></i><span><strong>Data Owner obrigatório:</strong> nenhum dataset é adicionado sem um responsável nomeado que aprove e documente</span></li>
+                <li><i class="fas fa-check-circle"></i><span><strong>Catálogo como requisito:</strong> toda nova tabela Silver/Gold deve ter entrada no OpenMetadata antes de ir para produção</span></li>
+                <li><i class="fas fa-check-circle"></i><span><strong>Revisão quinzenal:</strong> reunião de "limpeza do lago" — datasets não acessados há 90 dias são arquivados ou deletados com aprovação do owner</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz final — qual formato de arquivo é mais adequado para mensagens no Apache Kafka que precisam de schema evolution frequente?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Parquet — é o mais popular e amplamente suportado</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Avro — row-based, schema embutido, excelente para streaming e evolução de schema</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">ORC — otimizado para Hive e ideal para Kafka</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">CSV — mais simples de debugar em caso de erros</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 3</span></div>
+
+  <!-- ── RESUMO ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 3</div>
+        <div class="secao-titulo">O que você precisa ter gravado</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-water"></i>
+        <strong>Data Lake</strong>
+        <p>Schema-on-read. Aceita qualquer tipo. Barato. Risco de Data Swamp sem governança.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Zonas Raw/Silver/Gold</strong>
+        <p>Raw = imutável. Silver = limpo e padronizado. Gold = pronto para consumo e IA.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-table"></i>
+        <strong>Parquet</strong>
+        <p>Colunar, comprimido, rápido para analytics. Padrão para zonas Silver e Gold.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-stream"></i>
+        <strong>Avro</strong>
+        <p>Row-based, schema embutido, schema evolution. Padrão para Kafka e ingestão (Raw).</p>
+      </div>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:1.5rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar a diferença entre Data Warehouse, Data Lake e Lakehouse? Consegue dizer o que pertence a cada zona (Raw/Silver/Gold)? Sabe por que Parquet é melhor que CSV para analytics e quando usar Avro? Se sim para os três — você está pronto para a Semana 4.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-04-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 4 — Apache HDFS: blocos, replicação, NameNode/DataNode e alternativas em nuvem (S3, GCS)</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar solução'
+    :'<i class="fas fa-lightbulb"></i> ver solução';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Imagens e textos livres são dados não estruturados — um Data Warehouse não os aceita diretamente (só dados estruturados em tabelas). Um Data Lake ou Lakehouse aceita qualquer tipo de dado, tornando-os ideais para projetos de ML que combinam múltiplos tipos de fonte.'},
+  quiz2:{correct:'B',msg:'✅ Correto! A zona Raw é imutável por design — ela é a "fonte da verdade" do seu Data Lake. Se um bug foi introduzido na transformação para Silver, você corrige a lógica de transformação e reprocessa Silver a partir dos dados brutos originais que nunca foram alterados. Modificar a Raw eliminaria essa capacidade de reprocessamento confiável.'},
+  quiz3:{correct:'B',msg:'✅ Correto! O Apache Avro é o formato padrão do ecossistema Kafka exatamente por esses motivos: (1) é row-based, o que é eficiente para streaming de eventos individuais; (2) o schema é embutido no arquivo, permitindo que consumidores deserializem sem consulta externa; (3) tem suporte nativo a schema evolution — você pode adicionar campos opcionais sem quebrar consumidores mais antigos.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+// Animate compression bars on scroll
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.compress-fill').forEach(b=>{b.style.width=b.style.width;});observer.unobserve(e.target);}});
+},{threshold:.3});
+document.querySelectorAll('.compress-bar').forEach(b=>observer.observe(b));
+</script>
+</body>
+</html>

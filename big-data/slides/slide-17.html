@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 17 — Big Data e Engenharia de Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-900:#2a0f00;
+  --accent-400:#fb923c;
+  --accent-300:#fdba74;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.62);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(251,146,60,.06);
+  --code-bg:#150600;
+  --code-border:rgba(251,146,60,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7c2d12;top:-220px;left:-180px;}
+.blob-2{width:500px;height:500px;background:#431407;bottom:-200px;right:-100px;}
+.blob-3{width:260px;height:260px;background:#f97316;top:38%;left:42%;opacity:.1;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(251,146,60,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-400);border:1px solid rgba(251,146,60,.28);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(251,146,60,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--accent-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--accent-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.13);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}.topico:nth-child(6){animation-delay:.6s;}.topico:nth-child(7){animation-delay:.7s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(251,146,60,.18);color:var(--accent-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.05);border-left:3px solid var(--accent-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--accent-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.28);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;cursor:pointer;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(251,146,60,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(251,146,60,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(251,146,60,.22);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.card ul{margin:.5rem 0 .5rem 1.1rem;}
+.card li{font-size:.87rem;color:var(--text-secondary);line-height:1.65;margin-bottom:.4rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.07);border-left:3px solid var(--accent-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque strong{color:var(--accent-400);}
+.destaque-green{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid #4ade80;font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.65;}
+.destaque-green strong{color:#4ade80;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-accent{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.18);font-size:.86rem;color:rgba(253,186,116,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-accent i{color:var(--accent-400);flex-shrink:0;margin-top:2px;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(251,146,60,.1);}
+th{padding:.6rem 1rem;text-align:left;color:var(--accent-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(251,146,60,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(251,146,60,.03);}
+td strong{color:var(--text-primary);}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--accent-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(251,146,60,.12);color:var(--accent-400);border:1px solid rgba(251,146,60,.22);}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.22);}
+.badge-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.22);}
+.badge-purple{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.22);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(251,146,60,.07);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--accent-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fde68a;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#86efac;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.dir{color:#fb923c;}.flag{color:#fdba74;}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.comp-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.comp-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.comp-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.6rem;}
+.comp-a .comp-titulo{color:#60a5fa;}
+.comp-b .comp-titulo{color:#4ade80;}
+.comp-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.35rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.comp-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* Feast architecture */
+.feast-box{border-radius:14px;overflow:hidden;border:1px solid rgba(251,146,60,.15);margin:.75rem 0;background:rgba(0,0,0,.2);padding:1.5rem;}
+.feast-row{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap;}
+.feast-node{padding:.7rem 1.1rem;border-radius:10px;font-size:.78rem;font-weight:600;font-family:'JetBrains Mono',monospace;border:2px solid;text-align:center;min-width:130px;}
+.fn-source{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.4);color:#93c5fd;}
+.fn-offline{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.4);color:#c4b5fd;}
+.fn-online{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:#86efac;}
+.fn-train{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fde68a;}
+.fn-serve{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.4);color:var(--accent-300);}
+.feast-arrow{color:rgba(251,146,60,.4);font-size:1rem;padding:0 .3rem;}
+.feast-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);text-align:center;margin-bottom:.5rem;font-weight:700;}
+
+/* Skew comparison */
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.op-card{border-radius:12px;padding:1.1rem;border:1px solid;}
+.op-a{background:rgba(59,130,246,.04);border-color:rgba(59,130,246,.2);}
+.op-b{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.2);}
+.op-c{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.2);}
+.op-d{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.2);}
+.op-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.op-a .op-titulo{color:#60a5fa;}
+.op-b .op-titulo{color:#4ade80;}
+.op-c .op-titulo{color:#fbbf24;}
+.op-d .op-titulo{color:#a78bfa;}
+.op-item{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.op-item::before{content:'▸';position:absolute;left:0;font-size:.6rem;opacity:.4;margin-top:2px;}
+
+/* Revision week cards for P3 recap */
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.rev-card{border-radius:14px;padding:1.1rem;border:1px solid;}
+.rev-14{background:rgba(96,165,250,.04);border-color:rgba(96,165,250,.18);}
+.rev-15{background:rgba(74,222,128,.04);border-color:rgba(74,222,128,.18);}
+.rev-16{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.18);}
+.rev-17{background:rgba(251,146,60,.04);border-color:rgba(251,146,60,.18);}
+.rev-titulo{font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;}
+.rev-14 .rev-titulo{color:#60a5fa;}
+.rev-15 .rev-titulo{color:#4ade80;}
+.rev-16 .rev-titulo{color:#a78bfa;}
+.rev-17 .rev-titulo{color:var(--accent-400);}
+.rev-item{font-size:.79rem;color:var(--text-secondary);margin-bottom:.32rem;padding-left:.7rem;position:relative;line-height:1.5;}
+.rev-item::before{content:'✓';position:absolute;left:0;font-size:.62rem;color:var(--text-muted);}
+
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--accent-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dif-basico{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,146,60,.1);color:var(--accent-400);border:1px solid rgba(251,146,60,.2);}
+.dif-medio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:.5rem 1rem;color:var(--accent-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(251,146,60,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.quiz-box{background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.15);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+.quiz-pergunta{font-family:'Montserrat',sans-serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:1rem;}
+.quiz-ops{display:flex;flex-direction:column;gap:.5rem;}
+.quiz-op{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:9px;cursor:pointer;transition:all .2s;}
+.quiz-op:hover{background:rgba(251,146,60,.06);border-color:rgba(251,146,60,.2);}
+.quiz-op.correto{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);}
+.quiz-op.errado{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);}
+.quiz-letra{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+.quiz-texto{font-size:.85rem;color:var(--text-secondary);}
+.quiz-feedback{display:none;padding:.75rem 1rem;border-radius:8px;font-size:.83rem;line-height:1.55;margin-top:.75rem;}
+.quiz-feedback.show{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;text-align:center;}
+.resumo-item i{font-size:1.3rem;color:var(--accent-400);margin-bottom:.4rem;display:block;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.resumo-item p{font-size:.76rem;color:var(--text-secondary);line-height:1.4;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);margin-top:3rem;cursor:pointer;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#f87171;}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(251,146,60,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+.recap{display:flex;gap:.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(251,146,60,.04);border:1px solid rgba(251,146,60,.12);margin-bottom:2rem;}
+.recap-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-400);font-weight:700;flex-shrink:0;padding-top:2px;}
+.recap p{font-size:.82rem;color:var(--text-secondary);line-height:1.6;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.grid-4,.resumo-grid,.comp-grid,.op-grid,.rev-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa" id="topo">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo · Última antes da P3</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Big Data e Engenharia de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">17</div>
+    <h1 class="capa-titulo">Big Data<br>para <em>IA</em></h1>
+    <p class="capa-sub">4 aulas · 200 minutos · Feature Stores, MLflow/Spark MLlib e revisão para a P3</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-triangle-exclamation"></i></div><span>O problema do treino-serving skew e o que é um Feature Store</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Feast — offline store, online store e feature views</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-calculator"></i></div><span>Calculando features em larga escala com Spark</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask-vial"></i></div><span>Spark MLlib e integração com MLflow</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-book-open-reader"></i></div><span>Revisão consolidada — Semanas 14 a 17 para a P3</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>Atividade: calcular features com Spark e armazenar no Feature Store</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Calcular features agregadas com Spark a partir de dados de pedidos e registrá-las em um Feature Store local com Feast, consumindo depois via offline e online store.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-history"></i>Recap da Semana 16</div>
+      <ul class="info-lista">
+        <li>Data Catalog documenta e organiza os ativos de dados da empresa</li>
+        <li>Linhagem upstream/downstream rastreia origem e impacto de mudanças</li>
+        <li>Classificação de PII + linhagem viabilizam conformidade com a LGPD</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle" style="color:#fbbf24;"></i>P3 na Semana 18!</div>
+      <ul class="info-lista">
+        <li>P3 cobre: Delta Lake (S14), Structured Streaming (S15), Governança (S16), Big Data para IA (S17)</li>
+        <li>Esta é a última semana de conteúdo antes da avaliação</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>O que vamos usar</div>
+      <ul class="info-lista">
+        <li>PySpark para cálculo de features (mesmo motor das Semanas 8-10)</li>
+        <li>Feast (open-source) — <code>pip install feast</code></li>
+        <li>SQLite/Parquet como offline store local, sem cloud</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('conteudo').scrollIntoView({behavior:'smooth'})">
+    <span>role para o conteúdo</span><i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo" id="conteudo">
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O problema que os Feature Stores resolvem</div>
+      </div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-label">Semana 16</div>
+      <p>Você aprendeu a catalogar e rastrear dados de forma geral. Agora vamos ao caso específico de dados usados para treinar e servir modelos de Machine Learning — onde surgem problemas únicos que um Data Catalog comum não resolve sozinho.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-triangle-exclamation"></i>Treino-serving skew — o bug mais silencioso de ML em produção</div>
+      <p>Imagine um modelo de detecção de fraude treinado com uma feature "número de transações nas últimas 24h", calculada em um notebook Python com pandas. Em produção, a mesma feature precisa ser calculada em tempo real, em uma API — muitas vezes reimplementada do zero em outra linguagem ou lógica.</p>
+      <div class="grid-2">
+        <div style="padding:1rem;border-radius:12px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#f87171;margin-bottom:.5rem;">❌ Sem Feature Store</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Lógica da feature duplicada: uma versão no notebook de treino, outra na API de serving</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Pequenas diferenças de implementação geram "treino-serving skew" — o modelo se comporta diferente em produção</span></li>
+            <li><i class="fas fa-times-circle" style="color:#f87171;"></i><span>Sem reuso: cada time de ML recalcula as mesmas features do zero</span></li>
+          </ul>
+        </div>
+        <div style="padding:1rem;border-radius:12px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);">
+          <div style="font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;color:#4ade80;margin-bottom:.5rem;">✅ Com Feature Store</div>
+          <ul class="icon-list" style="margin-top:0;">
+            <li><i class="fas fa-check-circle"></i><span>Uma ÚNICA definição de feature, usada tanto no treino quanto no serving</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Garantia de consistência entre o valor histórico (treino) e o valor em tempo real (produção)</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Features viram ativos reutilizáveis entre times e projetos de ML</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque"><strong>Definição:</strong> um Feature Store é uma camada de armazenamento e serviço que centraliza a definição, o cálculo e o acesso a features de Machine Learning, garantindo que o mesmo valor esteja disponível tanto para treinar modelos (em lote, no passado) quanto para servir predições (em tempo real, no presente).</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Por que isso é "Big Data para IA"</div>
+      <p>Calcular features como "total gasto pelo cliente nos últimos 90 dias" ou "número de cliques na última hora" sobre milhões de clientes exige exatamente as ferramentas que você já domina: Spark para processamento em larga escala (Semanas 8-10), Delta Lake para armazenamento confiável (Semana 14) e, opcionalmente, Structured Streaming para features em tempo real (Semana 15).</p>
+      <div class="destaque-green"><strong>O Feature Store não substitui nada que você aprendeu — ele organiza e serve o que o Spark já calcula</strong>, adicionando a camada de consistência entre treino e produção que faltava.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — o que é "treino-serving skew"?</div>
+      <div class="quiz-ops" id="quiz1-ops">
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Quando o modelo demora mais para treinar do que para servir predições</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Quando a lógica de cálculo de uma feature difere entre o ambiente de treino e o de produção, causando comportamento inconsistente do modelo</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Um tipo de overfitting causado por poucos dados de treino</span></div>
+        <div class="quiz-op" onclick="responder('quiz1',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">A diferença de custo entre treinar na nuvem e servir localmente</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Feast — Arquitetura do Feature Store</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Feast — offline store, online store e feature views</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>A arquitetura de duas camadas do Feast</div>
+      <p><strong>Feast</strong> (Feature Store) é uma ferramenta open-source que implementa a ideia de Feature Store com duas camadas de armazenamento complementares:</p>
+      <div class="feast-box">
+        <div class="feast-row">
+          <div class="feast-node fn-source">Fonte de dados<br><span style="font-size:.62rem;opacity:.6;">Delta Lake / Data Warehouse</span></div>
+        </div>
+        <div class="feast-label">↓ features calculadas com Spark ↓</div>
+        <div class="feast-row">
+          <div class="feast-node fn-offline">Offline Store<br><span style="font-size:.62rem;opacity:.6;">histórico completo</span></div>
+          <span class="feast-arrow">→</span>
+          <div class="feast-node fn-online">Online Store<br><span style="font-size:.62rem;opacity:.6;">último valor, baixa latência</span></div>
+        </div>
+        <div class="feast-row" style="margin-top:.5rem;">
+          <div class="feast-node fn-train">Treino de modelo<br><span style="font-size:.62rem;opacity:.6;">consome Offline Store</span></div>
+          <div class="feast-node fn-serve">Predição em produção<br><span style="font-size:.62rem;opacity:.6;">consome Online Store</span></div>
+        </div>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Camada</th><th>Propósito</th><th>Tecnologia típica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Offline Store</strong></td><td>Histórico completo de features, para gerar datasets de treino (point-in-time correct)</td><td>Delta Lake, BigQuery, Parquet</td></tr>
+            <tr><td><strong>Online Store</strong></td><td>Apenas o valor MAIS RECENTE de cada feature, consultado com latência de milissegundos</td><td>Redis, DynamoDB, SQLite (dev)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque"><strong>Point-in-time correctness:</strong> ao montar o dataset de treino, o Feast garante que o valor da feature usado para cada exemplo é exatamente o valor que existia NAQUELE momento no passado — evitando "vazamento de futuro" (usar informação que só existiria depois do evento que você está tentando prever).</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Definindo uma feature view no Feast</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — feature_repo/features.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> feast <span class="kw">import</span> FeatureView, Field, FileSource
+<span class="kw">from</span> feast.types <span class="kw">import</span> Float32, Int64
+<span class="kw">from</span> datetime <span class="kw">import</span> timedelta
+
+<span class="cm"># Fonte: onde o Feast busca o histórico das features (offline)</span>
+fonte_pedidos = FileSource(
+    path=<span class="str">"s3://meu-bucket/delta/features_cliente/"</span>,
+    timestamp_field=<span class="str">"event_timestamp"</span>,
+)
+
+<span class="cm"># FeatureView: agrupa features relacionadas de uma mesma entidade</span>
+cliente_features = FeatureView(
+    name=<span class="str">"cliente_features"</span>,
+    entities=[<span class="str">"cliente_id"</span>],
+    ttl=timedelta(days=<span class="num">90</span>),
+    schema=[
+        Field(name=<span class="str">"total_gasto_90d"</span>, dtype=Float32),
+        Field(name=<span class="str">"qtd_pedidos_90d"</span>, dtype=Int64),
+        Field(name=<span class="str">"ticket_medio_90d"</span>, dtype=Float32),
+    ],
+    source=fonte_pedidos,
+)</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — consumindo features (treino e serving)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> feast <span class="kw">import</span> FeatureStore
+
+store = FeatureStore(repo_path=<span class="str">"feature_repo/"</span>)
+
+<span class="cm"># TREINO — busca histórico com point-in-time correctness (offline store)</span>
+dataset_treino = store.get_historical_features(
+    entity_df=df_com_timestamps_e_labels,
+    features=[<span class="str">"cliente_features:total_gasto_90d"</span>, <span class="str">"cliente_features:qtd_pedidos_90d"</span>],
+).to_df()
+
+<span class="cm"># SERVING — busca o valor mais recente com baixa latência (online store)</span>
+features_producao = store.get_online_features(
+    features=[<span class="str">"cliente_features:total_gasto_90d"</span>, <span class="str">"cliente_features:qtd_pedidos_90d"</span>],
+    entity_rows=[{<span class="str">"cliente_id"</span>: <span class="num">12345</span>}],
+).to_dict()</code></pre>
+      </div>
+      <div class="destaque-green"><strong>Repare:</strong> a mesma definição de feature (<code>cliente_features</code>) é usada nas duas chamadas — <code>get_historical_features</code> para treino e <code>get_online_features</code> para produção. É essa reutilização que elimina o treino-serving skew.</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — para montar um dataset de treino com o valor histórico correto de uma feature em cada ponto no tempo, qual componente do Feast é consultado?</div>
+      <div class="quiz-ops" id="quiz2-ops">
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Online Store, via get_online_features</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Offline Store, via get_historical_features, com garantia de point-in-time correctness</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Nenhum dos dois — o Feast não guarda histórico</span></div>
+        <div class="quiz-op" onclick="responder('quiz2',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">O FeatureView diretamente, sem passar pelo FeatureStore</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Calculando Features com Spark e MLlib</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Features em larga escala com Spark, MLlib e MLflow</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calculator"></i>Calculando features agregadas com PySpark</div>
+      <p>O cálculo das features em si usa exatamente as ferramentas das Semanas 8-10 — groupBy, window functions, joins. A diferença é que o resultado é desenhado para alimentar um Feature Store, com uma coluna de timestamp do evento.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — cálculo de features com PySpark</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, sum, count, avg, current_timestamp
+
+spark = SparkSession.builder.appName(<span class="str">"feature-engineering"</span>).getOrCreate()
+
+pedidos = spark.read.format(<span class="str">"delta"</span>).load(<span class="str">"s3://.../delta/pedidos/"</span>)
+
+<span class="cm"># Filtra últimos 90 dias e agrega por cliente</span>
+features_cliente = (pedidos
+    .filter(col(<span class="str">"data_pedido"</span>) >= <span class="fn">date_sub</span>(current_timestamp(), <span class="num">90</span>))
+    .groupBy(<span class="str">"cliente_id"</span>)
+    .agg(
+        sum(<span class="str">"total"</span>).alias(<span class="str">"total_gasto_90d"</span>),
+        count(<span class="str">"pedido_id"</span>).alias(<span class="str">"qtd_pedidos_90d"</span>),
+        avg(<span class="str">"total"</span>).alias(<span class="str">"ticket_medio_90d"</span>),
+    )
+    .withColumn(<span class="str">"event_timestamp"</span>, current_timestamp()))
+
+<span class="cm"># Grava como tabela Delta — esta é a "fonte" que o Feast vai ler</span>
+features_cliente.write.format(<span class="str">"delta"</span>).mode(<span class="str">"overwrite"</span>) \
+    .save(<span class="str">"s3://meu-bucket/delta/features_cliente/"</span>)</code></pre>
+      </div>
+      <div class="destaque"><strong>Conexão direta:</strong> este job de features roda exatamente como qualquer outro job Spark — pode ser orquestrado pelo Airflow (Semana 12) para recalcular diariamente, e gravado em Delta Lake (Semana 14) para ganhar as garantias ACID que você já conhece.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-flask-vial"></i>Spark MLlib — treinando modelos no mesmo cluster dos dados</div>
+      <p><strong>MLlib</strong> é a biblioteca de Machine Learning distribuído do Spark. A ideia central: em vez de extrair dados do cluster para treinar em um notebook local (o que não escala para bilhões de linhas), o treino acontece diretamente onde os dados já estão, em paralelo.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline MLlib simples</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pyspark.ml.feature <span class="kw">import</span> VectorAssembler
+<span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> pyspark.ml <span class="kw">import</span> Pipeline
+
+<span class="cm"># VectorAssembler junta as colunas de features em um único vetor</span>
+assembler = VectorAssembler(
+    inputCols=[<span class="str">"total_gasto_90d"</span>, <span class="str">"qtd_pedidos_90d"</span>, <span class="str">"ticket_medio_90d"</span>],
+    outputCol=<span class="str">"features"</span>
+)
+
+modelo = LogisticRegression(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"churn"</span>)
+
+pipeline = Pipeline(stages=[assembler, modelo])
+pipeline_ajustado = pipeline.fit(dataset_treino_spark)
+
+predicoes = pipeline_ajustado.transform(dataset_teste_spark)</code></pre>
+      </div>
+      <div class="aviso"><i class="fas fa-circle-info"></i><span>MLlib é mais indicado quando o VOLUME de dados de treino é o gargalo (bilhões de linhas). Para datasets que cabem em uma máquina, bibliotecas como scikit-learn continuam sendo mais simples e com mais recursos disponíveis.</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-diagram-project"></i>Integração com MLflow — rastreando o experimento completo</div>
+      <p>Combinando tudo: o MLflow (rastreamento de experimentos) registra não só métricas e hiperparâmetros do modelo, mas também qual versão das features do Feast foi usada no treino — fechando o ciclo de reprodutibilidade.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — MLflow + Feast + MLlib</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+
+<span class="kw">with</span> mlflow.start_run():
+    dataset_treino = store.get_historical_features(
+        entity_df=entity_df, features=lista_features
+    ).to_df()
+
+    modelo = pipeline.fit(dataset_treino)
+
+    mlflow.log_param(<span class="str">"features_usadas"</span>, lista_features)
+    mlflow.log_metric(<span class="str">"auc"</span>, auc_score)
+    mlflow.spark.log_model(modelo, <span class="str">"modelo_churn"</span>)</code></pre>
+      </div>
+      <div class="destaque-green"><strong>Fechando o ciclo:</strong> Spark calcula as features (Semanas 8-10) → Delta Lake armazena com ACID (Semana 14) → Feast serve com consistência treino/produção → MLflow rastreia qual combinação de features + hiperparâmetros gerou qual modelo. Esse é o pipeline completo de "Big Data para IA".</div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-pergunta">🙋 Quiz — quando faz mais sentido usar Spark MLlib em vez de scikit-learn para treinar um modelo?</div>
+      <div class="quiz-ops" id="quiz3-ops">
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'A')"><div class="quiz-letra" style="background:rgba(96,165,250,.15);color:#60a5fa;">A</div><span class="quiz-texto">Quando o dataset de treino é pequeno e cabe facilmente na memória de uma máquina</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,true,'B')"><div class="quiz-letra" style="background:rgba(139,92,246,.15);color:#c4b5fd;">B</div><span class="quiz-texto">Quando o volume de dados de treino é grande demais para uma única máquina, exigindo processamento distribuído</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'C')"><div class="quiz-letra" style="background:rgba(244,114,182,.15);color:#f472b6;">C</div><span class="quiz-texto">Sempre — MLlib é superior ao scikit-learn em qualquer cenário</span></div>
+        <div class="quiz-op" onclick="responder('quiz3',this,false,'D')"><div class="quiz-letra" style="background:rgba(52,211,153,.15);color:#34d399;">D</div><span class="quiz-texto">Apenas quando o modelo precisa ser servido em tempo real</span></div>
+      </div>
+      <div class="quiz-feedback" id="quiz3-feedback"></div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 4 · Revisão para a P3 e Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 4 · ~50 minutos</div>
+        <div class="secao-titulo">Revisão consolidada (Semanas 14-17) e construção prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-book-open-reader"></i>Revisão rápida — os 4 temas da P3</div>
+      <div class="rev-grid">
+        <div class="rev-card rev-14">
+          <div class="rev-titulo">Semana 14 — Delta Lake</div>
+          <div class="rev-item">ACID via _delta_log; leitura sempre passa pelo transaction log</div>
+          <div class="rev-item">MERGE INTO = upsert atômico; time travel via versionAsOf/timestampAsOf</div>
+          <div class="rev-item">Schema enforcement é padrão; mergeSchema=true habilita evolution</div>
+          <div class="rev-item">OPTIMIZE+ZORDER aceleram leitura; VACUUM remove arquivos órfãos (cuidado com o histórico)</div>
+        </div>
+        <div class="rev-card rev-15">
+          <div class="rev-titulo">Semana 15 — Structured Streaming</div>
+          <div class="rev-item">Stream = tabela infinita processada em micro-batches</div>
+          <div class="rev-item">Output modes: append (só novo), complete (tudo), update (mudanças)</div>
+          <div class="rev-item">Tumbling window = sem sobreposição; sliding window = com sobreposição</div>
+          <div class="rev-item">Watermark tolera atraso e viabiliza append em agregações</div>
+        </div>
+        <div class="rev-card rev-16">
+          <div class="rev-titulo">Semana 16 — Governança</div>
+          <div class="rev-item">Data Catalog guarda metadados técnicos, de negócio, operacionais e de governança</div>
+          <div class="rev-item">Linhagem upstream = de onde vem; downstream = o que depende</div>
+          <div class="rev-item">Classificação identifica PII antes de aplicar qualquer proteção</div>
+          <div class="rev-item">LGPD exige minimização, anonimização e rastreabilidade para direito ao esquecimento</div>
+        </div>
+        <div class="rev-card rev-17">
+          <div class="rev-titulo">Semana 17 — Big Data para IA</div>
+          <div class="rev-item">Feature Store elimina o treino-serving skew com uma única definição de feature</div>
+          <div class="rev-item">Offline store = histórico (treino); online store = valor mais recente (serving)</div>
+          <div class="rev-item">Point-in-time correctness evita vazamento de dados do futuro</div>
+          <div class="rev-item">MLlib treina distribuído; MLflow rastreia features + modelo</div>
+        </div>
+      </div>
+      <div class="aviso" style="margin-top:1rem;"><i class="fas fa-exclamation-circle"></i><span><strong>P3 é na Semana 18!</strong> Ela cobre exatamente esses quatro temas. Revise especialmente as armadilhas destacadas em cada card acima — são os pontos mais cobrados historicamente.</span></div>
+    </div>
+
+    <div class="secao-header" style="margin-top:2rem;">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Hands-on individual</div>
+        <div class="secao-titulo">Calcular features com Spark e servir com Feast</div>
+      </div>
+    </div>
+
+    <div class="aviso-accent">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale com <code>pip install pyspark delta-spark feast</code>. O professor vai disponibilizar o mesmo dataset de pedidos usado na Semana 14.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 1 — Calcular features com Spark (15 min)</div>
+      <p>Usando o dataset de pedidos, calcule com PySpark as features: total gasto, quantidade de pedidos e ticket médio dos últimos 90 dias, por cliente. Grave o resultado como tabela Delta, incluindo uma coluna <code>event_timestamp</code>.</p>
+      <span class="dif-basico">Feature Engineering</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 2 — Configurar o Feast (20 min)</div>
+      <p>Inicialize um repositório Feast (<code>feast init</code>). Defina uma <code>FeatureView</code> apontando para a tabela Delta gerada no Exercício 1. Rode <code>feast apply</code> e depois <code>feast materialize</code> para popular o online store com os valores mais recentes.</p>
+      <span class="dif-medio">Feast Setup</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 3 — Desafio: consumir treino e serving (15 min)</div>
+      <p>Escreva dois trechos de código: um usando <code>get_historical_features</code> para montar um dataset de treino (simulando um DataFrame de entidades com timestamps variados), e outro usando <code>get_online_features</code> para buscar as features de um cliente específico como se fosse uma chamada em produção. Compare a latência aproximada de cada chamada.</p>
+      <span class="dif-desafio">Treino + Serving</span>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-lightbulb"></i> ver comportamento esperado</button>
+      <div class="gabarito-content">
+        <div class="card" style="margin-top:.75rem;">
+          <div class="card-titulo"><i class="fas fa-check-circle"></i>Comportamento esperado</div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check-circle"></i><span><strong>get_historical_features:</strong> mais lenta (lê o offline store, geralmente Parquet/Delta), mas retorna o valor correto para CADA timestamp do dataset de treino — não apenas o valor mais recente.</span></li>
+            <li><i class="fas fa-check-circle"></i><span><strong>get_online_features:</strong> muito mais rápida (milissegundos), pois consulta um key-value store otimizado (SQLite local no exercício, Redis em produção) e retorna apenas o valor mais recente.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Ambas usam a MESMA definição de <code>FeatureView</code> — reforçando que a consistência entre treino e produção vem justamente de reutilizar a mesma lógica, e não de reimplementá-la duas vezes.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana 17</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento da Semana 17</div>
+        <div class="secao-titulo">O que você precisa ter gravado antes da P3</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-triangle-exclamation"></i>
+        <strong>Treino-serving skew</strong>
+        <p>Inconsistência entre a feature calculada no treino e a calculada em produção. Feature Store elimina isso com definição única.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Offline vs Online</strong>
+        <p>Offline store guarda histórico completo (treino, point-in-time correct). Online store guarda só o valor mais recente (serving, baixa latência).</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-calculator"></i>
+        <strong>Spark + MLlib</strong>
+        <p>Features calculadas em larga escala com o mesmo Spark das Semanas 8-10. MLlib treina modelos distribuídos quando o dado não cabe em uma máquina.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-diagram-project"></i>
+        <strong>MLflow</strong>
+        <p>Rastreia qual combinação de features + hiperparâmetros gerou qual modelo, fechando o ciclo de reprodutibilidade.</p>
+      </div>
+    </div>
+
+    <div class="aviso" style="margin-top:1.5rem;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>P3 é na semana que vem!</strong> Revisão do que será cobrado: Delta Lake — ACID, MERGE INTO, time travel, OPTIMIZE/ZORDER/VACUUM (Semana 14); Structured Streaming — micro-batch, output modes, windows, watermark (Semana 15); Governança — Data Catalog, linhagem, classificação, LGPD (Semana 16); Big Data para IA — Feature Store, Feast, MLlib, MLflow (Semana 17).</span>
+    </div>
+
+    <div class="aviso-accent" style="margin-top:.75rem;">
+      <i class="fas fa-question-circle"></i>
+      <span><strong>Checklist antes de sair:</strong> Você sabe explicar o que é treino-serving skew e como o Feature Store resolve isso? Consegue diferenciar offline store de online store? Sabe quando usar MLlib em vez de scikit-learn? Entende o papel do MLflow no ciclo de reprodutibilidade? Se sim para os quatro — você está pronto para a P3.</span>
+    </div>
+
+    <div class="proxima" onclick="window.location.href='semana-18-bigdata.html'">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 18 — AVALIAÇÃO P3 · Conteúdo das Semanas 14 a 17</div>
+      </div>
+      <i class="fas fa-clipboard-check"></i>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar resposta'
+    :'<i class="fas fa-lightbulb"></i> ver comportamento esperado';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+const quizData={
+  quiz1:{correct:'B',msg:'✅ Correto! Treino-serving skew acontece quando a lógica usada para calcular uma feature no ambiente de treino (ex: notebook com pandas) difere, ainda que sutilmente, da lógica usada para calcular a mesma feature em produção (ex: API de serving). Essa diferença faz o modelo se comportar de forma inconsistente quando implantado, mesmo que tenha performado bem no treino.'},
+  quiz2:{correct:'B',msg:'✅ Correto! O offline store, consultado via get_historical_features, guarda o histórico completo de valores de cada feature e garante point-in-time correctness — ou seja, para cada linha do dataset de treino, retorna o valor da feature que existia exatamente naquele momento no passado, evitando vazamento de informação do futuro.'},
+  quiz3:{correct:'B',msg:'✅ Correto! Spark MLlib faz mais sentido quando o volume de dados de treino é grande demais para caber e ser processado eficientemente em uma única máquina, exigindo processamento distribuído no mesmo cluster onde os dados já residem. Para datasets menores, scikit-learn costuma ser mais simples e ter mais algoritmos e recursos disponíveis.'},
+};
+function responder(quizId,el,isCorrect,letra){
+  const ops=document.getElementById(quizId+'-ops');
+  if(ops.dataset.answered)return;
+  ops.dataset.answered='1';
+  const correta=quizData[quizId].correct;
+  ops.querySelectorAll('.quiz-op').forEach(op=>{
+    op.style.pointerEvents='none';
+    if(op.querySelector('.quiz-letra').textContent.trim()===correta)op.classList.add('correto');
+  });
+  if(letra!==correta)el.classList.add('errado');
+  const fb=document.getElementById(quizId+'-feedback');
+  fb.textContent=quizData[quizId].msg;
+  fb.style.background=isCorrect?'rgba(74,222,128,.08)':'rgba(239,68,68,.08)';
+  fb.style.border=isCorrect?'1px solid rgba(74,222,128,.25)':'1px solid rgba(239,68,68,.25)';
+  fb.style.color=isCorrect?'#86efac':'#fca5a5';
+  fb.style.padding='.75rem 1rem';
+  fb.style.borderRadius='8px';
+  fb.classList.add('show');
+}
+</script>
+</body>
+</html>
