@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 16 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* JWT diagram */
+.jwt-parts{display:flex;gap:4px;margin:.75rem 0;align-items:stretch;}
+.jwt-part{flex:1;padding:.85rem;border-radius:8px;text-align:center;}
+.jwt-part h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;}
+.jwt-part p{font-size:.72rem;color:var(--text-muted);line-height:1.4;}
+.jwt-header{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);}
+.jwt-header h4{color:#f87171;}
+.jwt-payload{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);}
+.jwt-payload h4{color:#fbbf24;}
+.jwt-sig{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);}
+.jwt-sig h4{color:#4ade80;}
+.jwt-dot{display:flex;align-items:center;color:var(--text-muted);font-size:1.2rem;font-weight:700;padding:0 2px;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .jwt-parts{flex-direction:column;}
+  .jwt-dot{justify-content:center;transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">16</div>
+    <h1 class="capa-titulo">Segurança em<br>APIs de ML —<br><em>JWT e Rate Limiting</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Proteger sem complicar o fluxo de inferência</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exclamation-triangle"></i></div><span>Ameaças reais em APIs de ML — abuso, extração e envenenamento</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-id-badge"></i></div><span>JWT — autenticação stateless com tokens assinados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Rate limiting — proteger contra abuso e DDoS</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-list"></i></div><span>Auditoria — logar quem chamou o quê e quando</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: API de inferência completa com segurança em camadas</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Adicionar autenticação JWT, rate limiting por usuário e log de auditoria à API FastAPI de inferência.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-shield-alt"></i>Por que segurança importa em ML?</div>
+      <ul class="info-lista">
+        <li>APIs de ML expõem modelos caros de treinar — protegê-los é proteger IP</li>
+        <li>Ataques de model extraction: adversário reconstrói o modelo via consultas</li>
+        <li>Abuso de recursos: inferência pesada tem custo de CPU/GPU</li>
+        <li>Data poisoning via API: injetar dados maliciosos no fluxo de retreino</li>
+        <li>LGPD/GDPR: rastrear quem acessou dados de inferência</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 9: FastAPI — onde aplicamos autenticação e rate limiting</li>
+        <li>Sem. 12: Prometheus — monitorar tentativas de abuso</li>
+        <li>Sem. 14: Kubernetes — onde secrets JWT ficam como k8s Secrets</li>
+        <li>Sem. 15: Celery — tasks também precisam de autorização</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install python-jose[cryptography] passlib[bcrypt]</code></li>
+        <li><code style="font-size:.8rem;">pip install slowapi redis</code> — rate limiting</li>
+        <li>API FastAPI da Semana 9 como base</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-15-mlops.html"><i class="fas fa-arrow-left"></i> Semana 15 — Celery e RabbitMQ</a>
+
+  <!-- AULA 1: Ameaças + JWT -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Ameaças em APIs de ML e Autenticação com JWT</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Ameaças específicas a APIs de ML</div>
+      <p>APIs de ML têm superfícies de ataque distintas das APIs convencionais. Entender as ameaças é o primeiro passo para escolher as contramedidas corretas.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Ameaça</th><th>Como funciona</th><th>Impacto</th><th>Contramedida</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Model Extraction</strong></td><td>Adversário faz milhares de consultas e usa as respostas para treinar um modelo clone</td><td>Roubo de propriedade intelectual</td><td>Rate limiting + detecção de padrão anômalo</td></tr>
+            <tr><td><strong>Abuso de recursos</strong></td><td>Bot faz inferências em escala, consumindo CPU/GPU/fatura de cloud</td><td>Custo financeiro, indisponibilidade</td><td>Rate limiting por usuário/IP + autenticação</td></tr>
+            <tr><td><strong>Adversarial inputs</strong></td><td>Inputs cuidadosamente construídos para enganar o modelo</td><td>Predições incorretas deliberadas</td><td>Validação de input + monitoramento de distribuição</td></tr>
+            <tr><td><strong>Data poisoning</strong></td><td>Se a API alimenta o retreinamento, injetar dados maliciosos</td><td>Degradação do modelo ao longo do tempo</td><td>Auditoria + validação de dados de treino</td></tr>
+            <tr><td><strong>Inferência de dados de treino</strong></td><td>Consultas específicas para revelar dados usados no treino</td><td>Violação de privacidade / LGPD</td><td>Differential privacy + log de auditoria</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-id-badge"></i>JWT — JSON Web Token</div>
+      <p>JWT é o padrão de autenticação <strong>stateless</strong> mais usado em APIs REST. O token carrega as informações do usuário embutidas e assinadas — o servidor não precisa consultar um banco de dados para validar cada requisição.</p>
+
+      <div class="jwt-parts">
+        <div class="jwt-part jwt-header">
+          <h4>Header</h4>
+          <p>Algoritmo de assinatura e tipo do token</p>
+          <p style="font-size:.68rem;margin-top:.3rem;font-family:'JetBrains Mono',monospace;">{"alg":"HS256","typ":"JWT"}</p>
+        </div>
+        <div class="jwt-dot">.</div>
+        <div class="jwt-part jwt-payload">
+          <h4>Payload</h4>
+          <p>Claims: sub (usuário), exp (expiração), roles (permissões)</p>
+          <p style="font-size:.68rem;margin-top:.3rem;font-family:'JetBrains Mono',monospace;">{"sub":"ana","exp":1751234567}</p>
+        </div>
+        <div class="jwt-dot">.</div>
+        <div class="jwt-part jwt-sig">
+          <h4>Signature</h4>
+          <p>HMAC-SHA256 do header+payload com a chave secreta</p>
+          <p style="font-size:.68rem;margin-top:.3rem;font-family:'JetBrains Mono',monospace;">SflKxwRJSMeKKF2...</p>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que stateless é importante em ML:</strong> APIs de inferência escalam horizontalmente (múltiplas réplicas no k8s). Autenticação stateful (sessão em banco) exigiria que toda requisição fosse para a mesma réplica ou que todas compartilhassem um banco de sessões. Com JWT, qualquer réplica valida o token localmente usando apenas a chave secreta — sem comunicação extra.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Implementando JWT na FastAPI</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — auth.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> os
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, timezone
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+<span class="kw">from</span> jose <span class="kw">import</span> JWTError, jwt
+<span class="kw">from</span> passlib.context <span class="kw">import</span> CryptContext
+<span class="kw">from</span> fastapi <span class="kw">import</span> Depends, HTTPException, status
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer
+
+<span class="cm"># Em produção: variável de ambiente, não hardcoded</span>
+SECRET_KEY = os.getenv(<span class="str">"JWT_SECRET_KEY"</span>, <span class="str">"chave-secreta-troque-em-producao"</span>)
+ALGORITHM  = <span class="str">"HS256"</span>
+TOKEN_EXPIRES_MINUTES = <span class="num">60</span>
+
+pwd_context   = CryptContext(schemes=[<span class="str">"bcrypt"</span>], deprecated=<span class="str">"auto"</span>)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="str">"token"</span>)
+
+<span class="cm"># Banco de usuários simulado (use BD real em produção)</span>
+USUARIOS = {
+    <span class="str">"ana"</span>: {
+        <span class="str">"senha_hash"</span>: pwd_context.hash(<span class="str">"senha123"</span>),
+        <span class="str">"role"</span>: <span class="str">"data_scientist"</span>
+    },
+    <span class="str">"bot_cliente"</span>: {
+        <span class="str">"senha_hash"</span>: pwd_context.hash(<span class="str">"api_key_xyz"</span>),
+        <span class="str">"role"</span>: <span class="str">"api_consumer"</span>
+    }
+}
+
+<span class="kw">def</span> <span class="fn">autenticar_usuario</span>(username: str, password: str) -> Optional[dict]:
+    user = USUARIOS.get(username)
+    <span class="kw">if not</span> user:
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">if not</span> pwd_context.verify(password, user[<span class="str">"senha_hash"</span>]):
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">return</span> {<span class="str">"username"</span>: username, <span class="str">"role"</span>: user[<span class="str">"role"</span>]}
+
+<span class="kw">def</span> <span class="fn">criar_token</span>(data: dict) -> str:
+    payload = data.copy()
+    payload[<span class="str">"exp"</span>] = datetime.now(timezone.utc) + timedelta(minutes=TOKEN_EXPIRES_MINUTES)
+    <span class="kw">return</span> jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+<span class="kw">def</span> <span class="fn">get_usuario_atual</span>(token: str = Depends(oauth2_scheme)) -> dict:
+    <span class="kw">try</span>:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get(<span class="str">"sub"</span>)
+        role     = payload.get(<span class="str">"role"</span>)
+        <span class="kw">if</span> <span class="kw">not</span> username:
+            <span class="kw">raise</span> HTTPException(status.HTTP_401_UNAUTHORIZED, <span class="str">"Token inválido"</span>)
+        <span class="kw">return</span> {<span class="str">"username"</span>: username, <span class="str">"role"</span>: role}
+    <span class="kw">except</span> JWTError:
+        <span class="kw">raise</span> HTTPException(status.HTTP_401_UNAUTHORIZED, <span class="str">"Token expirado ou inválido"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — endpoints de login e predict protegido</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordRequestForm
+<span class="kw">from</span> auth <span class="kw">import</span> autenticar_usuario, criar_token, get_usuario_atual
+
+app = FastAPI()
+
+<span class="cm"># Endpoint de login — retorna o JWT</span>
+<span class="dec">@app.post</span>(<span class="str">"/token"</span>)
+<span class="kw">def</span> <span class="fn">login</span>(form: OAuth2PasswordRequestForm = Depends()):
+    user = autenticar_usuario(form.username, form.password)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Usuário ou senha incorretos"</span>)
+    token = criar_token({<span class="str">"sub"</span>: user[<span class="str">"username"</span>], <span class="str">"role"</span>: user[<span class="str">"role"</span>]})
+    <span class="kw">return</span> {<span class="str">"access_token"</span>: token, <span class="str">"token_type"</span>: <span class="str">"bearer"</span>}
+
+<span class="cm"># Endpoint protegido — exige token válido</span>
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(data: InputData, usuario=Depends(get_usuario_atual)):
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Predição solicitada por: {usuario['username']} ({usuario['role']})"</span>)
+    <span class="cm"># ... lógica de inferência</span>
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="num">1</span>}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: Rate limiting + Auditoria -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Rate Limiting por Usuário e Log de Auditoria</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Rate limiting com SlowAPI</div>
+      <p>Rate limiting controla quantas requisições um cliente pode fazer em um intervalo de tempo. Para APIs de ML, é a principal defesa contra model extraction e abuso de recursos. O <strong>SlowAPI</strong> é uma biblioteca que adiciona rate limiting ao FastAPI com decoradores simples.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — rate limiting com SlowAPI</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> slowapi <span class="kw">import</span> Limiter, _rate_limit_exceeded_handler
+<span class="kw">from</span> slowapi.util <span class="kw">import</span> get_remote_address
+<span class="kw">from</span> slowapi.errors <span class="kw">import</span> RateLimitExceeded
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request
+
+<span class="cm"># Limiter por IP (simples) ou por usuário autenticado</span>
+limiter = Limiter(key_func=get_remote_address)
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+<span class="cm"># 10 predições por minuto por IP</span>
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="dec">@limiter.limit</span>(<span class="str">"10/minute"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(request: Request, data: InputData):
+    <span class="cm"># request é obrigatório quando se usa o limiter</span>
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="num">1</span>}
+
+<span class="cm"># Limite diferente para endpoint batch (mais restritivo)</span>
+<span class="dec">@app.post</span>(<span class="str">"/predict/batch"</span>)
+<span class="dec">@limiter.limit</span>(<span class="str">"3/minute"</span>)
+<span class="kw">def</span> <span class="fn">predict_batch</span>(request: Request, data: BatchInput):
+    <span class="kw">return</span> {<span class="str">"resultados"</span>: []}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user-lock"></i>Rate limiting por usuário autenticado</div>
+      <p>Limitar por IP é fácil de contornar com proxies. A abordagem mais robusta é limitar pelo <strong>usuário autenticado</strong> no JWT — assim cada conta tem sua própria cota, independente do IP.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — rate limiting por usuário JWT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> Depends, Request
+<span class="kw">from</span> auth <span class="kw">import</span> get_usuario_atual
+
+<span class="kw">def</span> <span class="fn">get_username_for_rate_limit</span>(request: Request) -> str:
+    <span class="cm">"""Extrai username do JWT para usar como chave do rate limit."""</span>
+    auth_header = request.headers.get(<span class="str">"Authorization"</span>, <span class="str">""</span>)
+    <span class="kw">if</span> auth_header.startswith(<span class="str">"Bearer "</span>):
+        <span class="kw">try</span>:
+            <span class="kw">from</span> jose <span class="kw">import</span> jwt
+            token   = auth_header.split(<span class="str">" "</span>)[<span class="num">1</span>]
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[<span class="str">"HS256"</span>])
+            <span class="kw">return</span> payload.get(<span class="str">"sub"</span>, <span class="str">"anonimo"</span>)
+        <span class="kw">except</span>:
+            <span class="kw">pass</span>
+    <span class="kw">return</span> get_remote_address(request)  <span class="cm"># fallback para IP</span>
+
+<span class="cm"># Limiter usando username como chave</span>
+limiter_usuario = Limiter(key_func=get_username_for_rate_limit)
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="dec">@limiter_usuario.limit</span>(<span class="str">"60/minute"</span>)   <span class="cm"># 60 predições/min por usuário</span>
+<span class="kw">def</span> <span class="fn">predict</span>(request: Request, data: InputData,
+            usuario=Depends(get_usuario_atual)):
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="num">1</span>}</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Perfil de uso</th><th>Limite sugerido</th><th>Justificativa</th></tr></thead>
+          <tbody>
+            <tr><td>Usuário humano via dashboard</td><td>60 req/min</td><td>Uso interativo normal</td></tr>
+            <tr><td>Integração de sistema (API key)</td><td>300 req/min</td><td>Automação legítima</td></tr>
+            <tr><td>Endpoint de scoring em lote</td><td>10 req/min</td><td>Jobs pesados — poucos por vez</td></tr>
+            <tr><td>IP não autenticado</td><td>5 req/min</td><td>Acesso sem conta = suspeito</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clipboard-list"></i>Log de auditoria — quem fez o quê e quando</div>
+      <p>Auditoria é obrigatória em contextos regulatórios (LGPD, GDPR, sistemas financeiros). Para APIs de ML, os campos mínimos de cada predição registrada são: usuário, timestamp, endpoint, input hash, output e latência.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — middleware de auditoria</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> json, time, hashlib, logging
+<span class="kw">from</span> fastapi <span class="kw">import</span> Request, Response
+
+audit_log = logging.getLogger(<span class="str">"auditoria"</span>)
+audit_log.setLevel(logging.INFO)
+
+<span class="cm"># Handler que grava em arquivo separado</span>
+handler = logging.FileHandler(<span class="str">"logs/auditoria.jsonl"</span>)
+audit_log.addHandler(handler)
+
+<span class="dec">@app.middleware</span>(<span class="str">"http"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">middleware_auditoria</span>(request: Request, call_next):
+    inicio = time.perf_counter()
+
+    <span class="cm"># Capturar o body da requisição para hash</span>
+    body = <span class="kw">await</span> request.body()
+
+    response: Response = <span class="kw">await</span> call_next(request)
+
+    duracao_ms = (time.perf_counter() - inicio) * <span class="num">1000</span>
+
+    <span class="cm"># Extrair usuário do token (se houver)</span>
+    username = <span class="str">"anonimo"</span>
+    auth = request.headers.get(<span class="str">"Authorization"</span>, <span class="str">""</span>)
+    <span class="kw">if</span> auth.startswith(<span class="str">"Bearer "</span>):
+        <span class="kw">try</span>:
+            payload = jwt.decode(auth.split()[<span class="num">1</span>], SECRET_KEY, algorithms=[<span class="str">"HS256"</span>])
+            username = payload.get(<span class="str">"sub"</span>, <span class="str">"anonimo"</span>)
+        <span class="kw">except</span>: <span class="kw">pass</span>
+
+    <span class="cm"># Gravar evento de auditoria (nunca o input bruto — apenas hash)</span>
+    audit_log.info(json.dumps({
+        <span class="str">"ts"</span>       : time.time(),
+        <span class="str">"usuario"</span>  : username,
+        <span class="str">"metodo"</span>   : request.method,
+        <span class="str">"endpoint"</span> : request.url.path,
+        <span class="str">"ip"</span>       : request.client.host,
+        <span class="str">"status"</span>   : response.status_code,
+        <span class="str">"ms"</span>       : <span class="fn">round</span>(duracao_ms, <span class="num">2</span>),
+        <span class="str">"input_hash"</span>: hashlib.sha256(body).hexdigest()[:<span class="num">16</span>]
+    }))
+
+    <span class="kw">return</span> response</code></pre>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Nunca logue o input bruto da predição.</strong> Os dados de entrada podem conter informações pessoais (CPF, renda, histórico de saúde). Logue apenas o hash do input — suficiente para rastreabilidade sem expor dados sensíveis. Em sistemas que exigem full audit trail, armazene os dados criptografados separadamente com acesso restrito.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Integração Completa + Prática</span></div>
+
+  <!-- AULA 3: API segura completa -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">API de Inferência Segura — Todas as Camadas Integradas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Camadas de segurança da API completa</div>
+      <p>A segurança de uma API de ML é construída em camadas — cada uma com responsabilidade específica:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-shield-alt"></i><span><strong>Camada 1 — Autenticação JWT:</strong> só clientes com token válido chegam aos endpoints de predição. Tokens expiram em 60 minutos.</span></li>
+        <li><i class="fas fa-tachometer-alt"></i><span><strong>Camada 2 — Rate limiting por usuário:</strong> mesmo um usuário autenticado não pode fazer consultas ilimitadas. Limites diferentes por perfil (humano vs sistema).</span></li>
+        <li><i class="fas fa-check-double"></i><span><strong>Camada 3 — Validação de input (Pydantic):</strong> rejeita automaticamente dados malformados antes de chegarem ao modelo. Limites de tamanho de lista previnem DoS.</span></li>
+        <li><i class="fas fa-clipboard-list"></i><span><strong>Camada 4 — Auditoria:</strong> todo acesso é registrado com hash do input, usuário e resultado. Rastreabilidade para compliance.</span></li>
+        <li><i class="fas fa-chart-bar"></i><span><strong>Camada 5 — Monitoramento (Prometheus):</strong> métricas de tentativas de rate limit excedido, erros 401/403 e padrões anômalos alertam sobre possíveis ataques.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-key"></i>Boas práticas de secrets em produção</div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Secret</th><th>Nunca faça</th><th>Faça assim</th></tr></thead>
+          <tbody>
+            <tr><td>JWT_SECRET_KEY</td><td>Hardcoded no código Python</td><td>Variável de ambiente / k8s Secret</td></tr>
+            <tr><td>Senha do banco</td><td>No docker-compose sem .env</td><td>Arquivo .env fora do Git + k8s Secret</td></tr>
+            <tr><td>API keys externas</td><td>Commitadas no Git</td><td>Git-crypt ou HashiCorp Vault</td></tr>
+            <tr><td>Certificados TLS</td><td>Imagem Docker</td><td>k8s TLS Secret + cert-manager</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — k8s Secret para JWT</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Criar secret no Kubernetes</span>
+<span class="cm"># kubectl create secret generic jwt-secret \</span>
+<span class="cm">#   --from-literal=JWT_SECRET_KEY=$(openssl rand -hex 32)</span>
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+type: Opaque
+stringData:
+  JWT_SECRET_KEY: <span class="str">"gerado-pelo-openssl-rand-hex-32"</span>
+
+<span class="cm"># No Deployment, referenciar o secret:</span>
+<span class="cm"># env:</span>
+<span class="cm">#   - name: JWT_SECRET_KEY</span>
+<span class="cm">#     valueFrom:</span>
+<span class="cm">#       secretKeyRef:</span>
+<span class="cm">#         name: jwt-secret</span>
+<span class="cm">#         key: JWT_SECRET_KEY</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · API Segura em Camadas</div>
+        <div class="secao-titulo">JWT + rate limiting + auditoria na API de inferência</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use a API da Semana 9 como base. Ao final, o endpoint <code>/predict</code> deve exigir JWT válido, respeitar limite de 10 req/min e registrar cada acesso em <code>logs/auditoria.jsonl</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Implementar login e emissão de JWT</div>
+      <p>Instale <code>python-jose[cryptography]</code> e <code>passlib[bcrypt]</code>. Crie o arquivo <code>auth.py</code> com a função <code>autenticar_usuario()</code> e <code>criar_token()</code>. Adicione o endpoint <code>POST /token</code> à API. Teste via Swagger (<code>/docs</code>) e confirme que recebe um token ao enviar usuário e senha válidos.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — testar login</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>curl -X POST http://localhost:<span class="num">8000</span>/token \
+  -d <span class="str">"username=ana&password=senha123"</span> \
+  -H <span class="str">"Content-Type: application/x-www-form-urlencoded"</span>
+
+<span class="cm"># Esperado: {"access_token":"eyJ...","token_type":"bearer"}</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Proteger o endpoint /predict com JWT</div>
+      <p>Adicione <code>usuario=Depends(get_usuario_atual)</code> ao endpoint <code>POST /predict</code>. Teste que: (1) sem token retorna 401, (2) com token inválido retorna 401, (3) com token válido retorna a predição normalmente. Use o token obtido no Passo 01.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>TOKEN=<span class="str">"eyJ..."</span>  <span class="cm"># token obtido no passo anterior</span>
+
+<span class="cm"># Sem token — deve retornar 401</span>
+curl -X POST http://localhost:<span class="num">8000</span>/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>
+
+<span class="cm"># Com token — deve retornar predição</span>
+curl -X POST http://localhost:<span class="num">8000</span>/predict \
+  -H <span class="str">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Adicionar rate limiting de 10 req/min</div>
+      <p>Instale o <code>slowapi</code>. Configure o limiter e adicione o decorator <code>@limiter.limit("10/minute")</code> ao endpoint <code>/predict</code>. Faça 11 requisições consecutivas com token válido (use um loop bash) e confirme que a 11ª retorna HTTP 429.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — testar rate limit</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>TOKEN=<span class="str">"eyJ..."</span>
+<span class="kw">for</span> i in $(seq <span class="num">1</span> <span class="num">12</span>); do
+  STATUS=$(curl -s -o /dev/null -w <span class="str">"%{http_code}"</span> \
+    -X POST http://localhost:<span class="num">8000</span>/predict \
+    -H <span class="str">"Authorization: Bearer $TOKEN"</span> \
+    -H <span class="str">"Content-Type: application/json"</span> \
+    -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>)
+  echo <span class="str">"Req $i: HTTP $STATUS"</span>
+done
+<span class="cm"># Requisições 1-10: HTTP 200 | Requisição 11+: HTTP 429</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Implementar log de auditoria</div>
+      <p>Adicione o middleware de auditoria ao <code>main.py</code>. Crie a pasta <code>logs/</code>. Faça 3 predições com o usuário "ana" e inspecione o arquivo <code>logs/auditoria.jsonl</code> — confirme que cada linha tem: timestamp, username, endpoint, status e input_hash.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: rate limits diferentes por role</div>
+      <p>Modifique a função <code>get_username_for_rate_limit</code> para retornar <code>role:username</code>. Configure dois limiters: <code>data_scientist</code> recebe 100 req/min e <code>api_consumer</code> recebe 20 req/min. Crie um segundo usuário com role <code>api_consumer</code> e confirme que os limites são aplicados independentemente para cada um.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> endpoint sem token retorna 401. Endpoint com token válido retorna predição. A 11ª requisição no mesmo minuto retorna 429. O arquivo <code>logs/auditoria.jsonl</code> cresce uma linha por requisição com todos os campos esperados.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 16</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-id-badge"></i>
+        <strong>JWT</strong>
+        <p>Header.Payload.Signature — stateless e escalável. Token expira, é assinado com chave secreta e carrega username + role. 401 automático se inválido</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <strong>Rate Limiting</strong>
+        <p>SlowAPI com @limiter.limit("N/periodo"). Limitar por usuário (JWT) é mais robusto que por IP. Perfis diferentes têm cotas diferentes. 429 quando excede</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-clipboard-list"></i>
+        <strong>Auditoria</strong>
+        <p>Middleware registra: usuário, endpoint, status, latência e hash do input. Nunca logar dados brutos. JSONL para fácil ingestão em ferramentas de análise</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-17-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 17 — Governança e Explicabilidade com SHAP e LIME</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

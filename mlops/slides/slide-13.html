@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 13 — MLOps · Avaliação P2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red-950:#1a0a0a;--red-900:#450a0a;--red-800:#7f1d1d;
+  --red-700:#991b1b;--red-500:#ef4444;--red-400:#f87171;--red-300:#fca5a5;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(248,113,113,.06);
+  --code-bg:#150505;--code-border:rgba(248,113,113,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--red-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--red-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--red-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--red-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(248,113,113,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--red-400);border:1px solid rgba(248,113,113,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(248,113,113,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--red-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--red-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(248,113,113,.18);color:var(--red-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--red-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(248,113,113,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(248,113,113,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--red-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(248,113,113,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(248,113,113,.07);border-left:3px solid var(--red-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--red-400);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(248,113,113,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fecaca;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:background .2s,border-color .2s;user-select:none;}
+.check-item:hover{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.18);}
+.check-item.checked{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);}
+.check-box{width:18px;height:18px;border-radius:5px;border:2px solid rgba(248,113,113,.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.check-item.checked .check-box{background:#4ade80;border-color:#4ade80;}
+.check-icon{color:white;font-size:.65rem;display:none;}
+.check-item.checked .check-icon{display:block;}
+.check-label{font-size:.83rem;color:var(--text-secondary);line-height:1.4;}
+.check-item.checked .check-label{color:var(--text-muted);text-decoration:line-through;}
+.check-tema{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--red-400);font-weight:600;margin-left:auto;flex-shrink:0;}
+
+/* simulado */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.questao-num{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-weight:700;margin-bottom:.5rem;}
+.questao-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1.1rem;}
+.questao-enunciado code{font-family:'JetBrains Mono',monospace;font-size:.83rem;background:rgba(248,113,113,.1);padding:1px 6px;border-radius:4px;color:var(--red-300);}
+.alternativas{display:flex;flex-direction:column;gap:.5rem;}
+.alt{display:flex;align-items:flex-start;gap:10px;padding:.65rem 1rem;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:background .2s,border-color .2s;}
+.alt:hover{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.18);}
+.alt-letra{width:22px;height:22px;border-radius:6px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.2);color:var(--red-400);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Montserrat',sans-serif;}
+.alt-texto{font-size:.85rem;color:var(--text-secondary);line-height:1.5;}
+.alt-texto code{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:rgba(248,113,113,.08);padding:1px 5px;border-radius:3px;color:var(--red-300);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:.5rem 1rem;color:var(--red-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.85rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(248,113,113,.08);}
+.gabarito-content{display:none;margin-top:.75rem;padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);}
+.gabarito-content.open{display:block;}
+.gabarito-content p{font-size:.85rem;color:rgba(134,239,172,.85);line-height:1.65;}
+.gabarito-content strong{color:#4ade80;}
+
+/* instruções */
+.instrucoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+.instrucao-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.instrucao-card h4{font-size:.75rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;display:flex;align-items:center;gap:7px;}
+.instrucao-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.instrucao-card ul li{font-size:.82rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.instrucao-card ul li::before{content:'▸';position:absolute;left:0;color:var(--red-400);font-size:.65rem;top:3px;}
+
+.calendario{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.cal-item{display:flex;align-items:center;gap:14px;padding:.6rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);}
+.cal-data{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--red-400);min-width:90px;}
+.cal-desc{font-size:.82rem;color:var(--text-secondary);}
+.cal-badge{margin-left:auto;font-size:.65rem;padding:2px 8px;border-radius:6px;font-weight:600;flex-shrink:0;}
+.badge-hoje{background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.25);}
+.badge-prova{background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.badge-resultado{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:var(--red-400);flex-shrink:0;margin-top:2px;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(248,113,113,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--red-400);border-color:rgba(248,113,113,.2);}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--red-400);}
+
+.progresso-wrap{margin:.75rem 0;}
+.progresso-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem;}
+.progresso-bar{height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;}
+.progresso-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--red-700),var(--red-400));transition:width .4s ease;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.instrucoes-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🎯 Avaliação P2</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">13</div>
+    <h1 class="capa-titulo">Avaliação<br><em>P2</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Revisão express + Simulado + Instruções da prova</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Aula 1 — Revisão express das Semanas 7–12 com checklist</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-alt"></i></div><span>Aula 2 — Simulado P2 com 7 questões no estilo da prova</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-list"></i></div><span>Aula 3 — Instruções, formato e orientações finais da P2</span></div>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-book"></i>Conteúdo da P2</div>
+      <ul class="info-lista">
+        <li>Sem. 7 — Pipelines de ML (MLflow Pipelines + Metaflow)</li>
+        <li>Sem. 8 — Docker para ML (layers, multi-stage, compose)</li>
+        <li>Sem. 9 — FastAPI (Pydantic, endpoints, validação)</li>
+        <li>Sem. 10 — BentoML e Triton (serving, batching)</li>
+        <li>Sem. 11 — Evidently AI (drift, testes automatizados)</li>
+        <li>Sem. 12 — Prometheus + Grafana (métricas, alertas)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-info-circle"></i>Formato da prova</div>
+      <ul class="info-lista">
+        <li>7 questões mistas: múltipla escolha + análise de código</li>
+        <li>Duração: 90 minutos</li>
+        <li>Permitido: folha de cola A5 (frente e verso)</li>
+        <li>Peso: 35% da nota final</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle"></i>Atenção</div>
+      <ul class="info-lista">
+        <li>Chegue com 10 minutos de antecedência</li>
+        <li>Celular desligado ou no silencioso</li>
+        <li>Caneta azul ou preta (não lápis)</li>
+        <li>Leia todas as questões antes de começar</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-12-mlops.html"><i class="fas fa-arrow-left"></i> Semana 12 — Prometheus + Grafana</a>
+
+  <!-- AULA 1: Revisão express + checklist -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · Revisão Express</div>
+        <div class="secao-titulo">Checklist Interativo — Semanas 7 a 12</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tasks"></i>Marque o que você já domina</div>
+      <p>Clique nos itens que você se sente seguro. Use os itens <strong>não marcados</strong> para focar a revisão de última hora.</p>
+
+      <div class="progresso-wrap">
+        <div class="progresso-label"><span>Progresso de revisão</span><span id="prog-text">0 / 24</span></div>
+        <div class="progresso-bar"><div class="progresso-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.75rem;">Semana 7 — Pipelines</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Explicar por que scripts isolados são problemáticos (ordem implícita, sem cache, sem rastreamento)</span><span class="check-tema">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Estrutura de um projeto MLflow Pipelines: pipeline.yaml, steps/, profiles/</span><span class="check-tema">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Cache inteligente do MLflow Pipelines: só re-executa etapas com inputs modificados</span><span class="check-tema">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Metaflow: FlowSpec, @step, self.next(), Parameter e execução via CLI</span><span class="check-tema">Sem 7</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 8 — Docker para ML</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Por que a ordem das instruções importa: COPY requirements.txt antes de COPY src/</span><span class="check-tema">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">python:3.11-slim vs python:3.11 — diferença de tamanho e quando usar cada um</span><span class="check-tema">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">PYTHONDONTWRITEBYTECODE e PYTHONUNBUFFERED — o que fazem e por que usar</span><span class="check-tema">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Multi-stage build: stage builder compila, stage runtime copia apenas os wheels</span><span class="check-tema">Sem 8</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 9 — FastAPI</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Pydantic BaseModel com Field: validação automática de tipos, ranges e regex</span><span class="check-tema">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Erro 422 (Pydantic, antes de executar) vs 400/503 (HTTPException, dentro da função)</span><span class="check-tema">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Endpoint batch: processa N instâncias em uma única chamada ao model.predict()</span><span class="check-tema">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Documentação automática em /docs (Swagger) e /redoc gerada a partir dos tipos</span><span class="check-tema">Sem 9</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 10 — BentoML</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Runner (isola modelo), Service (define endpoints), Bento (artefato final versionado)</span><span class="check-tema">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">bentoml build + bentoml containerize: gera Docker sem Dockerfile manual</span><span class="check-tema">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Batching dinâmico: max_batch_size + max_latency_ms — throughput vs latência</span><span class="check-tema">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Quando usar FastAPI vs BentoML vs Triton (escala, GPU, complexidade)</span><span class="check-tema">Sem 10</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 11 — Evidently AI</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Data drift (features mudam) vs concept drift (relação feature-target muda) vs prediction drift</span><span class="check-tema">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">PSI: &lt;0.1 estável | 0.1–0.2 monitorar | &gt;0.2 drift significativo</span><span class="check-tema">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Report (HTML exploratório) vs TestSuite (passou/falhou, automatizável em CI/CD)</span><span class="check-tema">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">KS para numéricas, chi-quadrado para categóricas — qual usar em cada caso</span><span class="check-tema">Sem 11</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 12 — Prometheus + Grafana</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Counter (só cresce), Gauge (sobe e desce), Histogram (percentis), Summary</span><span class="check-tema">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Prometheus pull model: scraping periódico do /metrics de cada serviço</span><span class="check-tema">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">PromQL: rate() para Counters, histogram_quantile() para percentis de Histogramas</span><span class="check-tema">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">alerts.yml: expr (PromQL), for (tempo mínimo), labels.severity, annotations</span><span class="check-tema">Sem 12</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Simulado</span></div>
+
+  <!-- AULA 2: Simulado -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · Simulado P2</div>
+        <div class="secao-titulo">7 questões no estilo da prova — tente antes de ver o gabarito</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-stopwatch"></i>
+      <span>Simule as condições reais: tente responder todas as questões <strong>antes</strong> de abrir qualquer gabarito. Reserve os gabaritos para conferência ao final.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="questao-num">Questão 1 · Pipelines — Semana 7</div>
+      <p class="questao-enunciado">Um cientista de dados mantém quatro scripts Python (<code>01_limpar.py</code>, <code>02_features.py</code>, <code>03_treinar.py</code>, <code>04_avaliar.py</code>) para seu fluxo de ML. Após modificar apenas <code>03_treinar.py</code>, ele precisa re-executar o processo. Qual é a principal vantagem de usar MLflow Pipelines nesse cenário?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O MLflow Pipelines converte automaticamente os scripts para notebooks Jupyter, facilitando a visualização</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O cache inteligente detecta que apenas <code>03_treinar.py</code> mudou e re-executa somente as etapas de treino e avaliação, pulando limpeza e features</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O MLflow Pipelines executa todos os scripts em paralelo, reduzindo o tempo total pela metade</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O uso de pipelines elimina a necessidade de versionamento com Git, pois o pipeline rastreia todas as mudanças automaticamente</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>O cache inteligente do MLflow Pipelines (e do DVC) rastreia quais entradas de cada etapa foram modificadas. Como apenas o script de treino mudou, as etapas de limpeza e features têm as mesmas entradas de antes — então são puladas. Somente treino e avaliação são re-executados. A opção A é falsa (não converte para notebooks). A opção C é falsa (o pipeline é sequencial por padrão — paralelismo real requer Metaflow com foreach). A opção D é perigosamente falsa: pipelines e Git são complementares, não substitutos.</p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="questao-num">Questão 2 · Docker para ML — Semana 8</div>
+      <p class="questao-enunciado">Analise o Dockerfile abaixo e identifique o principal problema de performance de build:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dockerfile problemático</span></div>
+        <pre><code>FROM python:3.11-slim
+WORKDIR /app
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+      </div>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O uso de <code>python:3.11-slim</code> é inadequado para produção — deveria ser a imagem completa <code>python:3.11</code></div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">A flag <code>--no-cache-dir</code> está incorreta e faz o pip reinstalar todos os pacotes a cada execução</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O <code>COPY . .</code> copia todo o projeto antes do <code>pip install</code>, fazendo o cache da camada de dependências invalidar toda vez que qualquer arquivo do projeto mudar</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O <code>WORKDIR /app</code> deveria ser definido após o <code>COPY</code> para garantir que os arquivos sejam copiados para o local correto</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: C</strong><br>O problema clássico de ordem no Dockerfile. O <code>COPY . .</code> copia todos os arquivos — incluindo o código Python — antes do <code>pip install</code>. Isso significa que qualquer mudança em qualquer arquivo do projeto (até um comentário no código) invalida o cache da camada de dependências, forçando o <code>pip install</code> completo novamente. A solução correta é: <code>COPY requirements.txt .</code> → <code>RUN pip install</code> → <code>COPY src/ .</code>. Assim, a camada de dependências só é recriada quando o <code>requirements.txt</code> muda.</p>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="questao-num">Questão 3 · FastAPI + Pydantic — Semana 9</div>
+      <p class="questao-enunciado">Uma API de inferência recebe a seguinte requisição: <code>POST /predict</code> com corpo <code>{"features": [1.0, 2.0]}</code>. O modelo espera exatamente 10 features, definido com <code>Field(min_length=10, max_length=10)</code>. O que acontece?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O FastAPI aceita a requisição e o modelo recebe os 2 valores; cabe ao modelo tratar a entrada incompleta</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O FastAPI retorna HTTP 400 com a mensagem "features inválidas" configurada pelo desenvolvedor</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O Pydantic rejeita automaticamente a requisição antes de executar a função, retornando HTTP 422 com detalhes do erro</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O FastAPI completa a lista com zeros até atingir 10 features e executa a predição normalmente</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: C</strong><br>O Pydantic valida os dados <em>antes</em> de a função ser chamada. Com <code>min_length=10</code>, uma lista de 2 elementos falha na validação e o FastAPI retorna automaticamente HTTP 422 (Unprocessable Entity) com um JSON descrevendo exatamente qual campo falhou e por quê — sem nenhum código adicional do desenvolvedor. O 400 (opção B) é um código que o desenvolvedor dispara manualmente com <code>HTTPException</code> para erros de negócio. O 422 é o código automático do Pydantic para falhas de schema.</p>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="questao-num">Questão 4 · BentoML — Semana 10</div>
+      <p class="questao-enunciado">Um time configurou um runner BentoML com <code>max_batch_size=32</code> e <code>max_latency_ms=100</code>. Em um teste de carga com 5 requisições simultâneas, as predições chegam em 10ms mas o usuário percebe latência de 100ms. Qual a explicação correta?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O BentoML tem um overhead fixo de 90ms para serializar e desserializar dados em JSON</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O runner aguarda até 100ms para acumular mais requisições e formar um batch maior antes de processar, maximizando o throughput às custas da latência individual</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O modelo está sobrecarregado e leva 100ms para processar cada requisição individualmente</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Com apenas 5 requisições, o BentoML desativa o batching e processa sequencialmente, causando fila</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Este é o trade-off fundamental do batching dinâmico. O parâmetro <code>max_latency_ms=100</code> significa: "espere até 100ms para ver se chegam mais requisições antes de processar". Com 5 requisições (bem abaixo de <code>max_batch_size=32</code>), o runner espera o tempo máximo configurado para tentar completar o batch. O resultado é que cada requisição individual tem latência próxima a 100ms, mesmo que a inferência em si seja rápida. A solução é reduzir <code>max_latency_ms</code> para sistemas com SLA de latência estrito, ou aceitar a latência em troca de maior throughput quando há alta concorrência.</p>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="questao-num">Questão 5 · Evidently AI — Semana 11</div>
+      <p class="questao-enunciado">Um modelo de crédito foi treinado antes de uma crise econômica. Após a crise, os clientes com perfil de renda idêntico ao dos dados de treino passaram a ter taxa de inadimplência muito maior. Os dados de entrada (features) não mudaram significativamente, mas as predições do modelo estão erradas. Que tipo de drift isso descreve?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Data drift — a distribuição das features mudou e precisa ser recalibrada com novos dados de treino</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Prediction drift — as predições mudaram porque o modelo foi atualizado sem aviso</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Concept drift — a relação entre as features e o target mudou; o mesmo perfil de cliente agora implica risco diferente</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Label drift — os labels de treino estavam incorretos e precisam ser re-rotulados</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: C</strong><br>Concept drift é exatamente isso: a relação entre X (features) e y (target) muda, mesmo que a distribuição de X permaneça estável. Antes da crise, o modelo aprendeu que "renda X → inadimplência Y". Após a crise, a mesma renda X passou a implicar inadimplência Z (muito maior). O modelo usa o padrão antigo, logo erra. O data drift (A) seria se os perfis de clientes tivessem mudado. O prediction drift (B) é consequência de outros tipos de drift, não a causa. O label drift (D) não existe como categoria padrão — seria uma variante de concept drift.</p>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="questao-num">Questão 6 · Prometheus + PromQL — Semana 12</div>
+      <p class="questao-enunciado">Uma API de inferência usa um <code>Counter</code> chamado <code>predicoes_total</code> com o label <code>resultado</code>. Após 1 hora de operação, o valor acumulado é 10.000 para "sucesso" e 500 para "erro". Qual query PromQL fornece a <em>taxa atual</em> de erros por segundo (nos últimos 5 minutos)?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto"><code>predicoes_total{resultado="erro"}</code></div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto"><code>rate(predicoes_total{resultado="erro"}[5m])</code></div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto"><code>sum(predicoes_total{resultado="erro"})</code></div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto"><code>histogram_quantile(0.95, predicoes_total{resultado="erro"}[5m])</code></div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>A função <code>rate(counter[janela])</code> é a forma correta de obter a taxa por segundo de um Counter. Sem <code>rate()</code>, o valor bruto (A) mostra apenas o total acumulado — que cresce sem parar e não é útil para monitoramento de "taxa atual". A opção C (<code>sum()</code>) também retorna o total, apenas somando todas as séries. A opção D usa <code>histogram_quantile()</code>, que é exclusiva para métricas do tipo Histogram — não faz sentido aplicar a um Counter.</p>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="questao-num">Questão 7 · Integração — Semanas 7–12</div>
+      <p class="questao-enunciado">Uma equipe construiu a seguinte stack: pipeline MLflow Pipelines que treina o modelo → MLflow Registry para versionamento → FastAPI com prometheus_client para servir → Prometheus + Grafana para observabilidade → Evidently AI em job diário para drift. Um alerta do Grafana dispara: "TaxaErroAlta — 12% das predições retornando erro". Qual sequência de investigação faz mais sentido?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Retreinar o modelo imediatamente via pipeline MLflow, pois taxa de erro alta indica degradação do modelo</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Verificar os logs da API para entender o tipo de erro HTTP (400 = dado inválido do cliente vs 503 = modelo não carregado), depois checar o relatório Evidently para confirmar se há drift nos dados de entrada</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Fazer rollback para a versão anterior do modelo no Registry, pois toda taxa de erro alta é causada por regressão do modelo</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Escalar horizontalmente o serviço FastAPI com mais réplicas, pois a taxa de erro indica sobrecarga de capacidade</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Esta questão testa raciocínio de diagnóstico sistemático. Taxa de erro alta tem múltiplas causas possíveis — e a ordem correta é diagnosticar antes de agir. Os códigos HTTP revelam muito: erros 400 indicam clientes enviando dados malformados (solução: corrigir o cliente ou melhorar validação). Erros 503 indicam que o modelo não carregou (solução: verificar o modelo e reiniciar). Se os erros não são HTTP mas sim predições "erradas" semanticamente, aí sim o Evidently pode revelar drift como causa raiz. Retreinar (A) sem diagnóstico é precipitado. Rollback (C) assume causa que ainda não foi confirmada. Escalar (D) não resolve erros de lógica — apenas erros de capacidade, que seriam evidentes em métricas de latência e saturação de CPU, não só taxa de erro.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Instruções da P2</span></div>
+
+  <!-- AULA 3: Instruções -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · Orientações Finais</div>
+        <div class="secao-titulo">Instruções da P2 — Formato, Critérios e Calendário</div>
+      </div>
+    </div>
+
+    <div class="instrucoes-grid">
+      <div class="instrucao-card">
+        <h4><i class="fas fa-file-alt"></i>Formato da prova</h4>
+        <ul>
+          <li>7 questões mistas (múltipla escolha + análise de código)</li>
+          <li>Duração total: 90 minutos</li>
+          <li>Questões de múltipla escolha: 4 alternativas, 1 correta</li>
+          <li>Questões de código: identificar erro ou completar trecho</li>
+          <li>Todas as questões valem o mesmo peso</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-check-square"></i>O que é permitido</h4>
+        <ul>
+          <li>Folha de cola A5 — frente e verso, manuscrita</li>
+          <li>Caneta esferográfica azul ou preta</li>
+          <li>Régua (apenas para traçar linhas)</li>
+          <li>Nenhum dispositivo eletrônico ligado</li>
+          <li>Garrafa de água sem rótulo</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-times-circle"></i>O que não é permitido</h4>
+        <ul>
+          <li>Celular, tablet, notebook ou smartwatch</li>
+          <li>Consulta a apostilas ou livros (exceto a folha de cola)</li>
+          <li>Comunicação com outros alunos durante a prova</li>
+          <li>Saída da sala nos primeiros 20 minutos</li>
+          <li>Folha de cola digitada ou impressa</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-lightbulb"></i>Estratégia recomendada</h4>
+        <ul>
+          <li>Leia todas as 7 questões antes de começar</li>
+          <li>Responda primeiro as que você tem certeza</li>
+          <li>Nas questões de código: leia linha a linha</li>
+          <li>Eliminate alternativas absurdas antes de escolher</li>
+          <li>Reserve 10 minutos no final para revisar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="aviso-red" style="margin-top:1.25rem;">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span><strong>Atenção especial:</strong> questões que pedem identificação de código errado são as mais frequentes na P2. Treine ler Dockerfiles e código Python linha a linha. Na folha de cola, priorize: limiares do PSI, os 4 tipos de métricas Prometheus, a diferença entre rate() e o valor bruto, e a ordem correta das instruções no Dockerfile.</span>
+    </div>
+
+    <div style="margin-top:1.75rem;">
+      <div class="card-titulo" style="margin-bottom:1rem;"><i class="fas fa-calendar-alt" style="color:var(--red-400);"></i> &nbsp;Calendário</div>
+      <div class="calendario">
+        <div class="cal-item">
+          <span class="cal-data">Semana 13</span>
+          <span class="cal-desc">Hoje — Revisão express, simulado e orientações finais</span>
+          <span class="cal-badge badge-hoje">Hoje</span>
+        </div>
+        <div class="cal-item">
+          <span class="cal-data">Próxima aula</span>
+          <span class="cal-desc">Avaliação P2 — 90 minutos, 7 questões, folha de cola permitida</span>
+          <span class="cal-badge badge-prova">Prova</span>
+        </div>
+        <div class="cal-item">
+          <span class="cal-data">Semana 14</span>
+          <span class="cal-desc">Retomada do conteúdo — Kubernetes para ML (após devolução da P2)</span>
+          <span class="cal-badge badge-resultado">Continua</span>
+        </div>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-14-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 14 — Kubernetes para ML: Deployments, Services e HPA</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggle(el){
+  el.classList.toggle('checked');
+  atualizarProgresso();
+}
+function atualizarProgresso(){
+  const total = document.querySelectorAll('.check-item').length;
+  const marcados = document.querySelectorAll('.check-item.checked').length;
+  const pct = Math.round((marcados/total)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = marcados+' / '+total;
+}
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+</script>
+</body>
+</html>

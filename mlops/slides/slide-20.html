@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 20 — MLOps · Segunda Chamada</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red-950:#1a0a0a;--red-900:#450a0a;--red-800:#7f1d1d;
+  --red-700:#991b1b;--red-500:#ef4444;--red-400:#f87171;--red-300:#fca5a5;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(248,113,113,.06);
+  --code-bg:#150505;--code-border:rgba(248,113,113,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--red-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--red-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--red-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--red-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(248,113,113,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--red-400);border:1px solid rgba(248,113,113,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(248,113,113,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--red-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--red-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(248,113,113,.18);color:var(--red-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--red-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(248,113,113,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(248,113,113,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--red-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(248,113,113,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(248,113,113,.07);border-left:3px solid var(--red-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--red-400);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;padding:.5rem 1rem;background:rgba(248,113,113,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fecaca;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}
+
+/* checklist mestre */
+.checklist{display:flex;flex-direction:column;gap:.45rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:background .2s,border-color .2s;user-select:none;}
+.check-item:hover{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.18);}
+.check-item.checked{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);}
+.check-box{width:18px;height:18px;border-radius:5px;border:2px solid rgba(248,113,113,.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.check-item.checked .check-box{background:#4ade80;border-color:#4ade80;}
+.check-icon{color:white;font-size:.65rem;display:none;}
+.check-item.checked .check-icon{display:block;}
+.check-label{font-size:.82rem;color:var(--text-secondary);line-height:1.4;flex:1;}
+.check-item.checked .check-label{color:var(--text-muted);text-decoration:line-through;}
+.check-tema{font-size:.63rem;text-transform:uppercase;letter-spacing:.07em;color:var(--red-400);font-weight:600;flex-shrink:0;}
+
+.progresso-wrap{margin:.75rem 0;}
+.progresso-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem;}
+.progresso-bar{height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;}
+.progresso-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--red-700),var(--red-400));transition:width .4s ease;}
+
+/* simulado */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.questao-num{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-weight:700;margin-bottom:.5rem;}
+.questao-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1.1rem;}
+.questao-enunciado code{font-family:'JetBrains Mono',monospace;font-size:.83rem;background:rgba(248,113,113,.1);padding:1px 6px;border-radius:4px;color:var(--red-300);}
+.alternativas{display:flex;flex-direction:column;gap:.5rem;}
+.alt{display:flex;align-items:flex-start;gap:10px;padding:.65rem 1rem;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:background .2s,border-color .2s;}
+.alt:hover{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.18);}
+.alt-letra{width:22px;height:22px;border-radius:6px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.2);color:var(--red-400);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Montserrat',sans-serif;}
+.alt-texto{font-size:.85rem;color:var(--text-secondary);line-height:1.5;}
+.alt-texto code{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:rgba(248,113,113,.08);padding:1px 5px;border-radius:3px;color:var(--red-300);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:.5rem 1rem;color:var(--red-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.85rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(248,113,113,.08);}
+.gabarito-content{display:none;margin-top:.75rem;padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);}
+.gabarito-content.open{display:block;}
+.gabarito-content p{font-size:.85rem;color:rgba(134,239,172,.85);line-height:1.65;}
+.gabarito-content strong{color:#4ade80;}
+
+/* instrucoes */
+.instrucoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin:.75rem 0;}
+.instrucao-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.instrucao-card h4{font-size:.75rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;display:flex;align-items:center;gap:7px;}
+.instrucao-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.instrucao-card ul li{font-size:.82rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.instrucao-card ul li::before{content:'▸';position:absolute;left:0;color:var(--red-400);font-size:.65rem;top:3px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(248,113,113,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--red-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(248,113,113,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(248,113,113,.04);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(248,113,113,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--red-400);border-color:rgba(248,113,113,.2);}
+
+.fim-box{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:14px;padding:2rem;text-align:center;margin-top:3rem;}
+.fim-box h2{font-family:'Montserrat',sans-serif;font-size:1.3rem;font-weight:800;color:var(--white);margin-bottom:.5rem;}
+.fim-box p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;max-width:560px;margin:0 auto;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .instrucoes-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🔄 Segunda Chamada</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">20</div>
+    <h1 class="capa-titulo">Segunda<br><em>Chamada</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Revisão completa + Simulado integrador + Instruções finais</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-map"></i></div><span>Aula 1 — Checklist mestre das 20 semanas — tudo cobrado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-alt"></i></div><span>Aula 2 — Simulado integrador com 7 questões transversais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-list"></i></div><span>Aula 3 — Instruções da segunda chamada e encerramento da disciplina</span></div>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-info-circle"></i>Quem pode fazer a segunda chamada</div>
+      <ul class="info-lista">
+        <li>Alunos que faltaram à P1, P2 ou P3 com justificativa</li>
+        <li>A prova substitui apenas a avaliação faltante</li>
+        <li>Conteúdo: todo o semestre (Semanas 1–19)</li>
+        <li>Duração: 120 minutos (mais tempo que as provas regulares)</li>
+        <li>Permitido: folha de cola A5 manuscrita (frente e verso)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-book"></i>Conteúdo cobrado</div>
+      <ul class="info-lista">
+        <li>Bloco P1: DVC, MLflow Tracking, Model Registry (Sem 1–5)</li>
+        <li>Bloco P2: Pipelines, Docker, FastAPI, BentoML, Evidently, Prometheus (Sem 7–12)</li>
+        <li>Bloco P3: Kubernetes, Celery, JWT, SHAP, Kafka (Sem 14–18)</li>
+        <li>Integração entre os blocos — questões transversais</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-star"></i>Composição final da nota</div>
+      <ul class="info-lista">
+        <li>P1: 20% | P2: 35% | P3: 25% | Projeto: 20%</li>
+        <li>Segunda chamada substitui a prova ausente (mesmo peso)</li>
+        <li>Projeto: apresentação pendente também ocorre nesta semana</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-19-mlops.html"><i class="fas fa-arrow-left"></i> Semana 19 — P3 e Projeto Final</a>
+
+  <!-- AULA 1: Checklist mestre integrador -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · Revisão Mestre</div>
+        <div class="secao-titulo">Checklist Integrador — Os 30 Conceitos Mais Cobrados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tasks"></i>Marque os conceitos que você domina</div>
+      <p>Lista curada com os tópicos que mais aparecem em provas e que conectam múltiplas semanas. Para a segunda chamada, você precisa dominar todos os blocos.</p>
+
+      <div class="progresso-wrap">
+        <div class="progresso-label"><span>Domínio geral</span><span id="prog-text">0 / 30</span></div>
+        <div class="progresso-bar"><div class="progresso-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.75rem;">Bloco P1 — Fundamentos (Semanas 1–5)</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">DVC: por que dados não vão no Git, ponteiro .dvc, dvc add/push/pull, rollback com git checkout + dvc checkout</span><span class="check-tema">Sem 3</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">MLflow Tracking: log_param, log_metric (com step), log_model, autolog, search_runs com order_by</span><span class="check-tema">Sem 4</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Model Registry: 4 estágios (None→Staging→Production→Archived), transition_model_version_stage, URI models:/nome/Production</span><span class="check-tema">Sem 5</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Tracking = laboratório (experimentos) vs Registry = prateleira aprovada (modelos em produção)</span><span class="check-tema">Sem 5</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">87% dos projetos não chegam à produção — quatro fases do ciclo de vida do ML</span><span class="check-tema">Sem 1</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Bloco P2 — Produção (Semanas 7–12)</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Cache inteligente do MLflow Pipelines: só re-executa etapas com inputs modificados</span><span class="check-tema">Sem 7</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Dockerfile: COPY requirements.txt antes de COPY src/, python:3.11-slim, PYTHONDONTWRITEBYTECODE, --no-cache-dir</span><span class="check-tema">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Multi-stage build: stage builder (imagem gorda compila) → stage runtime (imagem slim copia wheels)</span><span class="check-tema">Sem 8</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">FastAPI: 422 automático Pydantic vs 400/503 manual com HTTPException — quando cada um ocorre</span><span class="check-tema">Sem 9</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">BentoML: Runner (isola modelo), bentoml build, bentoml containerize sem Dockerfile manual, max_batch_size</span><span class="check-tema">Sem 10</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">PSI limiares: &lt;0.1 estável | 0.1–0.2 monitorar | &gt;0.2 drift significativo</span><span class="check-tema">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Evidently: Report (HTML para humanos) vs TestSuite (passou/falhou para CI/CD)</span><span class="check-tema">Sem 11</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Prometheus: Counter (só cresce), Gauge (sobe/desce), Histogram (percentis). rate() para Counter, histogram_quantile() para p95/p99</span><span class="check-tema">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Pull model do Prometheus: ele coleta de /metrics; a aplicação não envia — diferença do modelo push</span><span class="check-tema">Sem 12</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">KS (numéricas contínuas) vs chi-quadrado (categóricas) — qual teste estatístico para qual tipo de feature</span><span class="check-tema">Sem 11</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Bloco P3 — Escala e Governança (Semanas 14–18)</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">K8s: Pod (menor unidade), Deployment (gerencia réplicas), Service (expõe com LB), HPA (auto-scaling)</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">readinessProbe: controla quando pod recebe tráfego | livenessProbe: reinicia pod travado</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Rolling update: maxUnavailable=0 + maxSurge=1 → zero downtime garantido pela readinessProbe</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Celery polling assíncrono: POST retorna task_id → GET /jobs/{id} consulta status → SUCCESS entrega resultado</span><span class="check-tema">Sem 15</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Celery: carregar modelo uma vez por worker com get_model() — nunca a cada task individual</span><span class="check-tema">Sem 15</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">JWT stateless: Header.Payload.Signature — payload é base64, não criptografado; assinatura garante integridade</span><span class="check-tema">Sem 16</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Rate limiting por usuário JWT > por IP — não contornável com proxies/VPN rotativas</span><span class="check-tema">Sem 16</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">SHAP local: base_value + soma dos SHAP values = predição exata da instância</span><span class="check-tema">Sem 17</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">SHAP TreeExplainer (rápido, para árvores) vs KernelExplainer (lento, qualquer modelo) vs LIME (perturbação local)</span><span class="check-tema">Sem 17</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Kafka: log imutável persistente — consumer groups leem o mesmo evento de forma independente (diferença do RabbitMQ)</span><span class="check-tema">Sem 18</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Kafka offset: posição do consumer group no log — permite replay de histórico a qualquer momento</span><span class="check-tema">Sem 18</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Integração entre blocos</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Fluxo completo: DVC (dados) → MLflow (experimento) → Registry → Docker → FastAPI → Prometheus → Grafana</span><span class="check-tema">Integração</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Quando usar cada serving: FastAPI (simples, controle total) → BentoML (batching) → Celery (lote async) → Kafka (stream)</span><span class="check-tema">Integração</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Rollback de modelo: Registry (mudar estágio) vs Docker (trocar tag da imagem) vs K8s (kubectl rollout undo)</span><span class="check-tema">Integração</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Simulado Integrador</span></div>
+
+  <!-- AULA 2: Simulado integrador -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · Simulado Integrador</div>
+        <div class="secao-titulo">7 questões transversais — cobrindo múltiplos blocos</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-stopwatch"></i>
+      <span>A segunda chamada tem 120 minutos e questões transversais. Este simulado tem exatamente esse perfil — cada questão exige conectar conceitos de semanas diferentes.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="questao-num">Questão 1 · Integração DVC + MLflow (Bloco P1)</div>
+      <p class="questao-enunciado">Um cientista de dados executa <code>git checkout v1.0 && dvc checkout</code> para voltar ao estado de 3 meses atrás. Em seguida, re-executa o pipeline de treino. Os experimentos agora aparecem no MLflow Tracking. Qual afirmação descreve corretamente o que aconteceu?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O dvc checkout substituiu o banco de dados do MLflow pela versão antiga, apagando experimentos recentes</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O git checkout voltou o código e os arquivos .dvc ao estado da tag v1.0; o dvc checkout restaurou os arquivos de dados referenciados. O MLflow continua acumulando — o novo run aparece como um experimento adicional, não substitui os anteriores</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O dvc checkout só funciona se o servidor MLflow estiver offline, caso contrário os dados são sobrescritos</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O git checkout voltou apenas o código; os dados de treino permanecem na versão mais recente porque o DVC não versiona arquivos grandes</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Git e DVC trabalham em camadas separadas. O <code>git checkout v1.0</code> restaura o código-fonte E os ponteiros .dvc (que apontam para hashes de dados). O <code>dvc checkout</code> usa esses ponteiros para baixar do storage remoto os arquivos de dados correspondentes à versão v1.0. O MLflow Tracking é um banco independente — acumula runs, nunca sobrescreve. O novo treino gerará um novo run_id com o timestamp atual, permitindo comparar diretamente com os runs históricos. Esse é o poder da combinação DVC + MLflow: reprodutibilidade total dos dados + rastreabilidade dos experimentos.</p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="questao-num">Questão 2 · Docker + FastAPI (Bloco P2)</div>
+      <p class="questao-enunciado">Analise o trecho de Dockerfile abaixo e identifique os dois problemas que prejudicam performance e segurança:</p>
+      <div style="margin:.75rem 0;">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Dockerfile com problemas</span></div>
+          <pre><code>FROM python:3.11
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+USER root
+EXPOSE 8000
+CMD ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+        </div>
+      </div>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Imagem base muito pesada (deveria ser slim) e COPY . . antes do pip install invalida cache de dependências a cada mudança de código</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O CMD usa uvicorn em vez de gunicorn, que é mais adequado para produção</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O WORKDIR /app está incorreto — deveria ser /usr/app para seguir o padrão Linux</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O EXPOSE 8000 deveria ser EXPOSE 80 para seguir o padrão HTTP</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: A</strong><br>Dois problemas clássicos: (1) <strong>Imagem pesada:</strong> <code>python:3.11</code> tem ~900MB com compiladores e ferramentas desnecessárias para inferência. A versão <code>python:3.11-slim</code> tem ~130MB — sem alterar funcionalidade para modelos sklearn. (2) <strong>Ordem de COPY:</strong> <code>COPY . .</code> antes do <code>pip install</code> invalida o cache da camada de dependências toda vez que qualquer arquivo do projeto muda — mesmo um comentário. A correção é: <code>COPY requirements.txt .</code> → <code>RUN pip install</code> → <code>COPY src/ .</code>. O <code>USER root</code> é também um problema de segurança (deveria ser um usuário sem privilégios), mas não foi listado nas opções — A ainda é a resposta mais completa.</p>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="questao-num">Questão 3 · Evidently + Prometheus (Bloco P2)</div>
+      <p class="questao-enunciado">Um time de MLOps usa Evidently para monitoramento de drift diário e Prometheus + Grafana para métricas em tempo real. Qual é a diferença fundamental entre o que cada ferramenta monitora?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O Evidently monitora métricas de infraestrutura (CPU, memória, latência); o Prometheus monitora qualidade dos dados do modelo</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O Evidently monitora a distribuição dos dados de entrada/saída do modelo (data drift, concept drift) com comparação de períodos; o Prometheus monitora métricas de sistema em tempo real (latência, throughput, erros)</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">São ferramentas equivalentes — podem ser substituídas uma pela outra sem perda de funcionalidade</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O Prometheus é mais adequado para drift porque coleta dados continuamente; o Evidently é apenas para relatórios históricos sem valor operacional</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>São ferramentas complementares, não substitutas. O <strong>Evidently</strong> compara distribuições estatísticas entre dois períodos (treino vs produção, semana passada vs esta semana) usando testes como KS, PSI e chi-quadrado — responde "os dados estão mudando?". O <strong>Prometheus</strong> coleta métricas numéricas em tempo real — responde "a API está saudável agora?". Em uma stack madura, ambas coexistem: Prometheus alerta se a API caiu ou a latência disparou; Evidently alerta se o modelo está recebendo dados fora da distribuição de treino. A integração ideal é exportar métricas de PSI do Evidently para o Prometheus, permitindo visualizar drift no mesmo Grafana que mostra latência.</p>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="questao-num">Questão 4 · Kubernetes + Celery (Bloco P3)</div>
+      <p class="questao-enunciado">Uma empresa tem dois casos de uso: (1) clientes fazem predições individuais em tempo real via frontend, esperando resposta em &lt;200ms; (2) analistas fazem uploads de CSVs com 200k registros para scoring semanal. Qual arquitetura atende melhor os dois casos simultaneamente?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">FastAPI síncrona para ambos — o endpoint de batch deve ter timeout aumentado para 10 minutos</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">FastAPI síncrona para predições em tempo real (caso 1); FastAPI + Celery assíncrono para scoring em lote (caso 2), com filas separadas e workers dedicados para cada tipo de carga</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Kafka para ambos os casos — o Kafka resolve tanto tempo real quanto lote com o mesmo consumer</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">BentoML com batching dinâmico para ambos — o max_latency_ms pode ser ajustado para acomodar os dois perfis</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Esta é a arquitetura híbrida correta. Para predições em tempo real (&lt;200ms), o FastAPI síncrono é ideal — sem overhead de fila. Para scoring em lote de 200k registros, o Celery assíncrono evita bloquear a API durante o processamento longo: o analista recebe um task_id imediatamente e consulta o status depois. Filas separadas (realtime e batch) garantem que jobs pesados não atrapalham a fila de predições rápidas — workers dedicados para cada fila. No Kubernetes, os workers Celery podem ter HPA separado do FastAPI, escalando apenas quando há jobs de batch na fila.</p>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="questao-num">Questão 5 · SHAP + Auditoria (Bloco P3)</div>
+      <p class="questao-enunciado">Um banco usa um modelo de crédito e precisa atender ao Art. 20 da LGPD (direito à explicação de decisões automatizadas). Um cliente teve crédito negado. Qual implementação atende corretamente ao requisito legal?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Informar ao cliente a probabilidade retornada pelo modelo (ex: 0.78) e os pesos globais das features do modelo</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Usar SHAP local para calcular a contribuição de cada feature para a predição específica deste cliente e apresentar as top-3 razões da negativa ("alto número de dívidas abertas", "histórico de crédito baixo")</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Apresentar o código-fonte do modelo para que o cliente possa verificar como a decisão foi tomada</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Enviar um e-mail genérico explicando que o modelo usa diversas variáveis financeiras para calcular o risco</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>A LGPD exige explicação da decisão automatizada específica para aquele indivíduo — não uma explicação genérica do modelo. O SHAP global (importância média das features) não satisfaz esse requisito porque descreve o comportamento médio do modelo, não por que este cliente específico foi negado. O SHAP local calcula a contribuição de cada feature para esta predição individual — é exatamente o que o Art. 20 pede. O endpoint <code>/explain</code> que construímos na Semana 17 implementa isso: recebe os dados do cliente, retorna os valores SHAP locais com direção (aumenta/reduz risco) e pode ser traduzido em linguagem natural para o cliente.</p>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="questao-num">Questão 6 · Kafka + Model Registry (Integração)</div>
+      <p class="questao-enunciado">Uma equipe quer atualizar o modelo de detecção de fraude rodando em um consumer Kafka sem interromper o fluxo de eventos. O modelo atual está em produção no MLflow Registry como versão 3. A nova versão 4 foi treinada e está em Staging. Qual a sequência correta?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Parar o consumer Kafka, atualizar o código para carregar a versão 4, restartar — causando janela de indisponibilidade</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Promover versão 4 para Production no Registry (com archive_existing_versions=True) → restartar o consumer graciosamente → o consumer carrega automaticamente models:/fraude/Production que agora aponta para v4 → versão 3 arquivada automaticamente</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Publicar um evento especial no tópico Kafka com instrução para os consumers recarregarem o modelo</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Criar um novo tópico Kafka e redirecionar o producer — o consumer antigo continua com o modelo v3 no tópico original</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Esta questão conecta o MLflow Registry (Semana 5) com o consumer Kafka (Semana 18). A URI <code>models:/fraude/Production</code> é dinâmica — sempre aponta para a versão atualmente em Production. Com <code>archive_existing_versions=True</code>, a v3 é arquivada automaticamente quando a v4 é promovida. O consumer precisa ser restartado para recarregar o modelo (o carregamento ocorre na inicialização). Em um ambiente Kubernetes, isso seria feito com <code>kubectl rollout restart deployment/consumer-fraude</code> que faz rolling restart dos pods — zero downtime se houver múltiplas réplicas. A opção A causa downtime desnecessário; a C não existe como mecanismo do Kafka; a D cria complexidade sem necessidade.</p>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="questao-num">Questão 7 · Integração Completa — Diagnóstico de Produção</div>
+      <p class="questao-enunciado">Um sistema de ML em produção apresenta: (1) Grafana mostra aumento gradual de latência P95 nas últimas 2 semanas; (2) Evidently reporta PSI = 0.23 na feature "valor_transacao"; (3) a acurácia do modelo caiu de 0.92 para 0.87; (4) nenhum alerta de infraestrutura disparou. Qual diagnóstico e ação são mais adequados?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Problema de infraestrutura — escalar horizontalmente os pods no Kubernetes para reduzir a latência</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Data drift confirmado (PSI 0.23 &gt; 0.2 = significativo) causando degradação do modelo. Ação: retreinar com dados recentes, promover no Registry e fazer rolling update. Investigar também se a mudança em valor_transacao é seasonal (temporária) ou estrutural (permanente)</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">A queda de acurácia é normal e esperada — reavaliar o threshold de alerta para 0.80</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Problema no Prometheus — o aumento de latência é artefato da coleta de métricas, não real</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Diagnóstico claro integrando três semanas: o PSI &gt; 0.2 (limiar de drift significativo da Semana 11) confirma que a distribuição de <code>valor_transacao</code> mudou substancialmente. Isso explica a queda de acurácia (o modelo foi treinado numa distribuição diferente da que está recebendo em produção) e pode explicar o aumento de latência (inputs anômalos podem estar causando lentidão em camadas de validação). A ação correta é retreinar com dados recentes, validar no MLflow, promover no Registry (Semana 5) e fazer rolling update no Kubernetes (Semana 14). A investigação seasonal/estrutural é importante: se for sazonalidade (ex: Black Friday), pode não ser necessário retreinar — apenas monitorar. Se for mudança estrutural, o retreinamento é obrigatório.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Instruções Finais</span></div>
+
+  <!-- AULA 3: Instruções segunda chamada -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · Encerramento</div>
+        <div class="secao-titulo">Instruções da Segunda Chamada e Encerramento da Disciplina</div>
+      </div>
+    </div>
+
+    <div class="instrucoes-grid">
+      <div class="instrucao-card">
+        <h4><i class="fas fa-file-alt"></i>Formato da segunda chamada</h4>
+        <ul>
+          <li>10 questões mistas (mais amplo que as provas regulares)</li>
+          <li>Duração: 120 minutos</li>
+          <li>Folha de cola A5 manuscrita (frente e verso)</li>
+          <li>Cobre todo o semestre — Semanas 1 a 19</li>
+          <li>Questões transversais (conectam múltiplos blocos)</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-lightbulb"></i>Estratégia para a folha de cola</h4>
+        <ul>
+          <li>Priorize limiares e valores numéricos (PSI 0.1/0.2)</li>
+          <li>Códigos HTTP: 401/422/429/503 — quando cada um</li>
+          <li>Comandos kubectl essenciais e flags do Dockerfile</li>
+          <li>Diferença Kafka vs RabbitMQ em uma frase</li>
+          <li>Fluxo SHAP: base_value + Σshap = predição</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-check-square"></i>Apresentação de Projeto pendente</h4>
+        <ul>
+          <li>Mesma rubrica da Semana 19 (100 pontos)</li>
+          <li>10 minutos de apresentação + 5 de perguntas</li>
+          <li>Demo ao vivo obrigatória — sem slides apenas</li>
+          <li>Repositório Git deve estar acessível antes de começar</li>
+          <li>docker-compose up deve funcionar sem configuração manual</li>
+        </ul>
+      </div>
+      <div class="instrucao-card">
+        <h4><i class="fas fa-exclamation-triangle"></i>Atenção especial</h4>
+        <ul>
+          <li>Questões de código: leia linha a linha antes de responder</li>
+          <li>Questões de diagnóstico: identifique TODOS os sintomas antes de escolher</li>
+          <li>Não confunda Evidently (drift de dados) com Prometheus (métricas de infra)</li>
+          <li>Não confunda Kafka (stream) com Celery (tarefas assíncronas)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Composição final da nota — resumo</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Avaliação</th><th>Conteúdo</th><th>Peso</th><th>Semanas</th></tr></thead>
+          <tbody>
+            <tr><td><strong>P1</strong></td><td>Fundamentos: DVC, MLflow Tracking, Registry</td><td>20%</td><td>1–5</td></tr>
+            <tr><td><strong>P2</strong></td><td>Produção: Pipelines, Docker, FastAPI, BentoML, Evidently, Prometheus</td><td>35%</td><td>7–12</td></tr>
+            <tr><td><strong>P3</strong></td><td>Escala: Kubernetes, Celery, JWT, SHAP, Kafka</td><td>25%</td><td>14–18</td></tr>
+            <tr><td><strong>Projeto</strong></td><td>Pipeline MLOps end-to-end com ≥6 componentes</td><td>20%</td><td>Todo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:.8rem;color:var(--text-muted);margin-top:.5rem;">A segunda chamada substitui a nota da prova faltante com o mesmo peso. Média final ≥ 5.0 para aprovação.</p>
+    </div>
+
+    <div class="fim-box">
+      <h2>🏁 Fim do semestre — parabéns!</h2>
+      <p>Você percorreu 20 semanas construindo uma stack completa de MLOps: versionamento, rastreamento, empacotamento, serving, monitoramento, escala, segurança e explicabilidade. Essas são as habilidades que o mercado procura em engenheiros de ML em 2025 e além. Boa prova e boa sorte!</p>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function toggle(el){
+  el.classList.toggle('checked');
+  atualizarProgresso();
+}
+function atualizarProgresso(){
+  const total   = document.querySelectorAll('.check-item').length;
+  const marcados = document.querySelectorAll('.check-item.checked').length;
+  const pct = Math.round((marcados/total)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = marcados+' / '+total;
+}
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+</script>
+</body>
+</html>

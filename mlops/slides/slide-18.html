@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 18 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* mapa revisão */
+.revisao-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.rev-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1rem;}
+.rev-card h4{font-size:.75rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;display:flex;align-items:center;gap:7px;}
+.rev-card ul{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.rev-card ul li{font-size:.78rem;color:var(--text-muted);padding-left:12px;position:relative;line-height:1.4;}
+.rev-card ul li::before{content:'▸';position:absolute;left:0;color:var(--purple-500);font-size:.62rem;top:3px;}
+
+/* kafka flow */
+.kafka-flow{display:flex;align-items:center;gap:0;margin:1rem 0;overflow-x:auto;}
+.kf-node{min-width:120px;padding:.8rem .9rem;border-radius:10px;text-align:center;flex-shrink:0;}
+.kf-node h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.25rem;}
+.kf-node p{font-size:.7rem;color:var(--text-muted);line-height:1.35;}
+.kf-arrow{color:var(--purple-500);font-size:1.1rem;padding:0 .4rem;flex-shrink:0;}
+.kf-producer{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.18);}
+.kf-producer h4{color:#60a5fa;}
+.kf-kafka{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);}
+.kf-kafka h4{color:#fbbf24;}
+.kf-consumer{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.18);}
+.kf-consumer h4{color:var(--purple-400);}
+.kf-store{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);}
+.kf-store h4{color:#34d399;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:#f87171;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.revisao-grid{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .kafka-flow{flex-direction:column;align-items:flex-start;}
+  .kf-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">18</div>
+    <h1 class="capa-titulo">Revisão Geral<br>e <em>Event-Driven ML</em><br>com Kafka</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Consolidar a jornada e expandir para eventos em tempo real</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-map"></i></div><span>Mapa da disciplina — arquitetura completa de MLOps revisitada</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Event-driven ML — por que Kafka vai além do Celery</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>Producer e Consumer Kafka com inferência em tempo real</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Integração da stack completa — do evento à predição ao alerta</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Final desta semana</div>
+      <p>Construir um consumer Kafka que lê eventos de transações, executa inferência de fraude em tempo real e publica resultados em outro tópico.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-road"></i>O que esta semana representa</div>
+      <ul class="info-lista">
+        <li>Semana de consolidação — integrar tudo que foi visto</li>
+        <li>Kafka como peça final da stack de produção moderna</li>
+        <li>Preparação para o Projeto Final (Semana 19)</li>
+        <li>Revisão dos conceitos mais cobrados na P3</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Celery vs Kafka — a diferença fundamental</div>
+      <ul class="info-lista">
+        <li>Celery: fila de tarefas — trabalho assíncrono, resultado esperado</li>
+        <li>Kafka: stream de eventos — fluxo contínuo, sem fim, pub/sub</li>
+        <li>Celery: um produtor, um worker consome cada mensagem</li>
+        <li>Kafka: um evento pode ser consumido por múltiplos grupos independentes</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install kafka-python confluent-kafka</code></li>
+        <li>Kafka via Docker: imagem bitnami/kafka (inclui ZooKeeper/KRaft)</li>
+        <li>Modelo de detecção de fraude (ou qualquer modelo classificador)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-17-mlops.html"><i class="fas fa-arrow-left"></i> Semana 17 — SHAP e Explicabilidade</a>
+
+  <!-- AULA 1: Revisão geral da disciplina -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Mapa Completo da Disciplina — Arquitetura de MLOps Revisitada</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>A jornada das 18 semanas — tudo conectado</div>
+      <p>Cada semana desta disciplina construiu uma peça de uma arquitetura real de MLOps. Antes de avançar para Kafka, vale enxergar o todo e entender como cada componente se relaciona.</p>
+
+      <div class="revisao-grid">
+        <div class="rev-card">
+          <h4><i class="fas fa-seedling"></i>Fundamentos (Sem 1–3)</h4>
+          <ul>
+            <li>Ciclo de vida do ML — as 4 fases</li>
+            <li>Reprodutibilidade: venv, Docker, requirements</li>
+            <li>DVC: versionar dados e pipelines</li>
+            <li>Git semântico para projetos ML</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-vial"></i>Experimentos (Sem 4–6)</h4>
+          <ul>
+            <li>MLflow Tracking: log_param, log_metric</li>
+            <li>Model Registry: estágios de produção</li>
+            <li>Avaliação P1 — semanas 1 a 5</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-project-diagram"></i>Pipelines (Sem 7)</h4>
+          <ul>
+            <li>MLflow Pipelines: pipeline.yaml + steps</li>
+            <li>Cache inteligente por etapa</li>
+            <li>Metaflow: @step, foreach, join</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-ship"></i>Empacotamento (Sem 8)</h4>
+          <ul>
+            <li>Layers Docker e cache de build</li>
+            <li>Multi-stage build (builder → slim)</li>
+            <li>docker-compose para dev local</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-bolt"></i>Serving (Sem 9–10)</h4>
+          <ul>
+            <li>FastAPI: Pydantic, endpoints, /docs</li>
+            <li>BentoML: runner, batching dinâmico</li>
+            <li>Triton: GPU, multi-modelo</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-eye"></i>Monitoramento (Sem 11–12)</h4>
+          <ul>
+            <li>Evidently: drift, TestSuites</li>
+            <li>Prometheus: Counter, Gauge, Histogram</li>
+            <li>Grafana: dashboards e alertas</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-cloud"></i>Infraestrutura (Sem 14)</h4>
+          <ul>
+            <li>Kubernetes: Deployment, Service, HPA</li>
+            <li>Rolling update sem downtime</li>
+            <li>readinessProbe + livenessProbe</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-cogs"></i>Async + Segurança (Sem 15–16)</h4>
+          <ul>
+            <li>Celery + RabbitMQ: task queues</li>
+            <li>JWT: autenticação stateless</li>
+            <li>Rate limiting + auditoria</li>
+          </ul>
+        </div>
+        <div class="rev-card">
+          <h4><i class="fas fa-balance-scale"></i>Governança (Sem 17)</h4>
+          <ul>
+            <li>SHAP: global e local</li>
+            <li>LIME: aproximação linear local</li>
+            <li>Endpoint /explain + relatório</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>A arquitetura de MLOps completa</div>
+      <p>Esta é a visão integrada de tudo que construímos — cada componente tem seu lugar e se comunica com os outros:</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Camada</th><th>Componente</th><th>Ferramenta</th><th>Semana</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dados</strong></td><td>Versionamento de datasets</td><td>DVC + S3/GCS</td><td>3</td></tr>
+            <tr><td><strong>Experimentos</strong></td><td>Tracking e Registry</td><td>MLflow</td><td>4–5</td></tr>
+            <tr><td><strong>Pipelines</strong></td><td>Orquestração reproduzível</td><td>MLflow Pipelines / Metaflow</td><td>7</td></tr>
+            <tr><td><strong>Empacotamento</strong></td><td>Container de inferência</td><td>Docker + BentoML</td><td>8, 10</td></tr>
+            <tr><td><strong>Serving Síncrono</strong></td><td>API REST de predição</td><td>FastAPI + Uvicorn</td><td>9</td></tr>
+            <tr><td><strong>Serving Assíncrono</strong></td><td>Fila de tarefas longas</td><td>Celery + RabbitMQ</td><td>15</td></tr>
+            <tr><td><strong>Serving em Streaming</strong></td><td>Inferência em tempo real</td><td>Kafka + Consumer</td><td>18</td></tr>
+            <tr><td><strong>Monitoramento</strong></td><td>Métricas e alertas</td><td>Prometheus + Grafana</td><td>12</td></tr>
+            <tr><td><strong>Drift</strong></td><td>Qualidade dos dados</td><td>Evidently AI</td><td>11</td></tr>
+            <tr><td><strong>Escala</strong></td><td>Orquestração de containers</td><td>Kubernetes + HPA</td><td>14</td></tr>
+            <tr><td><strong>Segurança</strong></td><td>Auth + rate limiting</td><td>JWT + SlowAPI</td><td>16</td></tr>
+            <tr><td><strong>Explicabilidade</strong></td><td>Justificativa de predições</td><td>SHAP + LIME</td><td>17</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Kafka</span></div>
+
+  <!-- AULA 2: Kafka conceitos + produtor/consumidor -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Apache Kafka — Event Streaming para ML em Tempo Real</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>O que é Kafka e por que vai além do Celery</div>
+      <p>O Apache Kafka é uma plataforma de <strong>streaming de eventos</strong> distribuída. Diferente do RabbitMQ (fila de mensagens), o Kafka é um <strong>log distribuído e imutável</strong>: os eventos são persistidos por um período configurável e qualquer número de consumidores pode ler o mesmo evento de forma independente.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>RabbitMQ / Celery:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span>Mensagem é consumida por um worker e removida</span></li>
+            <li><i class="fas fa-check"></i><span>Ideal para tarefas com começo e fim</span></li>
+            <li><i class="fas fa-check"></i><span>Resultado é armazenado e buscado pelo cliente</span></li>
+            <li><i class="fas fa-times"></i><span>Não suporta reprocessamento de histórico</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Kafka:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span>Evento persiste no log por dias/semanas</span></li>
+            <li><i class="fas fa-check"></i><span>Múltiplos consumer groups leem o mesmo evento</span></li>
+            <li><i class="fas fa-check"></i><span>Ideal para fluxos contínuos de dados</span></li>
+            <li><i class="fas fa-check"></i><span>Reprocessamento histórico a qualquer momento</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Caso de uso paradigmático em ML:</strong> detecção de fraude em transações bancárias. Cada transação é um evento publicado no tópico <code>transacoes</code>. Três consumer groups diferentes consomem o mesmo evento: (1) consumer de detecção de fraude ML, (2) consumer de auditoria/logging, (3) consumer de notificação ao cliente. Cada um processa de forma independente, sem que um afete o outro.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Conceitos fundamentais do Kafka</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito</th><th>Definição</th><th>Analogia</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Topic</strong></td><td>Canal nomeado onde eventos são publicados</td><td>Canal de TV — você assina e recebe tudo que passa</td></tr>
+            <tr><td><strong>Partition</strong></td><td>Subdivisão do tópico para paralelismo</td><td>Faixas numa rodovia — mais faixas, mais carros simultâneos</td></tr>
+            <tr><td><strong>Offset</strong></td><td>Posição do evento dentro da partição</td><td>Número de página — você sabe onde parou de ler</td></tr>
+            <tr><td><strong>Producer</strong></td><td>Publica eventos no tópico</td><td>Transmissora de TV</td></tr>
+            <tr><td><strong>Consumer</strong></td><td>Lê eventos de um tópico</td><td>Telespectador</td></tr>
+            <tr><td><strong>Consumer Group</strong></td><td>Grupo de consumers que divide as partições</td><td>Família dividindo a TV em salas diferentes</td></tr>
+            <tr><td><strong>Broker</strong></td><td>Servidor Kafka que armazena eventos</td><td>Emissora de TV — guarda e distribui os programas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Arquitetura do pipeline de inferência com Kafka</div>
+
+      <div class="kafka-flow">
+        <div class="kf-node kf-producer">
+          <h4><i class="fas fa-mobile-alt"></i> App / API</h4>
+          <p>Publica evento de transação no tópico</p>
+        </div>
+        <div class="kf-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="kf-node kf-kafka">
+          <h4><i class="fas fa-stream"></i> Kafka</h4>
+          <p>Tópico: transacoes<br>Persiste eventos</p>
+        </div>
+        <div class="kf-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="kf-node kf-consumer">
+          <h4><i class="fas fa-brain"></i> ML Consumer</h4>
+          <p>Lê evento, executa modelo, publica resultado</p>
+        </div>
+        <div class="kf-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="kf-node kf-kafka">
+          <h4><i class="fas fa-stream"></i> Kafka</h4>
+          <p>Tópico: predicoes-fraude</p>
+        </div>
+        <div class="kf-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="kf-node kf-store">
+          <h4><i class="fas fa-bell"></i> Alert Consumer</h4>
+          <p>Lê predições e dispara alertas</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">docker-compose.yml — Kafka com KRaft (sem ZooKeeper)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>services:
+  kafka:
+    image: bitnami/kafka:<span class="num">3.7</span>
+    ports:
+      - <span class="str">"9092:9092"</span>
+    environment:
+      - KAFKA_CFG_NODE_ID=<span class="num">0</span>
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - ALLOW_PLAINTEXT_LISTENER=yes</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Código + Prática</span></div>
+
+  <!-- AULA 3: Producer + Consumer ML + Prática -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Producer, Consumer ML e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Producer — publicar eventos de transação</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — producer.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> json, time, random
+<span class="kw">from</span> kafka <span class="kw">import</span> KafkaProducer
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+producer = KafkaProducer(
+    bootstrap_servers=[<span class="str">"localhost:9092"</span>],
+    value_serializer=<span class="kw">lambda</span> v: json.dumps(v).encode(<span class="str">"utf-8"</span>),
+    key_serializer=<span class="str">lambda</span> k: k.encode(<span class="str">"utf-8"</span>)
+)
+
+<span class="kw">def</span> <span class="fn">gerar_transacao</span>():
+    <span class="kw">return</span> {
+        <span class="str">"transaction_id"</span>: <span class="fn">f</span><span class="str">"TXN-{random.randint(10000,99999)}"</span>,
+        <span class="str">"cliente_id"</span>    : <span class="fn">f</span><span class="str">"CLT-{random.randint(1000,9999)}"</span>,
+        <span class="str">"valor"</span>         : <span class="fn">round</span>(random.uniform(<span class="num">10</span>, <span class="num">5000</span>), <span class="num">2</span>),
+        <span class="str">"hora"</span>          : datetime.now().hour,
+        <span class="str">"pais_destino"</span>  : random.choice([<span class="str">"BR"</span>, <span class="str">"US"</span>, <span class="str">"NG"</span>, <span class="str">"RU"</span>]),
+        <span class="str">"tentativas"</span>    : random.randint(<span class="num">1</span>, <span class="num">5</span>),
+        <span class="str">"timestamp"</span>     : datetime.now().isoformat()
+    }
+
+<span class="fn">print</span>(<span class="str">"Publicando transações no tópico 'transacoes'..."</span>)
+<span class="kw">try</span>:
+    <span class="kw">while</span> <span class="kw">True</span>:
+        txn = gerar_transacao()
+        producer.send(
+            topic=<span class="str">"transacoes"</span>,
+            key=txn[<span class="str">"transaction_id"</span>],
+            value=txn
+        )
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Publicado: {txn['transaction_id']} — R$ {txn['valor']}"</span>)
+        time.sleep(<span class="num">0.5</span>)
+<span class="kw">except</span> KeyboardInterrupt:
+    producer.flush()
+    <span class="fn">print</span>(<span class="str">"Producer encerrado."</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Consumer ML — inferência em tempo real</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — consumer_ml.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> json, pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> kafka <span class="kw">import</span> KafkaConsumer, KafkaProducer
+
+<span class="cm"># Carregar modelo uma vez</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    MODEL = pickle.load(f)
+
+consumer = KafkaConsumer(
+    <span class="str">"transacoes"</span>,
+    bootstrap_servers=[<span class="str">"localhost:9092"</span>],
+    group_id=<span class="str">"ml-fraude-grupo"</span>,
+    value_deserializer=<span class="kw">lambda</span> m: json.loads(m.decode(<span class="str">"utf-8"</span>)),
+    auto_offset_reset=<span class="str">"latest"</span>     <span class="cm"># processar apenas novos eventos</span>
+)
+
+producer = KafkaProducer(
+    bootstrap_servers=[<span class="str">"localhost:9092"</span>],
+    value_serializer=<span class="kw">lambda</span> v: json.dumps(v).encode(<span class="str">"utf-8"</span>)
+)
+
+<span class="kw">def</span> <span class="fn">extrair_features</span>(txn: dict) -> np.ndarray:
+    <span class="cm">"""Transforma o evento em features para o modelo."""</span>
+    paises_risco = {<span class="str">"BR"</span>: <span class="num">0</span>, <span class="str">"US"</span>: <span class="num">0</span>, <span class="str">"NG"</span>: <span class="num">1</span>, <span class="str">"RU"</span>: <span class="num">1</span>}
+    <span class="kw">return</span> np.array([[
+        txn[<span class="str">"valor"</span>],
+        txn[<span class="str">"hora"</span>],
+        paises_risco.get(txn[<span class="str">"pais_destino"</span>], <span class="num">0</span>),
+        txn[<span class="str">"tentativas"</span>],
+    ]])
+
+<span class="fn">print</span>(<span class="str">"Consumer ML iniciado. Aguardando eventos..."</span>)
+
+<span class="kw">for</span> msg <span class="kw">in</span> consumer:
+    txn   = msg.value
+    X     = extrair_features(txn)
+    pred  = <span class="fn">int</span>(MODEL.predict(X)[<span class="num">0</span>])
+    proba = <span class="fn">float</span>(MODEL.predict_proba(X)[<span class="num">0</span>][<span class="num">1</span>])
+
+    resultado = {
+        <span class="str">"transaction_id"</span>: txn[<span class="str">"transaction_id"</span>],
+        <span class="str">"cliente_id"</span>    : txn[<span class="str">"cliente_id"</span>],
+        <span class="str">"fraude"</span>        : <span class="fn">bool</span>(pred),
+        <span class="str">"probabilidade"</span> : <span class="fn">round</span>(proba, <span class="num">4</span>),
+        <span class="str">"alerta"</span>        : proba > <span class="num">0.80</span>
+    }
+
+    <span class="cm"># Publicar resultado no tópico de predições</span>
+    producer.send(<span class="str">"predicoes-fraude"</span>, value=resultado)
+
+    <span class="kw">if</span> resultado[<span class="str">"alerta"</span>]:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"🚨 ALERTA: {txn['transaction_id']} — fraude {proba:.1%}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"✅ OK: {txn['transaction_id']} — {proba:.1%}"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — criar tópicos e rodar o pipeline</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Subir Kafka</span>
+docker compose up -d kafka
+
+<span class="cm"># Criar tópicos</span>
+docker exec -it &lt;container_id&gt; kafka-topics.sh \
+  --bootstrap-server localhost:9092 --create \
+  --topic transacoes --partitions 3 --replication-factor 1
+
+docker exec -it &lt;container_id&gt; kafka-topics.sh \
+  --bootstrap-server localhost:9092 --create \
+  --topic predicoes-fraude --partitions 1 --replication-factor 1
+
+<span class="cm"># Terminal 1: iniciar consumer ML</span>
+python consumer_ml.py
+
+<span class="cm"># Terminal 2: iniciar producer</span>
+python producer.py
+
+<span class="cm"># Terminal 3: monitorar predições (consumer simples)</span>
+python -c "
+from kafka import KafkaConsumer; import json
+c = KafkaConsumer('predicoes-fraude', bootstrap_servers=['localhost:9092'],
+    value_deserializer=lambda m: json.loads(m))
+for msg in c: print(msg.value)
+"</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Pipeline Event-Driven de Fraude</div>
+        <div class="secao-titulo">Producer → Kafka → Consumer ML → Alertas em tempo real</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Esta atividade integra o que foi visto no semestre: o modelo treinado com MLflow (Sem 4–5) é servido por um consumer Kafka, com monitoramento de predições (Sem 12) e explicações SHAP para alertas (Sem 17).</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Subir Kafka e criar tópicos</div>
+      <p>Use o <code>docker-compose.yml</code> da aula para subir o Kafka. Crie os tópicos <code>transacoes</code> (3 partições) e <code>predicoes-fraude</code> (1 partição). Confirme que os tópicos existem listando com <code>kafka-topics.sh --list</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>docker compose up -d kafka
+CID=$(docker ps -qf <span class="str">"name=kafka"</span>)
+
+docker exec $CID kafka-topics.sh \
+  --bootstrap-server localhost:9092 --create \
+  --topic transacoes --partitions <span class="num">3</span> --replication-factor <span class="num">1</span>
+
+docker exec $CID kafka-topics.sh \
+  --bootstrap-server localhost:9092 --create \
+  --topic predicoes-fraude --partitions <span class="num">1</span> --replication-factor <span class="num">1</span>
+
+docker exec $CID kafka-topics.sh \
+  --bootstrap-server localhost:9092 --list</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Implementar o producer de transações</div>
+      <p>Crie o <code>producer.py</code> que gera transações aleatórias e publica no tópico <code>transacoes</code> a cada 500ms. Execute e confirme no terminal que eventos estão sendo publicados. Em outro terminal, consuma manualmente o tópico para ver os eventos chegando.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Implementar o consumer ML de inferência</div>
+      <p>Crie o <code>consumer_ml.py</code> que consome o tópico <code>transacoes</code>, extrai as features, chama o modelo e publica o resultado em <code>predicoes-fraude</code>. Execute simultaneamente com o producer e observe os alertas no console quando a probabilidade de fraude for superior a 80%.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Segundo consumer group: auditoria</div>
+      <p>Crie um segundo consumer (<code>consumer_auditoria.py</code>) que também lê o tópico <code>transacoes</code> mas com <code>group_id="auditoria-grupo"</code>. Este consumer não faz inferência — apenas salva cada evento em <code>logs/transacoes.jsonl</code>. Execute os dois consumers simultaneamente e confirme que ambos recebem os mesmos eventos (o Kafka entrega para grupos diferentes de forma independente).</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — consumer_auditoria.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> json, os
+<span class="kw">from</span> kafka <span class="kw">import</span> KafkaConsumer
+
+os.makedirs(<span class="str">"logs"</span>, exist_ok=<span class="kw">True</span>)
+consumer = KafkaConsumer(
+    <span class="str">"transacoes"</span>,
+    bootstrap_servers=[<span class="str">"localhost:9092"</span>],
+    group_id=<span class="str">"auditoria-grupo"</span>,   <span class="cm"># group diferente!</span>
+    value_deserializer=<span class="kw">lambda</span> m: json.loads(m.decode())
+)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"logs/transacoes.jsonl"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> msg <span class="kw">in</span> consumer:
+        f.write(json.dumps(msg.value) + <span class="str">"\n"</span>)
+        f.flush()
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Auditoria: {msg.value['transaction_id']}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: adicionar SHAP ao consumer de alertas</div>
+      <p>Crie um terceiro consumer que lê <code>predicoes-fraude</code> e, para qualquer transação com <code>alerta: true</code>, busca o evento original (pelo transaction_id), calcula os valores SHAP e imprime as 3 principais features que contribuíram para o score de fraude. Integração completa: Kafka + inferência + explicabilidade em tempo real.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> dois consumer groups rodando simultaneamente consumindo o mesmo tópico. O consumer ML publica predições em <code>predicoes-fraude</code>. O consumer de auditoria grava eventos em <code>logs/transacoes.jsonl</code>. Alertas aparecem no terminal quando proba &gt; 80%.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 18</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-map"></i>
+        <strong>Revisão Geral</strong>
+        <p>12 camadas da arquitetura MLOps integradas — de DVC ao Kafka. Cada ferramenta tem seu lugar e propósito. A stack completa é construída incrementalmente</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-stream"></i>
+        <strong>Kafka</strong>
+        <p>Log distribuído imutável. Consumer groups independentes consomem o mesmo evento. Topics + partitions + offsets. Ideal para fluxos contínuos e reprocessamento</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Inferência em Streaming</strong>
+        <p>Consumer ML carrega modelo uma vez e processa eventos em loop. Publica resultados em outro tópico. Múltiplos consumers (ML, auditoria, alertas) em paralelo</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-19-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana — Avaliação Final</div>
+        <div class="proxima-titulo">Semana 19 — Prova Final P3 e Apresentação do Projeto</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

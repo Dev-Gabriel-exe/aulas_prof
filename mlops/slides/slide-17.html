@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 17 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* shap bar chart simulado */
+.shap-chart{margin:.75rem 0;}
+.shap-row{display:flex;align-items:center;gap:10px;margin-bottom:.4rem;}
+.shap-label{font-size:.78rem;color:var(--text-secondary);width:160px;flex-shrink:0;text-align:right;}
+.shap-bar-wrap{flex:1;height:20px;position:relative;display:flex;align-items:center;}
+.shap-center{position:absolute;left:50%;width:1px;height:100%;background:rgba(255,255,255,.15);}
+.shap-bar{height:14px;border-radius:3px;position:absolute;}
+.shap-pos{background:rgba(239,68,68,.7);right:50%;}
+.shap-neg{background:rgba(96,165,250,.7);left:50%;}
+.shap-val{font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--text-muted);width:55px;flex-shrink:0;}
+
+/* comp table */
+.comp-row td:first-child{color:var(--text-primary);font-weight:500;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">17</div>
+    <h1 class="capa-titulo">Governança e<br><em>Explicabilidade</em><br>com SHAP e LIME</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Entender e justificar o que o modelo decide</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Governança de ML — regulamentação, viés e responsabilidade</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-bar"></i></div><span>SHAP — valores Shapley e importância de features global/local</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-flask"></i></div><span>LIME — explicações locais por aproximação linear</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>Integrando explicações na API — endpoint /explain</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: relatório de explicabilidade para auditoria regulatória</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Gerar explicações SHAP para predições individuais e globais, e adicionar o endpoint <code>/explain</code> à API FastAPI que retorna importância de features por predição.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-gavel"></i>Por que explicabilidade importa em produção</div>
+      <ul class="info-lista">
+        <li>LGPD Art. 20: direito à revisão de decisões automatizadas</li>
+        <li>GDPR "Right to Explanation": modelos em crédito e saúde precisam explicar</li>
+        <li>Auditoria interna: detectar viés racial, de gênero ou socioeconômico</li>
+        <li>Debug de modelo: entender por que uma predição específica falhou</li>
+        <li>Confiança do usuário: médicos e analistas aceitam mais o modelo quando entendem</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 5: MLflow Registry — versionar modelo com métricas de equidade</li>
+        <li>Sem. 9: FastAPI — adicionar endpoint /explain</li>
+        <li>Sem. 11: Evidently — drift de feature importance ao longo do tempo</li>
+        <li>Sem. 16: Auditoria — logar explicações para compliance</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install shap lime matplotlib</code></li>
+        <li>Modelo treinado (sklearn preferencial)</li>
+        <li>Dataset de referência (X_train) disponível</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-16-mlops.html"><i class="fas fa-arrow-left"></i> Semana 16 — Segurança JWT e Rate Limiting</a>
+
+  <!-- AULA 1: Governança + SHAP global -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Governança de ML e SHAP — Explicações Globais</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Governança de ML — o contexto regulatório</div>
+      <p>Governança de ML é o conjunto de práticas, políticas e ferramentas para garantir que modelos sejam desenvolvidos e operados de forma responsável, transparente e auditável. Deixou de ser opcional: regulamentações já exigem explicações de decisões automatizadas em diversos setores.</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Contexto</th><th>Obrigação</th><th>Ferramenta</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Crédito / Finanças</strong></td><td>Explicar por que crédito foi negado (LGPD Art. 20, Fair Credit)</td><td>SHAP local por predição</td></tr>
+            <tr><td><strong>Saúde</strong></td><td>Justificar diagnóstico ou triagem para o médico responsável</td><td>LIME local + relatório</td></tr>
+            <tr><td><strong>RH / Contratação</strong></td><td>Demonstrar ausência de viés de gênero/raça nas decisões</td><td>SHAP global + análise de equidade</td></tr>
+            <tr><td><strong>Seguros</strong></td><td>Explicar cálculo de risco personalizado</td><td>SHAP global + local</td></tr>
+            <tr><td><strong>Setor Público</strong></td><td>Auditabilidade de decisões que afetam cidadãos</td><td>Documentação + MLflow</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-bar"></i>O que é SHAP — Shapley Additive Explanations</div>
+      <p>SHAP é baseado na teoria dos jogos cooperativos. A ideia central: cada feature é um "jogador" que contribui para o resultado final (a predição). O <strong>valor Shapley</strong> de cada feature é a sua contribuição marginal média considerando todas as possíveis combinações com as outras features.</p>
+      <p>Propriedades que fazem o SHAP ser o padrão ouro:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-check"></i><span><strong>Consistência:</strong> se uma feature contribui mais em dois modelos, seu valor SHAP será maior no modelo em que ela é mais importante.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Localidade + globalidade:</strong> SHAP explica predições individuais (local) E pode ser agregado para importância global do modelo.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Soma zero:</strong> a soma dos valores SHAP de todas as features mais o valor base (predição média) é exatamente igual à predição do modelo para aquela instância.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Model-agnostic (com ressalvas):</strong> funciona com qualquer modelo via KernelSHAP, mas é muito mais rápido com TreeSHAP para modelos baseados em árvores.</span></li>
+      </ul>
+
+      <!-- Barchart simulado de SHAP global -->
+      <div class="card-titulo" style="margin-top:1rem;"><i class="fas fa-chart-bar"></i>Importância global de features — SHAP mean |values|</div>
+      <div class="shap-chart">
+        <div class="shap-row"><span class="shap-label">historico_credito</span><div class="shap-bar-wrap"><div class="shap-center"></div><div class="shap-bar shap-neg" style="width:42%;"></div></div><span class="shap-val">-0.38</span></div>
+        <div class="shap-row"><span class="shap-label">renda_mensal</span><div class="shap-bar-wrap"><div class="shap-center"></div><div class="shap-bar shap-neg" style="width:35%;"></div></div><span class="shap-val">-0.31</span></div>
+        <div class="shap-row"><span class="shap-label">dividas_abertas</span><div class="shap-bar-wrap"><div class="shap-center"></div><div class="shap-bar shap-pos" style="width:28%;"></div></div><span class="shap-val">+0.25</span></div>
+        <div class="shap-row"><span class="shap-label">tempo_emprego</span><div class="shap-bar-wrap"><div class="shap-center"></div><div class="shap-bar shap-neg" style="width:20%;"></div></div><span class="shap-val">-0.18</span></div>
+        <div class="shap-row"><span class="shap-label">idade</span><div class="shap-bar-wrap"><div class="shap-center"></div><div class="shap-bar shap-neg" style="width:12%;"></div></div><span class="shap-val">-0.11</span></div>
+        <p style="font-size:.72rem;color:var(--text-muted);margin-top:.4rem;">Azul = contribui para reduzir churn | Vermelho = contribui para aumentar churn</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>SHAP na prática — explicações globais</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — shap_global.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> shap
+<span class="kw">import</span> pickle
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Carregar modelo e dados</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+X_treino = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>).drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+feature_names = X_treino.columns.tolist()
+
+<span class="cm"># TreeExplainer é otimizado para Random Forest, GBM, XGBoost</span>
+explainer = shap.TreeExplainer(model)
+
+<span class="cm"># Calcular valores SHAP para todo o conjunto de treino</span>
+shap_values = explainer.shap_values(X_treino)
+<span class="cm"># Para classificação binária: shap_values[1] = valores para classe 1</span>
+
+<span class="cm"># ── Gráfico 1: importância global (média dos |SHAP|) ──────────────</span>
+shap.summary_plot(
+    shap_values[<span class="num">1</span>], X_treino,
+    plot_type=<span class="str">"bar"</span>,
+    feature_names=feature_names,
+    show=<span class="kw">False</span>
+)
+plt.tight_layout()
+plt.savefig(<span class="str">"reports/shap_importancia_global.png"</span>, dpi=<span class="num">150</span>)
+plt.close()
+
+<span class="cm"># ── Gráfico 2: beeswarm — direção e magnitude dos valores SHAP ─────</span>
+shap.summary_plot(
+    shap_values[<span class="num">1</span>], X_treino,
+    feature_names=feature_names,
+    show=<span class="kw">False</span>
+)
+plt.tight_layout()
+plt.savefig(<span class="str">"reports/shap_beeswarm.png"</span>, dpi=<span class="num">150</span>)
+plt.close()
+
+<span class="fn">print</span>(<span class="str">"Relatórios SHAP salvos em reports/"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: SHAP local + LIME -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">SHAP Local — Explicar Predições Individuais — e LIME</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-user"></i>SHAP local — por que ESTA predição foi assim?</div>
+      <p>Enquanto o SHAP global responde "quais features são mais importantes para o modelo em geral?", o SHAP local responde "por que o modelo deu ESTA predição para ESTE cliente específico?". É o SHAP local que satisfaz o Art. 20 da LGPD.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — SHAP local para uma instância</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> shap, pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+X_treino = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>).drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+feature_names = X_treino.columns.tolist()
+explainer     = shap.TreeExplainer(model)
+
+<span class="cm"># Instância específica a explicar</span>
+instancia = pd.DataFrame([{
+    <span class="str">"historico_credito"</span>: <span class="num">3</span>,
+    <span class="str">"renda_mensal"</span>: <span class="num">2500</span>,
+    <span class="str">"dividas_abertas"</span>: <span class="num">5</span>,
+    <span class="str">"tempo_emprego"</span>: <span class="num">6</span>,
+    <span class="str">"idade"</span>: <span class="num">28</span>
+}])
+
+<span class="cm"># SHAP values para a instância</span>
+shap_vals_instancia = explainer.shap_values(instancia)[<span class="num">1</span>][<span class="num">0</span>]
+
+<span class="cm"># Montar explicação legível</span>
+explicacao = <span class="fn">sorted</span>(
+    <span class="fn">zip</span>(feature_names, shap_vals_instancia),
+    key=<span class="kw">lambda</span> x: <span class="fn">abs</span>(x[<span class="num">1</span>]),
+    reverse=<span class="kw">True</span>
+)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Predição: {model.predict(instancia)[0]}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Valor base: {explainer.expected_value[1]:.4f}"</span>)
+<span class="fn">print</span>(<span class="str">"\nContribuição de cada feature:"</span>)
+<span class="kw">for</span> feat, val <span class="kw">in</span> explicacao:
+    direcao = <span class="str">"▲ aumenta risco"</span> <span class="kw">if</span> val > <span class="num">0</span> <span class="kw">else</span> <span class="str">"▼ reduz risco"</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"  {feat:25s}: {val:+.4f}  {direcao}"</span>)
+
+<span class="cm"># Gráfico waterfall para a instância</span>
+shap_exp = shap.Explanation(
+    values=shap_vals_instancia,
+    base_values=explainer.expected_value[<span class="num">1</span>],
+    data=instancia.values[<span class="num">0</span>],
+    feature_names=feature_names
+)
+shap.plots.waterfall(shap_exp, show=<span class="kw">False</span>)
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+plt.savefig(<span class="str">"reports/shap_waterfall_cliente.png"</span>, dpi=<span class="num">150</span>, bbox_inches=<span class="str">"tight"</span>)
+plt.close()</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Como interpretar o waterfall:</strong> começa no valor base (predição média do modelo). Cada barra adiciona ou subtrai a contribuição da feature para chegar à predição final desta instância. Features em vermelho aumentam o risco, em azul reduzem. A soma de todas as barras mais o valor base = predição final.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-flask"></i>LIME — Local Interpretable Model-agnostic Explanations</div>
+      <p>O LIME usa uma abordagem diferente do SHAP: para explicar uma predição específica, ele <strong>perturba a instância</strong> (gera variações próximas), coleta as predições do modelo original para essas variações e treina um <strong>modelo linear simples</strong> sobre elas. Os coeficientes desse modelo linear são a explicação.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>Vantagens do LIME:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span>Funciona com qualquer modelo (black-box total)</span></li>
+            <li><i class="fas fa-check"></i><span>Explicações fáceis de entender (coeficientes lineares)</span></li>
+            <li><i class="fas fa-check"></i><span>Suporta texto, imagem e tabular com a mesma API</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Limitações do LIME:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-times"></i><span>Instável: explicações podem variar entre execuções</span></li>
+            <li><i class="fas fa-times"></i><span>Sem garantias teóricas como o SHAP</span></li>
+            <li><i class="fas fa-times"></i><span>Mais lento que o TreeSHAP para modelos de árvore</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — LIME para dados tabulares</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> lime.lime_tabular <span class="kw">import</span> LimeTabularExplainer
+<span class="kw">import</span> numpy <span class="kw">as</span> np, pickle, pandas <span class="kw">as</span> pd
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+X_treino = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>).drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+
+<span class="cm"># Criar o explainer LIME com os dados de treino como referência</span>
+explainer_lime = LimeTabularExplainer(
+    training_data=X_treino.values,
+    feature_names=X_treino.columns.tolist(),
+    class_names=[<span class="str">"nao_churn"</span>, <span class="str">"churn"</span>],
+    mode=<span class="str">"classification"</span>
+)
+
+<span class="cm"># Instância a explicar</span>
+instancia = np.array([<span class="num">3</span>, <span class="num">2500</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">28</span>])
+
+<span class="cm"># Gerar explicação local</span>
+exp = explainer_lime.explain_instance(
+    data_row=instancia,
+    predict_fn=model.predict_proba,
+    num_features=<span class="num">5</span>     <span class="cm"># top 5 features mais influentes</span>
+)
+
+<span class="cm"># Exibir explicação</span>
+<span class="kw">for</span> feat, peso <span class="kw">in</span> exp.as_list():
+    direcao = <span class="str">"↑ churn"</span> <span class="kw">if</span> peso > <span class="num">0</span> <span class="kw">else</span> <span class="str">"↓ churn"</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{feat:30s}: {peso:+.4f}  {direcao}"</span>)
+
+<span class="cm"># Salvar como HTML interativo</span>
+exp.save_to_file(<span class="str">"reports/lime_explicacao.html"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>SHAP vs LIME — quando usar cada um</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>SHAP</th><th>LIME</th></tr></thead>
+          <tbody class="comp-row">
+            <tr><td>Base teórica</td><td>Teoria dos jogos (Shapley values) — sólida</td><td>Aproximação linear local — heurística</td></tr>
+            <tr><td>Estabilidade</td><td>Alta — mesma instância → mesmo resultado</td><td>Baixa — amostras aleatórias podem variar</td></tr>
+            <tr><td>Velocidade (árvores)</td><td>Muito rápido com TreeSHAP</td><td>Mais lento (requer muitas predições)</td></tr>
+            <tr><td>Modelos suportados</td><td>Qualquer (KernelSHAP) ou árvores (TreeSHAP)</td><td>Qualquer modelo via predict_fn</td></tr>
+            <tr><td>Uso de texto/imagem</td><td>Limitado</td><td>Suporte nativo excelente</td></tr>
+            <tr><td>Melhor para</td><td>Modelos tabulares, especialmente árvores; relatórios de compliance</td><td>NLP e visão computacional; prototipagem rápida</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Regra prática:</strong> para compliance regulatório com modelos tabulares sklearn/XGBoost, use <strong>SHAP com TreeExplainer</strong> — é mais rápido, mais estável e tem melhores garantias teóricas. Reserve o LIME para texto e imagem, ou quando precisar explicar modelos completamente opacos sem acesso às árvores internas.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Endpoint /explain + Prática</span></div>
+
+  <!-- AULA 3: Endpoint /explain + prática -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Endpoint /explain na API e Relatório de Auditoria</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plug"></i>Adicionando /explain à API FastAPI</div>
+      <p>O endpoint <code>/explain</code> recebe os mesmos dados do <code>/predict</code> e retorna a predição junto com a explicação estruturada — quais features mais contribuíram e em qual direção.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — endpoint /explain</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> shap, pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List, Dict
+
+app = FastAPI()
+
+<span class="cm"># Carregar modelo e explainer na inicialização</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    MODEL = pickle.load(f)
+
+EXPLAINER    = shap.TreeExplainer(MODEL)
+FEATURE_NAMES = [<span class="str">"historico_credito"</span>, <span class="str">"renda_mensal"</span>,
+                 <span class="str">"dividas_abertas"</span>, <span class="str">"tempo_emprego"</span>, <span class="str">"idade"</span>]
+
+<span class="kw">class</span> <span class="fn">ExplainInput</span>(BaseModel):
+    features: List[float]
+    top_n: <span class="fn">int</span> = <span class="num">5</span>           <span class="cm"># quantas features retornar</span>
+
+<span class="kw">class</span> <span class="fn">FeatureContribuicao</span>(BaseModel):
+    feature: str
+    valor_feature: float
+    contribuicao_shap: float
+    direcao: str              <span class="cm"># "aumenta_risco" ou "reduz_risco"</span>
+
+<span class="kw">class</span> <span class="fn">ExplainOutput</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+    valor_base: float
+    explicacao: List[FeatureContribuicao]
+
+<span class="dec">@app.post</span>(<span class="str">"/explain"</span>, response_model=ExplainOutput)
+<span class="kw">def</span> <span class="fn">explain</span>(data: ExplainInput):
+    X = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+
+    <span class="cm"># Predição</span>
+    pred  = <span class="fn">int</span>(MODEL.predict(X)[<span class="num">0</span>])
+    proba = <span class="fn">float</span>(MODEL.predict_proba(X)[<span class="num">0</span>][pred])
+
+    <span class="cm"># SHAP values</span>
+    shap_vals = EXPLAINER.shap_values(X)[<span class="num">1</span>][<span class="num">0</span>]
+    base_val  = <span class="fn">float</span>(EXPLAINER.expected_value[<span class="num">1</span>])
+
+    <span class="cm"># Ordenar por contribuição absoluta</span>
+    contribuicoes = <span class="fn">sorted</span>(
+        <span class="fn">zip</span>(FEATURE_NAMES, data.features, shap_vals),
+        key=<span class="kw">lambda</span> x: <span class="fn">abs</span>(x[<span class="num">2</span>]),
+        reverse=<span class="kw">True</span>
+    )[:data.top_n]
+
+    explicacao = [
+        FeatureContribuicao(
+            feature=f,
+            valor_feature=v,
+            contribuicao_shap=<span class="fn">round</span>(s, <span class="num">4</span>),
+            direcao=<span class="str">"aumenta_risco"</span> <span class="kw">if</span> s > <span class="num">0</span> <span class="kw">else</span> <span class="str">"reduz_risco"</span>
+        )
+        <span class="kw">for</span> f, v, s <span class="kw">in</span> contribuicoes
+    ]
+
+    <span class="kw">return</span> ExplainOutput(
+        prediction=pred,
+        probability=<span class="fn">round</span>(proba, <span class="num">4</span>),
+        valor_base=<span class="fn">round</span>(base_val, <span class="num">4</span>),
+        explicacao=explicacao
+    )</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — testar o endpoint /explain</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>curl -X POST http://localhost:<span class="num">8000</span>/explain \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[3,2500,5,6,28],"top_n":3}'</span>
+
+<span class="cm"># Resposta esperada:</span>
+<span class="cm"># {</span>
+<span class="cm">#   "prediction": 1,</span>
+<span class="cm">#   "probability": 0.7823,</span>
+<span class="cm">#   "valor_base": 0.3540,</span>
+<span class="cm">#   "explicacao": [</span>
+<span class="cm">#     {"feature":"dividas_abertas","valor_feature":5,"contribuicao_shap":+0.2134,"direcao":"aumenta_risco"},</span>
+<span class="cm">#     {"feature":"renda_mensal","valor_feature":2500,"contribuicao_shap":-0.1820,"direcao":"reduz_risco"},</span>
+<span class="cm">#     {"feature":"historico_credito","valor_feature":3,"contribuicao_shap":+0.1456,"direcao":"aumenta_risco"}</span>
+<span class="cm">#   ]</span>
+<span class="cm"># }</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Relatório de auditoria de equidade</div>
+      <p>Um dos usos mais importantes do SHAP global é verificar se o modelo usa features proxy de raça, gênero ou outras categorias protegidas. Se a feature "CEP" tem SHAP alto, pode ser proxy de raça. O relatório de equidade deve ser gerado periodicamente e arquivado.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — relatório de equidade com SHAP</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np, shap, json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">gerar_relatorio_equidade</span>(model, X_test, feature_names, caminho_saida):
+    explainer  = shap.TreeExplainer(model)
+    shap_vals  = explainer.shap_values(X_test)[<span class="num">1</span>]
+    imp_media  = np.<span class="fn">abs</span>(shap_vals).mean(axis=<span class="num">0</span>)
+    imp_df     = pd.DataFrame({
+        <span class="str">"feature"</span>  : feature_names,
+        <span class="str">"shap_mean"</span>: imp_media
+    }).sort_values(<span class="str">"shap_mean"</span>, ascending=<span class="kw">False</span>)
+
+    <span class="cm"># Features que podem ser proxies problemáticas</span>
+    FEATURES_ATENCAO = [<span class="str">"cep"</span>, <span class="str">"bairro"</span>, <span class="str">"escolaridade"</span>, <span class="str">"nome"</span>]
+    alertas = [f <span class="kw">for</span> f <span class="kw">in</span> feature_names <span class="kw">if</span> f.lower() <span class="kw">in</span> FEATURES_ATENCAO]
+
+    relatorio = {
+        <span class="str">"data_geracao"</span>: datetime.now().isoformat(),
+        <span class="str">"total_amostras"</span>: <span class="fn">len</span>(X_test),
+        <span class="str">"importancia_features"</span>: imp_df.to_dict(orient=<span class="str">"records"</span>),
+        <span class="str">"alertas_proxy"</span>: alertas,
+        <span class="str">"aprovado_equidade"</span>: <span class="fn">len</span>(alertas) == <span class="num">0</span>
+    }
+
+    <span class="kw">with</span> <span class="fn">open</span>(caminho_saida, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        json.dump(relatorio, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Relatório salvo: {caminho_saida}"</span>)
+    <span class="kw">if</span> alertas:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"⚠️  Features potencialmente problemáticas: {alertas}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"✅ Nenhuma feature proxy identificada"</span>)
+    <span class="kw">return</span> relatorio</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Explicabilidade End-to-End</div>
+        <div class="secao-titulo">SHAP global + local + endpoint /explain + relatório</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o modelo das semanas anteriores. Ao final, você deve ter um relatório de importância global, uma explicação waterfall de uma predição específica e o endpoint <code>/explain</code> funcionando na API.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — SHAP global: importância das features</div>
+      <p>Instale o SHAP. Crie o <code>TreeExplainer</code> com o modelo treinado. Calcule os valores SHAP para o conjunto de teste. Salve o gráfico de importância global (<code>summary_plot</code> com <code>plot_type="bar"</code>) em <code>reports/shap_global.png</code>. Identifique as 3 features com maior importância média.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> shap, pickle, pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt, os
+
+os.makedirs(<span class="str">"reports"</span>, exist_ok=<span class="kw">True</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+X = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>).drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+explainer  = shap.TreeExplainer(model)
+shap_vals  = explainer.shap_values(X)[<span class="num">1</span>]
+shap.summary_plot(shap_vals, X, plot_type=<span class="str">"bar"</span>, show=<span class="kw">False</span>)
+plt.tight_layout()
+plt.savefig(<span class="str">"reports/shap_global.png"</span>, dpi=<span class="num">150</span>)
+plt.close()
+<span class="fn">print</span>(<span class="str">"Salvo em reports/shap_global.png"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — SHAP local: waterfall de uma predição</div>
+      <p>Escolha a primeira instância do conjunto de teste. Calcule os valores SHAP locais e salve o gráfico waterfall em <code>reports/shap_waterfall.png</code>. Imprima no console a lista de features ordenadas por contribuição absoluta com sinal positivo ou negativo.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Adicionar endpoint /explain à API</div>
+      <p>Adicione o endpoint <code>POST /explain</code> ao <code>main.py</code> da API FastAPI. O modelo de resposta deve incluir: <code>prediction</code>, <code>probability</code>, <code>valor_base</code> e <code>explicacao</code> (lista com as top-3 features por contribuição absoluta). Teste com curl e confirme o formato JSON.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Gerar explicação LIME e comparar com SHAP</div>
+      <p>Para a mesma instância do Passo 02, gere também a explicação com LIME. Salve o HTML em <code>reports/lime_explicacao.html</code>. Compare as top-3 features de cada método: elas coincidem? As direções (positivo/negativo) são as mesmas? Anote as diferenças e tente explicar por quê podem divergir.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: relatório automático de equidade</div>
+      <p>Implemente a função <code>gerar_relatorio_equidade()</code> e execute-a sobre o conjunto de teste. Modifique propositalmente o dataset adicionando uma feature chamada <code>cep</code> (com valores aleatórios) e re-execute — confirme que o alerta de proxy aparece no relatório. Salve o JSON em <code>reports/equidade.json</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> arquivo <code>reports/shap_global.png</code> gerado com importâncias. Endpoint <code>POST /explain</code> retornando JSON com campo <code>explicacao</code>. Pelo menos um gráfico waterfall salvo para uma predição específica.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 17</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-chart-bar"></i>
+        <strong>SHAP</strong>
+        <p>Valores Shapley: contribuição marginal de cada feature. Global (importância média) e local (por instância). TreeSHAP muito rápido para sklearn/XGBoost</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-flask"></i>
+        <strong>LIME</strong>
+        <p>Perturbação + modelo linear local. Funciona com qualquer black-box. Melhor para texto e imagem. Menos estável que SHAP para dados tabulares</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-gavel"></i>
+        <strong>Governança</strong>
+        <p>LGPD Art. 20 exige explicação de decisões automatizadas. SHAP global detecta features proxy de viés. Endpoint /explain integra explicabilidade na API</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-18-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 18 — Revisão Geral e Event-Driven ML com Kafka</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 12 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* stack flow */
+.stack{display:flex;flex-direction:column;gap:3px;margin:1rem 0;}
+.stack-layer{display:flex;align-items:center;gap:12px;padding:.75rem 1.1rem;border-radius:9px;}
+.stack-layer .num{font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:800;color:rgba(167,139,250,.25);width:22px;flex-shrink:0;}
+.stack-layer .info strong{display:block;font-size:.82rem;color:var(--text-primary);margin-bottom:1px;}
+.stack-layer .info span{font-size:.75rem;color:var(--text-muted);}
+.stack-prom{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.15);}
+.stack-graf{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.15);}
+.stack-api{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.15);}
+.stack-ev{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.15);}
+
+/* metric type card */
+.mtype-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.mtype-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:11px;padding:1rem;}
+.mtype-card h4{font-size:.78rem;font-weight:700;color:var(--purple-300);margin-bottom:.45rem;display:flex;align-items:center;gap:7px;}
+.mtype-card p{font-size:.77rem;color:var(--text-muted);line-height:1.5;}
+.mtype-card .ex{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--purple-400);margin-top:.4rem;display:block;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+/* bloco P2 */
+.p2-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:1.5rem;margin-top:2rem;}
+.p2-titulo{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:10px;margin-bottom:1rem;}
+.p2-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.p2-col h4{font-size:.75rem;font-weight:700;color:var(--purple-300);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.p2-col ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.p2-col ul li{font-size:.82rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.p2-col ul li::before{content:'▸';position:absolute;left:0;color:#f87171;font-size:.65rem;top:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.mtype-grid,.p2-grid{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">12</div>
+    <h1 class="capa-titulo">Dashboards com<br><em>Prometheus</em><br>e <em>Grafana</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Visibilidade em tempo real do modelo em produção</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>A stack de observabilidade — Prometheus + Grafana</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-thermometer-half"></i></div><span>Expondo métricas da API FastAPI com prometheus_client</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-satellite-dish"></i></div><span>Configurando o Prometheus para coletar métricas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-area"></i></div><span>Grafana — dashboards, alertas e anotações</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: stack completa via docker-compose com alertas</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Instrumentar a API FastAPI com métricas Prometheus, subir Prometheus + Grafana via docker-compose e criar dashboard com alertas de latência e taxa de erros.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 8: docker-compose — base da stack desta semana</li>
+        <li>Sem. 9: FastAPI — a API que vamos instrumentar</li>
+        <li>Sem. 11: Evidently — drift detectado aqui alimenta alertas lá</li>
+        <li>Sem. 14: Kubernetes — onde Prometheus roda em produção real</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-toolbox"></i>Ferramentas desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install prometheus-client</code> — expor métricas</li>
+        <li><strong>Prometheus</strong> — coleta e armazena métricas time-series</li>
+        <li><strong>Grafana</strong> — dashboards e alertas visuais</li>
+        <li>Tudo via <strong>docker-compose</strong> — sem instalação local</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>O que é observabilidade</div>
+      <ul class="info-lista">
+        <li><strong>Métricas:</strong> números agregados ao longo do tempo (Prometheus)</li>
+        <li><strong>Logs:</strong> eventos textuais com contexto (ELK / Loki)</li>
+        <li><strong>Traces:</strong> caminho de uma requisição entre serviços (Jaeger)</li>
+        <li>Esta semana: foco em métricas — o pilar mais importante para ML</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-11-mlops.html"><i class="fas fa-arrow-left"></i> Semana 11 — Evidently AI</a>
+
+  <!-- AULA 1: Stack + tipos de métricas + prometheus_client -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">A Stack de Observabilidade e Métricas com prometheus_client</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Como Prometheus e Grafana trabalham juntos</div>
+      <p>A stack de observabilidade padrão da indústria combina três peças que se complementam. Entender o papel de cada uma evita confusão sobre o que configurar onde.</p>
+
+      <div class="stack">
+        <div class="stack-layer stack-api">
+          <div class="num">1</div>
+          <div class="info">
+            <strong>Sua aplicação (FastAPI) + prometheus_client</strong>
+            <span>Expõe um endpoint <code style="font-size:.75rem;">/metrics</code> com métricas no formato Prometheus (texto simples). Você define quais métricas coletar.</span>
+          </div>
+        </div>
+        <div class="stack-layer stack-prom">
+          <div class="num">2</div>
+          <div class="info">
+            <strong>Prometheus — coleta e armazena</strong>
+            <span>Faz <em>scraping</em> periódico do <code style="font-size:.75rem;">/metrics</code> de cada serviço. Armazena como séries temporais. Permite consultas com PromQL.</span>
+          </div>
+        </div>
+        <div class="stack-layer stack-graf">
+          <div class="num">3</div>
+          <div class="info">
+            <strong>Grafana — visualiza e alerta</strong>
+            <span>Consulta o Prometheus com PromQL, exibe gráficos e dashboards em tempo real. Envia alertas via email, Slack, PagerDuty quando limiares são ultrapassados.</span>
+          </div>
+        </div>
+        <div class="stack-layer stack-ev">
+          <div class="num">+</div>
+          <div class="info">
+            <strong>Evidently → Prometheus (integração opcional)</strong>
+            <span>Métricas de drift calculadas pelo Evidently podem ser exportadas para o Prometheus e exibidas no mesmo dashboard de observabilidade.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>O modelo mental:</strong> a aplicação <em>publica</em> métricas. O Prometheus <em>coleta</em>. O Grafana <em>visualiza</em>. Essa separação de responsabilidades significa que você pode mudar a ferramenta de visualização sem tocar na aplicação.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th-large"></i>Os 4 tipos de métricas Prometheus</div>
+
+      <div class="mtype-grid">
+        <div class="mtype-card">
+          <h4><i class="fas fa-sort-numeric-up" style="color:#60a5fa;"></i> Counter</h4>
+          <p>Valor que só cresce (nunca diminui). Reseta ao reiniciar o serviço.</p>
+          <span class="ex">predicoes_total, erros_total, requisicoes_http_total</span>
+        </div>
+        <div class="mtype-card">
+          <h4><i class="fas fa-arrows-alt-v" style="color:#4ade80;"></i> Gauge</h4>
+          <p>Valor que pode subir e descer. Representa estado atual.</p>
+          <span class="ex">modelo_carregado, predicoes_em_andamento, psi_feature_1</span>
+        </div>
+        <div class="mtype-card">
+          <h4><i class="fas fa-chart-bar" style="color:#fbbf24;"></i> Histogram</h4>
+          <p>Distribui observações em buckets. Permite calcular percentis (p50, p95, p99).</p>
+          <span class="ex">latencia_inferencia_segundos, tamanho_payload_bytes</span>
+        </div>
+        <div class="mtype-card">
+          <h4><i class="fas fa-percentage" style="color:#f87171;"></i> Summary</h4>
+          <p>Semelhante ao Histogram mas calcula percentis no cliente. Menos flexível para agregação.</p>
+          <span class="ex">latencia_percentis — prefira Histogram na maioria dos casos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Instrumentando a API FastAPI com prometheus_client</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — src/serve.py instrumentado com métricas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> time, pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, Request, Response
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+<span class="kw">from</span> prometheus_client <span class="kw">import</span> (
+    Counter, Histogram, Gauge,
+    generate_latest, CONTENT_TYPE_LATEST
+)
+
+app = FastAPI(title=<span class="str">"API de Inferência com Métricas"</span>)
+
+<span class="cm"># ── Definir métricas ────────────────────────────────────────────</span>
+PREDICOES_TOTAL = Counter(
+    <span class="str">"predicoes_total"</span>,
+    <span class="str">"Total de predições realizadas"</span>,
+    [<span class="str">"resultado"</span>]  <span class="cm"># label: "sucesso" ou "erro"</span>
+)
+LATENCIA = Histogram(
+    <span class="str">"latencia_inferencia_segundos"</span>,
+    <span class="str">"Latência de inferência em segundos"</span>,
+    buckets=[.<span class="num">001</span>, .<span class="num">005</span>, .<span class="num">01</span>, .<span class="num">025</span>, .<span class="num">05</span>, .<span class="num">1</span>, .<span class="num">25</span>, .<span class="num">5</span>, <span class="num">1.0</span>]
+)
+PREDICOES_ATIVAS = Gauge(
+    <span class="str">"predicoes_em_andamento"</span>,
+    <span class="str">"Predições sendo processadas agora"</span>
+)
+REQUISICOES_HTTP = Counter(
+    <span class="str">"requisicoes_http_total"</span>,
+    <span class="str">"Total de requisições HTTP"</span>,
+    [<span class="str">"metodo"</span>, <span class="str">"endpoint"</span>, <span class="str">"status"</span>]
+)
+
+<span class="cm"># ── Carregar modelo ─────────────────────────────────────────────</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    MODEL = pickle.load(f)
+
+MODEL_CARREGADO = Gauge(<span class="str">"modelo_carregado"</span>, <span class="str">"1 se o modelo está carregado"</span>)
+MODEL_CARREGADO.set(<span class="num">1</span>)
+
+<span class="cm"># ── Middleware para métricas HTTP ───────────────────────────────</span>
+<span class="dec">@app.middleware</span>(<span class="str">"http"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">middleware_metricas</span>(request: Request, call_next):
+    inicio = time.perf_counter()
+    response = <span class="kw">await</span> call_next(request)
+    duracao = time.perf_counter() - inicio
+    REQUISICOES_HTTP.labels(
+        metodo=request.method,
+        endpoint=request.url.path,
+        status=response.status_code
+    ).inc()
+    <span class="kw">return</span> response
+
+<span class="cm"># ── Endpoint de métricas (Prometheus faz scraping aqui) ─────────</span>
+<span class="dec">@app.get</span>(<span class="str">"/metrics"</span>)
+<span class="kw">def</span> <span class="fn">metrics</span>():
+    <span class="kw">return</span> Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+<span class="cm"># ── Endpoints da aplicação ──────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">InputData</span>(BaseModel):
+    features: List[float]
+
+<span class="dec">@app.get</span>(<span class="str">"/health"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"healthy"</span>}
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(data: InputData):
+    PREDICOES_ATIVAS.inc()
+    inicio = time.perf_counter()
+    <span class="kw">try</span>:
+        X     = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+        pred  = <span class="fn">int</span>(MODEL.predict(X)[<span class="num">0</span>])
+        proba = <span class="fn">float</span>(MODEL.predict_proba(X)[<span class="num">0</span>][pred])
+        PREDICOES_TOTAL.labels(resultado=<span class="str">"sucesso"</span>).inc()
+        <span class="kw">return</span> {<span class="str">"prediction"</span>: pred, <span class="str">"probability"</span>: <span class="fn">round</span>(proba, <span class="num">4</span>)}
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        PREDICOES_TOTAL.labels(resultado=<span class="str">"erro"</span>).inc()
+        <span class="kw">raise</span> HTTPException(<span class="num">400</span>, detail=<span class="fn">str</span>(e))
+    <span class="kw">finally</span>:
+        LATENCIA.observe(time.perf_counter() - inicio)
+        PREDICOES_ATIVAS.dec()</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: Prometheus config + PromQL -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Configurando o Prometheus e Consultando com PromQL</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-satellite-dish"></i>Como o Prometheus coleta métricas — scraping</div>
+      <p>O Prometheus usa o modelo <strong>pull</strong>: ele mesmo busca as métricas em cada serviço no intervalo configurado. O oposto do modelo <strong>push</strong> (onde a aplicação envia). O modelo pull é mais robusto porque o Prometheus detecta automaticamente quando um serviço cai (scraping falha).</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">prometheus.yml — configuração de scraping</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>global:
+  scrape_interval: <span class="num">15</span>s       <span class="cm"># coletar métricas a cada 15 segundos</span>
+  evaluation_interval: <span class="num">15</span>s   <span class="cm"># avaliar regras de alerta a cada 15s</span>
+
+<span class="cm"># Regras de alerta (arquivo separado)</span>
+rule_files:
+  - <span class="str">"alerts.yml"</span>
+
+scrape_configs:
+
+  <span class="cm"># O próprio Prometheus se monitora</span>
+  - job_name: <span class="str">"prometheus"</span>
+    static_configs:
+      - targets: [<span class="str">"localhost:9090"</span>]
+
+  <span class="cm"># Nossa API de inferência</span>
+  - job_name: <span class="str">"modelo-inferencia"</span>
+    static_configs:
+      - targets: [<span class="str">"modelo:8000"</span>]   <span class="cm"># nome do serviço no docker-compose</span>
+    metrics_path: <span class="str">"/metrics"</span>
+    scrape_interval: <span class="num">10</span>s           <span class="cm"># mais frequente para a API</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>PromQL — consultando métricas</div>
+      <p>PromQL (Prometheus Query Language) é a linguagem para consultar as métricas armazenadas. Parece complexo no início, mas alguns padrões cobrem 90% dos casos de ML.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>O que você quer saber</th><th>Query PromQL</th></tr></thead>
+          <tbody>
+            <tr><td>Taxa de predições por segundo (últimos 5 min)</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">rate(predicoes_total[5m])</code></td></tr>
+            <tr><td>Taxa de erros por segundo</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">rate(predicoes_total{resultado="erro"}[5m])</code></td></tr>
+            <tr><td>Percentil 95 de latência (últimos 5 min)</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">histogram_quantile(0.95, rate(latencia_inferencia_segundos_bucket[5m]))</code></td></tr>
+            <tr><td>Percentil 99 de latência</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">histogram_quantile(0.99, rate(latencia_inferencia_segundos_bucket[5m]))</code></td></tr>
+            <tr><td>Taxa de erro como percentual do total</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">rate(predicoes_total{resultado="erro"}[5m]) / rate(predicoes_total[5m])</code></td></tr>
+            <tr><td>Modelo está carregado?</td><td><code style="font-family:'JetBrains Mono',monospace;font-size:.78rem;">modelo_carregado == 0</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>A função <code>rate()</code>:</strong> converte um Counter em taxa por segundo. Sem ela, o gráfico de um Counter mostra apenas o total acumulado (número sempre crescente). Com <code>rate(counter[5m])</code> você vê "quantas vezes por segundo isso aconteceu nos últimos 5 minutos" — muito mais útil para análise de comportamento.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bell"></i>Regras de alerta no Prometheus</div>
+      <p>O Prometheus pode avaliar queries periodicamente e disparar alertas quando uma condição é verdadeira. Os alertas são enviados para o <strong>Alertmanager</strong>, que encaminha para email, Slack, PagerDuty etc.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">alerts.yml — regras de alerta para o modelo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>groups:
+  - name: modelo-inferencia
+    rules:
+
+      <span class="cm"># Alerta: taxa de erros acima de 5% por 2 minutos</span>
+      - alert: TaxaErroAlta
+        expr: >
+          rate(predicoes_total{resultado="erro"}[5m])
+          /
+          rate(predicoes_total[5m]) > <span class="num">0.05</span>
+        for: <span class="num">2</span>m
+        labels:
+          severity: warning
+        annotations:
+          summary: <span class="str">"Taxa de erros de predição acima de 5%"</span>
+          description: <span class="str">"Taxa atual: {{ $value | humanizePercentage }}"</span>
+
+      <span class="cm"># Alerta: latência p95 acima de 500ms por 5 minutos</span>
+      - alert: LatenciaAltaP95
+        expr: >
+          histogram_quantile(<span class="num">0.95</span>,
+            rate(latencia_inferencia_segundos_bucket[5m])
+          ) > <span class="num">0.5</span>
+        for: <span class="num">5</span>m
+        labels:
+          severity: critical
+        annotations:
+          summary: <span class="str">"Latência P95 acima de 500ms"</span>
+          description: <span class="str">"P95 atual: {{ $value | humanizeDuration }}"</span>
+
+      <span class="cm"># Alerta: modelo não está carregado</span>
+      - alert: ModeloNaoCarregado
+        expr: modelo_carregado == <span class="num">0</span>
+        for: <span class="num">1</span>m
+        labels:
+          severity: critical
+        annotations:
+          summary: <span class="str">"Modelo de inferência não está carregado"</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Grafana + docker-compose + Prática</span></div>
+
+  <!-- AULA 3: Grafana + docker-compose completo + Prática -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Grafana e Stack Completa via docker-compose</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-boxes"></i>docker-compose.yml — stack completa de observabilidade</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">docker-compose.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>services:
+
+  <span class="cm"># API de inferência</span>
+  modelo:
+    build: .
+    ports:
+      - <span class="str">"8000:8000"</span>
+    volumes:
+      - ./models:/app/models
+
+  <span class="cm"># Prometheus — coleta métricas</span>
+  prometheus:
+    image: prom/prometheus:<span class="str">v2.50.1</span>
+    ports:
+      - <span class="str">"9090:9090"</span>
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus_data:/prometheus
+    command:
+      - <span class="str">"--config.file=/etc/prometheus/prometheus.yml"</span>
+      - <span class="str">"--storage.tsdb.retention.time=15d"</span>
+    depends_on:
+      - modelo
+
+  <span class="cm"># Grafana — dashboards</span>
+  grafana:
+    image: grafana/grafana:<span class="str">10.4.0</span>
+    ports:
+      - <span class="str">"3000:3000"</span>
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=mlops123
+      - GF_USERS_ALLOW_SIGN_UP=<span class="str">"false"</span>
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data:
+  grafana_data:</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-area"></i>Grafana — configurando dashboards</div>
+      <p>O Grafana pode ser configurado via interface web (porta 3000) ou via arquivos de provisionamento (recomendado para versionamento). Vamos ver os dois.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">grafana/provisioning/datasources/prometheus.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>apiVersion: <span class="num">1</span>
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:<span class="num">9090</span>
+    isDefault: <span class="kw">true</span>
+    editable: <span class="kw">false</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Login Grafana:</strong> acesse <code>http://localhost:3000</code> com usuário <code>admin</code> e senha <code>mlops123</code> (definida no compose). O datasource Prometheus já está configurado automaticamente via provisionamento.</span>
+      </div>
+
+      <p>Painéis essenciais para um dashboard de modelo ML:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-chart-line"></i><span><strong>Throughput:</strong> <code style="font-size:.82rem;">rate(predicoes_total[5m])</code> — req/s ao longo do tempo</span></li>
+        <li><i class="fas fa-chart-line"></i><span><strong>Latência P50/P95/P99:</strong> <code style="font-size:.82rem;">histogram_quantile(0.95, rate(latencia_inferencia_segundos_bucket[5m]))</code></span></li>
+        <li><i class="fas fa-chart-bar"></i><span><strong>Taxa de erros:</strong> <code style="font-size:.82rem;">rate(predicoes_total{resultado="erro"}[5m]) / rate(predicoes_total[5m]) * 100</code></span></li>
+        <li><i class="fas fa-thermometer-half"></i><span><strong>Gauge de saúde:</strong> <code style="font-size:.82rem;">modelo_carregado</code> — 1 (verde) ou 0 (vermelho)</span></li>
+        <li><i class="fas fa-chart-area"></i><span><strong>Distribuição de latência:</strong> heatmap dos buckets do Histogram ao longo do tempo</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-play-circle"></i>Subindo e testando a stack completa</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — setup completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># 1. Subir toda a stack</span>
+docker compose up --build -d
+
+<span class="cm"># 2. Verificar que está tudo rodando</span>
+docker compose ps
+
+<span class="cm"># 3. Gerar tráfego para ver métricas</span>
+<span class="kw">for</span> i in $(seq <span class="num">1</span> <span class="num">50</span>); do
+  curl -s -X POST http://localhost:<span class="num">8000</span>/predict \
+    -H <span class="str">"Content-Type: application/json"</span> \
+    -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span> > /dev/null
+done
+echo <span class="str">"50 requisições enviadas"</span>
+
+<span class="cm"># 4. Acessar os serviços</span>
+<span class="cm"># API:        http://localhost:8000/docs</span>
+<span class="cm"># Métricas:   http://localhost:8000/metrics</span>
+<span class="cm"># Prometheus: http://localhost:9090</span>
+<span class="cm"># Grafana:    http://localhost:3000 (admin / mlops123)</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Stack de Observabilidade Completa</div>
+        <div class="secao-titulo">API instrumentada + Prometheus + Grafana com alertas</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use a API FastAPI da Semana 9 como base. Ao final, você deve ter a stack completa rodando e um dashboard Grafana mostrando pelo menos throughput, latência P95 e taxa de erros em tempo real.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Instrumentar a API com prometheus_client</div>
+      <p>Instale <code>prometheus-client</code> e adicione ao <code>src/serve.py</code>: um <strong>Counter</strong> de predições com label de resultado, um <strong>Histogram</strong> de latência com buckets adequados e um <strong>Gauge</strong> indicando se o modelo está carregado. Exponha o endpoint <code>GET /metrics</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — adições ao serve.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> prometheus_client <span class="kw">import</span> Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
+<span class="kw">from</span> fastapi <span class="kw">import</span> Response
+
+PREDICOES = Counter(<span class="str">"predicoes_total"</span>, <span class="str">"Total de predições"</span>, [<span class="str">"resultado"</span>])
+LATENCIA  = Histogram(<span class="str">"latencia_inferencia_segundos"</span>, <span class="str">"Latência"</span>,
+                      buckets=[.<span class="num">001</span>,.<span class="num">005</span>,.<span class="num">01</span>,.<span class="num">05</span>,.<span class="num">1</span>,.<span class="num">5</span>,<span class="num">1.0</span>])
+MODELO_OK = Gauge(<span class="str">"modelo_carregado"</span>, <span class="str">"1 = carregado"</span>)
+MODELO_OK.set(<span class="num">1</span>)
+
+<span class="dec">@app.get</span>(<span class="str">"/metrics"</span>)
+<span class="kw">def</span> <span class="fn">metrics</span>():
+    <span class="kw">return</span> Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Criar prometheus.yml e docker-compose.yml</div>
+      <p>Escreva o <code>prometheus.yml</code> configurando scraping da API a cada 10s. Adicione o Prometheus e o Grafana ao <code>docker-compose.yml</code> existente. Suba tudo com <code>docker compose up --build -d</code> e confirme que o Prometheus está acessível em <code>localhost:9090</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">prometheus.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>global:
+  scrape_interval: <span class="num">15</span>s
+scrape_configs:
+  - job_name: <span class="str">"modelo"</span>
+    static_configs:
+      - targets: [<span class="str">"modelo:8000"</span>]
+    scrape_interval: <span class="num">10</span>s</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Verificar métricas no Prometheus</div>
+      <p>Gere 30 requisições para a API usando o loop bash da aula. Acesse <code>localhost:9090</code>, vá em Graph e execute a query <code>rate(predicoes_total[5m])</code>. Verifique que o gráfico mostra a taxa de predições. Execute também <code>histogram_quantile(0.95, rate(latencia_inferencia_segundos_bucket[5m]))</code> e anote o valor.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Criar dashboard no Grafana</div>
+      <p>Acesse o Grafana em <code>localhost:3000</code>. Crie um novo dashboard com 4 painéis: (1) Throughput em req/s, (2) Latência P95 em ms, (3) Taxa de erros em %, (4) Gauge de saúde do modelo. Para cada painel, use as queries PromQL da aula. Salve o dashboard com o nome "Modelo de Inferência".</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: criar regra de alerta e simular disparo</div>
+      <p>Crie o arquivo <code>alerts.yml</code> com a regra de alerta para latência P95 acima de 200ms. Referencie-o no <code>prometheus.yml</code>. Depois, modifique temporariamente o endpoint <code>/predict</code> para adicionar um <code>time.sleep(0.3)</code> artificial — gere tráfego e observe o alerta disparar na aba Alerts do Prometheus em <code>localhost:9090/alerts</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> o endpoint <code>localhost:8000/metrics</code> deve retornar texto com <code>predicoes_total</code>, <code>latencia_inferencia_segundos_bucket</code> e <code>modelo_carregado</code>. O Grafana deve mostrar ao menos dois painéis com dados reais após gerar tráfego.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Revisão P2 · Semanas 7–12</span></div>
+
+  <section class="secao">
+    <div class="p2-box">
+      <div class="p2-titulo"><i class="fas fa-clipboard-check"></i>Preview — Conteúdo da P2 (Semana 13)</div>
+      <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">A P2 cobre as Semanas 7 a 12. Relembre os conceitos centrais:</p>
+      <div class="p2-grid">
+        <div class="p2-col">
+          <h4>Sem. 7 — Pipelines</h4>
+          <ul>
+            <li>Problema dos scripts isolados — ordem implícita</li>
+            <li>MLflow Pipelines: pipeline.yaml e etapas</li>
+            <li>Cache inteligente: só re-executa o que mudou</li>
+            <li>Metaflow: @step, foreach, join para paralelismo</li>
+          </ul>
+        </div>
+        <div class="p2-col">
+          <h4>Sem. 8 — Docker para ML</h4>
+          <ul>
+            <li>Layers e cache: requirements antes do código</li>
+            <li>python:3.11-slim reduz 600+ MB vs imagem completa</li>
+            <li>Multi-stage build: compilar em stage gordo, rodar em slim</li>
+            <li>docker-compose para orquestrar serviços</li>
+          </ul>
+        </div>
+        <div class="p2-col">
+          <h4>Sem. 9 — FastAPI</h4>
+          <ul>
+            <li>Pydantic: validação automática de tipos e ranges</li>
+            <li>422 automático vs 400/503 manual com HTTPException</li>
+            <li>Endpoint batch: uma chamada ao modelo para N instâncias</li>
+            <li>Documentação automática em /docs e /redoc</li>
+          </ul>
+        </div>
+        <div class="p2-col">
+          <h4>Sem. 10 — BentoML</h4>
+          <ul>
+            <li>Runner isola modelo do servidor HTTP</li>
+            <li>bentoml build + containerize sem Dockerfile manual</li>
+            <li>Batching dinâmico: max_batch_size + max_latency_ms</li>
+            <li>Quando usar FastAPI vs BentoML vs Triton</li>
+          </ul>
+        </div>
+        <div class="p2-col">
+          <h4>Sem. 11 — Evidently AI</h4>
+          <ul>
+            <li>Data drift, concept drift, prediction drift</li>
+            <li>KS, PSI (limiares 0.1/0.2), chi-quadrado</li>
+            <li>Reports (HTML) vs Test Suites (passou/falhou)</li>
+            <li>Integração em cron e GitHub Actions</li>
+          </ul>
+        </div>
+        <div class="p2-col">
+          <h4>Sem. 12 — Prometheus + Grafana</h4>
+          <ul>
+            <li>Counter, Gauge, Histogram, Summary</li>
+            <li>Prometheus: pull model — scraping periódico</li>
+            <li>PromQL: rate(), histogram_quantile()</li>
+            <li>Grafana: dashboards + alertas por limiar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 12</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-thermometer-half"></i>
+        <strong>prometheus_client</strong>
+        <p>Counter para totais, Gauge para estado atual, Histogram para latência com percentis. Endpoint /metrics expõe tudo em formato text/plain</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-satellite-dish"></i>
+        <strong>Prometheus</strong>
+        <p>Pull model: coleta métricas periodicamente. prometheus.yml configura targets. PromQL consulta séries temporais. alerts.yml define limiares</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-chart-area"></i>
+        <strong>Grafana</strong>
+        <p>Dashboards com queries PromQL. Alertas visuais com notificação. Provisioning via YAML para versionar configuração. Stack completa em docker-compose</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-13-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 13 — Avaliação P2</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

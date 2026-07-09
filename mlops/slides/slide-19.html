@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 19 — MLOps · Prova Final P3</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red-950:#1a0a0a;--red-900:#450a0a;--red-800:#7f1d1d;
+  --red-700:#991b1b;--red-500:#ef4444;--red-400:#f87171;--red-300:#fca5a5;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(248,113,113,.06);
+  --code-bg:#150505;--code-border:rgba(248,113,113,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--red-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--red-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--red-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--red-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(248,113,113,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--red-400);border:1px solid rgba(248,113,113,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(248,113,113,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--red-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--red-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(248,113,113,.18);color:var(--red-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--red-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(248,113,113,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(248,113,113,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--red-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(248,113,113,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(248,113,113,.07);border-left:3px solid var(--red-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--red-400);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;padding:.5rem 1rem;background:rgba(248,113,113,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#fecaca;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:center;gap:12px;padding:.65rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:background .2s,border-color .2s;user-select:none;}
+.check-item:hover{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.18);}
+.check-item.checked{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);}
+.check-box{width:18px;height:18px;border-radius:5px;border:2px solid rgba(248,113,113,.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.check-item.checked .check-box{background:#4ade80;border-color:#4ade80;}
+.check-icon{color:white;font-size:.65rem;display:none;}
+.check-item.checked .check-icon{display:block;}
+.check-label{font-size:.83rem;color:var(--text-secondary);line-height:1.4;flex:1;}
+.check-item.checked .check-label{color:var(--text-muted);text-decoration:line-through;}
+.check-tema{font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--red-400);font-weight:600;flex-shrink:0;}
+
+.progresso-wrap{margin:.75rem 0;}
+.progresso-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem;}
+.progresso-bar{height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;}
+.progresso-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--red-700),var(--red-400));transition:width .4s ease;}
+
+/* simulado */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.questao-num{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red-400);font-weight:700;margin-bottom:.5rem;}
+.questao-enunciado{font-size:.92rem;color:var(--text-primary);line-height:1.65;margin-bottom:1.1rem;}
+.questao-enunciado code{font-family:'JetBrains Mono',monospace;font-size:.83rem;background:rgba(248,113,113,.1);padding:1px 6px;border-radius:4px;color:var(--red-300);}
+.alternativas{display:flex;flex-direction:column;gap:.5rem;}
+.alt{display:flex;align-items:flex-start;gap:10px;padding:.65rem 1rem;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:background .2s,border-color .2s;}
+.alt:hover{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.18);}
+.alt-letra{width:22px;height:22px;border-radius:6px;background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.2);color:var(--red-400);font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Montserrat',sans-serif;}
+.alt-texto{font-size:.85rem;color:var(--text-secondary);line-height:1.5;}
+.alt-texto code{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:rgba(248,113,113,.08);padding:1px 5px;border-radius:3px;color:var(--red-300);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:.5rem 1rem;color:var(--red-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.85rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(248,113,113,.08);}
+.gabarito-content{display:none;margin-top:.75rem;padding:1rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);}
+.gabarito-content.open{display:block;}
+.gabarito-content p{font-size:.85rem;color:rgba(134,239,172,.85);line-height:1.65;}
+.gabarito-content strong{color:#4ade80;}
+
+/* rubrica projeto */
+.rubrica-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.rubrica-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:11px;padding:1rem;}
+.rubrica-item h4{font-size:.75rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;}
+.rubrica-pts{font-size:.8rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.rubrica-item ul{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.rubrica-item ul li{font-size:.78rem;color:var(--text-muted);padding-left:12px;position:relative;line-height:1.4;}
+.rubrica-item ul li::before{content:'▸';position:absolute;left:0;color:var(--red-500);font-size:.62rem;top:3px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:var(--red-400);flex-shrink:0;margin-top:2px;}
+
+.calendario{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.cal-item{display:flex;align-items:center;gap:14px;padding:.6rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);}
+.cal-data{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--red-400);min-width:90px;}
+.cal-desc{font-size:.82rem;color:var(--text-secondary);}
+.cal-badge{margin-left:auto;font-size:.65rem;padding:2px 8px;border-radius:6px;font-weight:600;flex-shrink:0;}
+.badge-hoje{background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.25);}
+.badge-prova{background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.badge-proj{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2);}
+.badge-fim{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+
+.instrucoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+.instrucao-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.instrucao-card h4{font-size:.75rem;font-weight:700;color:var(--red-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;display:flex;align-items:center;gap:7px;}
+.instrucao-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.instrucao-card ul li{font-size:.82rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.instrucao-card ul li::before{content:'▸';position:absolute;left:0;color:var(--red-400);font-size:.65rem;top:3px;}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(248,113,113,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--red-400);border-color:rgba(248,113,113,.2);}
+
+.fim-box{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:14px;padding:2rem;text-align:center;margin-top:3rem;}
+.fim-box h2{font-family:'Montserrat',sans-serif;font-size:1.3rem;font-weight:800;color:var(--white);margin-bottom:.5rem;}
+.fim-box p{font-size:.88rem;color:var(--text-secondary);line-height:1.7;max-width:560px;margin:0 auto;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .instrucoes-grid,.rubrica-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">🎯 Avaliação Final</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">19</div>
+    <h1 class="capa-titulo">Prova Final<br><em>P3</em> e Projeto</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Revisão express + Simulado P3 + Projeto Final</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Aula 1 — Revisão express das Semanas 14–18 com checklist</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-pencil-alt"></i></div><span>Aula 2 — Simulado P3 com 7 questões no estilo da prova</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-clipboard-list"></i></div><span>Aula 3 — Rubrica do Projeto Final e orientações de entrega</span></div>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-book"></i>Conteúdo da P3</div>
+      <ul class="info-lista">
+        <li>Sem. 14 — Kubernetes (Deployment, HPA, rolling update)</li>
+        <li>Sem. 15 — Celery + RabbitMQ (tasks, retry, polling)</li>
+        <li>Sem. 16 — JWT + Rate Limiting + Auditoria</li>
+        <li>Sem. 17 — SHAP + LIME + endpoint /explain</li>
+        <li>Sem. 18 — Kafka (producer, consumer groups, streaming)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-info-circle"></i>Formato da prova</div>
+      <ul class="info-lista">
+        <li>7 questões mistas: múltipla escolha + análise de código</li>
+        <li>Duração: 90 minutos</li>
+        <li>Permitido: folha de cola A5 (frente e verso)</li>
+        <li>Peso P3: 25% da nota final</li>
+        <li>Projeto: 20% da nota final</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-project-diagram"></i>Projeto Final</div>
+      <ul class="info-lista">
+        <li>Pipeline MLOps end-to-end com pelo menos 6 componentes</li>
+        <li>Apresentação de 10 minutos + 5 minutos de perguntas</li>
+        <li>Entrega: repositório Git + README documentado</li>
+        <li>Semana 20: segunda chamada para quem não apresentou</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-18-mlops.html"><i class="fas fa-arrow-left"></i> Semana 18 — Kafka e Revisão Geral</a>
+
+  <!-- AULA 1: Revisão + Checklist -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · Revisão Express</div>
+        <div class="secao-titulo">Checklist Interativo — Semanas 14 a 18</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tasks"></i>Marque o que você já domina</div>
+      <p>Clique nos itens que você se sente seguro. Use os <strong>não marcados</strong> como guia de revisão de última hora.</p>
+
+      <div class="progresso-wrap">
+        <div class="progresso-label"><span>Progresso de revisão</span><span id="prog-text">0 / 20</span></div>
+        <div class="progresso-bar"><div class="progresso-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.75rem;">Semana 14 — Kubernetes</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Pod, Deployment, Service e HPA — papel de cada objeto K8s</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">readinessProbe vs livenessProbe — diferença e por que ambas são necessárias em ML</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Rolling update com maxUnavailable=0 — zero downtime garantido pela readinessProbe</span><span class="check-tema">Sem 14</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">HPA: minReplicas, maxReplicas, averageUtilization — como o escalonamento automático funciona</span><span class="check-tema">Sem 14</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 15 — Celery + RabbitMQ</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Arquitetura produtor–broker–consumidor: FastAPI publica, RabbitMQ armazena, Celery executa</span><span class="check-tema">Sem 15</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">@app.task com max_retries e retry com backoff — resiliência automática sem código extra</span><span class="check-tema">Sem 15</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Padrão assíncrono: POST retorna task_id → GET polling → status SUCCESS → resultado</span><span class="check-tema">Sem 15</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Filas separadas (realtime vs batch) — routing por tipo de tarefa para workers dedicados</span><span class="check-tema">Sem 15</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 16 — JWT + Rate Limiting + Auditoria</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">JWT stateless: Header.Payload.Signature — qualquer réplica valida sem banco de sessões</span><span class="check-tema">Sem 16</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">401 (token ausente/inválido) vs 422 (schema inválido Pydantic) vs 429 (rate limit excedido)</span><span class="check-tema">Sem 16</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Rate limiting por usuário JWT é mais robusto que por IP — não contornável com proxy</span><span class="check-tema">Sem 16</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Auditoria: logar hash do input (não o dado bruto) + usuário + timestamp + status</span><span class="check-tema">Sem 16</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 17 — SHAP e LIME</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">SHAP global (importância média) vs local (por instância) — quando usar cada um</span><span class="check-tema">Sem 17</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Soma dos SHAP values + base value = predição exata da instância</span><span class="check-tema">Sem 17</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">LIME: perturbação + modelo linear local — instável, melhor para texto/imagem</span><span class="check-tema">Sem 17</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">LGPD Art. 20 exige explicação de decisões automatizadas — SHAP local satisfaz esse requisito</span><span class="check-tema">Sem 17</span></div>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--text-muted);margin:.85rem 0 .75rem;">Semana 18 — Kafka</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Kafka é log distribuído imutável — evento persiste e pode ser relido; RabbitMQ remove ao consumir</span><span class="check-tema">Sem 18</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Consumer groups independentes: ML, auditoria e alertas leem o mesmo evento sem interferir</span><span class="check-tema">Sem 18</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Topic + Partition + Offset — estrutura do log Kafka e como o consumer group rastreia posição</span><span class="check-tema">Sem 18</span></div>
+        <div class="check-item" onclick="toggle(this)"><div class="check-box"><i class="fas fa-check check-icon"></i></div><span class="check-label">Consumer ML: carregar modelo uma vez → loop de mensagens → publicar resultado em outro tópico</span><span class="check-tema">Sem 18</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Simulado P3</span></div>
+
+  <!-- AULA 2: Simulado -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · Simulado P3</div>
+        <div class="secao-titulo">7 questões no estilo da prova — tente antes de ver o gabarito</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-stopwatch"></i>
+      <span>Simule as condições reais: tente responder todas as questões <strong>antes</strong> de abrir qualquer gabarito. Cronometre 90 minutos.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="questao">
+      <div class="questao-num">Questão 1 · Kubernetes — Semana 14</div>
+      <p class="questao-enunciado">Um Deployment de modelo ML tem <code>replicas: 3</code> e a seguinte estratégia de atualização: <code>maxUnavailable: 0</code> e <code>maxSurge: 1</code>. O que acontece quando você executa <code>kubectl set image deployment/modelo modelo=modelo:2.0</code>?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Os 3 pods antigos são encerrados simultaneamente e 3 novos com a imagem 2.0 são iniciados</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Um pod com imagem 2.0 é iniciado (total: 4 pods). Quando passa na readinessProbe, um pod antigo é removido. Processo se repete até todos serem 2.0, nunca havendo menos de 3 pods rodando</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O Kubernetes aguarda o operador aprovar manualmente a atualização antes de iniciar qualquer pod novo</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O update falha porque <code>maxUnavailable: 0</code> não é compatível com <code>maxSurge: 1</code></div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Com <code>maxUnavailable: 0</code> e <code>maxSurge: 1</code>, o Kubernetes garante zero downtime. Ele sobe um pod extra (total: 4) antes de remover qualquer pod antigo. O pod novo só recebe tráfego depois de passar na readinessProbe — que para modelos ML verifica se o modelo carregou com sucesso via <code>/health</code>. Só então um pod antigo é removido. O processo se repete até todos os pods estarem na versão 2.0, com no mínimo 3 pods ativos em todo momento.</p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="questao">
+      <div class="questao-num">Questão 2 · Celery — Semana 15</div>
+      <p class="questao-enunciado">Um cliente envia 500.000 registros para pontuação via <code>POST /jobs/batch</code>. O endpoint retorna imediatamente o JSON <code>{"task_id": "abc123", "status": "PENDING"}</code>. Três minutos depois, o cliente consulta <code>GET /jobs/abc123</code> e recebe <code>{"status": "SUCCESS", "resultado": {...}}</code>. Qual o nome deste padrão de arquitetura?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Streaming síncrono — o servidor processa em paralelo e o cliente aguarda em stream</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Polling assíncrono — o trabalho é enfileirado, o cliente verifica periodicamente o status usando o task_id</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Webhook reverso — o servidor notifica o cliente assim que o processamento termina</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Long polling — a conexão HTTP fica aberta até o processamento terminar</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>O padrão é polling assíncrono. O POST retorna imediatamente com um task_id (sem bloquear). O cliente repete chamadas GET periodicamente (polling) até receber SUCCESS. Este padrão é o mais simples de implementar com Celery — POST enfileira a task com .delay(), GET usa AsyncResult(task_id).status. O webhook (C) é o oposto: o servidor que notifica o cliente proativamente. O long polling (D) mantém a conexão aberta esperando, o que bloquearia o servidor e exigiria timeout muito maior.</p>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="questao">
+      <div class="questao-num">Questão 3 · JWT — Semana 16</div>
+      <p class="questao-enunciado">Uma API de ML escala horizontalmente para 5 réplicas no Kubernetes. Por que JWT é preferível a sessões armazenadas em banco de dados para autenticação nesse cenário?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">JWT é mais seguro porque o token é criptografado e não pode ser interceptado por terceiros</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">JWT é stateless: cada réplica valida o token localmente com a chave secreta, sem precisar consultar um banco de sessões compartilhado — o que eliminaria gargalo e ponto único de falha</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">JWT permite que o usuário veja o conteúdo do token, facilitando o debug de problemas de autenticação</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">JWT expira automaticamente, enquanto sessões em banco precisam de limpeza manual periódica</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>A vantagem central do JWT em ambientes horizontalmente escalados é a natureza stateless: a réplica que recebe a requisição não precisa de nenhuma comunicação com banco de dados ou outras réplicas para validar o token — ela verifica a assinatura HMAC com a chave secreta e decodifica o payload. Com sessões em banco, todas as 5 réplicas precisariam consultar o mesmo banco a cada requisição, criando gargalo de I/O e ponto único de falha. A opção A é parcialmente falsa (o payload do JWT é só codificado em base64, não criptografado). A D é verdadeira mas não é a razão principal para preferi-lo em ambiente distribuído.</p>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="questao">
+      <div class="questao-num">Questão 4 · SHAP — Semana 17</div>
+      <p class="questao-enunciado">Um modelo de crédito prevê que o cliente João não deve receber empréstimo (predição = 0, probabilidade = 0.82). Os valores SHAP calculados são: <code>historico_credito: -0.31</code>, <code>dividas_abertas: +0.28</code>, <code>renda_mensal: -0.15</code>. O valor base do modelo é 0.40. O que significam esses valores?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O histórico de crédito ruim e as dívidas abertas contribuem juntos para aumentar o risco, enquanto a renda reduz o risco</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O bom histórico de crédito e a boa renda reduzem o score de risco, mas as dívidas abertas aumentam — resultando no score final de 0.82 (0.40 - 0.31 + 0.28 - 0.15 + outros = 0.82)</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Os valores SHAP representam a importância global de cada feature para o modelo, não a explicação desta predição específica</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O modelo base já prediz 0.40 de risco; os SHAP values somam e subtraem para chegar à predição final, sendo positivos os que aumentam e negativos os que reduzem o risco de inadimplência</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: D</strong><br>Esta questão testa a interpretação correta dos valores SHAP locais. O valor base (0.40) é a predição média do modelo sobre o conjunto de treino. Os SHAP values medem a contribuição de cada feature para afastar a predição deste cliente do valor base: <code>dividas_abertas: +0.28</code> significa que as dívidas deste cliente aumentam o score de risco em 0.28 em relação à média. <code>historico_credito: -0.31</code> significa que o histórico deste cliente reduz o risco em 0.31. A soma de todos os SHAP values + base_value = predição final (0.82). A opção B descreve a direção corretamente mas erra ao dizer que histórico de crédito "bom" reduz o risco (o enunciado não diz que o histórico é bom — um SHAP negativo significa que a feature deste cliente específico reduz o score em relação à média, não que o histórico é bom em termos absolutos).</p>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="questao">
+      <div class="questao-num">Questão 5 · Rate Limiting — Semana 16</div>
+      <p class="questao-enunciado">Uma empresa concorrente suspeita que está sofrendo model extraction: um agente externo faz 50.000 consultas à API de inferência em 24h, possivelmente para reconstruir o modelo proprietário. O rate limiting por IP já está configurado em 100 req/min. Por que ele não resolveu o problema e qual seria a contramedida mais eficaz?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O rate limiting por IP falhou porque o atacante usou múltiplos IPs (proxies/VPN). A solução mais eficaz é rate limiting por usuário autenticado (JWT), que limita a conta independente do IP de origem</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O rate limiting falhou porque o atacante usou HTTP/2 multiplexing. A solução é migrar para gRPC</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O rate limiting por IP é suficiente — o problema deve estar em outra camada de segurança</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">A única solução para model extraction é tornar a API completamente privada, sem acesso externo</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: A</strong><br>Rate limiting por IP é facilmente contornado com proxies residenciais, VPNs ou redes de IPs rotativos. 100 req/min por IP, distribuídos em 1.000 IPs diferentes = 100.000 req/min sem violar nenhum limite individual. Rate limiting por conta autenticada (JWT) remove essa possibilidade: independente de quantos IPs o atacante use, ele está vinculado à sua conta. Complementarmente, sistemas de detecção de anomalias (padrão de consulta suspeito — inputs muito similares ou cobrindo o espaço de features sistematicamente) podem identificar model extraction antes que o dano seja significativo.</p>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="questao">
+      <div class="questao-num">Questão 6 · Kafka — Semana 18</div>
+      <p class="questao-enunciado">Uma empresa publica eventos de transações no tópico Kafka <code>transacoes</code>. Três sistemas distintos precisam processar cada evento: (1) detecção de fraude ML, (2) auditoria/logging, (3) atualização de saldo em tempo real. Qual a abordagem correta no Kafka?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">Criar três tópicos diferentes (<code>transacoes-fraude</code>, <code>transacoes-auditoria</code>, <code>transacoes-saldo</code>) e o producer publica em todos os três</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">Criar um único consumer que processa os três casos e publica os resultados em tópicos separados</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">Criar três consumer groups distintos (<code>grupo-fraude</code>, <code>grupo-auditoria</code>, <code>grupo-saldo</code>), cada um consumindo o mesmo tópico <code>transacoes</code> de forma independente</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">Usar RabbitMQ em vez de Kafka, pois o Kafka só suporta um consumer por tópico</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: C</strong><br>Esta é a principal vantagem do Kafka sobre filas tradicionais: o modelo de consumer groups. Cada grupo tem seu próprio offset por partição — ou seja, cada grupo lê o evento de forma completamente independente. O grupo de fraude pode estar no offset 1.000, o de auditoria no 999 e o de saldo no 1.001, sem interferência. O evento persiste no log e cada grupo o lê no seu próprio ritmo. A opção A seria ineficiente (triplicar os dados no broker). A B acoplaria três responsabilidades distintas em um único consumer, criando um ponto de falha único. A D é factualmente incorreta — o Kafka suporta múltiplos consumer groups por design.</p>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="questao">
+      <div class="questao-num">Questão 7 · Integração — Semanas 14–18</div>
+      <p class="questao-enunciado">Uma API de ML em produção no Kubernetes apresenta os seguintes sintomas: (1) autenticação JWT funcionando, (2) algumas requisições retornam 503, (3) o HPA não está escalando mesmo com CPU em 85%, (4) o Grafana mostra latência P95 crescendo. Qual é a causa raiz mais provável e a sequência correta de investigação?</p>
+      <div class="alternativas">
+        <div class="alt"><div class="alt-letra">A</div><div class="alt-texto">O JWT expirou para todos os usuários simultaneamente, causando reautenticação em massa que sobrecarregou o servidor</div></div>
+        <div class="alt"><div class="alt-letra">B</div><div class="alt-texto">O modelo não está carregando corretamente: pods falham na readinessProbe e ficam fora do Service, reduzindo a capacidade efetiva. O HPA não escala porque as réplicas não-ready não contam para o cálculo de CPU média. Investigação: kubectl describe pods → logs → verificar /health</div></div>
+        <div class="alt"><div class="alt-letra">C</div><div class="alt-texto">O rate limiting está configurado muito restritivo e está retornando 503 em vez de 429</div></div>
+        <div class="alt"><div class="alt-letra">D</div><div class="alt-texto">O Kafka está sobrecarregando a API com eventos demais, saturando as conexões disponíveis</div></div>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <p><strong>Resposta: B</strong><br>Esta questão integra Kubernetes + monitoramento. Os sintomas se encaixam perfeitamente: se o modelo falha ao carregar (por ex., arquivo .pkl corrompido ou dependência ausente), os pods falham na readinessProbe e o Kubernetes os remove do Service — resultando em 503 para as requisições que chegam sem pods disponíveis. O HPA calcula a utilização de CPU como média sobre os pods <em>ready</em>, não todos os pods. Com apenas 1-2 pods ready em vez de 3, o denominador do cálculo diminui, mas a CPU por pod ready pode já estar tão alta que o comportamento parece inconsistente. A investigação correta é sempre: <code>kubectl get pods</code> → checar quais estão Running vs não-ready → <code>kubectl describe pod</code> para eventos → <code>kubectl logs</code> → verificar manualmente o endpoint /health.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Projeto Final</span></div>
+
+  <!-- AULA 3: Projeto Final -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · Projeto Final</div>
+        <div class="secao-titulo">Rubrica de Avaliação e Orientações de Entrega</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>O que é o Projeto Final</div>
+      <p>O Projeto Final consiste em construir um <strong>pipeline MLOps end-to-end</strong> para um problema de sua escolha, integrando pelo menos 6 dos componentes estudados na disciplina. Você apresentará em 10 minutos demonstrando o pipeline funcionando.</p>
+      <div class="destaque">
+        <strong>Liberdade de tema:</strong> escolha qualquer problema de ML que você tenha interesse — detecção de fraude, churn de clientes, recomendação, classificação de texto, previsão de demanda. O que importa é a infraestrutura MLOps, não a acurácia do modelo.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-star"></i>Rubrica de Avaliação — 100 pontos</div>
+      <div class="rubrica-grid">
+        <div class="rubrica-item">
+          <h4>Reprodutibilidade <span class="rubrica-pts">20pts</span></h4>
+          <ul>
+            <li>Dados versionados com DVC (10pts)</li>
+            <li>Dockerfile correto com slim e boas práticas (5pts)</li>
+            <li>requirements.txt com versões fixas (5pts)</li>
+          </ul>
+        </div>
+        <div class="rubrica-item">
+          <h4>Pipeline e Tracking <span class="rubrica-pts">20pts</span></h4>
+          <ul>
+            <li>Experimentos logados no MLflow (10pts)</li>
+            <li>Modelo promovido no Registry com critério (5pts)</li>
+            <li>Pipeline reproduzível (MLflow ou DVC) (5pts)</li>
+          </ul>
+        </div>
+        <div class="rubrica-item">
+          <h4>Serving <span class="rubrica-pts">20pts</span></h4>
+          <ul>
+            <li>API FastAPI com endpoints documentados (10pts)</li>
+            <li>Validação Pydantic e tratamento de erros (5pts)</li>
+            <li>Health check funcional (5pts)</li>
+          </ul>
+        </div>
+        <div class="rubrica-item">
+          <h4>Monitoramento <span class="rubrica-pts">15pts</span></h4>
+          <ul>
+            <li>Métricas Prometheus expostas (8pts)</li>
+            <li>Dashboard Grafana com pelo menos 2 painéis (7pts)</li>
+          </ul>
+        </div>
+        <div class="rubrica-item">
+          <h4>Segurança ou Explicabilidade <span class="rubrica-pts">15pts</span></h4>
+          <ul>
+            <li>JWT + rate limiting (15pts), ou</li>
+            <li>SHAP global + endpoint /explain (15pts)</li>
+          </ul>
+        </div>
+        <div class="rubrica-item">
+          <h4>Apresentação <span class="rubrica-pts">10pts</span></h4>
+          <ul>
+            <li>Demo ao vivo funcionando (5pts)</li>
+            <li>Clareza na explicação das escolhas (3pts)</li>
+            <li>README completo no repositório (2pts)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque" style="margin-top:1rem;">
+        <strong>Bônus (até +10pts):</strong> Kubernetes com HPA funcional (+5pts) | Celery para scoring em lote (+3pts) | Evidently com drift detection automatizado (+2pts)
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clipboard-check"></i>Instruções da P3 e entrega do Projeto</div>
+      <div class="instrucoes-grid">
+        <div class="instrucao-card">
+          <h4><i class="fas fa-file-alt"></i>Formato da P3</h4>
+          <ul>
+            <li>7 questões mistas (múltipla escolha + código)</li>
+            <li>Duração: 90 minutos</li>
+            <li>Folha de cola A5 manuscrita permitida</li>
+            <li>Peso: 25% da nota final</li>
+          </ul>
+        </div>
+        <div class="instrucao-card">
+          <h4><i class="fas fa-folder-open"></i>Entrega do Projeto</h4>
+          <ul>
+            <li>Repositório Git público ou privado compartilhado</li>
+            <li>README com: problema, arquitetura, como rodar</li>
+            <li>docker-compose.yml funcional no repositório</li>
+            <li>Apresentação presencial: 10min + 5min perguntas</li>
+          </ul>
+        </div>
+        <div class="instrucao-card">
+          <h4><i class="fas fa-lightbulb"></i>Dicas para a P3</h4>
+          <ul>
+            <li>Foco especial: Kubernetes + Celery + Kafka</li>
+            <li>Pratique leitura de YAML de Deployment</li>
+            <li>Revise consumer groups do Kafka</li>
+            <li>Lembre os códigos: 401/422/429/503</li>
+          </ul>
+        </div>
+        <div class="instrucao-card">
+          <h4><i class="fas fa-exclamation-circle"></i>Atenção na apresentação</h4>
+          <ul>
+            <li>Prepare a demo com antecedência — não confie na rede</li>
+            <li>Mostre o pipeline rodando (logs, Grafana, predições)</li>
+            <li>Explique uma decisão de arquitetura que você tomou</li>
+            <li>Tenha o repositório Git aberto para mostrar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calendar-alt"></i>Calendário Final</div>
+      <div class="calendario">
+        <div class="cal-item">
+          <span class="cal-data">Semana 19</span>
+          <span class="cal-desc">Hoje — Revisão P3, simulado e orientações do projeto</span>
+          <span class="cal-badge badge-hoje">Hoje</span>
+        </div>
+        <div class="cal-item">
+          <span class="cal-data">Próxima aula</span>
+          <span class="cal-desc">Prova Final P3 — 90 minutos, folha de cola permitida</span>
+          <span class="cal-badge badge-prova">P3</span>
+        </div>
+        <div class="cal-item">
+          <span class="cal-data">Semana 19 (cont.)</span>
+          <span class="cal-desc">Apresentações do Projeto Final — 10 min cada grupo</span>
+          <span class="cal-badge badge-proj">Projeto</span>
+        </div>
+        <div class="cal-item">
+          <span class="cal-data">Semana 20</span>
+          <span class="cal-desc">Segunda chamada P3 + Apresentações pendentes do Projeto</span>
+          <span class="cal-badge badge-fim">2ª Chamada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fim-box">
+      <h2>🎓 Parabéns pela jornada!</h2>
+      <p>Em 18 semanas você construiu uma stack completa de MLOps: do versionamento de dados com DVC ao streaming com Kafka, passando por Docker, Kubernetes, FastAPI, Celery, Prometheus, Grafana, SHAP e muito mais. Essa é a fundação para trabalhar com sistemas de ML em produção real.</p>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+function toggle(el){
+  el.classList.toggle('checked');
+  atualizarProgresso();
+}
+function atualizarProgresso(){
+  const total   = document.querySelectorAll('.check-item').length;
+  const marcados = document.querySelectorAll('.check-item.checked').length;
+  const pct = Math.round((marcados/total)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-text').textContent = marcados+' / '+total;
+}
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+</script>
+</body>
+</html>

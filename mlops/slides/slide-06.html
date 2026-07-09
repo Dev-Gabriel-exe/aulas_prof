@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 06 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA ─────────────────────────────────────────────────────── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:#7f1d1d;top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:#450a0a;bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:#991b1b;top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(239,68,68,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:#f87171;border:1px solid rgba(239,68,68,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:#f87171;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(239,68,68,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:#f87171;}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:#ef4444;border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(239,68,68,.18);color:#f87171;display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(239,68,68,.05);border-left:3px solid #ef4444;}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:#f87171;font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:#f87171;font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(239,68,68,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(239,68,68,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:#f87171;font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.03);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.07);border-left:3px solid #ef4444;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-red strong{color:#f87171;}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(239,68,68,.1);}
+th{padding:.6rem 1rem;text-align:left;color:#f87171;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(239,68,68,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(239,68,68,.03);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:#4ade80;}.icon-list li i.warn{color:#fbbf24;}.icon-list li i.no{color:#f87171;}
+
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);font-size:.86rem;color:rgba(196,181,253,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:var(--purple-400);flex-shrink:0;margin-top:2px;}
+
+/* revisão cards */
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.rev-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.rev-card:hover{border-color:rgba(239,68,68,.2);}
+.rev-semana{font-size:.62rem;color:#f87171;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.35rem;}
+.rev-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--text-primary);margin-bottom:.6rem;}
+.rev-lista{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.rev-lista li{font-size:.78rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:7px;line-height:1.5;}
+.rev-lista li::before{content:'→';color:rgba(239,68,68,.5);flex-shrink:0;font-size:.7rem;margin-top:2px;}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:.65rem 1rem;border-radius:9px;background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:.15s;user-select:none;}
+.check-item:hover{border-color:rgba(167,139,250,.2);background:rgba(167,139,250,.04);}
+.check-item.done{border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.05);}
+.check-box{width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:.15s;}
+.check-item.done .check-box{background:rgba(167,139,250,.25);border-color:rgba(167,139,250,.5);color:var(--purple-400);}
+.check-text{font-size:.85rem;color:var(--text-secondary);line-height:1.5;}
+.check-item.done .check-text{color:var(--text-muted);text-decoration:line-through;}
+
+/* score */
+.score-wrap{display:flex;align-items:center;gap:1.5rem;padding:1.25rem 1.5rem;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:14px;margin-top:1.5rem;}
+.score-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:#f87171;line-height:1;}
+.score-label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;}
+.score-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;}
+.score-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#ef4444,#f87171);transition:width .5s ease;}
+
+/* simulado */
+.sim-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.sim-header{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;}
+.sim-num{width:30px;height:30px;border-radius:8px;background:rgba(239,68,68,.15);color:#f87171;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:800;flex-shrink:0;}
+.sim-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sim-tipo{font-size:.65rem;padding:2px 8px;border-radius:5px;font-weight:600;letter-spacing:.05em;}
+.sim-conceito{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.sim-codigo{background:rgba(167,139,250,.1);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+.sim-pratica{background:rgba(52,211,153,.1);color:#34d399;border:1px solid rgba(52,211,153,.2);}
+.sim-analise{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.sim-pts{font-size:.65rem;color:var(--text-muted);}
+.sim-item p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.sim-item p code{font-family:'JetBrains Mono',monospace;font-size:.82rem;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;color:#ddd6fe;}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.75rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* proxima */
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.rev-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📝 Avaliação</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">06</div>
+    <h1 class="capa-titulo">Avaliação<br><em>P1</em></h1>
+    <p class="capa-sub">Semanas 1 a 5 · Revisão + Simulado + Prova</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sync-alt"></i></div><span>Ciclo de vida de modelos e papéis</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ship"></i></div><span>Reprodutibilidade — venv, Docker, Git para ML</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-database"></i></div><span>DVC — versionamento de dados e pipelines</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-line"></i></div><span>MLflow Tracking — experimentos e artefatos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-archive"></i></div><span>Model Registry — estágios e promoção</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Avaliação P1</div>
+      <p>Prova escrita e/ou prática cobrindo o conteúdo das semanas 1 a 5.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Estrutura da aula de hoje</div>
+      <ul class="info-lista">
+        <li><strong>Aula 1:</strong> Revisão express — flashcards de cada semana</li>
+        <li><strong>Aula 2:</strong> Simulado — 7 questões comentadas</li>
+        <li><strong>Aula 3:</strong> Prova P1</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-clipboard-list"></i>Distribuição da prova</div>
+      <ul class="info-lista">
+        <li>Reprodutibilidade (venv, Docker, Git) — 25%</li>
+        <li>DVC — versionamento de dados — 20%</li>
+        <li>MLflow Tracking — experimentos — 30%</li>
+        <li>Model Registry — estágios e promoção — 25%</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-lightbulb"></i>Dicas para a prova</div>
+      <ul class="info-lista">
+        <li>Leia o enunciado inteiro antes de responder</li>
+        <li>Em código MLflow: lembre do <code style="font-size:.78rem;">with start_run():</code></li>
+        <li>DVC: separe o que vai no Git (ponteiro) do que vai no remote (dado)</li>
+        <li>Registry: archive_existing_versions arquiva — não deleta</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para a revisão</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Revisão Express ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Revisão Express — Semanas 1 a 5</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-clock"></i>
+      <span>5–8 minutos por semana. O objetivo não é re-ensinar — é garantir que os conceitos-chave estão frescos antes do simulado.</span>
+    </div>
+
+    <div class="rev-grid">
+
+      <div class="rev-card">
+        <div class="rev-semana">Semana 1</div>
+        <div class="rev-titulo">O que é MLOps — Ciclo de Vida</div>
+        <ul class="rev-lista">
+          <li>~87% dos projetos de ML nunca chegam a produção</li>
+          <li>MLOps = ML + Dev + Ops — não só DevOps com modelos</li>
+          <li>4 fases: dados → experimentação → deploy → monitoramento</li>
+          <li>Ciclo contínuo — modelos degradam sem retreinamento</li>
+          <li>Data Scientist treina · ML Engineer faz o deploy · MLOps mantém a infraestrutura</li>
+          <li>Notebook: dados fixos, sem escala. Produção: dados dinâmicos, SLA, monitoramento</li>
+        </ul>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-semana">Semana 2</div>
+        <div class="rev-titulo">Reprodutibilidade — venv, Docker, Git</div>
+        <ul class="rev-lista">
+          <li>venv isola pacotes Python por projeto — nunca instale no Python global</li>
+          <li>conda: gerencia dependências de sistema (CUDA, C libs) além dos pacotes</li>
+          <li>requirements.txt com versões fixas garante mesmo ambiente em qualquer máquina</li>
+          <li>Docker: empacota OS + runtime + pacotes + código em imagem imutável</li>
+          <li>Copie requirements.txt antes do código no Dockerfile — aproveita cache de layers</li>
+          <li>Git: dados e modelos fora (.gitignore) · .env com segredos nunca entra no repo</li>
+        </ul>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-semana">Semana 3</div>
+        <div class="rev-titulo">DVC — Versionamento de Dados</div>
+        <ul class="rev-lista">
+          <li>Dados não entram no Git: tamanho, binários, dados sensíveis</li>
+          <li>dvc add cria ponteiro .dvc com hash MD5 — esse arquivo vai no Git</li>
+          <li>dvc add também adiciona o dado ao .gitignore automaticamente</li>
+          <li>dvc push envia dado ao remote · dvc pull baixa do remote</li>
+          <li>git checkout de ponteiro + dvc checkout = rollback de dados</li>
+          <li>dvc.yaml define pipeline · dvc repro só re-executa o que mudou (cache via dvc.lock)</li>
+        </ul>
+      </div>
+
+      <div class="rev-card">
+        <div class="rev-semana">Semana 4</div>
+        <div class="rev-titulo">MLflow Tracking — Experimentos</div>
+        <ul class="rev-lista">
+          <li>Experiment agrupa runs relacionados a um objetivo</li>
+          <li>Run = uma execução com parâmetros, métricas, tags e artefatos</li>
+          <li>Sempre use <code style="font-size:.75rem;">with mlflow.start_run():</code> — fecha o run corretamente</li>
+          <li>autolog() captura tudo automaticamente — sklearn, XGBoost, LightGBM…</li>
+          <li>log_metric com step= cria curva de aprendizado na UI</li>
+          <li>search_runs() retorna DataFrame — use order_by para achar o melhor</li>
+        </ul>
+      </div>
+
+      <div class="rev-card" style="grid-column:span 2;">
+        <div class="rev-semana">Semana 5</div>
+        <div class="rev-titulo">MLflow Model Registry — Estágios e Promoção</div>
+        <ul class="rev-lista" style="columns:2;gap:2rem;">
+          <li>Tracking = laboratório (todos os runs) · Registry = prateleira aprovada (curado)</li>
+          <li>4 estágios: None → Staging → Production → Archived</li>
+          <li>Registry precisa de backend DB: mlflow server --backend-store-uri sqlite:///mlflow.db</li>
+          <li>registered_model_name no log_model registra na hora</li>
+          <li>client.transition_model_version_stage() promove via código</li>
+          <li>archive_existing_versions=True arquiva versão anterior automaticamente</li>
+          <li>URI models:/nome/Production — código de inferência não precisa saber a versão</li>
+          <li>Rollback: arquivar versão nova + reativar versão anterior = 2 linhas de código</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-check-square"></i>Checklist de revisão — marque o que já sabe</div>
+      <div class="checklist" id="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar as 4 fases do ciclo de vida de um modelo e por que é um ciclo, não um pipeline linear</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Dizer a diferença entre venv e conda, e quando usar cada um</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar por que o requirements.txt deve ser copiado antes do código no Dockerfile</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Descrever o que o dvc add faz internamente (ponteiro, hash, gitignore, cache)</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Fazer rollback de dados: sequência de comandos git + dvc correta</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Instrumentar um script de treino com MLflow: set_experiment, start_run, log_param, log_metric, log_model</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Usar search_runs() para encontrar o melhor run e carregar o modelo programaticamente</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar a diferença entre MLflow Tracking e Model Registry com a analogia correta</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Promover um modelo para Production e fazer rollback para versão anterior via MlflowClient</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Explicar por que usar models:/classificador/Production em vez de runs:/abc123/modelo</span></div>
+      </div>
+      <div class="score-wrap">
+        <div><div class="score-num" id="scoreNum">0</div><div class="score-label">/ 10 itens</div></div>
+        <div style="flex:1;">
+          <div style="font-size:.78rem;color:var(--text-secondary);margin-bottom:.4rem;" id="scoreMsg">Marque os itens que você já domina</div>
+          <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2 · Simulado</span></div>
+
+  <!-- ── AULA 2: Simulado ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Simulado — 7 Questões com Gabarito Comentado</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Tente responder cada questão antes de abrir o gabarito. O simulado cobre os mesmos tópicos e nível de dificuldade da P1.</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q1</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-conceito">Conceito</span>
+          <span class="sim-pts">1,5 pts</span>
+        </div>
+      </div>
+      <p>Explique com suas palavras por que um modelo de ML que atinge 94% de acurácia no notebook do cientista pode produzir resultados diferentes ao ser colocado em produção — mesmo sem nenhuma mudança no código de treino. Cite pelo menos dois fatores concretos.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Resposta esperada (ao menos 2 dos fatores abaixo):</strong><br><br>
+          <strong>1. Versões de pacotes diferentes:</strong> scikit-learn 1.2 e 1.5 podem implementar algoritmos com leves diferenças numéricas, parâmetros renomeados ou comportamento padrão alterado. O modelo serializado com uma versão pode se comportar diferente ao ser carregado em outra.<br><br>
+          <strong>2. Dados de entrada dinâmicos:</strong> em produção os dados chegam em tempo real com ruído, formatos inesperados, campos nulos e distribuição diferente dos dados de treino. O notebook usava dados já limpos e estáticos.<br><br>
+          <strong>3. Aleatoriedade e seeds:</strong> operações com random_state não definido podem gerar resultados diferentes entre execuções em ambientes distintos.<br><br>
+          <strong>4. Diferenças de SO/bibliotecas de sistema:</strong> precisão de ponto flutuante pode variar entre arquiteturas, e bibliotecas como numpy dependem de BLAS/LAPACK do sistema.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q2</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-codigo">Análise de Código</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>O Dockerfile abaixo contém três problemas que afetam reprodutibilidade, desempenho de build ou segurança. Identifique cada um, explique o impacto e escreva a linha corrigida.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dockerfile</span></div>
+        <pre><code><span class="kw">FROM</span> python:latest
+
+<span class="kw">COPY</span> . .
+
+<span class="kw">RUN</span> pip install scikit-learn pandas mlflow fastapi
+
+<span class="kw">ENV</span> API_KEY=<span class="str">"sk-prod-abc123secret"</span>
+
+<span class="kw">CMD</span> [<span class="str">"python"</span>, <span class="str">"serve.py"</span>]</code></pre>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque-red">
+          <strong>Problema 1 — <code>FROM python:latest</code>:</strong> a tag latest aponta para versões diferentes ao longo do tempo — build de hoje pode usar Python 3.11, build de amanhã Python 3.13. Não é reproduzível.<br>
+          Correção: <code>FROM python:3.11-slim</code><br><br>
+          <strong>Problema 2 — <code>COPY . .</code> antes do pip install:</strong> qualquer mudança em qualquer arquivo do projeto invalida o cache Docker a partir daí, forçando reinstalação completa de todos os pacotes a cada build. Além disso, pacotes sem versão fixada (<code>scikit-learn</code> sem <code>==x.y.z</code>) quebram a reprodutibilidade.<br>
+          Correção: <code>COPY requirements.txt .</code> → <code>RUN pip install --no-cache-dir -r requirements.txt</code> → <code>COPY . .</code><br><br>
+          <strong>Problema 3 — <code>ENV API_KEY="sk-prod-abc123secret"</code>:</strong> credenciais hardcodadas na imagem ficam expostas em docker inspect e no histórico de layers — qualquer pessoa com acesso à imagem vê o segredo.<br>
+          Correção: remover do Dockerfile e injetar em runtime: <code>docker run -e API_KEY=$API_KEY ...</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q3</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-conceito">DVC</span>
+          <span class="sim-pts">1,5 pts</span>
+        </div>
+      </div>
+      <p>Um pipeline DVC tem três estágios: <strong>coletar → transformar → treinar</strong>. O time modifica apenas o script <code>src/train.py</code> e executa <code>dvc repro</code>. Descreva quais estágios são re-executados, quais são pulados, e qual mecanismo o DVC usa para tomar essa decisão.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>Estágios pulados:</strong> "coletar" e "transformar" — nenhum arquivo nas suas <code>deps</code> mudou.<br>
+          <strong>Estágio re-executado:</strong> "treinar" — <code>src/train.py</code> está listado nas suas <code>deps</code> e seu hash MD5 atual é diferente do registrado no <code>dvc.lock</code>.<br><br>
+          <strong>O mecanismo:</strong> o arquivo <code>dvc.lock</code> armazena o hash MD5 de cada arquivo em <code>deps</code> e <code>outs</code> de cada estágio. Ao executar <code>dvc repro</code>, o DVC compara os hashes atuais com os do lockfile. Diferença = invalida o estágio e todos os estágios que dependem do seu output. Igualdade = usa cache.<br><br>
+          <strong>Por que importa:</strong> se "coletar" leva 2 horas (ex: consulta a banco externo), re-executá-lo a cada mudança de código tornaria o ciclo inviável. O cache inteligente do DVC garante que só o necessário seja reprocessado.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q4</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-codigo">Análise de Código — MLflow</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>O script abaixo usa MLflow mas tem três erros ou omissões que deixam o rastreamento incompleto. Identifique cada problema e escreva a correção correspondente.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span></div>
+        <pre><code><span class="kw">import</span> mlflow
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, f1_score
+
+N_EST = <span class="num">200</span>
+DEPTH = <span class="num">10</span>
+
+model = RandomForestClassifier(n_estimators=N_EST, max_depth=DEPTH)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+mlflow.start_run()
+mlflow.log_param(<span class="str">"n_estimators"</span>, N_EST)
+mlflow.log_metric(<span class="str">"accuracy"</span>, accuracy_score(y_test, y_pred))
+mlflow.log_metric(<span class="str">"f1"</span>, f1_score(y_test, y_pred))</code></pre>
+      </div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque-red">
+          <strong>Problema 1 — treino fora do contexto de run:</strong> <code>model.fit()</code> ocorre antes de <code>mlflow.start_run()</code>. O autolog (se ativado) não capturaria o fit, e o tempo de treino não é rastreado.<br>
+          Correção: usar <code>with mlflow.start_run():</code> englobando todo o bloco, incluindo o fit.<br><br>
+          <strong>Problema 2 — <code>max_depth</code> não é logado:</strong> <code>DEPTH=10</code> nunca é registrado como parâmetro. Ao comparar runs na UI, não será possível saber qual max_depth gerou qual resultado.<br>
+          Correção: adicionar <code>mlflow.log_param("max_depth", DEPTH)</code>.<br><br>
+          <strong>Problema 3 — run nunca é encerrado e modelo não é salvo:</strong> sem <code>with start_run():</code> ou chamada a <code>mlflow.end_run()</code>, o run fica em estado RUNNING na UI. Além disso, o modelo não é salvo como artefato — impossível carregá-lo pelo Registry depois.<br>
+          Correção: usar <code>with mlflow.start_run():</code> (fecha automaticamente) e adicionar <code>mlflow.sklearn.log_model(model, "modelo")</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q5</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-analise">Análise</span>
+          <span class="sim-pts">1,5 pts</span>
+        </div>
+      </div>
+      <p>Um modelo de recomendação de produtos foi treinado em março com acurácia de 91%. Em setembro, sem nenhuma mudança no código, a acurácia caiu para 68% e ninguém percebeu por três semanas. <strong>a)</strong> Explique a causa mais provável. <strong>b)</strong> Cite duas práticas de MLOps estudadas que teriam prevenido ou detectado o problema mais cedo.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="destaque">
+          <strong>a) Data drift / concept drift:</strong> o comportamento dos usuários muda sazonalmente. O modelo aprendeu o padrão de março (pré-verão) — em setembro o perfil de compras é diferente. O modelo continua fazendo predições baseadas em uma realidade que deixou de existir. Como ninguém monitorava as predições reais vs. os resultados, a degradação foi silenciosa.<br><br>
+          <strong>b) Duas práticas:</strong><br>
+          — <strong>Monitoramento de drift</strong> (abordado na Semana 1 como fase do ciclo de vida, aprofundado na Semana 11): ferramentas como Evidently AI comparam continuamente a distribuição dos dados de entrada reais com a distribuição dos dados de treino. Um alerta seria disparado semanas antes da queda de acurácia se tornar crítica.<br>
+          — <strong>Model Registry com versionamento (Semana 5):</strong> com o modelo de março versionado no Registry (Archived), o rollback seria imediato — uma chamada a <code>transition_model_version_stage()</code> para reativar a versão anterior enquanto o retreinamento é preparado.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q6</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-codigo">Código — Registry</span>
+          <span class="sim-pts">2,0 pts</span>
+        </div>
+      </div>
+      <p>Escreva o código Python completo que: (1) inicia um run MLflow, treina um RandomForestClassifier, loga accuracy e registra o modelo no Registry com o nome <code>"classificador-churn"</code>; (2) promove a versão 1 para Production arquivando qualquer versão anterior; (3) carrega o modelo em produção usando a URI correta sem hardcodar o número de versão.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — Gabarito Q6</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow, mlflow.sklearn
+<span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+NOME = <span class="str">"classificador-churn"</span>
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)
+mlflow.set_experiment(<span class="str">"churn-prediction"</span>)
+
+<span class="cm"># 1. Treinar e registrar</span>
+<span class="kw">with</span> mlflow.start_run():
+    model = RandomForestClassifier(n_estimators=<span class="num">200</span>, random_state=<span class="num">42</span>)
+    model.fit(X_train, y_train)
+    acc = accuracy_score(y_test, model.predict(X_test))
+    mlflow.log_metric(<span class="str">"accuracy"</span>, acc)
+    mlflow.sklearn.log_model(
+        model, <span class="str">"modelo"</span>,
+        registered_model_name=NOME   <span class="cm"># registra direto no Registry</span>
+    )
+
+<span class="cm"># 2. Promover v1 para Production</span>
+client = MlflowClient(<span class="str">"http://localhost:5000"</span>)
+client.transition_model_version_stage(
+    name=NOME,
+    version=<span class="str">"1"</span>,
+    stage=<span class="str">"Production"</span>,
+    archive_existing_versions=<span class="kw">True</span>   <span class="cm"># arquiva versões anteriores</span>
+)
+
+<span class="cm"># 3. Carregar de Production — sem hardcodar versão</span>
+model_prod = mlflow.pyfunc.load_model(
+    f<span class="str">"models:/{NOME}/Production"</span>
+)
+predicoes = model_prod.predict(X_test)</code></pre>
+        </div>
+        <div class="destaque"><strong>Ponto crítico:</strong> a URI <code>models:/classificador-churn/Production</code> sempre aponta para a versão atual em Production. Quando o time promover a v2, o código de inferência carrega a nova versão automaticamente — sem deploy de código novo.</div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="sim-item">
+      <div class="sim-header">
+        <div class="sim-num">Q7</div>
+        <div class="sim-meta">
+          <span class="sim-tipo sim-pratica">Prática</span>
+          <span class="sim-pts">3,5 pts</span>
+        </div>
+      </div>
+      <p>Descreva, em sequência, todos os comandos Git e DVC necessários para que um novo membro do time, após clonar o repositório, possa: (a) ter o ambiente Python correto; (b) obter os dados da versão mais recente; (c) rodar o pipeline completo. Explique o que cada comando faz e por que a ordem importa.</p>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — sequência completa comentada</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># 1. Clonar o repositório (código + ponteiros .dvc)</span>
+git clone https://github.com/time/projeto-ml.git
+cd projeto-ml
+
+<span class="cm"># 2. Criar e ativar o ambiente virtual</span>
+python -m venv .venv
+source .venv/bin/activate        <span class="cm"># Linux/Mac</span>
+
+<span class="cm"># 3. Instalar dependências com versões fixas</span>
+pip install -r requirements.txt  <span class="cm"># inclui dvc[gdrive] ou dvc[s3]</span>
+
+<span class="cm"># 4. Baixar os dados do remote storage</span>
+dvc pull
+<span class="cm"># Lê os ponteiros .dvc do repositório,</span>
+<span class="cm"># consulta o remote configurado em .dvc/config</span>
+<span class="cm"># e baixa os dados correspondentes ao commit atual</span>
+
+<span class="cm"># 5. Executar o pipeline</span>
+dvc repro
+<span class="cm"># Executa apenas os estágios que não estão em cache</span></code></pre>
+        </div>
+        <div class="destaque"><strong>Por que a ordem importa:</strong> o <code>git clone</code> deve vir antes do <code>dvc pull</code> porque o DVC precisa dos ponteiros <code>.dvc</code> (que estão no Git) para saber quais arquivos buscar e de onde. Sem o clone não há ponteiros; sem os ponteiros o <code>dvc pull</code> não tem referência. O pip install deve vir antes do <code>dvc repro</code> porque os scripts Python do pipeline precisam das dependências instaladas para executar.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prova P1</span></div>
+
+  <!-- ── AULA 3: Orientações da Prova ─────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Avaliação P1 — Orientações</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-info-circle"></i>Instruções gerais</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle ok"></i><span>Permitido: anotações próprias em papel</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Em código: sintaxe não precisa ser exata — lógica e conceito contam mais</span></li>
+          <li><i class="fas fa-check-circle ok"></i><span>Questões dissertativas: mínimo 3 linhas com justificativa</span></li>
+          <li><i class="fas fa-times-circle no"></i><span>Não permitido: internet, celular ou consulta ao colega</span></li>
+          <li><i class="fas fa-times-circle no"></i><span>Questões em branco não recebem crédito parcial</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-star"></i>Critérios de correção</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-circle warn"></i><span><strong>Conceito:</strong> clareza da explicação + exemplo concreto</span></li>
+          <li><i class="fas fa-circle warn"></i><span><strong>Código:</strong> lógica correta + identificação dos erros + justificativa</span></li>
+          <li><i class="fas fa-circle warn"></i><span><strong>Análise:</strong> causa identificada + solução proposta</span></li>
+          <li><i class="fas fa-circle warn"></i><span>Erros de digitação menores não penalizam</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do semestre</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Avaliação</th><th>Semana</th><th>Conteúdo</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-inline">P1</span> ← você está aqui</td><td>6</td><td>Semanas 1–5</td></tr>
+            <tr><td><span class="badge-inline">P2</span></td><td>13</td><td>Semanas 7–12</td></tr>
+            <tr><td><span class="badge-inline">Revisão Geral</span></td><td>18</td><td>—</td></tr>
+            <tr><td><span class="badge-inline">P3 Final</span></td><td>19</td><td>Semanas 14–17 + projeto integrador</td></tr>
+            <tr><td><span class="badge-inline">2ª Chamada</span></td><td>20</td><td>Prova não realizada</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-07-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 7 — Pipelines de ML Automatizados com MLflow Pipelines e Metaflow</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+function toggleCheck(item){
+  item.classList.toggle('done');
+  const box=item.querySelector('.check-box');
+  box.innerHTML=item.classList.contains('done')?'<i class="fas fa-check"></i>':'';
+  const total=document.querySelectorAll('.check-item').length;
+  const done=document.querySelectorAll('.check-item.done').length;
+  document.getElementById('scoreNum').textContent=done;
+  document.getElementById('scoreBar').style.width=(done/total*100)+'%';
+  const msgs=['Marque os itens que você já domina','Bom começo — continue revisando!','Metade do caminho percorrido!','Quase lá — revise os itens restantes','Você está pronto para a P1! 🚀'];
+  const idx=Math.min(Math.floor(done/(total/4)),4);
+  document.getElementById('scoreMsg').textContent=msgs[idx];
+}
+</script>
+</body>
+</html>

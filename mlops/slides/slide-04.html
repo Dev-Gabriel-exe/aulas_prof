@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 04 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;
+  --purple-900:#2e1065;
+  --purple-800:#4c1d95;
+  --purple-700:#6d28d9;
+  --purple-500:#8b5cf6;
+  --purple-400:#a78bfa;
+  --purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;
+  --code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--purple-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(167,139,250,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);
+  border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(167,139,250,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.var{color:#6ee7b7;}
+.flag{color:#fdba74;}
+.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+.badge-green{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.badge-yellow{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-green{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);
+  font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* componentes MLflow */
+.mlflow-componentes{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;
+}
+.mlflow-comp{
+  background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);
+  border-radius:12px;padding:1rem;text-align:center;
+}
+.mlflow-comp i{font-size:1.3rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.mlflow-comp h4{font-size:.75rem;font-weight:700;color:var(--purple-300);margin-bottom:.35rem;}
+.mlflow-comp p{font-size:.72rem;color:var(--text-muted);line-height:1.45;}
+
+/* run card simulado */
+.runs-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:.75rem 0;}
+.runs-table thead tr{background:rgba(167,139,250,.15);}
+.runs-table th{padding:.5rem .85rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(167,139,250,.2);}
+.runs-table td{padding:.55rem .85rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.04);font-family:'JetBrains Mono',monospace;font-size:.76rem;}
+.runs-table tr:last-child td{border-bottom:none;}
+.runs-table tbody tr:hover td{background:rgba(167,139,250,.04);}
+.run-best td{background:rgba(74,222,128,.04)!important;}
+.run-best td:first-child{border-left:2px solid #4ade80;}
+.run-tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:.68rem;font-weight:600;font-family:'Inter',monospace;}
+.run-tag.finished{background:rgba(74,222,128,.1);color:#4ade80;}
+.run-tag.running{background:rgba(251,191,36,.1);color:#fbbf24;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--text-muted);text-decoration:none;
+  padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);
+  margin-bottom:2rem;transition:color .2s,border-color .2s;
+}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .mlflow-componentes{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">04</div>
+    <h1 class="capa-titulo">Rastreamento de<br><em>Experimentos</em><br>com MLflow</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Nunca mais perca um resultado</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>O problema sem rastreamento — o notebook hell</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-puzzle-piece"></i></div><span>MLflow — componentes, conceitos e arquitetura</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>MLflow Tracking — log de parâmetros, métricas e artefatos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-bar"></i></div><span>UI do MLflow — comparando runs e escolhendo o melhor</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: instrumentar modelo existente e comparar experimentos</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Instrumentar o <code style="font-size:.8rem;">train.py</code> das semanas anteriores com MLflow, rodar pelo menos 5 experimentos com hiperparâmetros diferentes e identificar o melhor via UI.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle"></i>O problema que MLflow resolve</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.78rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">model_final.pkl</code>, <code style="font-size:.78rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">model_v2_bom.pkl</code>, <code style="font-size:.78rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">model_USAR.pkl</code></li>
+        <li>Qual hiperparâmetro gerou aquela acurácia de 94%?</li>
+        <li>Com qual versão do dataset foi treinado?</li>
+        <li>Como esse resultado se compara ao de semana passada?</li>
+        <li>MLflow responde tudo isso com rastreamento automático</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-layer-group"></i>Os 4 componentes do MLflow</div>
+      <ul class="info-lista">
+        <li><strong>Tracking</strong> — log de parâmetros, métricas, artefatos</li>
+        <li><strong>Projects</strong> — empacotar código de ML de forma portátil</li>
+        <li><strong>Models</strong> — formato padrão para servir modelos</li>
+        <li><strong>Registry</strong> — repositório central de modelos (Semana 5)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install mlflow</code> no ambiente virtual</li>
+        <li>Projeto das semanas anteriores em mãos</li>
+        <li>Nenhuma conta externa necessária — roda 100% local</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-03-mlops.html"><i class="fas fa-arrow-left"></i> Semana 3 — DVC</a>
+
+  <!-- ── AULA 1: O problema + Conceitos ────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O Problema sem Rastreamento — e o que é MLflow</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bomb"></i>O notebook hell — onde experimentos vão morrer</div>
+      <p>Você treina um modelo. Funciona bem. Você ajusta os hiperparâmetros. Fica melhor. Você muda o algoritmo. Piora. Você volta para os parâmetros anteriores — mas quais eram mesmo? O notebook já foi sobrescrito três vezes.</p>
+      <p>Esse é o <strong>notebook hell</strong>: um estado em que você tem resultados, mas perdeu o caminho para reproduzi-los. É o problema mais comum na fase de experimentação de qualquer projeto de ML.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">O estado típico sem rastreamento</span></div>
+        <pre><code>notebooks/
+├── experimento.ipynb          <span class="cm"># acurácia 0.87 — quais params?</span>
+├── experimento_v2.ipynb       <span class="cm"># tentei mudar algo, piorou</span>
+├── experimento_v3_bom.ipynb   <span class="cm"># esse ficou bom, mas qual era o lr?</span>
+└── experimento_FINAL.ipynb    <span class="cm"># outputs apagados por acidente 😭</span>
+
+models/
+├── rf_100.pkl      <span class="cm"># 100 árvores? qual dataset?</span>
+├── rf_200_v2.pkl   <span class="cm"># melhor ou pior que o anterior?</span>
+└── xgb_final.pkl   <span class="cm"># acurácia desconhecida</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>A pergunta que sempre aparece:</strong> "qual foi o melhor modelo que treinamos no mês passado e com quais hiperparâmetros?" Sem rastreamento, a resposta honesta é: "não sei". Com MLflow, a resposta é uma busca na UI.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-puzzle-piece"></i>O que é MLflow</div>
+      <p>MLflow é uma plataforma open-source para gerenciar o ciclo de vida de experimentos de ML. Foi criado pela Databricks em 2018 e se tornou o padrão da indústria para rastreamento de experimentos.</p>
+      <p>Ele tem <strong>quatro componentes independentes</strong> — você pode usar só o que precisar, sem ter que adotar o pacote inteiro.</p>
+
+      <div class="mlflow-componentes">
+        <div class="mlflow-comp">
+          <i class="fas fa-chart-line"></i>
+          <h4>Tracking</h4>
+          <p>Log de parâmetros, métricas, artefatos e tags. Interface para comparar runs. <strong>Foco desta semana.</strong></p>
+        </div>
+        <div class="mlflow-comp">
+          <i class="fas fa-box"></i>
+          <h4>Projects</h4>
+          <p>Formato para empacotar código de ML de forma reproduzível, com dependências declaradas.</p>
+        </div>
+        <div class="mlflow-comp">
+          <i class="fas fa-cube"></i>
+          <h4>Models</h4>
+          <p>Formato padrão de modelo que pode ser servido com diferentes frameworks e plataformas.</p>
+        </div>
+        <div class="mlflow-comp">
+          <i class="fas fa-archive"></i>
+          <h4>Registry</h4>
+          <p>Repositório central de modelos com estágios (staging, production). Semana 5.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Conceitos centrais do MLflow Tracking</div>
+      <p>Antes de escrever código, é essencial entender a hierarquia de conceitos do MLflow:</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Conceito</th><th>O que é</th><th>Analogia</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge">Experiment</span></td>
+              <td>Agrupamento de runs relacionados a um mesmo objetivo</td>
+              <td>Uma pasta de projeto</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Run</span></td>
+              <td>Uma execução individual — um treino com seus params e métricas</td>
+              <td>Um experimento de laboratório</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Parameters</span></td>
+              <td>Entradas do modelo: hiperparâmetros, tamanho do dataset, etc.</td>
+              <td>As variáveis que você controlou</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Metrics</span></td>
+              <td>Saídas numéricas: acurácia, F1, RMSE, perda, etc.</td>
+              <td>Os resultados que você mediu</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Artifacts</span></td>
+              <td>Arquivos gerados: modelo serializado, gráficos, CSV de predições</td>
+              <td>Os materiais produzidos</td>
+            </tr>
+            <tr>
+              <td><span class="badge">Tags</span></td>
+              <td>Metadados livres: autor, versão do dataset, notas</td>
+              <td>Post-its com contexto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>Estrutura:</strong> você tem um <em>Experiment</em> chamado "classificacao-clientes". Dentro dele, cada tentativa — com parâmetros diferentes — é um <em>Run</em>. Cada run registra os parâmetros usados, as métricas obtidas e salva o modelo como artefato. A UI mostra todos os runs lado a lado para comparação.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: MLflow Tracking na prática ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">MLflow Tracking na Prática — Instrumentando o Código</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-download"></i>Instalação e primeiro run</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — instalação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>pip install mlflow
+
+<span class="cm"># Adicionar ao requirements.txt</span>
+pip freeze | grep mlflow >> requirements.txt</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — primeiro experimento MLflow</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+
+<span class="cm"># Iniciar um run dentro de um experimento</span>
+mlflow.set_experiment(<span class="str">"meu-primeiro-experimento"</span>)
+
+<span class="kw">with</span> mlflow.start_run():
+    <span class="cm"># Registrar um parâmetro</span>
+    mlflow.log_param(<span class="str">"n_estimators"</span>, <span class="num">100</span>)
+
+    <span class="cm"># Registrar uma métrica</span>
+    mlflow.log_metric(<span class="str">"accuracy"</span>, <span class="num">0.923</span>)
+
+    <span class="cm"># Registrar uma tag (metadado livre)</span>
+    mlflow.set_tag(<span class="str">"autor"</span>, <span class="str">"ana"</span>)
+
+<span class="fn">print</span>(<span class="str">"Run registrado! Abra a UI com: mlflow ui"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — abrindo a UI</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Inicia o servidor web da UI na porta 5000</span>
+mlflow ui
+
+<span class="cm"># Acesse: http://localhost:5000</span>
+<span class="cm"># Os runs ficam salvos na pasta mlruns/ criada automaticamente</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-folder"></i>
+        <span><strong>Adicione <code>mlruns/</code> ao .gitignore.</strong> Essa pasta cresce rapidamente com artefatos e modelos. O MLflow tem seu próprio sistema de armazenamento — não versione com Git. Se quiser compartilhar runs com o time, use um MLflow Tracking Server centralizado (configurado na Semana 5).</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-flask"></i>Instrumentando um script de treino completo</div>
+      <p>O uso real do MLflow é instrumentar o script de treinamento existente — poucas linhas adicionadas ao código que já existe.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — src/train.py com MLflow</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+<span class="kw">import</span> mlflow.sklearn
+<span class="kw">import</span> pickle, os, json
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, f1_score, precision_score, recall_score
+
+<span class="cm"># ── Hiperparâmetros (poderiam vir de args ou config) ──────────────</span>
+N_ESTIMATORS  = <span class="num">100</span>
+MAX_DEPTH     = <span class="kw">None</span>
+MIN_SAMPLES   = <span class="num">2</span>
+RANDOM_STATE  = <span class="num">42</span>
+
+<span class="cm"># ── Carregar dados ────────────────────────────────────────────────</span>
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=RANDOM_STATE
+)
+
+<span class="cm"># ── Nomear o experimento ──────────────────────────────────────────</span>
+mlflow.set_experiment(<span class="str">"classificacao-clientes"</span>)
+
+<span class="kw">with</span> mlflow.start_run():
+
+    <span class="cm"># ── 1. Logar parâmetros ───────────────────────────────────────</span>
+    mlflow.log_param(<span class="str">"n_estimators"</span>,  N_ESTIMATORS)
+    mlflow.log_param(<span class="str">"max_depth"</span>,     MAX_DEPTH)
+    mlflow.log_param(<span class="str">"min_samples"</span>,   MIN_SAMPLES)
+    mlflow.log_param(<span class="str">"dataset_linhas"</span>, <span class="fn">len</span>(df))
+    mlflow.log_param(<span class="str">"dataset_features"</span>, X.shape[<span class="num">1</span>])
+
+    <span class="cm"># ── 2. Treinar ────────────────────────────────────────────────</span>
+    model = RandomForestClassifier(
+        n_estimators=N_ESTIMATORS,
+        max_depth=MAX_DEPTH,
+        min_samples_split=MIN_SAMPLES,
+        random_state=RANDOM_STATE
+    )
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    <span class="cm"># ── 3. Logar métricas ─────────────────────────────────────────</span>
+    mlflow.log_metric(<span class="str">"accuracy"</span>,  accuracy_score(y_test, y_pred))
+    mlflow.log_metric(<span class="str">"f1"</span>,        f1_score(y_test, y_pred))
+    mlflow.log_metric(<span class="str">"precision"</span>, precision_score(y_test, y_pred))
+    mlflow.log_metric(<span class="str">"recall"</span>,    recall_score(y_test, y_pred))
+
+    <span class="cm"># ── 4. Logar o modelo como artefato ──────────────────────────</span>
+    mlflow.sklearn.log_model(model, <span class="str">"modelo"</span>)
+
+    <span class="cm"># ── 5. Tags de contexto ──────────────────────────────────────</span>
+    mlflow.set_tag(<span class="str">"algoritmo"</span>,      <span class="str">"RandomForest"</span>)
+    mlflow.set_tag(<span class="str">"dataset_versao"</span>, <span class="str">"v2"</span>)
+
+    acc = accuracy_score(y_test, y_pred)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Acurácia: {acc:.4f} | Run registrado no MLflow"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-magic"></i>Autolog — rastreamento automático com uma linha</div>
+      <p>O MLflow tem integração nativa com os principais frameworks de ML. Com <code style="font-size:.85rem;">mlflow.sklearn.autolog()</code>, ele captura <strong>automaticamente</strong> todos os parâmetros do modelo, métricas de avaliação e o modelo serializado — sem precisar chamar cada <code style="font-size:.85rem;">log_param</code> manualmente.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — usando autolog</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+<span class="kw">import</span> mlflow.sklearn
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+<span class="cm"># Uma única linha ativa o rastreamento completo</span>
+mlflow.sklearn.autolog()
+
+mlflow.set_experiment(<span class="str">"classificacao-autolog"</span>)
+
+<span class="kw">with</span> mlflow.start_run():
+    model = RandomForestClassifier(n_estimators=<span class="num">200</span>, max_depth=<span class="num">10</span>)
+    model.fit(X_train, y_train)
+    <span class="cm"># MLflow capturou automaticamente:</span>
+    <span class="cm"># → todos os hiperparâmetros do RandomForest</span>
+    <span class="cm"># → accuracy, f1, precision, recall no conjunto de teste</span>
+    <span class="cm"># → o modelo serializado como artefato</span>
+    <span class="cm"># → tempo de treino</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Autolog funciona com:</strong> scikit-learn, XGBoost, LightGBM, CatBoost, PyTorch, TensorFlow/Keras, Spark MLlib e outros. Para a maioria dos projetos desta disciplina, autolog é suficiente — use o log manual só quando precisar registrar informações adicionais que o autolog não captura.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-line"></i>Logando métricas ao longo do treino (epochs)</div>
+      <p>Para modelos iterativos — redes neurais, gradient boosting com early stopping — você pode logar métricas a cada iteração. A UI do MLflow plota a curva de aprendizado automaticamente.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — métricas por época / iteração</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">with</span> mlflow.start_run():
+    mlflow.log_param(<span class="str">"n_epochs"</span>, <span class="num">50</span>)
+
+    <span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">51</span>):
+        <span class="cm"># ... lógica de treino da época ...</span>
+        train_loss = <span class="num">1.0</span> / epoch          <span class="cm"># simulado</span>
+        val_acc    = <span class="num">0.5</span> + epoch * <span class="num">0.009</span>  <span class="cm"># simulado</span>
+
+        <span class="cm"># step=epoch cria uma série temporal na UI</span>
+        mlflow.log_metric(<span class="str">"train_loss"</span>, train_loss, step=epoch)
+        mlflow.log_metric(<span class="str">"val_accuracy"</span>, val_acc,  step=epoch)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-upload"></i>Logando artefatos — gráficos, CSVs e imagens</div>
+      <p>Além do modelo, você pode logar qualquer arquivo como artefato: matriz de confusão, curva ROC, CSV de predições, feature importance. Eles ficam vinculados ao run e acessíveis na UI.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — logando artefatos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> ConfusionMatrixDisplay
+
+<span class="kw">with</span> mlflow.start_run():
+    <span class="cm"># ... treino ...</span>
+
+    <span class="cm"># Logar arquivo individual</span>
+    mlflow.log_artifact(<span class="str">"data/raw/dataset.csv"</span>)   <span class="cm"># dataset usado</span>
+
+    <span class="cm"># Gerar e logar gráfico de matriz de confusão</span>
+    fig, ax = plt.subplots(figsize=(<span class="num">6</span>, <span class="num">5</span>))
+    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax)
+    plt.tight_layout()
+    mlflow.log_figure(fig, <span class="str">"confusion_matrix.png"</span>)
+    plt.close()
+
+    <span class="cm"># Logar feature importances como CSV</span>
+    importances = pd.DataFrame({
+        <span class="str">"feature"</span>: X.columns,
+        <span class="str">"importance"</span>: model.feature_importances_
+    }).sort_values(<span class="str">"importance"</span>, ascending=<span class="kw">False</span>)
+    importances.to_csv(<span class="str">"artifacts/feature_importance.csv"</span>, index=<span class="kw">False</span>)
+    mlflow.log_artifact(<span class="str">"artifacts/feature_importance.csv"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · UI + Comparação + Prática</span></div>
+
+  <!-- ── AULA 3: UI + Comparação + Prática ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Comparando Runs na UI — e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-columns"></i>A UI do MLflow — o que você vê</div>
+      <p>A interface do MLflow em <code style="font-size:.85rem;">localhost:5000</code> é onde a mágica acontece. Ela organiza os runs em tabela e permite comparar qualquer combinação de parâmetros e métricas.</p>
+
+      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.5rem;">Simulação de tabela de runs — experimento "classificacao-clientes":</p>
+      <div class="tabela-wrap">
+        <table class="runs-table">
+          <thead>
+            <tr>
+              <th>Run</th>
+              <th>Status</th>
+              <th>n_estimators</th>
+              <th>max_depth</th>
+              <th>min_samples</th>
+              <th>accuracy ↓</th>
+              <th>f1</th>
+              <th>algoritmo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="run-best">
+              <td>run_7f3a</td>
+              <td><span class="run-tag finished">FINISHED</span></td>
+              <td>300</td>
+              <td>15</td>
+              <td>2</td>
+              <td><strong style="color:#4ade80;">0.9450</strong></td>
+              <td>0.9431</td>
+              <td>RandomForest</td>
+            </tr>
+            <tr>
+              <td>run_2b9c</td>
+              <td><span class="run-tag finished">FINISHED</span></td>
+              <td>200</td>
+              <td>10</td>
+              <td>4</td>
+              <td>0.9380</td>
+              <td>0.9365</td>
+              <td>RandomForest</td>
+            </tr>
+            <tr>
+              <td>run_4e1d</td>
+              <td><span class="run-tag finished">FINISHED</span></td>
+              <td>100</td>
+              <td>None</td>
+              <td>2</td>
+              <td>0.9300</td>
+              <td>0.9285</td>
+              <td>RandomForest</td>
+            </tr>
+            <tr>
+              <td>run_8a5f</td>
+              <td><span class="run-tag finished">FINISHED</span></td>
+              <td>50</td>
+              <td>5</td>
+              <td>5</td>
+              <td>0.9150</td>
+              <td>0.9130</td>
+              <td>RandomForest</td>
+            </tr>
+            <tr>
+              <td>run_1c6g</td>
+              <td><span class="run-tag finished">FINISHED</span></td>
+              <td>100</td>
+              <td>3</td>
+              <td>2</td>
+              <td>0.8920</td>
+              <td>0.8905</td>
+              <td>RandomForest</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="icon-list" style="margin-top:1rem;">
+        <li><i class="fas fa-sort"></i><span>Clique em qualquer coluna para ordenar — encontre o melhor modelo em segundos.</span></li>
+        <li><i class="fas fa-check-square"></i><span>Selecione dois ou mais runs e clique em "Compare" — gráficos de scatter plot e bar chart são gerados automaticamente.</span></li>
+        <li><i class="fas fa-search"></i><span>Filtre por parâmetros: mostrar só runs com <code style="font-size:.8rem;">accuracy > 0.93</code> ou <code style="font-size:.8rem;">algoritmo = "XGBoost"</code>.</span></li>
+        <li><i class="fas fa-download"></i><span>Baixe o modelo de qualquer run clicando em Artifacts — sem precisar reexecutar o código.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Buscando e carregando runs via Python</div>
+      <p>Além da UI, você pode buscar e comparar runs programaticamente — útil para automatizar a seleção do melhor modelo.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — buscar o melhor run</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+
+<span class="cm"># Buscar todos os runs do experimento, ordenados por acurácia</span>
+runs = mlflow.search_runs(
+    experiment_names=[<span class="str">"classificacao-clientes"</span>],
+    order_by=[<span class="str">"metrics.accuracy DESC"</span>]
+)
+
+<span class="cm"># O melhor run fica na primeira linha</span>
+melhor = runs.iloc[<span class="num">0</span>]
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Melhor run: {melhor['run_id']}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Acurácia:   {melhor['metrics.accuracy']:.4f}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Parâmetros: n_estimators={melhor['params.n_estimators']}, "</span>
+      <span class="fn">f</span><span class="str">"max_depth={melhor['params.max_depth']}"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — carregar modelo de um run específico</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow.sklearn
+
+<span class="cm"># Carregar o modelo diretamente do artefato do run</span>
+run_id  = melhor[<span class="str">"run_id"</span>]
+uri     = <span class="fn">f</span><span class="str">"runs:/{run_id}/modelo"</span>
+
+model = mlflow.sklearn.load_model(uri)
+
+<span class="cm"># Usar para predição — mesma interface do scikit-learn</span>
+predicoes = model.predict(X_test)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Predições geradas: {len(predicoes)}"</span>)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que isso é poderoso:</strong> esse padrão — buscar o melhor run e carregar o modelo — é a base de pipelines de promoção automática para produção. Na Semana 5 vamos integrar isso com o Model Registry para formalizar o processo.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-random"></i>Comparando múltiplos algoritmos no mesmo experimento</div>
+      <p>Uma das melhores práticas é colocar runs de algoritmos diferentes no <strong>mesmo experimento</strong>. Assim a comparação fica num único lugar.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — múltiplos algoritmos, mesmo experimento</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, GradientBoostingClassifier
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">import</span> mlflow, mlflow.sklearn
+
+mlflow.set_experiment(<span class="str">"classificacao-clientes"</span>)
+
+candidatos = [
+    (<span class="str">"RandomForest"</span>,       RandomForestClassifier(n_estimators=<span class="num">200</span>, random_state=<span class="num">42</span>)),
+    (<span class="str">"GradientBoosting"</span>,   GradientBoostingClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)),
+    (<span class="str">"LogisticRegression"</span>, LogisticRegression(max_iter=<span class="num">1000</span>, random_state=<span class="num">42</span>)),
+]
+
+<span class="kw">for</span> nome, modelo <span class="kw">in</span> candidatos:
+    <span class="kw">with</span> mlflow.start_run(run_name=nome):
+        mlflow.set_tag(<span class="str">"algoritmo"</span>, nome)
+
+        <span class="cm"># autolog captura todos os hiperparâmetros automaticamente</span>
+        mlflow.sklearn.autolog(log_models=<span class="kw">True</span>)
+
+        modelo.fit(X_train, y_train)
+        acc = accuracy_score(y_test, modelo.predict(X_test))
+        f1  = f1_score(y_test, modelo.predict(X_test))
+
+        mlflow.log_metric(<span class="str">"accuracy"</span>, acc)
+        mlflow.log_metric(<span class="str">"f1"</span>, f1)
+
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{nome:25s} | acc={acc:.4f} | f1={f1:.4f}"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Instrumentando Experimentos Reais</div>
+        <div class="secao-titulo">5 runs, 3 algoritmos, 1 experimento — encontre o melhor</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Continue no projeto das semanas anteriores. Ao final da atividade você deve ter um experimento MLflow com pelo menos 5 runs comparáveis — e conseguir responder "qual é o melhor modelo e por quê?" com evidência na UI, não com intuição.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Instalar e verificar MLflow</div>
+      <p>Instale o MLflow no ambiente virtual, adicione ao <code style="font-size:.83rem;">requirements.txt</code> e adicione <code style="font-size:.83rem;">mlruns/</code> ao <code style="font-size:.83rem;">.gitignore</code>. Rode o servidor de UI para confirmar que está funcionando.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>pip install mlflow
+pip freeze > requirements.txt
+
+<span class="cm"># Adicionar ao .gitignore</span>
+echo <span class="str">"mlruns/"</span> >> .gitignore
+echo <span class="str">"mlflow.db"</span> >> .gitignore
+
+<span class="cm"># Testar a UI (Ctrl+C para encerrar)</span>
+mlflow ui
+<span class="cm"># Abra http://localhost:5000</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Instrumentar o train.py com log manual</div>
+      <p>Adapte o <code style="font-size:.83rem;">src/train.py</code> existente para usar MLflow. Registre pelo menos: <strong>3 parâmetros</strong> (n_estimators, max_depth, random_state), <strong>3 métricas</strong> (accuracy, f1, precision) e <strong>o modelo</strong> como artefato. Rode o script e confirme que o run aparece na UI.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/train.py instrumentado</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow, mlflow.sklearn
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, f1_score, precision_score
+
+N_ESTIMATORS = <span class="num">100</span>
+MAX_DEPTH    = <span class="kw">None</span>
+RANDOM_STATE = <span class="num">42</span>
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+mlflow.set_experiment(<span class="str">"classificacao-semana4"</span>)
+
+<span class="kw">with</span> mlflow.start_run():
+    mlflow.log_param(<span class="str">"n_estimators"</span>, N_ESTIMATORS)
+    mlflow.log_param(<span class="str">"max_depth"</span>,    MAX_DEPTH)
+    mlflow.log_param(<span class="str">"random_state"</span>, RANDOM_STATE)
+
+    model = RandomForestClassifier(
+        n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH, random_state=RANDOM_STATE
+    )
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    mlflow.log_metric(<span class="str">"accuracy"</span>,  accuracy_score(y_test, y_pred))
+    mlflow.log_metric(<span class="str">"f1"</span>,        f1_score(y_test, y_pred))
+    mlflow.log_metric(<span class="str">"precision"</span>, precision_score(y_test, y_pred))
+
+    mlflow.sklearn.log_model(model, <span class="str">"modelo"</span>)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"accuracy={accuracy_score(y_test,y_pred):.4f} — run salvo no MLflow"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Rodar 5 experimentos com parâmetros diferentes</div>
+      <p>Crie um script <code style="font-size:.83rem;">src/experimentos.py</code> que rode 5 configurações diferentes do RandomForest no mesmo experimento. Varie pelo menos dois hiperparâmetros (<code style="font-size:.83rem;">n_estimators</code> e <code style="font-size:.83rem;">max_depth</code>). Use o loop de candidatos mostrado na aula.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/experimentos.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow, mlflow.sklearn
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, f1_score
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+configs = [
+    {<span class="str">"n_estimators"</span>: <span class="num">50</span>,  <span class="str">"max_depth"</span>: <span class="num">5</span>},
+    {<span class="str">"n_estimators"</span>: <span class="num">100</span>, <span class="str">"max_depth"</span>: <span class="kw">None</span>},
+    {<span class="str">"n_estimators"</span>: <span class="num">200</span>, <span class="str">"max_depth"</span>: <span class="num">10</span>},
+    {<span class="str">"n_estimators"</span>: <span class="num">300</span>, <span class="str">"max_depth"</span>: <span class="num">15</span>},
+    {<span class="str">"n_estimators"</span>: <span class="num">200</span>, <span class="str">"max_depth"</span>: <span class="num">5</span>},
+]
+
+mlflow.set_experiment(<span class="str">"classificacao-semana4"</span>)
+
+<span class="kw">for</span> cfg <span class="kw">in</span> configs:
+    <span class="kw">with</span> mlflow.start_run():
+        mlflow.log_params(cfg)
+        model = RandomForestClassifier(**cfg, random_state=<span class="num">42</span>)
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        mlflow.log_metric(<span class="str">"accuracy"</span>, accuracy_score(y_test, y_pred))
+        mlflow.log_metric(<span class="str">"f1"</span>,       f1_score(y_test, y_pred))
+        mlflow.sklearn.log_model(model, <span class="str">"modelo"</span>)
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"n_est={cfg['n_estimators']:3d} | depth={str(cfg['max_depth']):4s} | "</span>
+              <span class="fn">f</span><span class="str">"acc={accuracy_score(y_test,y_pred):.4f}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Identificar o melhor run via Python</div>
+      <p>Escreva um script que use <code style="font-size:.83rem;">mlflow.search_runs()</code> para encontrar automaticamente o run com maior acurácia, imprima seus parâmetros e carregue o modelo salvo para fazer predições no conjunto de teste.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/selecionar_melhor.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow, mlflow.sklearn
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+_, X_test, _, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+<span class="cm"># Buscar e ordenar por acurácia</span>
+runs = mlflow.search_runs(
+    experiment_names=[<span class="str">"classificacao-semana4"</span>],
+    order_by=[<span class="str">"metrics.accuracy DESC"</span>]
+)
+
+melhor = runs.iloc[<span class="num">0</span>]
+<span class="fn">print</span>(<span class="str">"=== Melhor Run ==="</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"run_id:       {melhor['run_id']}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"accuracy:     {melhor['metrics.accuracy']:.4f}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"n_estimators: {melhor['params.n_estimators']}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"max_depth:    {melhor['params.max_depth']}"</span>)
+
+model = mlflow.sklearn.load_model(<span class="fn">f</span><span class="str">"runs:/{melhor['run_id']}/modelo"</span>)
+preds = model.predict(X_test)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Confirmado no teste: {accuracy_score(y_test, preds):.4f}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: comparar 3 algoritmos diferentes</div>
+      <p>Adicione ao experimento runs de <strong>GradientBoostingClassifier</strong> e <strong>LogisticRegression</strong>, além do RandomForest. Use <code style="font-size:.83rem;">mlflow.set_tag("algoritmo", ...)</code> para identificar cada família. Na UI, filtre por tag e identifique qual algoritmo performa melhor no seu dataset. Escreva uma conclusão de 3 linhas nos comentários do código.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — comparação de algoritmos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, GradientBoostingClassifier
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+
+candidatos = [
+    (<span class="str">"RandomForest"</span>,      RandomForestClassifier(n_estimators=<span class="num">200</span>, random_state=<span class="num">42</span>)),
+    (<span class="str">"GradientBoosting"</span>,  GradientBoostingClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)),
+    (<span class="str">"LogisticRegression"</span>,LogisticRegression(max_iter=<span class="num">1000</span>, random_state=<span class="num">42</span>)),
+]
+
+mlflow.set_experiment(<span class="str">"classificacao-semana4"</span>)
+
+<span class="kw">for</span> nome, modelo <span class="kw">in</span> candidatos:
+    <span class="kw">with</span> mlflow.start_run(run_name=nome):
+        mlflow.set_tag(<span class="str">"algoritmo"</span>, nome)
+        mlflow.sklearn.autolog()
+        modelo.fit(X_train, y_train)
+        acc = accuracy_score(y_test, modelo.predict(X_test))
+        f1  = f1_score(y_test, modelo.predict(X_test))
+        mlflow.log_metric(<span class="str">"accuracy"</span>, acc)
+        mlflow.log_metric(<span class="str">"f1"</span>, f1)
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{nome:22s} | acc={acc:.4f} | f1={f1:.4f}"</span>)
+
+<span class="cm"># CONCLUSÃO (preencher após rodar):</span>
+<span class="cm"># GradientBoosting teve a maior acurácia (X.XX) neste dataset sintético.</span>
+<span class="cm"># RandomForest ficou em segundo com leve diferença de 0.00X.</span>
+<span class="cm"># LogisticRegression teve pior desempenho, esperado para dados não-lineares.</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> ao abrir <code style="font-size:.82rem;">localhost:5000</code>, você deve ver pelo menos 8 runs no experimento "classificacao-semana4", conseguir ordenar por acurácia em um clique e, ao rodar <code style="font-size:.82rem;">selecionar_melhor.py</code>, o modelo carregado do MLflow deve ter a mesma acurácia registrada na UI.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 4</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-chart-line"></i>
+        <strong>MLflow Tracking</strong>
+        <p>log_param, log_metric, log_model, log_artifact — cada run registra o contexto completo do experimento</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-magic"></i>
+        <strong>Autolog</strong>
+        <p>Uma linha captura automaticamente todos os hiperparâmetros, métricas e o modelo — suporte nativo para sklearn, XGBoost, LightGBM e mais</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-search"></i>
+        <strong>search_runs + load_model</strong>
+        <p>Selecionar o melhor run programaticamente e carregar o modelo salvo — base do pipeline de promoção para produção</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-05-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 5 — Registro de Modelos com MLflow Model Registry</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

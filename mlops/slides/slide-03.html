@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 03 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;
+  --purple-900:#2e1065;
+  --purple-800:#4c1d95;
+  --purple-700:#6d28d9;
+  --purple-500:#8b5cf6;
+  --purple-400:#a78bfa;
+  --purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;
+  --code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--purple-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── CAPA ─────────────────────────────────────────────────────────── */
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(167,139,250,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);
+  border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(167,139,250,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.var{color:#6ee7b7;}
+.flag{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-red{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+.aviso-green{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);
+  font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* diagrama DVC */
+.dvc-flow{
+  display:flex;align-items:stretch;gap:0;margin:1rem 0;
+  border:1px solid rgba(167,139,250,.15);border-radius:12px;overflow:hidden;
+}
+.dvc-col{flex:1;padding:1rem 1.1rem;}
+.dvc-col:not(:last-child){border-right:1px solid rgba(167,139,250,.12);}
+.dvc-col h4{
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--purple-400);margin-bottom:.6rem;display:flex;align-items:center;gap:6px;
+}
+.dvc-col ul{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.dvc-col ul li{font-size:.78rem;color:var(--text-secondary);padding-left:12px;position:relative;line-height:1.5;}
+.dvc-col ul li::before{content:'▸';position:absolute;left:0;color:var(--purple-500);font-size:.65rem;top:3px;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--text-muted);text-decoration:none;
+  padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);
+  margin-bottom:2rem;transition:color .2s,border-color .2s;
+}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+/* linha do tempo de versões */
+.versoes{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.versao{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:.75rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.1);
+}
+.versao-tag{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;
+  color:var(--purple-400);background:rgba(167,139,250,.12);
+  padding:2px 8px;border-radius:6px;flex-shrink:0;margin-top:2px;
+  border:1px solid rgba(167,139,250,.2);
+}
+.versao-desc{font-size:.83rem;color:var(--text-secondary);line-height:1.5;}
+.versao-desc strong{color:var(--text-primary);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .dvc-flow{flex-direction:column;}
+  .dvc-col:not(:last-child){border-right:none;border-bottom:1px solid rgba(167,139,250,.12);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     CAPA
+════════════════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">03</div>
+    <h1 class="capa-titulo">Versionamento de<br><em>Dados e Modelos</em><br>com DVC</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · O Git dos seus dados</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que versionar dados e modelos separadamente</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>DVC — instalação, init e integração com Git</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud-upload-alt"></i></div><span>Remote storage — Google Drive, S3 e local</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-history"></i></div><span>Rastreando versões de dados e navegando no histórico</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: versionar dataset e modelo com DVC end-to-end</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Versionar dataset e modelo treinado com DVC, configurar remote storage e simular rollback para versão anterior dos dados.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-exclamation-triangle"></i>O problema sem DVC</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">data_final.csv</code>, <code style="font-size:.8rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">data_final_v2.csv</code>, <code style="font-size:.8rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;">data_USAR_ESSE.csv</code></li>
+        <li>Modelo de ontem vs modelo de hoje — qual foi melhor?</li>
+        <li>Git não aceita arquivos grandes — dados ficam fora</li>
+        <li>Reproduzir resultado de 3 meses atrás é impossível</li>
+        <li>Com DVC: git checkout de dados como de código</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Como DVC e Git trabalham juntos</div>
+      <ul class="info-lista">
+        <li>Git versiona o código + arquivos <code style="font-size:.8rem;">.dvc</code> (ponteiros)</li>
+        <li>DVC armazena os dados reais no remote (S3, GDrive…)</li>
+        <li>Um commit Git aponta para uma versão exata dos dados</li>
+        <li>Reproduzir qualquer experimento passado = 2 comandos</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Pré-requisitos</div>
+      <ul class="info-lista">
+        <li>Python + pip — instalar <strong>dvc</strong></li>
+        <li>Repositório Git da Semana 2 em mãos</li>
+        <li>Conta Google (para remote no Google Drive)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CONTEÚDO
+════════════════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-02-mlops.html"><i class="fas fa-arrow-left"></i> Semana 2 — Reprodutibilidade</a>
+
+  <!-- ── AULA 1: Por que DVC + conceitos ───────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que Versionar Dados — e o que é DVC</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-folder-open"></i>O caos sem versionamento de dados</div>
+      <p>Você já viu (ou criou) uma pasta assim?</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">O problema clássico</span></div>
+        <pre><code>data/
+├── clientes.csv
+├── clientes_limpo.csv
+├── clientes_limpo_v2.csv
+├── clientes_FINAL.csv
+├── clientes_FINAL_corrigido.csv
+├── clientes_USAR_ESSE.csv          <span class="cm"># qual mesmo?</span>
+└── clientes_USAR_ESSE_novo.csv     <span class="cm"># esse ou o anterior?</span>
+
+models/
+├── model.pkl
+├── model_v2.pkl
+├── model_bom.pkl
+└── model_melhor_DEFINITIVO.pkl     <span class="cm"># 😬</span></code></pre>
+      </div>
+      <p>Isso não é falta de disciplina — é falta de ferramenta. Sem versionamento de dados, qualquer time acaba nesse estado. E o custo é alto: <strong>não se sabe qual modelo foi treinado com quais dados, e resultados passados são impossíveis de reproduzir</strong>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>Por que não colocar dados no Git?</div>
+      <p>Git foi projetado para código — arquivos de texto que mudam linha a linha. Dados têm características incompatíveis:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-weight-hanging"></i><span><strong>Tamanho:</strong> datasets reais têm GB ou TB. Git armazena cada versão completa, o repositório explodiria em dias.</span></li>
+        <li><i class="fas fa-file-excel"></i><span><strong>Formato binário:</strong> CSV até vai, mas Parquet, HDF5, imagens e modelos <code style="font-size:.83rem;">.pkl</code> são binários — Git não consegue fazer diff útil.</span></li>
+        <li><i class="fas fa-tachometer-alt"></i><span><strong>Performance:</strong> repositórios com arquivos grandes ficam lentos para clonar, fazer push e pull — prejudica todo o time.</span></li>
+        <li><i class="fas fa-shield-alt"></i><span><strong>Dados sensíveis:</strong> datasets com PII (informação pessoal identificável) não devem ficar em repositórios de código — DVC permite armazenar em storage separado com controle de acesso.</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>Solução DVC:</strong> o Git versiona um arquivo de ponteiro pequeno (<code style="font-size:.83rem;">.dvc</code>) que contém o hash do dado real. O dado fica num storage externo. Você navega nas versões com Git; o DVC busca os dados correspondentes.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Como Git + DVC funcionam juntos</div>
+      <p>O modelo mental é simples: Git e DVC são responsáveis por coisas diferentes, mas trabalham em sincronia.</p>
+
+      <div class="dvc-flow">
+        <div class="dvc-col">
+          <h4><i class="fas fa-code-branch"></i> Git versiona</h4>
+          <ul>
+            <li>Código Python (<code style="font-size:.75rem;">.py</code>)</li>
+            <li>Notebooks (<code style="font-size:.75rem;">.ipynb</code>)</li>
+            <li>Arquivos de config</li>
+            <li>Ponteiros DVC (<code style="font-size:.75rem;">.dvc</code>)</li>
+            <li><code style="font-size:.75rem;">dvc.yaml</code>, <code style="font-size:.75rem;">dvc.lock</code></li>
+            <li><code style="font-size:.75rem;">requirements.txt</code></li>
+          </ul>
+        </div>
+        <div class="dvc-col">
+          <h4><i class="fas fa-database"></i> DVC versiona</h4>
+          <ul>
+            <li>Datasets (<code style="font-size:.75rem;">.csv</code>, <code style="font-size:.75rem;">.parquet</code>)</li>
+            <li>Imagens, áudio, vídeo</li>
+            <li>Modelos serializados (<code style="font-size:.75rem;">.pkl</code>)</li>
+            <li>Artefatos de treino</li>
+            <li>Dados pré-processados</li>
+          </ul>
+        </div>
+        <div class="dvc-col">
+          <h4><i class="fas fa-cloud"></i> Remote armazena</h4>
+          <ul>
+            <li>Amazon S3</li>
+            <li>Google Drive</li>
+            <li>Azure Blob Storage</li>
+            <li>Google Cloud Storage</li>
+            <li>SSH / SFTP</li>
+            <li>Pasta local (dev)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>O fluxo completo:</strong> você faz <code style="font-size:.83rem;">git commit</code> do código + ponteiros DVC, e <code style="font-size:.83rem;">dvc push</code> dos dados para o remote. Quando um colega clona o repositório, faz <code style="font-size:.83rem;">git pull</code> + <code style="font-size:.83rem;">dvc pull</code> — e tem exatamente o mesmo ambiente, com os mesmos dados.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>O arquivo .dvc — entendendo o ponteiro</div>
+      <p>Quando você adiciona um arquivo ao DVC, ele cria um ponteiro <code style="font-size:.83rem;">.dvc</code> que é um YAML pequeno. Esse arquivo vai para o Git. É ele que "lembra" qual versão do dado corresponde a qual commit.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">data/clientes.csv.dvc — exemplo de ponteiro</span></div>
+        <pre><code>outs:
+- md5: <span class="str">a1b2c3d4e5f6789012345678abcdef01</span>
+  size: <span class="num">15728640</span>
+  path: clientes.csv</code></pre>
+      </div>
+
+      <p>O campo <code style="font-size:.83rem;">md5</code> é o hash do arquivo real. O DVC usa esse hash para encontrar o dado no remote storage — é assim que ele sabe exatamente qual versão do arquivo buscar, não importa quando você fez o commit.</p>
+
+      <div class="versoes">
+        <div class="versao">
+          <span class="versao-tag">commit abc123</span>
+          <div class="versao-desc"><strong>Semana 1 —</strong> dataset bruto com 50k linhas, <code style="font-size:.8rem;">md5: a1b2c3...</code></div>
+        </div>
+        <div class="versao">
+          <span class="versao-tag">commit def456</span>
+          <div class="versao-desc"><strong>Semana 2 —</strong> após limpeza: 47.3k linhas, nulos removidos, <code style="font-size:.8rem;">md5: f7e8d9...</code></div>
+        </div>
+        <div class="versao">
+          <span class="versao-tag">commit ghi789</span>
+          <div class="versao-desc"><strong>Semana 3 —</strong> feature engineering aplicado, 47.3k × 28 features, <code style="font-size:.8rem;">md5: 2c3b4a...</code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: DVC na prática ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">DVC na Prática — Instalação, Comandos e Remote Storage</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-download"></i>Instalação e inicialização</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — instalação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Dentro do ambiente virtual do projeto (venv ativado)</span>
+pip install dvc
+
+<span class="cm"># Com suporte ao remote específico (instale só o que for usar)</span>
+pip install <span class="str">"dvc[s3]"</span>        <span class="cm"># Amazon S3</span>
+pip install <span class="str">"dvc[gdrive]"</span>    <span class="cm"># Google Drive</span>
+pip install <span class="str">"dvc[gs]"</span>        <span class="cm"># Google Cloud Storage</span>
+pip install <span class="str">"dvc[azure]"</span>     <span class="cm"># Azure Blob Storage</span>
+
+<span class="cm"># Verificar instalação</span>
+dvc --version</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — inicializando DVC no projeto</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Na raiz do repositório Git (já inicializado)</span>
+dvc init
+
+<span class="cm"># O DVC cria a pasta .dvc/ com configurações</span>
+<span class="cm"># Commit obrigatório após o init</span>
+git add .dvc .dvcignore
+git commit -m <span class="str">"feat: inicializar DVC no projeto"</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>dvc init precisa de git init primeiro.</strong> DVC é uma extensão do Git — ele precisa de um repositório Git existente para funcionar. Se rodar <code style="font-size:.82rem;">dvc init</code> numa pasta sem Git, vai dar erro.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plus-circle"></i>Adicionando dados ao controle do DVC</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — dvc add</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Adicionar um arquivo ao DVC</span>
+dvc add data/raw/clientes.csv
+
+<span class="cm"># O DVC faz três coisas automaticamente:</span>
+<span class="cm"># 1. Cria data/raw/clientes.csv.dvc  (ponteiro para o Git)</span>
+<span class="cm"># 2. Adiciona data/raw/clientes.csv ao .gitignore (dado fora do Git)</span>
+<span class="cm"># 3. Copia o arquivo para o cache local (.dvc/cache/)</span>
+
+<span class="cm"># Verificar o que foi criado</span>
+cat data/raw/clientes.csv.dvc
+
+<span class="cm"># Commitar o ponteiro no Git (não o arquivo em si)</span>
+git add data/raw/clientes.csv.dvc data/raw/.gitignore
+git commit -m <span class="str">"data: adicionar dataset de clientes v1 (50k linhas)"</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — adicionando uma pasta inteira</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Versionar pasta completa (útil para datasets de imagens)</span>
+dvc add data/raw/
+
+<span class="cm"># Para modelos treinados</span>
+dvc add models/model.pkl
+
+git add models/model.pkl.dvc models/.gitignore
+git commit -m <span class="str">"model: adicionar RandomForest v1 — acurácia 0.9230"</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>Configurando o Remote Storage</div>
+      <p>O cache local funciona para uso pessoal, mas para colaborar em equipe os dados precisam estar num storage acessível a todos. O DVC suporta vários backends — usaremos <strong>Google Drive</strong> por ser gratuito e simples de configurar.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — remote no Google Drive</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># 1. Criar uma pasta no Google Drive e copiar o ID da URL:</span>
+<span class="cm">#    https://drive.google.com/drive/folders/1aBcDeFgHiJkLmNoPqRsTuVw</span>
+<span class="cm">#                                            ↑ esse é o ID</span>
+
+<span class="cm"># 2. Adicionar o remote ao DVC</span>
+dvc remote add -d meu-remote gdrive://<span class="str">1aBcDeFgHiJkLmNoPqRsTuVw</span>
+
+<span class="cm"># -d define como remote padrão (default)</span>
+
+<span class="cm"># 3. Commitar a configuração do remote</span>
+git add .dvc/config
+git commit -m <span class="str">"config: adicionar remote DVC no Google Drive"</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — remote em pasta local (alternativa para testes)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Útil para testes sem depender de internet</span>
+dvc remote add -d local-remote /tmp/dvc-storage
+
+<span class="cm"># Remote em S3 (para produção)</span>
+dvc remote add -d s3-remote s3://meu-bucket/dvc-storage
+dvc remote modify s3-remote region us-east-1</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>Push, Pull e o fluxo do dia a dia</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — push e pull de dados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Enviar dados para o remote (após dvc add + git commit)</span>
+dvc push
+
+<span class="cm"># Baixar dados do remote (após git pull em outro computador)</span>
+dvc pull
+
+<span class="cm"># Baixar dados de um arquivo específico</span>
+dvc pull data/raw/clientes.csv.dvc
+
+<span class="cm"># Verificar status — mostra se dados locais estão sincronizados</span>
+dvc status</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Comando Git</th><th>Equivalente DVC</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td><code>git add</code></td><td><code>dvc add</code></td><td>Rastreia o arquivo/pasta</td></tr>
+            <tr><td><code>git commit</code></td><td><code>git commit</code> (ponteiro)</td><td>Salva a versão no histórico</td></tr>
+            <tr><td><code>git push</code></td><td><code>dvc push</code></td><td>Envia dados para o remote</td></tr>
+            <tr><td><code>git pull</code></td><td><code>dvc pull</code></td><td>Baixa dados do remote</td></tr>
+            <tr><td><code>git checkout</code></td><td><code>dvc checkout</code></td><td>Atualiza dados para a versão do commit atual</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>Fluxo completo do dia a dia:</strong> atualizou os dados? <code style="font-size:.83rem;">dvc add → git add → git commit → git push → dvc push</code>. Colega precisa trabalhar? <code style="font-size:.83rem;">git pull → dvc pull</code>. Simples assim.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Histórico + Prática</span></div>
+
+  <!-- ── AULA 3: Histórico + Exercícios ────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Navegando no Histórico e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-history"></i>Voltando no tempo — checkout de versões anteriores</div>
+      <p>Esse é o superpoder do DVC: como os ponteiros <code style="font-size:.83rem;">.dvc</code> ficam no Git, você pode voltar para qualquer commit passado e o DVC busca automaticamente os dados daquela época.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — rollback de dados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Ver histórico de commits que alteraram o ponteiro</span>
+git log --oneline data/raw/clientes.csv.dvc
+
+<span class="cm"># Saída esperada:</span>
+<span class="cm"># ghi789 data: adicionar feature engineering — 28 features</span>
+<span class="cm"># def456 data: limpeza — remover nulos e outliers</span>
+<span class="cm"># abc123 data: dataset de clientes v1 (50k linhas)</span>
+
+<span class="cm"># Voltar para a versão original dos dados</span>
+git checkout abc123 -- data/raw/clientes.csv.dvc
+
+<span class="cm"># Dizer ao DVC para buscar os dados dessa versão</span>
+dvc checkout
+
+<span class="cm"># Agora data/raw/clientes.csv é o arquivo original de 50k linhas</span>
+<span class="cm"># Qualquer script treinado aqui vai usar exatamente esses dados</span>
+
+<span class="cm"># Para voltar ao estado mais recente:</span>
+git checkout HEAD -- data/raw/clientes.csv.dvc
+dvc checkout</code></pre>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Atenção ao dvc checkout:</strong> esse comando substitui os arquivos locais pelos dados da versão selecionada. Se você tiver modificações não salvas nos dados, elas serão perdidas. Sempre confirme com <code style="font-size:.82rem;">dvc status</code> antes.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tags"></i>Usando tags Git para marcar versões importantes</div>
+      <p>Navegar por hashes de commit é funcional, mas usar <strong>tags semânticas</strong> torna tudo muito mais legível — especialmente quando você precisa comunicar versões para o time.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — tags para versões de dados e modelos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Marcar o estado atual com uma tag</span>
+git tag -a <span class="str">"dataset-v1.0"</span> -m <span class="str">"Dataset inicial — 50k clientes, sem limpeza"</span>
+git tag -a <span class="str">"dataset-v2.0"</span> -m <span class="str">"Pós-limpeza — 47.3k linhas, nulos removidos"</span>
+git tag -a <span class="str">"model-v1.0"</span>   -m <span class="str">"RandomForest — acurácia 0.9230 no dataset v2.0"</span>
+
+<span class="cm"># Enviar tags para o GitHub</span>
+git push origin --tags
+
+<span class="cm"># Voltar para uma tag específica</span>
+git checkout dataset-v1.0
+dvc checkout
+
+<span class="cm"># Listar todas as tags</span>
+git tag -l</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>dvc.yaml — pipelines reproduzíveis</div>
+      <p>Além de versionar arquivos individuais, o DVC permite definir <strong>pipelines</strong> — sequências de passos que transformam dados. Isso garante não só que os dados são versionados, mas que o <em>processo</em> de transformação também é reproduzível.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">dvc.yaml — pipeline de treino</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>stages:
+  preparar:
+    cmd: python src/data.py
+    deps:
+      - src/data.py
+      - data/raw/clientes.csv
+    outs:
+      - data/processed/clientes_limpo.csv
+
+  treinar:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed/clientes_limpo.csv
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics/scores.json:</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — executar e reproduzir o pipeline</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Executar todos os estágios do pipeline</span>
+dvc repro
+
+<span class="cm"># O DVC só re-executa o que mudou (cache inteligente)</span>
+<span class="cm"># Se dados e código estão iguais, nada é re-executado</span>
+
+<span class="cm"># Ver o DAG (grafo de dependências) do pipeline</span>
+dvc dag
+
+<span class="cm"># Comparar métricas entre commits/branches</span>
+dvc metrics diff HEAD~1</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que isso importa:</strong> com <code style="font-size:.83rem;">dvc repro</code>, qualquer pessoa que clonar o repositório consegue reproduzir todo o pipeline — do dado bruto ao modelo treinado — com um único comando. Isso é reprodutibilidade completa.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Versionamento End-to-End com DVC</div>
+        <div class="secao-titulo">Do dataset bruto ao modelo versionado — com rollback</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Continue no repositório da Semana 2. Você vai adicionar DVC ao projeto existente, versionar duas versões do dataset, treinar um modelo para cada uma e demonstrar que consegue alternar entre elas com <code style="font-size:.82rem;">git checkout + dvc checkout</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Instalar e inicializar DVC</div>
+      <p>Com o ambiente virtual ativado, instale o DVC com suporte ao Google Drive. Inicialize o DVC no repositório e commite os arquivos gerados.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>pip install <span class="str">"dvc[gdrive]"</span>
+dvc init
+git add .dvc .dvcignore
+git commit -m <span class="str">"feat: inicializar DVC"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Criar e versionar dataset v1</div>
+      <p>Crie o script <code style="font-size:.83rem;">src/gerar_dados.py</code> que gera um dataset sintético com <strong>1000 linhas</strong> usando <code style="font-size:.83rem;">make_classification</code> e salva em <code style="font-size:.83rem;">data/raw/dataset.csv</code>. Adicione ao DVC e commite o ponteiro no Git com a tag <code style="font-size:.83rem;">dataset-v1</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/gerar_dados.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> os
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+
+X, y = make_classification(n_samples=<span class="num">1000</span>, n_features=<span class="num">10</span>, random_state=<span class="num">42</span>)
+df = pd.DataFrame(X, columns=[<span class="fn">f</span><span class="str">"feature_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)])
+df[<span class="str">"target"</span>] = y
+
+os.makedirs(<span class="str">"data/raw"</span>, exist_ok=<span class="kw">True</span>)
+df.to_csv(<span class="str">"data/raw/dataset.csv"</span>, index=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Dataset salvo: {len(df)} linhas"</span>)</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>python src/gerar_dados.py
+dvc add data/raw/dataset.csv
+git add data/raw/dataset.csv.dvc data/raw/.gitignore src/gerar_dados.py
+git commit -m <span class="str">"data: dataset v1 — 1000 linhas, 10 features"</span>
+git tag -a <span class="str">"dataset-v1"</span> -m <span class="str">"Dataset inicial 1000 linhas"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Criar dataset v2 e versionar</div>
+      <p>Modifique o script para gerar <strong>2000 linhas e 15 features</strong>. Regere o dataset, atualize o DVC e commite com a tag <code style="font-size:.83rem;">dataset-v2</code>. Verifique que o arquivo <code style="font-size:.83rem;">.dvc</code> mudou (o hash deve ser diferente).</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/gerar_dados.py (atualizado)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>X, y = make_classification(n_samples=<span class="num">2000</span>, n_features=<span class="num">15</span>, random_state=<span class="num">42</span>)
+df = pd.DataFrame(X, columns=[<span class="fn">f</span><span class="str">"feature_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">15</span>)])
+df[<span class="str">"target"</span>] = y</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>python src/gerar_dados.py
+dvc add data/raw/dataset.csv
+git add data/raw/dataset.csv.dvc src/gerar_dados.py
+git commit -m <span class="str">"data: dataset v2 — 2000 linhas, 15 features"</span>
+git tag -a <span class="str">"dataset-v2"</span> -m <span class="str">"Dataset ampliado 2000 linhas"</span>
+
+<span class="cm"># Verificar que o hash mudou</span>
+cat data/raw/dataset.csv.dvc</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Treinar com cada versão e comparar</div>
+      <p>Use o <code style="font-size:.83rem;">src/train.py</code> da Semana 2 (adaptado para ler <code style="font-size:.83rem;">data/raw/dataset.csv</code>) e treine um modelo para cada versão do dataset. Imprima a acurácia das duas e observe a diferença. Adicione o modelo ao DVC.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/train.py (adaptado)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pickle, os, json
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y = df[<span class="str">"target"</span>]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+model = RandomForestClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+model.fit(X_train, y_train)
+
+acc = accuracy_score(y_test, model.predict(X_test))
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Dataset: {len(df)} linhas × {X.shape[1]} features | Acurácia: {acc:.4f}"</span>)
+
+os.makedirs(<span class="str">"models"</span>, exist_ok=<span class="kw">True</span>)
+os.makedirs(<span class="str">"metrics"</span>, exist_ok=<span class="kw">True</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"wb"</span>) <span class="kw">as</span> f:
+    pickle.dump(model, f)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"metrics/scores.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump({<span class="str">"accuracy"</span>: <span class="fn">round</span>(acc, <span class="num">4</span>)}, f)</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — treinar com v1, depois v2</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Voltar para dataset v1 e treinar</span>
+git checkout dataset-v1 -- data/raw/dataset.csv.dvc
+dvc checkout
+python src/train.py
+<span class="cm"># "Dataset: 1000 linhas × 10 features | Acurácia: X.XXXX"</span>
+
+<span class="cm"># Voltar para dataset v2 e treinar</span>
+git checkout HEAD -- data/raw/dataset.csv.dvc
+dvc checkout
+python src/train.py
+<span class="cm"># "Dataset: 2000 linhas × 15 features | Acurácia: X.XXXX"</span>
+
+<span class="cm"># Versionar o modelo no DVC</span>
+dvc add models/model.pkl
+git add models/model.pkl.dvc models/.gitignore src/train.py
+git commit -m <span class="str">"model: modelo treinado com dataset v2"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Configurar remote e fazer push</div>
+      <p>Configure um remote DVC (Google Drive ou pasta local) e faça <code style="font-size:.83rem;">dvc push</code> para enviar dados e modelo. Simule a experiência de um colega: apague a pasta <code style="font-size:.83rem;">data/raw/</code> e <code style="font-size:.83rem;">models/</code> localmente e use <code style="font-size:.83rem;">dvc pull</code> para recuperar tudo.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — remote local para teste</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Configurar remote em pasta local</span>
+dvc remote add -d local-storage /tmp/dvc-demo-storage
+git add .dvc/config
+git commit -m <span class="str">"config: remote DVC local para testes"</span>
+
+<span class="cm"># Enviar dados e modelo para o remote</span>
+dvc push
+
+<span class="cm"># Simular colega: apagar arquivos locais</span>
+rm -rf data/raw/dataset.csv models/model.pkl
+
+<span class="cm"># Recuperar tudo do remote</span>
+dvc pull
+
+<span class="cm"># Verificar que os arquivos voltaram</span>
+ls data/raw/
+ls models/</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 06 — Desafio: pipeline com dvc.yaml</div>
+      <p>Crie um <code style="font-size:.83rem;">dvc.yaml</code> com dois estágios: <strong>gerar</strong> (executa <code style="font-size:.83rem;">src/gerar_dados.py</code>) e <strong>treinar</strong> (executa <code style="font-size:.83rem;">src/train.py</code>). Execute com <code style="font-size:.83rem;">dvc repro</code>. Depois modifique apenas o número de estimadores do RandomForest e rode novamente — observe que só o estágio de treino é re-executado.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">dvc.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>stages:
+  gerar:
+    cmd: python src/gerar_dados.py
+    deps:
+      - src/gerar_dados.py
+    outs:
+      - data/raw/dataset.csv
+
+  treinar:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/raw/dataset.csv
+    outs:
+      - models/model.pkl
+    metrics:
+      - metrics/scores.json:</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Executar pipeline completo</span>
+dvc repro
+
+<span class="cm"># Modificar train.py (ex: n_estimators=200) e rodar de novo</span>
+<span class="cm"># Observe: "Stage 'gerar' didn't change, skipping"</span>
+dvc repro
+
+<span class="cm"># Comparar métricas antes e depois</span>
+dvc metrics diff HEAD~1</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> você deve conseguir fazer <code style="font-size:.82rem;">git checkout dataset-v1 && dvc checkout</code> e obter os dados de 1000 linhas, e <code style="font-size:.82rem;">git checkout dataset-v2 && dvc checkout</code> para obter os de 2000 linhas — tudo sem nunca ter colocado um CSV no Git.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 3</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-file-alt"></i>
+        <strong>Ponteiros .dvc</strong>
+        <p>Git versiona o ponteiro (hash + tamanho), DVC versiona os dados reais no remote. Leve no repositório, dados seguros no storage</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-history"></i>
+        <strong>Histórico e Rollback</strong>
+        <p>git checkout do ponteiro + dvc checkout dos dados: qualquer versão de dataset ou modelo é recuperável em segundos</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-project-diagram"></i>
+        <strong>Pipelines com dvc.yaml</strong>
+        <p>dvc repro executa só o que mudou. Cache inteligente + rastreamento de dependências = reprodutibilidade de ponta a ponta</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-04-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 4 — Rastreamento de Experimentos com MLflow Tracking</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

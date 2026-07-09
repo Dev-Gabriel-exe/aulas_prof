@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 05 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;
+  --purple-900:#2e1065;
+  --purple-800:#4c1d95;
+  --purple-700:#6d28d9;
+  --purple-500:#8b5cf6;
+  --purple-400:#a78bfa;
+  --purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;
+  --code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--purple-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(167,139,250,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);
+  border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(167,139,250,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.var{color:#6ee7b7;}
+.flag{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+/* estágios coloridos */
+.stage{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:100px;font-size:.73rem;font-weight:700;letter-spacing:.05em;}
+.stage-none{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.2);}
+.stage-staging{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
+.stage-production{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.stage-archived{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.stage i{font-size:.65rem;}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-green{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);
+  font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+.aviso-red{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* diagrama de ciclo de estágios */
+.estagio-flow{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin:1.25rem 0;flex-wrap:wrap;
+}
+.estagio-box{
+  padding:.85rem 1.25rem;border-radius:12px;text-align:center;min-width:130px;
+}
+.estagio-box .label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.2rem;}
+.estagio-box .desc{font-size:.7rem;color:var(--text-muted);line-height:1.4;}
+.estagio-none{background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2);}
+.estagio-none .label{color:#94a3b8;}
+.estagio-staging{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);}
+.estagio-staging .label{color:#fbbf24;}
+.estagio-prod{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);}
+.estagio-prod .label{color:#4ade80;}
+.estagio-arch{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);}
+.estagio-arch .label{color:#f87171;}
+.flow-arrow{color:var(--purple-500);font-size:.9rem;padding:0 .6rem;flex-shrink:0;}
+.flow-arrow-down{color:var(--purple-500);font-size:.9rem;padding:.4rem 0;flex-shrink:0;display:block;text-align:center;}
+
+/* tabela de versões do registry */
+.registry-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:.75rem 0;}
+.registry-table thead tr{background:rgba(167,139,250,.15);}
+.registry-table th{padding:.5rem .85rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid rgba(167,139,250,.2);}
+.registry-table td{padding:.55rem .85rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;}
+.registry-table tr:last-child td{border-bottom:none;}
+.registry-table tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+/* bloco P1 */
+.p1-box{
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);
+  border-radius:14px;padding:1.5rem;margin-top:2rem;
+}
+.p1-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;
+  color:#f87171;text-transform:uppercase;letter-spacing:.08em;
+  display:flex;align-items:center;gap:10px;margin-bottom:1rem;
+}
+.p1-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.p1-col h4{font-size:.75rem;font-weight:700;color:var(--purple-300);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.p1-col ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.p1-col ul li{font-size:.82rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.p1-col ul li::before{content:'▸';position:absolute;left:0;color:#f87171;font-size:.65rem;top:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--text-muted);text-decoration:none;
+  padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);
+  margin-bottom:2rem;transition:color .2s,border-color .2s;
+}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2,.p1-grid{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .estagio-flow{flex-direction:column;align-items:flex-start;}
+  .flow-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">05</div>
+    <h1 class="capa-titulo">Registro de Modelos<br>com <em>MLflow</em><br><em>Model Registry</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Da experimentação à produção formal</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-archive"></i></div><span>O que é o Model Registry e por que ele existe</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tags"></i></div><span>Estágios: None → Staging → Production → Archived</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>Registrar, promover e fazer rollback via Python e UI</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>Integração com MLflow Tracking Server centralizado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: publicar modelo no registry e simular promoção</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Publicar o melhor modelo da Semana 4 no Registry, promover para Production, simular um retreino e fazer rollback para a versão anterior.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Tracking vs Registry — qual a diferença?</div>
+      <ul class="info-lista">
+        <li><strong>Tracking:</strong> log de todos os experimentos — mesmo os ruins</li>
+        <li><strong>Registry:</strong> repositório dos modelos aprovados para uso</li>
+        <li>Tracking é o laboratório; Registry é a farmácia</li>
+        <li>Só modelos curados entram no Registry</li>
+        <li>Registry adiciona: versão, estágio, aprovação, histórico</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Os 4 estágios de um modelo</div>
+      <ul class="info-lista">
+        <li><span class="stage stage-none"><i class="fas fa-circle"></i> None</span> — recém-registrado, sem estágio definido</li>
+        <li><span class="stage stage-staging"><i class="fas fa-vial"></i> Staging</span> — em validação, testes de integração</li>
+        <li><span class="stage stage-production"><i class="fas fa-check-circle"></i> Production</span> — servindo usuários reais</li>
+        <li><span class="stage stage-archived"><i class="fas fa-box"></i> Archived</span> — aposentado, mantido para auditoria</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li>MLflow já instalado (Semana 4)</li>
+        <li>Experimento com runs da Semana 4 em mãos</li>
+        <li>SQLite para backend do Registry (local, sem instalação)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-04-mlops.html"><i class="fas fa-arrow-left"></i> Semana 4 — MLflow Tracking</a>
+
+  <!-- ── AULA 1: Registry — conceito e estágios ────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O que é o Model Registry — e por que ele existe</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O gap entre experimentação e produção</div>
+      <p>Na Semana 4 você aprendeu a rastrear experimentos. Agora você tem dezenas de runs registrados, sabe qual é o melhor modelo e consegue carregá-lo com uma linha de código. Mas ainda falta algo crucial para trabalho em equipe e em produção:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-question"></i><span><strong>Qual versão está em produção agora?</strong> Num time de 5 pessoas, quem sabe responder isso com certeza?</span></li>
+        <li><i class="fas fa-question"></i><span><strong>Quem aprovou a última atualização?</strong> Modelo foi para produção — passou por alguma revisão ou foi direto do notebook?</span></li>
+        <li><i class="fas fa-question"></i><span><strong>Como fazer rollback?</strong> O novo modelo quebrou algo em produção — como voltar para o anterior em segundos?</span></li>
+        <li><i class="fas fa-question"></i><span><strong>Qual foi a histórico de promoções?</strong> Para auditoria, compliance ou LGPD — quando cada versão foi ao ar e quem autorizou?</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>O Model Registry responde tudo isso.</strong> É um repositório centralizado que adiciona governança ao ciclo de vida do modelo — separando o "laboratório" (Tracking) do "prateleira aprovada" (Registry).
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-flask"></i>Analogia: laboratório farmacêutico</div>
+      <p>Pense assim: o <strong>MLflow Tracking</strong> é o laboratório de pesquisa — onde você testa dezenas de fórmulas, anota tudo, compara resultados. A maioria das fórmulas não vai a lugar nenhum. Isso é normal e esperado.</p>
+      <p>O <strong>Model Registry</strong> é a linha de aprovação — a fórmula que passou por todos os testes, foi aprovada pela equipe de qualidade e recebeu número de lote. Só o que passou por esse processo chega à prateleira (produção).</p>
+      <div class="destaque">
+        <strong>Regra prática:</strong> nem todo run do Tracking vira uma versão no Registry. Você registra no Registry apenas os modelos que passaram por critérios mínimos de qualidade — acurácia acima do baseline, testes de integração, revisão de um colega. O Registry é uma lista curada, não um dump de experimentos.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>Os 4 estágios e o fluxo de promoção</div>
+      <p>Cada versão de modelo no Registry vive em um dos quatro estágios. A progressão segue um fluxo formal, auditável e reversível.</p>
+
+      <div class="estagio-flow">
+        <div class="estagio-box estagio-none">
+          <span class="label">None</span>
+          <span class="desc">Recém-registrado. Sob análise inicial.</span>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="estagio-box estagio-staging">
+          <span class="label">Staging</span>
+          <span class="desc">Validação técnica. Testes com dados reais.</span>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="estagio-box estagio-prod">
+          <span class="label">Production</span>
+          <span class="desc">Servindo usuários. Monitorado ativamente.</span>
+        </div>
+        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="estagio-box estagio-arch">
+          <span class="label">Archived</span>
+          <span class="desc">Aposentado. Mantido para histórico.</span>
+        </div>
+      </div>
+
+      <div class="tabela-wrap" style="margin-top:1rem;">
+        <table>
+          <thead><tr><th>Estágio</th><th>Quem pode promover</th><th>O que deve ter acontecido</th><th>Ação típica de saída</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="stage stage-none"><i class="fas fa-circle"></i> None</span></td>
+              <td>Qualquer membro do time</td>
+              <td>Modelo registrado a partir de um run aprovado</td>
+              <td>Promover para Staging após revisão inicial</td>
+            </tr>
+            <tr>
+              <td><span class="stage stage-staging"><i class="fas fa-vial"></i> Staging</span></td>
+              <td>ML Engineer / Tech Lead</td>
+              <td>Testes de integração, shadow mode, A/B test</td>
+              <td>Promover para Production ou voltar para None</td>
+            </tr>
+            <tr>
+              <td><span class="stage stage-production"><i class="fas fa-check-circle"></i> Production</span></td>
+              <td>Tech Lead / Squad</td>
+              <td>Aprovação formal, testes de carga, monitoramento ativo</td>
+              <td>Arquivar quando novo modelo assumir</td>
+            </tr>
+            <tr>
+              <td><span class="stage stage-archived"><i class="fas fa-box"></i> Archived</span></td>
+              <td>Automático ou manual</td>
+              <td>Modelo substituído por versão mais nova</td>
+              <td>Reativar em caso de rollback de emergência</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Múltiplos modelos em Production:</strong> é possível (e comum) ter mais de uma versão em Production ao mesmo tempo — por exemplo, durante uma migração gradual ou A/B test. O código que consome o modelo deve especificar qual versão quer, ou sempre pegar a "última em Production".</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Registry na prática ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Model Registry na Prática — Registrar, Promover e Carregar</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-database"></i>Configurando o backend do Registry</div>
+      <p>Por padrão o MLflow usa o sistema de arquivos local (<code style="font-size:.85rem;">mlruns/</code>), que não suporta o Registry completamente. Para usar o Registry precisamos de um <strong>backend de banco de dados</strong>. Em desenvolvimento, usamos SQLite — em produção, PostgreSQL ou MySQL.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — iniciando o server com SQLite como backend</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Iniciar o MLflow Tracking Server com backend SQLite</span>
+<span class="cm"># --backend-store-uri: onde ficam runs e registry</span>
+<span class="cm"># --default-artifact-root: onde ficam os artefatos (modelos, plots)</span>
+mlflow server \
+  <span class="flag">--backend-store-uri</span> sqlite:///mlflow.db \
+  <span class="flag">--default-artifact-root</span> ./mlartifacts \
+  <span class="flag">--host</span> 0.0.0.0 \
+  <span class="flag">--port</span> 5000
+
+<span class="cm"># Acesse: http://localhost:5000</span>
+<span class="cm"># A aba "Models" no menu superior é o Registry</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — apontar o código para o servidor</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow
+
+<span class="cm"># Apontar todos os logs para o servidor centralizado</span>
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)
+
+<span class="cm"># A partir daqui, todos os runs e registros vão para o servidor</span>
+mlflow.set_experiment(<span class="str">"classificacao-clientes"</span>)</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-info-circle"></i>
+        <span>Adicione <code style="font-size:.82rem;">mlflow.db</code> e <code style="font-size:.82rem;">mlartifacts/</code> ao <code style="font-size:.82rem;">.gitignore</code>. Em projetos reais de time, o servidor MLflow roda num servidor compartilhado (VM, Kubernetes) e todos apontam o <code style="font-size:.82rem;">MLFLOW_TRACKING_URI</code> para ele via variável de ambiente.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plus-circle"></i>Registrando um modelo no Registry</div>
+      <p>Existem três formas de registrar um modelo — via Python no momento do log, via Python após o run, ou manualmente pela UI.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — registrar durante o log_model</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow, mlflow.sklearn
+
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)
+mlflow.set_experiment(<span class="str">"classificacao-clientes"</span>)
+
+<span class="kw">with</span> mlflow.start_run() <span class="kw">as</span> run:
+    <span class="cm"># ... treino e métricas ...</span>
+
+    <span class="cm"># registered_model_name registra automaticamente no Registry</span>
+    <span class="cm"># cria o modelo se não existir, ou adiciona nova versão se já existir</span>
+    mlflow.sklearn.log_model(
+        sk_model=model,
+        artifact_path=<span class="str">"modelo"</span>,
+        registered_model_name=<span class="str">"classificador-clientes"</span>
+    )</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — registrar a partir de um run existente</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+
+client = MlflowClient(<span class="str">"http://localhost:5000"</span>)
+
+<span class="cm"># Registrar pelo URI do artefato de um run específico</span>
+run_id = <span class="str">"7f3a2b9c..."</span>  <span class="cm"># ID do melhor run da semana 4</span>
+model_uri = <span class="fn">f</span><span class="str">"runs:/{run_id}/modelo"</span>
+
+versao = mlflow.register_model(
+    model_uri=model_uri,
+    name=<span class="str">"classificador-clientes"</span>
+)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Modelo registrado — versão {versao.version}"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-arrow-up"></i>Promovendo entre estágios</div>
+      <p>Com o modelo registrado, o fluxo de promoção pode ser feito via UI (clique em "Stage → Transition to...") ou programaticamente. Em pipelines de CI/CD automáticos, a promoção é sempre feita por código.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — promover versão entre estágios</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+
+client = MlflowClient(<span class="str">"http://localhost:5000"</span>)
+
+MODELO = <span class="str">"classificador-clientes"</span>
+
+<span class="cm"># ── Promover versão 1 para Staging ────────────────────────────────</span>
+client.transition_model_version_stage(
+    name=MODELO,
+    version=<span class="num">1</span>,
+    stage=<span class="str">"Staging"</span>,
+    archive_existing_versions=<span class="kw">False</span>
+)
+<span class="fn">print</span>(<span class="str">"v1 → Staging ✓"</span>)
+
+<span class="cm"># ── Promover versão 1 para Production ────────────────────────────</span>
+<span class="cm"># archive_existing_versions=True arquiva automaticamente</span>
+<span class="cm"># qualquer outra versão que esteja em Production</span>
+client.transition_model_version_stage(
+    name=MODELO,
+    version=<span class="num">1</span>,
+    stage=<span class="str">"Production"</span>,
+    archive_existing_versions=<span class="kw">True</span>
+)
+<span class="fn">print</span>(<span class="str">"v1 → Production ✓"</span>)
+
+<span class="cm"># ── Adicionar descrição à versão ──────────────────────────────────</span>
+client.update_model_version(
+    name=MODELO,
+    version=<span class="num">1</span>,
+    description=<span class="str">"RandomForest 200 árvores, dataset v2. Acc=0.9450. Aprovado por Ana."</span>
+)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — rollback: arquivar nova versão e reativar anterior</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Cenário: v2 foi para Production mas está com problemas</span>
+<span class="cm"># Precisamos voltar para v1 imediatamente</span>
+
+<span class="cm"># 1. Arquivar a versão problemática</span>
+client.transition_model_version_stage(
+    name=MODELO, version=<span class="num">2</span>, stage=<span class="str">"Archived"</span>
+)
+
+<span class="cm"># 2. Reativar a versão estável</span>
+client.transition_model_version_stage(
+    name=MODELO, version=<span class="num">1</span>, stage=<span class="str">"Production"</span>,
+    archive_existing_versions=<span class="kw">False</span>
+)
+
+<span class="fn">print</span>(<span class="str">"Rollback completo: v2 arquivada, v1 restaurada em Production ✓"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-download"></i>Carregando modelo de produção — sempre o mais recente</div>
+      <p>O grande benefício do Registry é que o código que consome o modelo pode sempre pegar <strong>"o que está em Production"</strong> — sem conhecer o run_id ou a versão específica. Quando o modelo for atualizado, o código de inferência não precisa mudar.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — carregar modelo de Production</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> mlflow.pyfunc
+
+<span class="cm"># URI que sempre aponta para a versão em Production</span>
+<span class="cm"># Quando v2 subir para Production, este código já vai usá-la</span>
+model = mlflow.pyfunc.load_model(
+    model_uri=<span class="str">"models:/classificador-clientes/Production"</span>
+)
+
+<span class="cm"># Usar para predições — interface padrão</span>
+predicoes = model.predict(X_test)
+
+
+<span class="cm"># Carregar versão específica (para testes ou comparação)</span>
+model_v1 = mlflow.pyfunc.load_model(
+    model_uri=<span class="str">"models:/classificador-clientes/1"</span>
+)
+
+<span class="cm"># Carregar versão em Staging (para validação)</span>
+model_staging = mlflow.pyfunc.load_model(
+    model_uri=<span class="str">"models:/classificador-clientes/Staging"</span>
+)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Padrão de URI do Registry:</strong> <code style="font-size:.83rem;">models:/&lt;nome-do-modelo&gt;/&lt;estágio-ou-versão&gt;</code>. Use o estágio (<code style="font-size:.83rem;">Production</code>, <code style="font-size:.83rem;">Staging</code>) no código de produção. Use o número de versão (<code style="font-size:.83rem;">1</code>, <code style="font-size:.83rem;">2</code>) só em scripts de teste ou comparação.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 & 4· Pipeline completo + Prática</span></div>
+
+  <!-- ── AULA 3: Pipeline end-to-end + Prática ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03 & 04</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 & 4 · ~100 minutos</div>
+        <div class="secao-titulo">Pipeline de Promoção Automática e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-robot"></i>Pipeline de promoção automática — o padrão da indústria</div>
+      <p>Em times maduros, a promoção de modelos não é manual. Um script verifica se o novo modelo atende aos critérios mínimos e, se sim, promove automaticamente. Isso elimina o erro humano e cria um processo auditável.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — src/promover_modelo.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">"""
+Pipeline de promoção automática:
+1. Treina novo modelo e registra no Registry
+2. Compara com modelo em Production
+3. Promove se atender ao critério mínimo
+4. Faz rollback se o critério não for atendido
+"""</span>
+<span class="kw">import</span> mlflow, mlflow.sklearn
+<span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+TRACKING_URI  = <span class="str">"http://localhost:5000"</span>
+EXPERIMENTO   = <span class="str">"classificacao-clientes"</span>
+NOME_MODELO   = <span class="str">"classificador-clientes"</span>
+CRITERIO_MIN  = <span class="num">0.90</span>   <span class="cm"># acurácia mínima para ir a Staging</span>
+
+mlflow.set_tracking_uri(TRACKING_URI)
+client = MlflowClient(TRACKING_URI)
+
+<span class="cm"># ── 1. Treinar novo modelo ─────────────────────────────────────────</span>
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+mlflow.set_experiment(EXPERIMENTO)
+
+<span class="kw">with</span> mlflow.start_run() <span class="kw">as</span> run:
+    model = RandomForestClassifier(n_estimators=<span class="num">300</span>, max_depth=<span class="num">15</span>, random_state=<span class="num">42</span>)
+    model.fit(X_train, y_train)
+    acc_nova = accuracy_score(y_test, model.predict(X_test))
+
+    mlflow.log_param(<span class="str">"n_estimators"</span>, <span class="num">300</span>)
+    mlflow.log_param(<span class="str">"max_depth"</span>, <span class="num">15</span>)
+    mlflow.log_metric(<span class="str">"accuracy"</span>, acc_nova)
+    mlflow.sklearn.log_model(
+        model, <span class="str">"modelo"</span>,
+        registered_model_name=NOME_MODELO
+    )
+    nova_versao = client.get_latest_versions(NOME_MODELO, stages=[<span class="str">"None"</span>])[<span class="num">0</span>].version
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Nova versão registrada: v{nova_versao} | accuracy={acc_nova:.4f}"</span>)
+
+<span class="cm"># ── 2. Comparar com modelo em Production (se existir) ─────────────</span>
+prod_versions = client.get_latest_versions(NOME_MODELO, stages=[<span class="str">"Production"</span>])
+acc_prod = <span class="num">0.0</span>
+
+<span class="kw">if</span> prod_versions:
+    prod_run_id = prod_versions[<span class="num">0</span>].run_id
+    prod_run    = client.get_run(prod_run_id)
+    acc_prod    = prod_run.data.metrics.get(<span class="str">"accuracy"</span>, <span class="num">0.0</span>)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Modelo em Production: v{prod_versions[0].version} | accuracy={acc_prod:.4f}"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Nenhum modelo em Production ainda."</span>)
+
+<span class="cm"># ── 3. Decidir promoção ───────────────────────────────────────────</span>
+<span class="kw">if</span> acc_nova >= CRITERIO_MIN <span class="kw">and</span> acc_nova > acc_prod:
+    client.transition_model_version_stage(
+        name=NOME_MODELO, version=nova_versao,
+        stage=<span class="str">"Staging"</span>, archive_existing_versions=<span class="kw">False</span>
+    )
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"✅ v{nova_versao} promovida para Staging (acc={acc_nova:.4f} > {acc_prod:.4f})"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"❌ v{nova_versao} NÃO promovida — acc={acc_nova:.4f} abaixo do critério ou pior que Production"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-alt"></i>Inspecionando o Registry programaticamente</div>
+      <p>Além de registrar e promover, o <code style="font-size:.85rem;">MlflowClient</code> permite consultar o estado completo do Registry — útil para scripts de auditoria, dashboards ou notificações automáticas.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — inspecionar o Registry</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+
+client = MlflowClient(<span class="str">"http://localhost:5000"</span>)
+NOME = <span class="str">"classificador-clientes"</span>
+
+<span class="cm"># Listar todos os modelos registrados</span>
+<span class="kw">for</span> modelo <span class="kw">in</span> client.search_registered_models():
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Modelo: {modelo.name}"</span>)
+
+<span class="cm"># Listar todas as versões de um modelo</span>
+<span class="fn">print</span>(<span class="str">"\n=== Versões de classificador-clientes ==="</span>)
+<span class="kw">for</span> v <span class="kw">in</span> client.search_model_versions(<span class="fn">f</span><span class="str">"name='{NOME}'"</span>):
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"  v{v.version:2s} | {v.current_stage:12s} | run_id={v.run_id[:8]}... | {v.description or '—'}"</span>)
+
+<span class="cm"># Pegar versão mais recente em Production</span>
+prod = client.get_latest_versions(NOME, stages=[<span class="str">"Production"</span>])
+<span class="kw">if</span> prod:
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"\n✅ Em Production: v{prod[0].version} ({prod[0].run_id[:8]}...)"</span>)
+
+<span class="cm"># Buscar versão específica e ver seu histórico de estágios</span>
+historico = client.get_model_version(<span class="str">"classificador-clientes"</span>, <span class="str">"1"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"\nHistórico v1: criada em {historico.creation_timestamp}"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Visão consolidada: Tracking vs Registry</div>
+      <div class="tabela-wrap">
+        <table class="registry-table">
+          <thead><tr><th>Aspecto</th><th>MLflow Tracking</th><th>Model Registry</th></tr></thead>
+          <tbody>
+            <tr><td>Propósito</td><td>Registrar todos os experimentos</td><td>Gerenciar modelos aprovados</td></tr>
+            <tr><td>Volume</td><td>Dezenas/centenas de runs</td><td>Poucas versões curadas</td></tr>
+            <tr><td>Quem usa</td><td>Data Scientists e ML Engineers</td><td>Todo o time + sistemas</td></tr>
+            <tr><td>Ciclo de vida</td><td>Imutável — runs não mudam</td><td>Mutável — estágios evoluem</td></tr>
+            <tr><td>Referência em código</td><td><code style="font-size:.78rem;">runs:/&lt;run_id&gt;/artefato</code></td><td><code style="font-size:.78rem;">models:/&lt;nome&gt;/Production</code></td></tr>
+            <tr><td>Suporta rollback</td><td>Carregar run antigo manualmente</td><td>Transição de estágio em 1 linha</td></tr>
+            <tr><td>Auditoria</td><td>Histórico de execuções</td><td>Histórico de promoções com autor</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Registry End-to-End</div>
+        <div class="secao-titulo">Do run ao rollback — ciclo completo de promoção</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Continue no projeto das semanas anteriores. Esta atividade simula o ciclo completo de um time de ML: registrar → promover → "bug em produção" → rollback. Ao final você terá um Registry com ao menos duas versões e histórico de promoções visível na UI.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Iniciar o servidor com backend SQLite</div>
+      <p>Inicie o MLflow Tracking Server com SQLite como backend. Confirme que a aba "Models" aparece na UI em <code style="font-size:.83rem;">localhost:5000</code>. Aponte o código para esse servidor com <code style="font-size:.83rem;">mlflow.set_tracking_uri</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Adicionar ao .gitignore antes de começar</span>
+echo <span class="str">"mlflow.db"</span>      >> .gitignore
+echo <span class="str">"mlartifacts/"</span>   >> .gitignore
+
+<span class="cm"># Iniciar o servidor (deixe rodando num terminal separado)</span>
+mlflow server \
+  <span class="flag">--backend-store-uri</span> sqlite:///mlflow.db \
+  <span class="flag">--default-artifact-root</span> ./mlartifacts \
+  <span class="flag">--host</span> 0.0.0.0 --port <span class="num">5000</span></code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — no início de qualquer script</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Registrar o melhor modelo da Semana 4</div>
+      <p>Use o <code style="font-size:.83rem;">run_id</code> do melhor run da Semana 4 (ou rode um novo experimento apontando para o servidor) e registre o modelo no Registry com o nome <code style="font-size:.83rem;">"classificador-clientes"</code>. Confirme que a versão 1 aparece na aba Models da UI com estágio "None".</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow
+<span class="kw">import</span> mlflow.sklearn
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)
+mlflow.set_experiment(<span class="str">"classificacao-clientes"</span>)
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+<span class="kw">with</span> mlflow.start_run():
+    model = RandomForestClassifier(n_estimators=<span class="num">200</span>, max_depth=<span class="num">10</span>, random_state=<span class="num">42</span>)
+    model.fit(X_train, y_train)
+    acc = accuracy_score(y_test, model.predict(X_test))
+    mlflow.log_metric(<span class="str">"accuracy"</span>, acc)
+    mlflow.sklearn.log_model(
+        model, <span class="str">"modelo"</span>,
+        registered_model_name=<span class="str">"classificador-clientes"</span>
+    )
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"v1 registrada | acc={acc:.4f}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Promover v1 para Staging e depois Production</div>
+      <p>Use o <code style="font-size:.83rem;">MlflowClient</code> para promover a versão 1 primeiro para <code style="font-size:.83rem;">Staging</code>, depois para <code style="font-size:.83rem;">Production</code>. Adicione uma descrição à versão descrevendo os hiperparâmetros e a acurácia. Confirme os estágios na UI.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+
+client = MlflowClient(<span class="str">"http://localhost:5000"</span>)
+NOME = <span class="str">"classificador-clientes"</span>
+
+client.transition_model_version_stage(NOME, <span class="str">"1"</span>, <span class="str">"Staging"</span>)
+<span class="fn">print</span>(<span class="str">"v1 → Staging ✓"</span>)
+
+client.transition_model_version_stage(
+    NOME, <span class="str">"1"</span>, <span class="str">"Production"</span>, archive_existing_versions=<span class="kw">True</span>
+)
+<span class="fn">print</span>(<span class="str">"v1 → Production ✓"</span>)
+
+client.update_model_version(
+    name=NOME, version=<span class="str">"1"</span>,
+    description=<span class="str">"RF 200 árvores, depth=10, dataset v2. Acc=X.XXXX. Primeira versão de produção."</span>
+)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Registrar v2 e simular rollback</div>
+      <p>Treine um segundo modelo (pode ser com hiperparâmetros intencionalmente ruins — ex: <code style="font-size:.83rem;">max_depth=2</code>) e registre como versão 2. Promova para Production. Depois simule que "deu problema": arquive a v2 e reative a v1 em Production. Confirme o estado final na UI.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Registrar v2 (modelo ruim de propósito)</span>
+<span class="kw">with</span> mlflow.start_run():
+    model_ruim = RandomForestClassifier(n_estimators=<span class="num">10</span>, max_depth=<span class="num">2</span>, random_state=<span class="num">42</span>)
+    model_ruim.fit(X_train, y_train)
+    acc2 = accuracy_score(y_test, model_ruim.predict(X_test))
+    mlflow.log_metric(<span class="str">"accuracy"</span>, acc2)
+    mlflow.sklearn.log_model(
+        model_ruim, <span class="str">"modelo"</span>,
+        registered_model_name=<span class="str">"classificador-clientes"</span>
+    )
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"v2 registrada | acc={acc2:.4f} (modelo ruim de propósito)"</span>)
+
+<span class="cm"># Promover v2 para Production (archive v1 automaticamente)</span>
+client.transition_model_version_stage(
+    NOME, <span class="str">"2"</span>, <span class="str">"Production"</span>, archive_existing_versions=<span class="kw">True</span>
+)
+<span class="fn">print</span>(<span class="str">"v2 → Production (v1 arquivada)"</span>)
+
+<span class="cm"># Simular incidente — ROLLBACK!</span>
+client.transition_model_version_stage(NOME, <span class="str">"2"</span>, <span class="str">"Archived"</span>)
+client.transition_model_version_stage(
+    NOME, <span class="str">"1"</span>, <span class="str">"Production"</span>, archive_existing_versions=<span class="kw">False</span>
+)
+<span class="fn">print</span>(<span class="str">"🔄 ROLLBACK: v2 arquivada, v1 restaurada em Production"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Carregar modelo de Production e validar</div>
+      <p>Escreva um script <code style="font-size:.83rem;">src/inferencia.py</code> que carregue o modelo atual em Production usando a URI <code style="font-size:.83rem;">models:/classificador-clientes/Production</code> — sem hardcodar versão ou run_id — e imprima a acurácia no conjunto de teste.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/inferencia.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> mlflow.pyfunc
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+
+mlflow.set_tracking_uri(<span class="str">"http://localhost:5000"</span>)
+
+df = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+X  = df.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>)
+y  = df[<span class="str">"target"</span>]
+_, X_test, _, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+<span class="cm"># Sempre busca o modelo atual em Production — sem hardcodar versão</span>
+model = mlflow.pyfunc.load_model(<span class="str">"models:/classificador-clientes/Production"</span>)
+preds = model.predict(X_test)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Modelo em Production | Acurácia: {accuracy_score(y_test, preds):.4f}"</span>)
+<span class="fn">print</span>(<span class="str">"(Este número deve refletir a v1 após o rollback)"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 06 — Desafio: pipeline automático com critério de promoção</div>
+      <p>Implemente o script <code style="font-size:.83rem;">src/promover_modelo.py</code> completo mostrado na aula. Rode-o três vezes alterando os hiperparâmetros — uma vez com modelo pior que o em Production (deve bloquear), duas vezes com modelo melhor (deve promover para Staging). Verifique o estado do Registry após cada execução.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> na aba Models da UI você deve ver o modelo <code style="font-size:.82rem;">"classificador-clientes"</code> com pelo menos 2 versões, histórico de transições de estágio visível, e v1 em Production após o rollback. O script <code style="font-size:.82rem;">inferencia.py</code> deve rodar sem conhecer o número da versão.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da P1 · Semanas 1–5</span></div>
+
+  <!-- ── BLOCO P1 ──────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="p1-box">
+      <div class="p1-titulo"><i class="fas fa-clipboard-check"></i>Revisão — Conteúdo da P1 (Semana 6)</div>
+      <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">A P1 cobre todo o conteúdo das Semanas 1 a 5. Relembre os conceitos centrais de cada semana:</p>
+      <div class="p1-grid">
+        <div class="p1-col">
+          <h4>Semana 1 — Fundamentos</h4>
+          <ul>
+            <li>Definição de MLOps e os 3 papéis</li>
+            <li>87% dos modelos nunca vão a produção</li>
+            <li>As 4 fases do ciclo de vida</li>
+            <li>Diferença notebook vs. produção</li>
+          </ul>
+        </div>
+        <div class="p1-col">
+          <h4>Semana 2 — Reprodutibilidade</h4>
+          <ul>
+            <li>venv vs conda — quando usar cada um</li>
+            <li>requirements.txt e lockfiles</li>
+            <li>Dockerfile: FROM, COPY, RUN, CMD, cache de layers</li>
+            <li>Git para ML: .gitignore, estrutura de projeto</li>
+          </ul>
+        </div>
+        <div class="p1-col">
+          <h4>Semana 3 — DVC</h4>
+          <ul>
+            <li>Por que dados não entram no Git</li>
+            <li>Arquivo .dvc: ponteiro com hash MD5</li>
+            <li>dvc add, push, pull, checkout</li>
+            <li>dvc.yaml: pipelines reproduzíveis</li>
+          </ul>
+        </div>
+        <div class="p1-col">
+          <h4>Semana 4 — MLflow Tracking</h4>
+          <ul>
+            <li>Experiment, Run, Parameters, Metrics, Artifacts, Tags</li>
+            <li>log_param, log_metric, log_model, log_artifact</li>
+            <li>autolog: rastreamento com uma linha</li>
+            <li>search_runs + load_model via Python</li>
+          </ul>
+        </div>
+        <div class="p1-col">
+          <h4>Semana 5 — Model Registry</h4>
+          <ul>
+            <li>Tracking vs Registry — laboratório vs prateleira</li>
+            <li>Os 4 estágios: None, Staging, Production, Archived</li>
+            <li>transition_model_version_stage</li>
+            <li>URI models:/nome/Production — sem hardcodar versão</li>
+          </ul>
+        </div>
+        <div class="p1-col">
+          <h4>Conceitos transversais</h4>
+          <ul>
+            <li>Reprodutibilidade end-to-end: dados + código + ambiente</li>
+            <li>Rollback: Git checkout + DVC checkout + Registry stage</li>
+            <li>MLflow server com SQLite para Registry completo</li>
+            <li>Pipeline automático de promoção com critério mínimo</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo da Semana</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 5</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-archive"></i>
+        <strong>Model Registry</strong>
+        <p>Repositório de modelos aprovados — separado do Tracking. Versões com estágios, descrições e histórico de promoções auditável</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>Promoção e Rollback</strong>
+        <p>transition_model_version_stage em uma linha — promover, arquivar e restaurar versões anteriores sem tocar no código de inferência</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-robot"></i>
+        <strong>Pipeline Automático</strong>
+        <p>Critério mínimo de acurácia + comparação com Production + promoção automática para Staging — base do CI/CD de modelos</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-07-mlops.html">
+      <div>
+        <div class="proxima-label">Após a P1 (Semana 6) · Próximo conteúdo</div>
+        <div class="proxima-titulo">Semana 7 — Pipelines de ML Automatizados com MLflow Pipelines e Metaflow</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

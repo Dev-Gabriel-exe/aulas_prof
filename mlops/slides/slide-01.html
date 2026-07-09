@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 01 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;
+  --purple-900:#2e1065;
+  --purple-800:#4c1d95;
+  --purple-700:#6d28d9;
+  --purple-500:#8b5cf6;
+  --purple-400:#a78bfa;
+  --purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;
+  --code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--purple-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── CAPA ─────────────────────────────────────────────────────────── */
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(167,139,250,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);
+  border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-card-titulo i{font-size:.8rem;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{
+  content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;
+}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);
+}
+
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+.scroll-hint i{font-size:1rem;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-info{}
+.secao-label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--purple-400);font-weight:600;margin-bottom:2px;
+}
+.secao-titulo{
+  font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;
+  color:var(--white);letter-spacing:-.02em;
+}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card-titulo i{font-size:.9rem;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;
+   font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(167,139,250,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;
+}
+.code-copy{
+  font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;
+  border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;
+  transition:color .2s;
+}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;
+  line-height:1.7;color:#ddd6fe;
+}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.var{color:#6ee7b7;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:.88rem;color:var(--text-secondary);line-height:1.55;
+}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  font-size:.72rem;font-weight:600;letter-spacing:.04em;
+  background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);
+}
+.badge-green{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.badge-red{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.badge-yellow{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-red{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* diagrama de ciclo */
+.ciclo{
+  display:flex;align-items:center;gap:0;margin:1rem 0;flex-wrap:wrap;
+}
+.ciclo-etapa{
+  flex:1;min-width:120px;
+  padding:.85rem .75rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.15);
+  text-align:center;position:relative;
+}
+.ciclo-etapa .num{
+  font-family:'Montserrat',sans-serif;font-size:1.5rem;font-weight:800;
+  color:rgba(167,139,250,.2);line-height:1;display:block;margin-bottom:4px;
+}
+.ciclo-etapa .titulo{
+  font-size:.75rem;font-weight:600;color:var(--purple-300);display:block;margin-bottom:3px;
+}
+.ciclo-etapa .desc{font-size:.7rem;color:var(--text-muted);line-height:1.4;}
+.ciclo-arrow{
+  color:var(--purple-500);font-size:.9rem;padding:0 .5rem;flex-shrink:0;
+}
+
+/* papéis */
+.papel-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.1rem;
+  border-top:3px solid var(--purple-500);
+}
+.papel-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:700;
+  color:var(--purple-400);margin-bottom:.6rem;
+}
+.papel-lista{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.papel-lista li{font-size:.78rem;color:var(--text-secondary);line-height:1.5;padding-left:12px;position:relative;}
+.papel-lista li::before{content:'–';position:absolute;left:0;color:var(--purple-500);}
+
+/* comparativo notebook vs prod */
+.comp{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.comp-col{border-radius:10px;padding:1rem 1.1rem;}
+.comp-col.notebook{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);}
+.comp-col.producao{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);}
+.comp-col h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;}
+.comp-col.notebook h4{color:#fbbf24;}
+.comp-col.producao h4{color:#4ade80;}
+.comp-col ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.comp-col ul li{font-size:.8rem;color:var(--text-secondary);line-height:1.5;padding-left:14px;position:relative;}
+.comp-col.notebook ul li::before{content:'⚠';position:absolute;left:0;font-size:.65rem;top:2px;}
+.comp-col.producao ul li::before{content:'✓';position:absolute;left:0;font-size:.65rem;color:#4ade80;top:1px;}
+
+/* exercícios */
+.exercicio{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.25rem;margin-bottom:.85rem;
+}
+.exercicio-num{
+  font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;
+}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{
+  display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;
+  font-size:.65rem;font-weight:600;letter-spacing:.05em;
+}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.1rem;text-align:center;
+}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{
+  display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;
+}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2,.grid-3,.comp{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .ciclo{flex-direction:column;}
+  .ciclo-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     CAPA
+════════════════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">01</div>
+    <h1 class="capa-titulo">O que é <em>MLOps?</em><br>Ciclo de vida de<br>modelos em produção</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Semana de abertura</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>O que é MLOps — definição, contexto e por que importa</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-laptop-code"></i></div><span>Notebook vs. produção — onde os projetos morrem</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sync-alt"></i></div><span>Ciclo de vida de modelos de ML — 4 fases</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-users-cog"></i></div><span>Papéis: ML Engineer, Data Scientist, MLOps Engineer</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-map-marked-alt"></i></div><span>Estudo de caso: mapeamento de ciclo de vida real</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Mapeamento do ciclo de vida de um modelo real em estudo de caso — do problema ao monitoramento em produção.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do semestre</div>
+      <ul class="info-lista">
+        <li>P1 — Semana 6 · Conteúdo das semanas 1–5</li>
+        <li>P2 — Semana 13 · Conteúdo das semanas 7–12</li>
+        <li>Revisão Geral — Semana 18</li>
+        <li>P3 Final — Semana 19 · Projeto integrador</li>
+        <li>Segunda Chamada — Semana 20</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Trilha do semestre</div>
+      <ul class="info-lista">
+        <li>Reprodutibilidade: venv, Docker, DVC, Git para ML</li>
+        <li>Rastreamento de experimentos com MLflow</li>
+        <li>Serving: FastAPI, BentoML, containers Docker</li>
+        <li>Monitoramento: drift, Evidently AI, Grafana</li>
+        <li>Escala: Kubernetes, filas, segurança e governança</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup necessário</div>
+      <ul class="info-lista">
+        <li>Python 3.10+ instalado com pip/conda</li>
+        <li>Git instalado e conta no GitHub</li>
+        <li>VS Code ou editor de sua preferência</li>
+        <li>Pré-requisito: D1.07 e D1.11</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CONTEÚDO
+════════════════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: O que é MLOps ──────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O que é MLOps — Contexto e Motivação</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Onde estamos e o que essa disciplina resolve</div>
+      <p>Você já sabe criar modelos de machine learning. Sabe treinar uma regressão, avaliar com métricas, ajustar hiperparâmetros num notebook. Mas o que acontece <em>depois</em> que o modelo performa bem no seu computador?</p>
+      <p>Na maioria das empresas: <strong>nada</strong>. O modelo fica no notebook. Nunca chega aos usuários. Nunca gera valor real. Esse é o problema que MLOps resolve.</p>
+      <div class="destaque">
+        <strong>Dado que define a disciplina:</strong> estudos da indústria apontam que cerca de 87% dos projetos de Machine Learning nunca saem do ambiente de experimento para produção. MLOps é o conjunto de práticas, ferramentas e processos que resolve isso.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-puzzle-piece"></i>A definição de MLOps</div>
+      <p><strong>MLOps = Machine Learning + DevOps.</strong> É a aplicação dos princípios de DevOps — automação, versionamento, CI/CD, monitoramento — ao ciclo de vida de modelos de Machine Learning.</p>
+      <p>Mas MLOps não é só DevOps com modelos. Modelos têm características únicas que complicam tudo:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-exclamation-triangle"></i><span><strong>Modelos degradam com o tempo</strong> — os dados do mundo real mudam, e o modelo que funcionava bem em janeiro pode estar errado em julho sem que ninguém tenha tocado no código.</span></li>
+        <li><i class="fas fa-exclamation-triangle"></i><span><strong>Dados são parte do sistema</strong> — no software tradicional, o comportamento é determinado pelo código. Em ML, o comportamento é determinado pelos dados de treino. Ambos precisam ser versionados.</span></li>
+        <li><i class="fas fa-exclamation-triangle"></i><span><strong>Experimentos proliferam</strong> — sem controle, você rapidamente tem dezenas de versões de modelo sem saber qual gerou qual resultado, com quais dados e hiperparâmetros.</span></li>
+        <li><i class="fas fa-exclamation-triangle"></i><span><strong>Reproduzir um resultado é difícil</strong> — "funcionou na minha máquina" é um problema antigo em software; em ML é ainda pior porque envolve dados, código, ambiente e aleatoriedade.</span></li>
+      </ul>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-road"></i>Trilha do semestre</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 1–5:</strong> Fundamentos, reprodutibilidade, DVC, MLflow, Model Registry</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 7–12:</strong> Pipelines, Docker, FastAPI, serving, monitoramento, Grafana</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 14–17:</strong> Kubernetes, filas, segurança, governança e fairness</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 19:</strong> Projeto final: modelo em produção com monitoramento ativo</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-clipboard-list"></i>Avaliações</div>
+        <div class="tabela-wrap">
+          <table>
+            <thead><tr><th>Prova</th><th>Semana</th><th>Conteúdo</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge">P1</span></td><td>6</td><td>Semanas 1–5</td></tr>
+              <tr><td><span class="badge">P2</span></td><td>13</td><td>Semanas 7–12</td></tr>
+              <tr><td><span class="badge">Revisão</span></td><td>18</td><td>Geral</td></tr>
+              <tr><td><span class="badge">P3 Final</span></td><td>19</td><td>14–17 + projeto</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-laptop"></i>
+      <span><strong>Setup hoje:</strong> Confirme que tem Python 3.10+ e Git instalados. Nas próximas semanas vamos precisar de Docker também — quem não tiver, comece a instalar. Dúvidas de setup: resolva agora nos 10 minutos finais da aula.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Notebook vs. Produção + Ciclo de Vida ─────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Notebook vs. Produção — e o Ciclo de Vida de Modelos</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-laptop-code"></i>Por que o modelo que funciona no notebook quebra em produção</div>
+      <p>Essa é a pergunta mais comum de quem começa na área. O modelo tinha 94% de acurácia. Os testes passaram. Mas quando foi para produção, vieram os problemas. Por quê?</p>
+
+      <div class="comp">
+        <div class="comp-col notebook">
+          <h4><i class="fas fa-flask" style="margin-right:6px;"></i>Notebook / Experimento</h4>
+          <ul>
+            <li>Dados fixos, estáticos, já limpos pelo cientista</li>
+            <li>Uma requisição de cada vez, sem concorrência</li>
+            <li>Ambiente: "funciona na minha máquina"</li>
+            <li>Sem versionamento de dados ou modelo</li>
+            <li>Sem tratamento de erros ou entradas inválidas</li>
+            <li>Resultado: arquivo <code style="font-size:.75rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">model.pkl</code> na pasta local</li>
+          </ul>
+        </div>
+        <div class="comp-col producao">
+          <h4><i class="fas fa-server" style="margin-right:6px;"></i>Produção</h4>
+          <ul>
+            <li>Dados chegam em tempo real, com ruído e variação</li>
+            <li>Centenas de requisições simultâneas</li>
+            <li>Ambiente reproduzível: Docker, requirements fixos</li>
+            <li>Modelo e dados versionados — rollback possível</li>
+            <li>Validação de input, logs, alertas de erros</li>
+            <li>API REST servindo predições com SLA definido</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Resumo:</strong> notebook é um ambiente de exploração. Produção é um sistema com usuários reais, SLA, dados dinâmicos e necessidade de manutenção contínua. A distância entre os dois é o problema central de MLOps.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>As 4 fases do ciclo de vida de um modelo</div>
+      <p>Todo modelo de ML em produção passa por quatro fases. Entender esse ciclo é o pré-requisito para qualquer prática de MLOps.</p>
+
+      <div class="ciclo">
+        <div class="ciclo-etapa">
+          <span class="num">1</span>
+          <span class="titulo">Definição e Dados</span>
+          <span class="desc">Problema, coleta, exploração, limpeza, feature engineering</span>
+        </div>
+        <div class="ciclo-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="ciclo-etapa">
+          <span class="num">2</span>
+          <span class="titulo">Experimentação</span>
+          <span class="desc">Treinamento, avaliação, comparação de algoritmos, tuning</span>
+        </div>
+        <div class="ciclo-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="ciclo-etapa">
+          <span class="num">3</span>
+          <span class="titulo">Deploy</span>
+          <span class="desc">Empacotamento, API, containerização, testes de integração</span>
+        </div>
+        <div class="ciclo-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="ciclo-etapa">
+          <span class="num">4</span>
+          <span class="titulo">Monitoramento</span>
+          <span class="desc">Drift de dados, performance real, alertas, retreinamento</span>
+        </div>
+      </div>
+
+      <p style="margin-top:1rem;">Note que a fase 4 <strong>leva de volta à fase 1</strong>. Não existe "modelo pronto para sempre". Um modelo em produção é um sistema vivo que precisa ser continuamente monitorado e atualizado.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>Detalhando cada fase</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead>
+            <tr><th>Fase</th><th>O que acontece</th><th>Ferramentas típicas</th><th>Problema sem MLOps</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge">1 — Dados</span></td>
+              <td>Coleta, EDA, limpeza, features</td>
+              <td>Python, pandas, SQL</td>
+              <td>Dados não versionados — impossível reproduzir</td>
+            </tr>
+            <tr>
+              <td><span class="badge">2 — Experimento</span></td>
+              <td>Treino, avaliação, tuning</td>
+              <td>scikit-learn, XGBoost, MLflow</td>
+              <td>Dezenas de runs sem rastreamento — qual era o melhor?</td>
+            </tr>
+            <tr>
+              <td><span class="badge">3 — Deploy</span></td>
+              <td>API, Docker, CI/CD</td>
+              <td>FastAPI, Docker, GitHub Actions</td>
+              <td>"Funciona na minha máquina" — ambiente incompatível</td>
+            </tr>
+            <tr>
+              <td><span class="badge">4 — Monitoramento</span></td>
+              <td>Métricas, drift, alertas</td>
+              <td>Evidently AI, Grafana, Prometheus</td>
+              <td>Modelo degradando silenciosamente sem ninguém perceber</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="aviso-red">
+      <i class="fas fa-ghost"></i>
+      <span><strong>O modelo fantasma:</strong> um dos cenários mais comuns na indústria é descobrir que um modelo "em produção" há meses nunca foi monitorado e suas predições estão completamente erradas — mas como ninguém acompanhava, ninguém sabia. MLOps existe para tornar isso impossível.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Papéis + Estudo de Caso</span></div>
+
+  <!-- ── AULA 3: Papéis e Estudo de Caso ───────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Papéis, Responsabilidades e Estudo de Caso</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-users-cog"></i>Quem faz o quê — os três papéis centrais</div>
+      <p>Em empresas que levam ML a sério, existem papéis distintos com responsabilidades diferentes em torno do ciclo de vida do modelo. Entender onde cada um começa e termina evita confusão e lacunas de responsabilidade.</p>
+
+      <div class="grid-3" style="margin-top:1rem;">
+        <div class="papel-card">
+          <div class="papel-titulo"><i class="fas fa-flask" style="margin-right:6px;color:var(--purple-400);"></i>Data Scientist</div>
+          <ul class="papel-lista">
+            <li>Define o problema e as métricas de sucesso</li>
+            <li>Explora e processa os dados</li>
+            <li>Treina, avalia e seleciona o modelo</li>
+            <li>Responsável pela qualidade do modelo</li>
+            <li>Entrega: modelo treinado + código de experimentação</li>
+          </ul>
+        </div>
+        <div class="papel-card">
+          <div class="papel-titulo"><i class="fas fa-code" style="margin-right:6px;color:var(--purple-400);"></i>ML Engineer</div>
+          <ul class="papel-lista">
+            <li>Pega o modelo do cientista e leva a produção</li>
+            <li>Constrói a API de serving (FastAPI, etc)</li>
+            <li>Garante performance, latência e escalabilidade</li>
+            <li>Implementa testes e pipelines de CI/CD</li>
+            <li>Entrega: modelo servindo via API confiável</li>
+          </ul>
+        </div>
+        <div class="papel-card">
+          <div class="papel-titulo"><i class="fas fa-cogs" style="margin-right:6px;color:var(--purple-400);"></i>MLOps Engineer</div>
+          <ul class="papel-lista">
+            <li>Constrói e mantém a infraestrutura de ML</li>
+            <li>Configura rastreamento, registro e versionamento</li>
+            <li>Implementa monitoramento e alertas</li>
+            <li>Garante reprodutibilidade de ponta a ponta</li>
+            <li>Entrega: plataforma que acelera todos os outros</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Na prática:</strong> em empresas menores, uma pessoa acumula dois ou três desses papéis. Mas entender a separação de responsabilidades é essencial para não deixar nada cair no vazio — especialmente monitoramento, que costuma ser a primeira vítima quando não há papel definido para isso.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map-marked-alt"></i>Estudo de caso — sistema de recomendação de uma loja virtual</div>
+      <p>Vamos acompanhar o ciclo de vida de um modelo real: um sistema de recomendação de produtos para e-commerce. Cada fase vai ilustrar tanto as decisões técnicas quanto os problemas que surgem sem MLOps.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">Cenário — contexto do problema</span>
+        </div>
+        <pre><code><span class="cm">──────────────────────────────────────────────────────────────</span>
+<span class="cm"> Empresa:  loja virtual de eletrônicos, ~10k pedidos/dia</span>
+<span class="cm"> Problema: "nossos clientes não encontram o que querem"</span>
+<span class="cm"> Objetivo: recomendar produtos relevantes na página inicial</span>
+<span class="cm"> Métrica:  aumentar a taxa de clique (CTR) em 15%</span>
+<span class="cm">──────────────────────────────────────────────────────────────</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Fase 1 — Dados:</strong> o time coleta 6 meses de histórico de compras do banco de dados. Um cientista faz EDA, remove outliers e cria features (última categoria comprada, frequência de compra, ticket médio). Os dados são salvos localmente. <span style="color:#f87171;">Problema: quando o experimento for reproduzido em 3 meses, quais dados foram usados? Ninguém sabe.</span>
+      </div>
+
+      <div class="destaque">
+        <strong>Fase 2 — Experimento:</strong> são testados 12 modelos diferentes (colaborativo, baseado em conteúdo, híbrido). O melhor tem AUC de 0.87 com um modelo de matrix factorization. O resultado está num notebook chamado <code style="font-size:.8rem;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">final_v3_FINAL2.ipynb</code>. <span style="color:#f87171;">Problema: os outros 11 experimentos não têm registro. Qual foi o segundo melhor? Com quais dados? Impossível dizer.</span>
+      </div>
+
+      <div class="destaque">
+        <strong>Fase 3 — Deploy:</strong> o ML Engineer serializa o modelo com pickle e escreve um script Flask. Funciona localmente. No servidor de produção, a versão do scikit-learn é diferente e o modelo não carrega. 2 dias de trabalho para resolver dependências. <span style="color:#f87171;">Problema: sem Docker e requirements fixos, ambiente de dev ≠ produção.</span>
+      </div>
+
+      <div class="destaque">
+        <strong>Fase 4 — Monitoramento:</strong> o modelo vai ao ar. A CTR sobe 18% no primeiro mês. Ninguém configura monitoramento. Quatro meses depois, durante a Black Friday, o perfil de compras muda completamente — e o modelo segue recomendando produtos do comportamento pré-Black Friday. CTR cai para -3%. A equipe só descobre 2 semanas depois. <span style="color:#f87171;">Problema: sem monitoramento de drift, o modelo degradou silenciosamente.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-check-double"></i>O mesmo cenário com MLOps</div>
+      <p>Vejamos como as mesmas fases funcionariam com práticas de MLOps aplicadas — que é exatamente o que vamos construir ao longo do semestre:</p>
+
+      <ul class="icon-list">
+        <li><i class="fas fa-check-circle"></i><span><strong>Dados versionados com DVC</strong> — cada experimento referencia exatamente qual versão do dataset foi usada. Reproduzir qualquer run é trivial. (Semana 3)</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Experimentos rastreados com MLflow</strong> — todos os 12 modelos têm parâmetros, métricas e artefatos registrados. Comparar e voltar para o melhor é um clique. (Semana 4)</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Ambiente containerizado com Docker</strong> — a imagem de produção é gerada a partir do mesmo Dockerfile testado em dev. "Funciona na minha máquina" deixa de existir. (Semana 8)</span></li>
+        <li><i class="fas fa-check-circle"></i><span><strong>Monitoramento com Evidently AI + Grafana</strong> — data drift é detectado automaticamente. Um alerta é disparado quando a distribuição dos dados de entrada muda. O retreinamento pode ser automático. (Semanas 11–12)</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Estudo de Caso em Grupo</div>
+        <div class="secao-titulo">Mapeamento do Ciclo de Vida de um Modelo Real</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade em duplas ou trios. Escolham um dos cenários abaixo e respondam às perguntas. O objetivo não é ter a resposta certa, mas praticar o raciocínio sobre ciclo de vida e identificar onde estão os riscos sem MLOps.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-list-alt"></i>Cenários disponíveis</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Cenário</th><th>Modelo envolvido</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge">A</span></td><td>Banco detectando transações fraudulentas</td><td>Classificação binária em tempo real</td></tr>
+            <tr><td><span class="badge">B</span></td><td>App de saúde prevendo risco de abandono de tratamento</td><td>Regressão logística com dados de wearable</td></tr>
+            <tr><td><span class="badge">C</span></td><td>Plataforma de streaming recomendando conteúdo</td><td>Filtragem colaborativa + ranqueamento</td></tr>
+            <tr><td><span class="badge">D</span></td><td>Empresa de logística prevendo prazo de entrega</td><td>Regressão com dados de rota e clima</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Questão 01</div>
+      <p>Para o cenário escolhido: <strong>quais dados seriam necessários para treinar o modelo?</strong> De onde viriam esses dados? Como você garantiria que os dados de treino são representativos do mundo real?</p>
+      <span class="dificuldade dif-basico">Reflexão</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Questão 02</div>
+      <p><strong>Quais métricas você usaria para avaliar o modelo?</strong> Pense em métricas técnicas (acurácia, F1, RMSE) e também em métricas de negócio. Por que as duas perspectivas são necessárias?</p>
+      <span class="dificuldade dif-basico">Reflexão</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Questão 03</div>
+      <p>Como o modelo seria <strong>consumido em produção</strong>? Uma API REST? Um processo batch que roda à noite? Em tempo real na borda? Que critérios definem essa escolha?</p>
+      <span class="dificuldade dif-medio">Análise</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Questão 04</div>
+      <p><strong>O que poderia fazer o modelo degradar com o tempo?</strong> Dê pelo menos dois exemplos concretos de mudanças no mundo real que afetariam a qualidade das predições. Como você detectaria isso?</p>
+      <span class="dificuldade dif-medio">Análise</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Questão 05 — Desafio</div>
+      <p>Imagine que o modelo foi para produção e, três meses depois, vocês precisam <strong>provar que a versão atual é melhor que a versão anterior</strong>. Sem nenhum controle de versionamento ou rastreamento, como fariam? O que seria impossível de responder? O que isso implica para o negócio?</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-chalkboard-teacher"></i>
+      <span><strong>Fechamento:</strong> cada grupo apresenta o cenário escolhido em 3–4 minutos. Foco nas questões 4 e 5 — onde estão os maiores riscos e o que MLOps resolveria. Os problemas que vocês identificaram hoje são exatamente as ferramentas que vamos aprender nas próximas semanas.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 1</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-question-circle"></i>
+        <strong>O problema de MLOps</strong>
+        <p>87% dos modelos nunca chegam a produção. MLOps é o conjunto de práticas que resolve reprodutibilidade, rastreamento e monitoramento</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-sync-alt"></i>
+        <strong>Ciclo de Vida</strong>
+        <p>4 fases: dados, experimentação, deploy e monitoramento — um ciclo contínuo, não um pipeline linear de mão única</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-users-cog"></i>
+        <strong>Papéis e Responsabilidades</strong>
+        <p>Data Scientist, ML Engineer e MLOps Engineer — papéis distintos que cobrem o ciclo completo sem lacunas</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-02-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 2 — Reprodutibilidade: venv, conda, Docker, requirements e Git para ML</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

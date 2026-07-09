@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 09 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ──────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+.badge-get{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.badge-post{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* request/response flow */
+.req-flow{display:flex;align-items:stretch;gap:0;margin:1rem 0;border-radius:12px;overflow:hidden;border:1px solid rgba(167,139,250,.15);}
+.req-col{flex:1;padding:1rem 1.1rem;}
+.req-col:not(:last-child){border-right:1px solid rgba(167,139,250,.12);}
+.req-col h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-400);margin-bottom:.5rem;}
+.req-col p{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+
+/* endpoint card */
+.endpoint{display:flex;align-items:center;gap:10px;margin-bottom:.5rem;}
+.endpoint code{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text-primary);}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .req-flow{flex-direction:column;}
+  .req-col:not(:last-child){border-right:none;border-bottom:1px solid rgba(167,139,250,.12);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">09</div>
+    <h1 class="capa-titulo">Servindo Modelos<br>com <em>FastAPI</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Endpoints, validação e documentação automática</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Por que FastAPI — async, performance e tipagem</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-alt"></i></div><span>Pydantic — validação de input automática e robusta</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-route"></i></div><span>Endpoints de predição — single, batch e health check</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-book-open"></i></div><span>Documentação automática — Swagger UI e ReDoc</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: API REST de predição completa testada com Postman/curl</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir uma API REST de predição com FastAPI: validação de input, tratamento de erros, endpoint batch e documentação automática.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que FastAPI e não Flask?</div>
+      <ul class="info-lista">
+        <li>Validação automática de tipos via Pydantic — sem código manual</li>
+        <li>Documentação interativa gerada automaticamente (Swagger)</li>
+        <li>Suporte nativo a async/await — melhor para I/O concorrente</li>
+        <li>Performance comparável a frameworks Node.js/Go</li>
+        <li>Erros de validação retornam JSON estruturado automaticamente</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 5: modelo no Registry — vamos carregá-lo aqui</li>
+        <li>Sem. 8: Dockerfile básico de inferência — vamos aprofundar a API</li>
+        <li>Sem. 10: BentoML/Triton como alternativas de serving</li>
+        <li>Sem. 16: autenticação JWT e rate limiting na mesma API</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install fastapi uvicorn pydantic</code></li>
+        <li>Modelo treinado em <code style="font-size:.8rem;">models/model.pkl</code></li>
+        <li>Postman ou curl para testar os endpoints</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-08-mlops.html"><i class="fas fa-arrow-left"></i> Semana 8 — Docker para ML</a>
+
+  <!-- ── AULA 1: Por que FastAPI + Pydantic ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que FastAPI — e Validação com Pydantic</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bolt"></i>O que torna FastAPI a escolha padrão para servir modelos</div>
+      <p>Na Semana 8 usamos FastAPI de forma mínima. Agora vamos entender <strong>por que</strong> ele se tornou o padrão da indústria para servir modelos de ML, superando Flask na maioria dos casos novos.</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-check"></i><span><strong>Tipagem nativa do Python:</strong> você declara os tipos esperados (<code style="font-size:.83rem;">float</code>, <code style="font-size:.83rem;">str</code>, <code style="font-size:.83rem;">List[float]</code>) e o FastAPI valida automaticamente — sem escrever código de validação manual.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Documentação gerada sozinha:</strong> a partir dos tipos declarados, o FastAPI gera Swagger UI e ReDoc automaticamente — sem manter documentação separada que desatualiza.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Performance:</strong> construído sobre Starlette e Uvicorn (ASGI), é um dos frameworks Python mais rápidos — comparável a frameworks em Go ou Node.js em benchmarks.</span></li>
+        <li><i class="fas fa-check"></i><span><strong>Suporte a async/await:</strong> útil quando o endpoint precisa esperar I/O (banco de dados, chamada a outro serviço) sem bloquear outras requisições.</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>Para servir modelos de ML especificamente:</strong> a combinação de validação automática + documentação + performance resolve exatamente os três problemas mais comuns de APIs de inferência: receber dados malformados, falta de clareza sobre o contrato da API, e latência sob carga.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shield-alt"></i>Pydantic — o motor de validação por trás do FastAPI</div>
+      <p>O Pydantic é a biblioteca que faz a validação de dados no FastAPI. Você define um <strong>modelo</strong> (uma classe Python) com os tipos esperados, e o Pydantic garante que qualquer dado recebido seja convertido ou rejeitado com erro claro.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — modelos Pydantic básicos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator
+<span class="kw">from</span> typing <span class="kw">import</span> List, Optional
+
+<span class="kw">class</span> <span class="fn">PredictionInput</span>(BaseModel):
+    <span class="cm"># Tipos básicos com validação automática</span>
+    idade: <span class="fn">int</span> = Field(gt=<span class="num">0</span>, lt=<span class="num">120</span>, description=<span class="str">"Idade do cliente"</span>)
+    saldo: float = Field(ge=<span class="num">0</span>, description=<span class="str">"Saldo em conta"</span>)
+    tempo_cliente_meses: <span class="fn">int</span> = Field(ge=<span class="num">0</span>)
+    categoria: str = Field(pattern=<span class="str">"^(bronze|prata|ouro)$"</span>)
+
+    <span class="cm"># Validação customizada</span>
+    <span class="dec">@field_validator</span>(<span class="str">"saldo"</span>)
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">saldo_razoavel</span>(cls, v):
+        <span class="kw">if</span> v > <span class="num">10_000_000</span>:
+            <span class="kw">raise</span> ValueError(<span class="str">"Saldo acima do limite esperado — verifique a entrada"</span>)
+        <span class="kw">return</span> v
+
+<span class="kw">class</span> <span class="fn">PredictionOutput</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+    modelo_versao: str = <span class="str">"1.0"</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-info-circle"></i>
+        <span>Se a requisição enviar <code>idade: -5</code> ou <code>categoria: "platina"</code>, o FastAPI <strong>rejeita automaticamente</strong> com status <code>422 Unprocessable Entity</code> e uma mensagem JSON explicando exatamente qual campo falhou e por quê — sem você escrever nenhum código de validação manual.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>Como uma requisição é validada — o fluxo completo</div>
+
+      <div class="req-flow">
+        <div class="req-col">
+          <h4><i class="fas fa-paper-plane" style="margin-right:6px;"></i>1. Cliente envia JSON</h4>
+          <p>POST com corpo JSON contendo os campos esperados pelo modelo Pydantic</p>
+        </div>
+        <div class="req-col">
+          <h4><i class="fas fa-shield-alt" style="margin-right:6px;"></i>2. Pydantic valida</h4>
+          <p>Verifica tipos, ranges, regex. Se falhar, retorna 422 com detalhes do erro</p>
+        </div>
+        <div class="req-col">
+          <h4><i class="fas fa-cogs" style="margin-right:6px;"></i>3. Função executa</h4>
+          <p>Só roda se a validação passou. Recebe objeto Python já tipado e validado</p>
+        </div>
+        <div class="req-col">
+          <h4><i class="fas fa-reply" style="margin-right:6px;"></i>4. Resposta validada</h4>
+          <p>response_model garante que a saída também segue o contrato declarado</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Exemplo — erro 422 retornado automaticamente</span></div>
+        <pre><code><span class="cm">// Requisição com idade negativa:</span>
+<span class="cm">// POST /predict {"idade": -5, "saldo": 1000, ...}</span>
+
+<span class="cm">// Resposta automática do FastAPI (HTTP 422):</span>
+{
+  <span class="str">"detail"</span>: [
+    {
+      <span class="str">"type"</span>: <span class="str">"greater_than"</span>,
+      <span class="str">"loc"</span>: [<span class="str">"body"</span>, <span class="str">"idade"</span>],
+      <span class="str">"msg"</span>: <span class="str">"Input should be greater than 0"</span>,
+      <span class="str">"input"</span>: -<span class="num">5</span>
+    }
+  ]
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Endpoints de predição ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Endpoints de Predição — Single, Batch e Tratamento de Erros</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-route"></i>API completa de inferência — estrutura</div>
+      <p>Uma API de inferência madura tem mais do que um único endpoint de predição. Vamos construir a estrutura completa: health check, predição individual, predição em lote e metadados do modelo.</p>
+
+      <div class="endpoint"><span class="badge badge-get">GET</span><code>/health</code> — verifica se o serviço e o modelo estão operacionais</div>
+      <div class="endpoint"><span class="badge badge-get">GET</span><code>/model/info</code> — retorna metadados do modelo carregado (versão, features esperadas)</div>
+      <div class="endpoint"><span class="badge badge-post">POST</span><code>/predict</code> — predição de uma única instância</div>
+      <div class="endpoint"><span class="badge badge-post">POST</span><code>/predict/batch</code> — predição de múltiplas instâncias em uma chamada</div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>API completa — src/serve.py</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — API de inferência completa</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pickle
+<span class="kw">import</span> time
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+app = FastAPI(
+    title=<span class="str">"API de Predição — Classificador de Churn"</span>,
+    description=<span class="str">"Serviço de inferência para modelo de churn de clientes"</span>,
+    version=<span class="str">"1.0.0"</span>
+)
+
+<span class="cm"># Carrega o modelo uma única vez, na inicialização</span>
+<span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+        MODEL = pickle.load(f)
+    MODEL_CARREGADO = <span class="kw">True</span>
+<span class="kw">except</span> Exception <span class="kw">as</span> e:
+    MODEL = <span class="kw">None</span>
+    MODEL_CARREGADO = <span class="kw">False</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"ERRO ao carregar modelo: {e}"</span>)
+
+N_FEATURES_ESPERADAS = <span class="num">10</span>
+
+
+<span class="cm"># ── Modelos Pydantic ─────────────────────────────────────────────</span>
+<span class="kw">class</span> <span class="fn">PredictionInput</span>(BaseModel):
+    features: List[float] = Field(
+        ..., min_length=N_FEATURES_ESPERADAS, max_length=N_FEATURES_ESPERADAS,
+        description=<span class="fn">f</span><span class="str">"Lista com exatamente {N_FEATURES_ESPERADAS} features numéricas"</span>
+    )
+
+<span class="kw">class</span> <span class="fn">BatchInput</span>(BaseModel):
+    instancias: List[PredictionInput]
+
+<span class="kw">class</span> <span class="fn">PredictionOutput</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+    tempo_inferencia_ms: float
+
+<span class="kw">class</span> <span class="fn">BatchOutput</span>(BaseModel):
+    resultados: List[PredictionOutput]
+    total_processado: <span class="fn">int</span>
+
+
+<span class="cm"># ── Endpoints ────────────────────────────────────────────────────</span>
+<span class="dec">@app.get</span>(<span class="str">"/health"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">if</span> <span class="kw">not</span> MODEL_CARREGADO:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">503</span>, detail=<span class="str">"Modelo não carregado"</span>)
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"healthy"</span>, <span class="str">"modelo_carregado"</span>: <span class="kw">True</span>}
+
+
+<span class="dec">@app.get</span>(<span class="str">"/model/info"</span>)
+<span class="kw">def</span> <span class="fn">model_info</span>():
+    <span class="kw">return</span> {
+        <span class="str">"tipo"</span>: <span class="fn">type</span>(MODEL).__name__,
+        <span class="str">"n_features_esperadas"</span>: N_FEATURES_ESPERADAS,
+        <span class="str">"versao"</span>: <span class="str">"1.0.0"</span>
+    }
+
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>, response_model=PredictionOutput)
+<span class="kw">def</span> <span class="fn">predict</span>(data: PredictionInput):
+    <span class="kw">if</span> <span class="kw">not</span> MODEL_CARREGADO:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">503</span>, detail=<span class="str">"Modelo não disponível"</span>)
+
+    inicio = time.perf_counter()
+    <span class="kw">try</span>:
+        X     = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+        pred  = <span class="fn">int</span>(MODEL.predict(X)[<span class="num">0</span>])
+        proba = <span class="fn">float</span>(MODEL.predict_proba(X)[<span class="num">0</span>][pred])
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">400</span>, detail=<span class="fn">f</span><span class="str">"Erro na predição: {str(e)}"</span>)
+
+    tempo_ms = (time.perf_counter() - inicio) * <span class="num">1000</span>
+    <span class="kw">return</span> PredictionOutput(
+        prediction=pred, probability=<span class="fn">round</span>(proba, <span class="num">4</span>), tempo_inferencia_ms=<span class="fn">round</span>(tempo_ms, <span class="num">2</span>)
+    )
+
+
+<span class="dec">@app.post</span>(<span class="str">"/predict/batch"</span>, response_model=BatchOutput)
+<span class="kw">def</span> <span class="fn">predict_batch</span>(data: BatchInput):
+    <span class="kw">if</span> <span class="kw">not</span> MODEL_CARREGADO:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">503</span>, detail=<span class="str">"Modelo não disponível"</span>)
+
+    inicio = time.perf_counter()
+    X = np.array([inst.features <span class="kw">for</span> inst <span class="kw">in</span> data.instancias])
+    preds  = MODEL.predict(X)
+    probas = MODEL.predict_proba(X)
+    tempo_total_ms = (time.perf_counter() - inicio) * <span class="num">1000</span>
+
+    resultados = [
+        PredictionOutput(
+            prediction=<span class="fn">int</span>(p), probability=<span class="fn">round</span>(<span class="fn">float</span>(pr[p]), <span class="num">4</span>),
+            tempo_inferencia_ms=<span class="fn">round</span>(tempo_total_ms / <span class="fn">len</span>(preds), <span class="num">2</span>)
+        )
+        <span class="kw">for</span> p, pr <span class="kw">in</span> <span class="fn">zip</span>(preds, probas)
+    ]
+    <span class="kw">return</span> BatchOutput(resultados=resultados, total_processado=<span class="fn">len</span>(resultados))</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Tratamento de erros com HTTPException</div>
+      <p>O <code>HTTPException</code> do FastAPI permite retornar códigos de status HTTP específicos com mensagens claras. Isso é essencial para que sistemas clientes (e outros desenvolvedores) entendam exatamente o que deu errado.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Código</th><th>Significado</th><th>Quando usar em APIs de ML</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge">200</span></td><td>OK</td><td>Predição realizada com sucesso</td></tr>
+            <tr><td><span class="badge">400</span></td><td>Bad Request</td><td>Erro ao processar dados válidos sintaticamente (ex: features fora do range do modelo)</td></tr>
+            <tr><td><span class="badge">422</span></td><td>Unprocessable Entity</td><td>Gerado automaticamente pelo Pydantic — dado não corresponde ao schema esperado</td></tr>
+            <tr><td><span class="badge">503</span></td><td>Service Unavailable</td><td>Modelo não foi carregado corretamente na inicialização</td></tr>
+            <tr><td><span class="badge">429</span></td><td>Too Many Requests</td><td>Rate limiting acionado (implementado na Semana 16)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>Diferença importante:</strong> erros 422 acontecem <em>antes</em> da sua função executar — o Pydantic intercepta. Erros 400/503 você dispara manualmente <em>dentro</em> da função, com <code>raise HTTPException(status_code=..., detail=...)</code>, quando a validação de schema passou mas algo de negócio falhou.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Documentação + Prática</span></div>
+
+  <!-- ── AULA 3: Documentação automática + Prática ─────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Documentação Automática e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-book-open"></i>Swagger UI e ReDoc — documentação que nunca desatualiza</div>
+      <p>A partir dos tipos Pydantic e das anotações nas rotas, o FastAPI gera automaticamente duas interfaces de documentação interativa — sem você escrever uma linha de documentação manual.</p>
+
+      <ul class="icon-list">
+        <li><i class="fas fa-play-circle"></i><span><strong><code>/docs</code> — Swagger UI:</strong> interface interativa onde é possível testar cada endpoint diretamente no navegador, preenchendo campos e vendo a resposta real.</span></li>
+        <li><i class="fas fa-file-alt"></i><span><strong><code>/redoc</code> — ReDoc:</strong> documentação em formato de leitura, mais adequada para compartilhar com outros times ou stakeholders não-técnicos.</span></li>
+        <li><i class="fas fa-code"></i><span><strong><code>/openapi.json</code>:</strong> a especificação OpenAPI completa em JSON — pode ser importada em Postman, geradores de SDK client, ou ferramentas de teste automatizado.</span></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — enriquecendo a documentação</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+
+<span class="kw">class</span> <span class="fn">PredictionInput</span>(BaseModel):
+    features: List[float] = Field(
+        ...,
+        description=<span class="str">"10 features numéricas normalizadas do cliente"</span>,
+        examples=[[<span class="num">0.5</span>, -<span class="num">1.2</span>, <span class="num">0.8</span>, <span class="num">1.1</span>, -<span class="num">0.3</span>, <span class="num">0.6</span>, <span class="num">1.5</span>, -<span class="num">0.9</span>, <span class="num">0.2</span>, <span class="num">0.7</span>]]
+    )
+
+    <span class="kw">class</span> <span class="fn">Config</span>:
+        json_schema_extra = {
+            <span class="str">"example"</span>: {
+                <span class="str">"features"</span>: [<span class="num">0.5</span>, -<span class="num">1.2</span>, <span class="num">0.8</span>, <span class="num">1.1</span>, -<span class="num">0.3</span>, <span class="num">0.6</span>, <span class="num">1.5</span>, -<span class="num">0.9</span>, <span class="num">0.2</span>, <span class="num">0.7</span>]
+            }
+        }
+
+<span class="dec">@app.post</span>(
+    <span class="str">"/predict"</span>,
+    response_model=PredictionOutput,
+    summary=<span class="str">"Realiza predição de churn"</span>,
+    description=<span class="str">"Recebe as features de um cliente e retorna a probabilidade de churn"</span>,
+    tags=[<span class="str">"predição"</span>]
+)
+<span class="kw">def</span> <span class="fn">predict</span>(data: PredictionInput):
+    <span class="cm">"""
+    Esta docstring também aparece no Swagger UI como descrição detalhada.
+    """</span>
+    <span class="kw">pass</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que isso importa em produção:</strong> em times que consomem APIs de ML construídas por outras equipes, a documentação automática elimina o ciclo de "pergunte no Slack qual o formato esperado". O contrato da API está sempre visível e sempre atualizado, porque é gerado do próprio código.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stopwatch"></i>Middleware de logging e tempo de resposta</div>
+      <p>Para observabilidade básica (aprofundada na Semana 12), é útil registrar automaticamente o tempo de cada requisição. Um middleware do FastAPI faz isso sem modificar cada endpoint individualmente.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — middleware de logging</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> time
+<span class="kw">import</span> logging
+<span class="kw">from</span> fastapi <span class="kw">import</span> Request
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(<span class="str">"api-inferencia"</span>)
+
+<span class="dec">@app.middleware</span>(<span class="str">"http"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">log_requests</span>(request: Request, call_next):
+    inicio = time.perf_counter()
+    response = <span class="kw">await</span> call_next(request)
+    duracao_ms = (time.perf_counter() - inicio) * <span class="num">1000</span>
+
+    logger.info(
+        <span class="fn">f</span><span class="str">"{request.method} {request.url.path} "</span>
+        <span class="fn">f</span><span class="str">"status={response.status_code} tempo={duracao_ms:.2f}ms"</span>
+    )
+    response.headers[<span class="str">"X-Process-Time-Ms"</span>] = <span class="fn">str</span>(<span class="fn">round</span>(duracao_ms, <span class="num">2</span>))
+    <span class="kw">return</span> response</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · API REST de Predição Completa</div>
+        <div class="secao-titulo">Validação, batch, documentação e testes via Postman</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o modelo das semanas anteriores. Ao final, sua API deve ter 4 endpoints funcionando, validação automática rejeitando inputs inválidos, e a documentação Swagger acessível em <code>/docs</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Modelos Pydantic com validação</div>
+      <p>Defina <code>PredictionInput</code> com um campo <code>features: List[float]</code> que exige exatamente o número de features que seu modelo espera (use <code>min_length</code> e <code>max_length</code> no <code>Field</code>). Defina <code>PredictionOutput</code> com <code>prediction</code>, <code>probability</code> e <code>tempo_inferencia_ms</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+N_FEATURES = <span class="num">10</span>
+
+<span class="kw">class</span> <span class="fn">PredictionInput</span>(BaseModel):
+    features: List[float] = Field(..., min_length=N_FEATURES, max_length=N_FEATURES)
+
+<span class="kw">class</span> <span class="fn">PredictionOutput</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+    tempo_inferencia_ms: float</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Endpoints /health e /predict</div>
+      <p>Implemente o endpoint <code>GET /health</code> que retorna o status do modelo carregado, e <code>POST /predict</code> que recebe <code>PredictionInput</code>, mede o tempo de inferência e retorna <code>PredictionOutput</code>. Use <code>HTTPException(503, ...)</code> se o modelo não tiver carregado.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> time, pickle, numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+
+app = FastAPI()
+
+<span class="kw">try</span>:
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+        MODEL = pickle.load(f)
+    OK = <span class="kw">True</span>
+<span class="kw">except</span>:
+    MODEL, OK = <span class="kw">None</span>, <span class="kw">False</span>
+
+<span class="dec">@app.get</span>(<span class="str">"/health"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">if</span> <span class="kw">not</span> OK:
+        <span class="kw">raise</span> HTTPException(<span class="num">503</span>, <span class="str">"Modelo não carregado"</span>)
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"healthy"</span>}
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>, response_model=PredictionOutput)
+<span class="kw">def</span> <span class="fn">predict</span>(data: PredictionInput):
+    <span class="kw">if</span> <span class="kw">not</span> OK:
+        <span class="kw">raise</span> HTTPException(<span class="num">503</span>, <span class="str">"Modelo não disponível"</span>)
+    inicio = time.perf_counter()
+    X = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+    pred = <span class="fn">int</span>(MODEL.predict(X)[<span class="num">0</span>])
+    proba = <span class="fn">float</span>(MODEL.predict_proba(X)[<span class="num">0</span>][pred])
+    tempo = (time.perf_counter() - inicio) * <span class="num">1000</span>
+    <span class="kw">return</span> PredictionOutput(prediction=pred, probability=<span class="fn">round</span>(proba,<span class="num">4</span>), tempo_inferencia_ms=<span class="fn">round</span>(tempo,<span class="num">2</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Endpoint de predição em batch</div>
+      <p>Implemente <code>BatchInput</code> com uma lista de <code>PredictionInput</code>, e o endpoint <code>POST /predict/batch</code> que processa todas as instâncias em uma única chamada ao <code>model.predict()</code> (não em loop chamando predict várias vezes). Retorne a lista de resultados e o total processado.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">class</span> <span class="fn">BatchInput</span>(BaseModel):
+    instancias: List[PredictionInput]
+
+<span class="kw">class</span> <span class="fn">BatchOutput</span>(BaseModel):
+    resultados: List[PredictionOutput]
+    total_processado: <span class="fn">int</span>
+
+<span class="dec">@app.post</span>(<span class="str">"/predict/batch"</span>, response_model=BatchOutput)
+<span class="kw">def</span> <span class="fn">predict_batch</span>(data: BatchInput):
+    inicio = time.perf_counter()
+    X = np.array([i.features <span class="kw">for</span> i <span class="kw">in</span> data.instancias])
+    preds  = MODEL.predict(X)
+    probas = MODEL.predict_proba(X)
+    tempo_total = (time.perf_counter() - inicio) * <span class="num">1000</span>
+
+    resultados = [
+        PredictionOutput(
+            prediction=<span class="fn">int</span>(p),
+            probability=<span class="fn">round</span>(<span class="fn">float</span>(pr[p]), <span class="num">4</span>),
+            tempo_inferencia_ms=<span class="fn">round</span>(tempo_total/<span class="fn">len</span>(preds), <span class="num">2</span>)
+        )
+        <span class="kw">for</span> p, pr <span class="kw">in</span> <span class="fn">zip</span>(preds, probas)
+    ]
+    <span class="kw">return</span> BatchOutput(resultados=resultados, total_processado=<span class="fn">len</span>(resultados))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Testar validação e documentação</div>
+      <p>Inicie a API com <code>uvicorn</code>. Abra <code>/docs</code> e teste o endpoint <code>/predict</code> diretamente pela interface Swagger. Depois, envie via curl uma requisição com número errado de features (ex: 5 em vez de 10) e confirme que recebe erro 422 com mensagem clara.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>uvicorn src.serve:app <span class="flag">--reload</span> <span class="flag">--port</span> <span class="num">8000</span>
+
+<span class="cm"># Em outro terminal — request inválida de propósito</span>
+curl <span class="flag">-X</span> POST http://localhost:<span class="num">8000</span>/predict \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features": [1.0, 2.0, 3.0]}'</span>
+
+<span class="cm"># Esperado: HTTP 422 com detail explicando "List should have</span>
+<span class="cm"># at least 10 items after validation, not 3"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: middleware de logging + métricas</div>
+      <p>Implemente o middleware de logging mostrado na aula. Adicione também um endpoint <code>GET /metrics</code> que mantém um contador global do número de predições realizadas desde que o servidor iniciou (use uma variável global simples, sem persistência). Teste fazendo 5 predições e verificando o contador.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> a página <code>/docs</code> deve listar 4 endpoints funcionando. Uma requisição malformada deve retornar 422 automaticamente. Uma requisição válida em <code>/predict/batch</code> com 3 instâncias deve retornar exatamente 3 resultados processados em uma única chamada ao modelo.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 9</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Pydantic</strong>
+        <p>Validação automática de tipos, ranges e formatos. Erros 422 estruturados sem código manual de validação</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-route"></i>
+        <strong>Endpoints Completos</strong>
+        <p>health, model/info, predict e predict/batch — processamento em lote evita chamadas repetidas ao modelo</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-book-open"></i>
+        <strong>Documentação Automática</strong>
+        <p>Swagger UI em /docs e ReDoc em /redoc gerados a partir dos tipos Pydantic — contrato da API sempre atualizado</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-10-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 10 — Frameworks de Serving: BentoML e Triton Inference Server</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

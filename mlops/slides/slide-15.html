@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 15 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* fluxo assíncrono */
+.async-flow{display:flex;align-items:center;gap:0;margin:1rem 0;overflow-x:auto;}
+.async-node{min-width:130px;padding:.85rem 1rem;border-radius:10px;text-align:center;flex-shrink:0;}
+.async-node h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;}
+.async-node p{font-size:.72rem;color:var(--text-muted);line-height:1.4;}
+.async-arrow{color:var(--purple-500);font-size:1.2rem;padding:0 .5rem;flex-shrink:0;}
+.node-api{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);}
+.node-api h4{color:var(--purple-400);}
+.node-broker{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);}
+.node-broker h4{color:#fbbf24;}
+.node-worker{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);}
+.node-worker h4{color:#34d399;}
+.node-result{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.18);}
+.node-result h4{color:#60a5fa;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .async-flow{flex-direction:column;align-items:flex-start;}
+  .async-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">15</div>
+    <h1 class="capa-titulo">Processamento<br><em>Assíncrono</em><br>com Celery</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Tarefas longas sem bloquear a API</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Quando a inferência síncrona não basta — o problema do blocking</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-sitemap"></i></div><span>Arquitetura produtor–broker–consumidor com RabbitMQ</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>Celery — tasks, workers, retry e resultados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>Integração FastAPI + Celery — endpoint assíncrono completo</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline de scoring em lote via fila de mensagens</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir uma API FastAPI que envia jobs de inferência em lote para uma fila RabbitMQ, processados por workers Celery, com polling de status e resultado.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que processamento assíncrono?</div>
+      <ul class="info-lista">
+        <li>Inferência síncrona bloqueia o cliente durante todo o processamento</li>
+        <li>Grandes lotes (100k+ registros) não cabem em uma requisição HTTP</li>
+        <li>Filas desacoplam produtores de consumidores — escala independente</li>
+        <li>Retry automático em caso de falha — resiliência sem código extra</li>
+        <li>Workers podem rodar em máquinas diferentes, com GPU dedicada</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 9: FastAPI — onde os endpoints produtores vivem</li>
+        <li>Sem. 10: BentoML — workers de inferência especializada</li>
+        <li>Sem. 14: Kubernetes — onde Celery workers escalam em pods</li>
+        <li>Sem. 12: Prometheus — monitorar tamanho da fila e throughput</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install celery[rabbitmq] fastapi uvicorn</code></li>
+        <li>RabbitMQ via Docker: <code style="font-size:.8rem;">docker run -p 5672:5672 rabbitmq:3-alpine</code></li>
+        <li>Redis (backend de resultados): <code style="font-size:.8rem;">docker run -p 6379:6379 redis:alpine</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-14-mlops.html"><i class="fas fa-arrow-left"></i> Semana 14 — Kubernetes para ML</a>
+
+  <!-- AULA 1: Problema síncrono + arquitetura de filas -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O Problema do Blocking e a Arquitetura de Filas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hourglass-half"></i>Quando inferência síncrona falha</div>
+      <p>A API FastAPI que construímos nas semanas anteriores é <strong>síncrona</strong>: o cliente envia a requisição, espera o modelo rodar, recebe a resposta. Para predições individuais em tempo real (&lt;100ms), isso é perfeito. Mas há cenários onde esse modelo quebra:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-times"></i><span><strong>Scoring em lote:</strong> um analista precisa classificar 500.000 clientes. Uma única requisição HTTP com 500k registros excede limites de tamanho, timeout e memória da API.</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Inferência lenta:</strong> modelos de visão computacional ou NLP pesados levam 5-30 segundos por exemplo. O cliente não pode ficar esperando — e a conexão HTTP pode cair.</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Pico de demanda:</strong> às 23:59 de toda segunda-feira, 10.000 requisições chegam simultaneamente. A API fica sobrecarregada enquanto os workers de inferência ficam ociosos no resto do tempo.</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Dependências externas:</strong> a inferência depende de buscar dados adicionais em um banco lento. O timeout da requisição HTTP expira antes de terminar.</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>A solução:</strong> separar a <em>recepção do trabalho</em> da <em>execução do trabalho</em>. A API recebe a solicitação instantaneamente e retorna um ID de job. Um worker processa em background, no seu próprio ritmo. O cliente consulta o status e busca o resultado quando pronto.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Arquitetura produtor–broker–consumidor</div>
+      <p>Três peças que se complementam, cada uma com responsabilidade clara:</p>
+
+      <div class="async-flow">
+        <div class="async-node node-api">
+          <h4><i class="fas fa-globe"></i> FastAPI</h4>
+          <p>Produtor — recebe a requisição e publica a tarefa na fila</p>
+        </div>
+        <div class="async-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="async-node node-broker">
+          <h4><i class="fas fa-exchange-alt"></i> RabbitMQ</h4>
+          <p>Broker (fila) — armazena e distribui as tarefas para os workers</p>
+        </div>
+        <div class="async-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="async-node node-worker">
+          <h4><i class="fas fa-cogs"></i> Celery Worker</h4>
+          <p>Consumidor — pega a tarefa, executa o modelo e salva o resultado</p>
+        </div>
+        <div class="async-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="async-node node-result">
+          <h4><i class="fas fa-database"></i> Redis</h4>
+          <p>Backend de resultados — armazena o resultado para o cliente buscar</p>
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Componente</th><th>Papel</th><th>Tecnologia usada</th><th>Alternativas</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Broker</strong></td><td>Fila de mensagens — armazena tarefas pendentes</td><td>RabbitMQ</td><td>Redis, Amazon SQS, Kafka</td></tr>
+            <tr><td><strong>Worker</strong></td><td>Executa as tarefas, consome da fila</td><td>Celery</td><td>RQ, Dramatiq, Arq</td></tr>
+            <tr><td><strong>Result Backend</strong></td><td>Armazena resultados das tarefas</td><td>Redis</td><td>RabbitMQ, PostgreSQL, S3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-boxes"></i>Docker Compose — subindo broker e backend</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">docker-compose.yml — infraestrutura de filas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>services:
+
+  rabbitmq:
+    image: rabbitmq:<span class="num">3</span>-management-alpine
+    ports:
+      - <span class="str">"5672:5672"</span>    <span class="cm"># porta AMQP (Celery conecta aqui)</span>
+      - <span class="str">"15672:15672"</span>  <span class="cm"># management UI (admin/guest)</span>
+    environment:
+      RABBITMQ_DEFAULT_USER: mlops
+      RABBITMQ_DEFAULT_PASS: mlops123
+
+  redis:
+    image: redis:<span class="num">7</span>-alpine
+    ports:
+      - <span class="str">"6379:6379"</span>
+
+  worker:
+    build: .
+    command: celery -A tasks worker --loglevel=info --concurrency=4
+    environment:
+      - CELERY_BROKER_URL=amqp://mlops:mlops123@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - rabbitmq
+      - redis
+
+  api:
+    build: .
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - <span class="str">"8000:8000"</span>
+    environment:
+      - CELERY_BROKER_URL=amqp://mlops:mlops123@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - rabbitmq
+      - redis</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: Celery + tasks -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Celery — Tasks, Workers, Retry e Resultados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Definindo tasks Celery</div>
+      <p>Uma task Celery é uma função Python decorada com <code>@app.task</code>. Quando chamada com <code>.delay()</code> ou <code>.apply_async()</code>, ela não executa localmente — é serializada e enviada para a fila do broker. O worker que consumir a fila executará a função.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — tasks.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> os, pickle, time
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> celery <span class="kw">import</span> Celery
+
+<span class="cm"># Configurar o app Celery</span>
+app = Celery(
+    <span class="str">"ml-tasks"</span>,
+    broker=os.getenv(<span class="str">"CELERY_BROKER_URL"</span>, <span class="str">"amqp://mlops:mlops123@localhost:5672//"</span>),
+    backend=os.getenv(<span class="str">"CELERY_RESULT_BACKEND"</span>, <span class="str">"redis://localhost:6379/0"</span>),
+)
+
+<span class="cm"># Carregar modelo uma vez por worker (não a cada task)</span>
+_model = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">get_model</span>():
+    <span class="kw">global</span> _model
+    <span class="kw">if</span> _model <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+            _model = pickle.load(f)
+    <span class="kw">return</span> _model
+
+
+<span class="cm"># Task de predição individual</span>
+<span class="dec">@app.task</span>(bind=<span class="kw">True</span>, max_retries=<span class="num">3</span>, default_retry_delay=<span class="num">5</span>)
+<span class="kw">def</span> <span class="fn">predizer</span>(self, features: list) -> dict:
+    <span class="cm">"""Executa predição de uma instância. Retry automático em falha."""</span>
+    <span class="kw">try</span>:
+        model = get_model()
+        X     = np.array(features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+        pred  = <span class="fn">int</span>(model.predict(X)[<span class="num">0</span>])
+        proba = <span class="fn">float</span>(model.predict_proba(X)[<span class="num">0</span>][pred])
+        <span class="kw">return</span> {<span class="str">"prediction"</span>: pred, <span class="str">"probability"</span>: <span class="fn">round</span>(proba, <span class="num">4</span>)}
+    <span class="kw">except</span> Exception <span class="kw">as</span> exc:
+        <span class="cm"># Retry automático com backoff exponencial</span>
+        <span class="kw">raise</span> self.retry(exc=exc, countdown=<span class="num">2</span> ** self.request.retries)
+
+
+<span class="cm"># Task de scoring em lote</span>
+<span class="dec">@app.task</span>(bind=<span class="kw">True</span>, max_retries=<span class="num">2</span>)
+<span class="kw">def</span> <span class="fn">predizer_lote</span>(self, lista_features: list) -> dict:
+    <span class="cm">"""Processa múltiplas instâncias em uma única chamada ao modelo."""</span>
+    model = get_model()
+    X     = np.array(lista_features)
+    preds  = model.predict(X).tolist()
+    probas = model.predict_proba(X).max(axis=<span class="num">1</span>).tolist()
+    <span class="kw">return</span> {
+        <span class="str">"predictions"</span>: preds,
+        <span class="str">"probabilities"</span>: [<span class="fn">round</span>(p, <span class="num">4</span>) <span class="kw">for</span> p <span class="kw">in</span> probas],
+        <span class="str">"total"</span>: <span class="fn">len</span>(preds)
+    }</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>O padrão <code>get_model()</code>:</strong> o modelo é carregado uma única vez por processo worker (não a cada task). Isso é equivalente ao que fazemos na inicialização do FastAPI — carregar uma vez e reutilizar. Se cada task carregasse o modelo do disco, o throughput cairia drasticamente.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-play-circle"></i>Executar e monitorar tasks</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — enviar tasks e consultar resultados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> tasks <span class="kw">import</span> predizer, predizer_lote
+
+<span class="cm"># Enviar task assíncrona — retorna imediatamente com um AsyncResult</span>
+result = predizer.delay([<span class="num">0.5</span>, -<span class="num">1.2</span>, <span class="num">0.8</span>, <span class="num">1.1</span>, -<span class="num">0.3</span>, <span class="num">0.6</span>, <span class="num">1.5</span>, -<span class="num">0.9</span>, <span class="num">0.2</span>, <span class="num">0.7</span>])
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Task ID: {result.id}"</span>)      <span class="cm"># ID único da tarefa</span>
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Status: {result.status}"</span>)  <span class="cm"># PENDING | STARTED | SUCCESS | FAILURE</span>
+
+<span class="cm"># Verificar status sem bloquear</span>
+<span class="kw">if</span> result.ready():
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Resultado: {result.get()}"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Ainda processando..."</span>)
+
+<span class="cm"># Aguardar até terminar (bloqueante — usar só em scripts)</span>
+resultado = result.get(timeout=<span class="num">30</span>)  <span class="cm"># levanta exception se timeout</span>
+
+<span class="cm"># Task de lote</span>
+features_lote = [[<span class="num">0.1</span>*i <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1000</span>)]
+job = predizer_lote.delay(features_lote)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Lote enviado. ID: {job.id}"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — iniciar workers e monitorar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Iniciar worker com 4 processos concorrentes</span>
+celery -A tasks worker --loglevel=info --concurrency=<span class="num">4</span>
+
+<span class="cm"># Worker dedicado para tarefas de GPU (fila separada)</span>
+celery -A tasks worker -Q gpu_queue --loglevel=info --concurrency=<span class="num">1</span>
+
+<span class="cm"># Interface de monitoramento Flower (opcional)</span>
+pip install flower
+celery -A tasks flower --port=<span class="num">5555</span>
+<span class="cm"># Acesse: http://localhost:5555</span>
+
+<span class="cm"># Inspecionar tasks ativas</span>
+celery -A tasks inspect active
+
+<span class="cm"># Verificar workers registrados</span>
+celery -A tasks inspect registered</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-redo"></i>Retry, prioridade e expiração</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — configurações avançadas de task</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Enviar com prioridade alta e expiração</span>
+result = predizer.apply_async(
+    args=[[<span class="num">0.5</span>, -<span class="num">1.2</span>, <span class="num">0.8</span>, <span class="num">1.1</span>, -<span class="num">0.3</span>, <span class="num">0.6</span>, <span class="num">1.5</span>, -<span class="num">0.9</span>, <span class="num">0.2</span>, <span class="num">0.7</span>]],
+    priority=<span class="num">9</span>,           <span class="cm"># 0 (baixa) a 9 (alta)</span>
+    expires=<span class="num">300</span>,          <span class="cm"># expira em 300s se não executou</span>
+    queue=<span class="str">"high_priority"</span> <span class="cm"># fila dedicada</span>
+)
+
+<span class="cm"># Configurar filas no app Celery</span>
+app.conf.task_routes = {
+    <span class="str">"tasks.predizer"</span>     : {<span class="str">"queue"</span>: <span class="str">"realtime"</span>},
+    <span class="str">"tasks.predizer_lote"</span>: {<span class="str">"queue"</span>: <span class="str">"batch"</span>},
+}
+
+<span class="cm"># Configurar TTL dos resultados no Redis (padrão: 1 dia)</span>
+app.conf.result_expires = <span class="num">3600</span>  <span class="cm"># 1 hora</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · FastAPI + Celery + Prática</span></div>
+
+  <!-- AULA 3: Integração FastAPI + Celery -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Integração FastAPI + Celery — API Assíncrona Completa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plug"></i>FastAPI como produtor de tasks</div>
+      <p>O padrão mais comum é a FastAPI receber a requisição, publicar a task na fila e retornar o <strong>task_id</strong> imediatamente. O cliente usa o task_id para fazer polling até obter o resultado.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — main.py — API com endpoints assíncronos</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List, Optional
+<span class="kw">from</span> celery.result <span class="kw">import</span> AsyncResult
+<span class="kw">from</span> tasks <span class="kw">import</span> predizer, predizer_lote, app <span class="kw">as</span> celery_app
+
+api = FastAPI(title=<span class="str">"API Assíncrona de Inferência"</span>)
+
+<span class="kw">class</span> <span class="fn">PredictInput</span>(BaseModel):
+    features: List[float]
+
+<span class="kw">class</span> <span class="fn">BatchInput</span>(BaseModel):
+    instancias: List[List[float]]
+
+<span class="kw">class</span> <span class="fn">JobResponse</span>(BaseModel):
+    task_id: str
+    status: str
+    mensagem: str
+
+<span class="kw">class</span> <span class="fn">StatusResponse</span>(BaseModel):
+    task_id: str
+    status: str
+    resultado: Optional[dict] = <span class="kw">None</span>
+    erro: Optional[str] = <span class="kw">None</span>
+
+
+<span class="cm"># Submeter predição individual</span>
+<span class="dec">@api.post</span>(<span class="str">"/jobs/predict"</span>, response_model=JobResponse)
+<span class="kw">def</span> <span class="fn">submeter_predicao</span>(data: PredictInput):
+    task = predizer.delay(data.features)
+    <span class="kw">return</span> JobResponse(
+        task_id=task.id,
+        status=<span class="str">"PENDING"</span>,
+        mensagem=<span class="str">"Tarefa submetida. Use /jobs/{task_id} para consultar."</span>
+    )
+
+
+<span class="cm"># Submeter scoring em lote</span>
+<span class="dec">@api.post</span>(<span class="str">"/jobs/batch"</span>, response_model=JobResponse)
+<span class="kw">def</span> <span class="fn">submeter_lote</span>(data: BatchInput):
+    <span class="kw">if</span> <span class="fn">len</span>(data.instancias) > <span class="num">100_000</span>:
+        <span class="kw">raise</span> HTTPException(<span class="num">400</span>, <span class="str">"Máximo 100.000 instâncias por lote"</span>)
+    task = predizer_lote.delay(data.instancias)
+    <span class="kw">return</span> JobResponse(
+        task_id=task.id,
+        status=<span class="str">"PENDING"</span>,
+        mensagem=<span class="fn">f</span><span class="str">"Lote de {len(data.instancias)} instâncias submetido."</span>
+    )
+
+
+<span class="cm"># Consultar status e resultado de uma task</span>
+<span class="dec">@api.get</span>(<span class="str">"/jobs/{task_id}"</span>, response_model=StatusResponse)
+<span class="kw">def</span> <span class="fn">consultar_job</span>(task_id: str):
+    result = AsyncResult(task_id, app=celery_app)
+
+    <span class="kw">if</span> result.status == <span class="str">"PENDING"</span>:
+        <span class="kw">return</span> StatusResponse(task_id=task_id, status=<span class="str">"PENDING"</span>)
+
+    <span class="kw">if</span> result.status == <span class="str">"STARTED"</span>:
+        <span class="kw">return</span> StatusResponse(task_id=task_id, status=<span class="str">"RUNNING"</span>)
+
+    <span class="kw">if</span> result.status == <span class="str">"SUCCESS"</span>:
+        <span class="kw">return</span> StatusResponse(
+            task_id=task_id, status=<span class="str">"SUCCESS"</span>, resultado=result.get()
+        )
+
+    <span class="kw">if</span> result.status == <span class="str">"FAILURE"</span>:
+        <span class="kw">return</span> StatusResponse(
+            task_id=task_id, status=<span class="str">"FAILURE"</span>, erro=<span class="fn">str</span>(result.result)
+        )
+
+    <span class="kw">return</span> StatusResponse(task_id=task_id, status=result.status)
+
+
+<span class="cm"># Listar tasks ativas (útil para debug)</span>
+<span class="dec">@api.get</span>(<span class="str">"/jobs"</span>)
+<span class="kw">def</span> <span class="fn">listar_jobs</span>():
+    inspect = celery_app.control.inspect()
+    ativas  = inspect.active() <span class="kw">or</span> {}
+    <span class="kw">return</span> {
+        <span class="str">"workers_ativos"</span>: <span class="fn">list</span>(ativas.keys()),
+        <span class="str">"tasks_em_execucao"</span>: <span class="fn">sum</span>(<span class="fn">len</span>(t) <span class="kw">for</span> t <span class="kw">in</span> ativas.values())
+    }</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>O fluxo do cliente:</strong> POST <code>/jobs/batch</code> → recebe <code>task_id</code> → faz polling em <code>/jobs/{task_id}</code> a cada 2-5 segundos → quando <code>status == "SUCCESS"</code>, busca o resultado. Esse padrão é chamado de <strong>polling assíncrono</strong> e é o mais simples de implementar. Para sistemas com muitos clientes, WebSockets ou Server-Sent Events são alternativas que evitam o polling.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Testando o fluxo completo</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — subir tudo e testar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Subir infraestrutura</span>
+docker compose up -d rabbitmq redis
+
+<span class="cm"># Iniciar worker em terminal 1</span>
+celery -A tasks worker --loglevel=info --concurrency=<span class="num">2</span>
+
+<span class="cm"># Iniciar API em terminal 2</span>
+uvicorn main:app --reload --port <span class="num">8000</span>
+
+<span class="cm"># Submeter uma predição (terminal 3)</span>
+curl -X POST http://localhost:<span class="num">8000</span>/jobs/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>
+
+<span class="cm"># Saída: {"task_id":"abc123...","status":"PENDING","mensagem":"..."}</span>
+
+<span class="cm"># Consultar resultado (use o task_id real retornado)</span>
+curl http://localhost:<span class="num">8000</span>/jobs/abc123...
+
+<span class="cm"># Submeter lote de 5 instâncias</span>
+curl -X POST http://localhost:<span class="num">8000</span>/jobs/batch \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"instancias":[[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0],[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]]}'</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Pipeline de Scoring Assíncrono</div>
+        <div class="secao-titulo">FastAPI + Celery + RabbitMQ — do job ao resultado</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o modelo das semanas anteriores. Ao final, você deve conseguir submeter um lote de 100 instâncias e obter todos os resultados via polling, sem bloquear a API durante o processamento.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Subir RabbitMQ e Redis</div>
+      <p>Escreva o <code>docker-compose.yml</code> com os serviços <code>rabbitmq</code> (com management UI) e <code>redis</code>. Suba com <code>docker compose up -d</code>. Acesse o painel do RabbitMQ em <code>localhost:15672</code> (usuário/senha: mlops/mlops123) e confirme que está rodando.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">docker-compose.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>services:
+  rabbitmq:
+    image: rabbitmq:<span class="num">3</span>-management-alpine
+    ports:
+      - <span class="str">"5672:5672"</span>
+      - <span class="str">"15672:15672"</span>
+    environment:
+      RABBITMQ_DEFAULT_USER: mlops
+      RABBITMQ_DEFAULT_PASS: mlops123
+  redis:
+    image: redis:<span class="num">7</span>-alpine
+    ports:
+      - <span class="str">"6379:6379"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Criar tasks.py com predizer e predizer_lote</div>
+      <p>Crie o arquivo <code>tasks.py</code> com o app Celery configurado e as duas tasks: <code>predizer</code> (instância individual, com retry até 3 vezes) e <code>predizer_lote</code> (lista de features). Inicie o worker com <code>celery -A tasks worker --loglevel=info</code> e confirme que ele conectou ao RabbitMQ.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Criar main.py com endpoints assíncronos</div>
+      <p>Crie o <code>main.py</code> com FastAPI e os endpoints: <code>POST /jobs/predict</code>, <code>POST /jobs/batch</code> e <code>GET /jobs/{task_id}</code>. Inicie com uvicorn, submeta uma predição via curl e faça polling até obter o resultado com <code>status: "SUCCESS"</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — fluxo de teste</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Submeter</span>
+RESP=$(curl -s -X POST http://localhost:<span class="num">8000</span>/jobs/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>)
+echo $RESP
+
+<span class="cm"># Extrair task_id com jq (instalar se necessário)</span>
+TASK_ID=$(echo $RESP | python3 -c <span class="str">"import sys,json; print(json.load(sys.stdin)['task_id'])"</span>)
+
+<span class="cm"># Polling</span>
+<span class="kw">while</span> true; do
+  STATUS=$(curl -s http://localhost:<span class="num">8000</span>/jobs/$TASK_ID)
+  echo $STATUS
+  <span class="kw">if</span> echo $STATUS | grep -q SUCCESS; <span class="kw">then break</span>; fi
+  sleep <span class="num">1</span>
+done</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Submeter lote de 100 instâncias</div>
+      <p>Escreva um script Python que gera 100 instâncias de features aleatórias, submete via <code>POST /jobs/batch</code>, e faz polling em <code>GET /jobs/{task_id}</code> até o status ser <code>SUCCESS</code>. Imprima o total processado e a primeira predição do resultado.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — testar_lote.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> time, requests, numpy <span class="kw">as</span> np
+
+BASE = <span class="str">"http://localhost:8000"</span>
+instancias = np.random.randn(<span class="num">100</span>, <span class="num">10</span>).tolist()
+
+resp = requests.post(<span class="fn">f</span><span class="str">"{BASE}/jobs/batch"</span>, json={<span class="str">"instancias"</span>: instancias})
+task_id = resp.json()[<span class="str">"task_id"</span>]
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Job submetido: {task_id}"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    status = requests.get(<span class="fn">f</span><span class="str">"{BASE}/jobs/{task_id}"</span>).json()
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Status: {status['status']}"</span>)
+    <span class="kw">if</span> status[<span class="str">"status"</span>] == <span class="str">"SUCCESS"</span>:
+        res = status[<span class="str">"resultado"</span>]
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Total processado: {res['total']}"</span>)
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Primeira predição: {res['predictions'][0]}"</span>)
+        <span class="kw">break</span>
+    time.sleep(<span class="num">1</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: filas separadas para realtime vs batch</div>
+      <p>Configure o Celery para usar duas filas: <code>realtime</code> para o endpoint <code>/jobs/predict</code> e <code>batch</code> para o <code>/jobs/batch</code>. Inicie dois workers: um consumindo apenas <code>realtime</code> com <code>--concurrency=4</code> e outro consumindo apenas <code>batch</code> com <code>--concurrency=1</code>. Verifique no painel do RabbitMQ que as mensagens vão para as filas corretas.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> um <code>POST /jobs/batch</code> com 100 instâncias deve retornar um <code>task_id</code> imediatamente (em &lt;50ms). O polling em <code>GET /jobs/{task_id}</code> deve retornar <code>status: "SUCCESS"</code> com 100 predições dentro de 10 segundos. A API não deve ficar bloqueada durante o processamento — um <code>GET /health</code> simultâneo deve responder normalmente.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 15</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Arquitetura de Filas</strong>
+        <p>Produtor (FastAPI) publica task → Broker (RabbitMQ) armazena → Worker (Celery) consome e executa → Backend (Redis) guarda resultado</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cogs"></i>
+        <strong>Celery Tasks</strong>
+        <p>@app.task com max_retries e retry automático. get_model() carregado uma vez por worker. apply_async com priority, expires e queue routing</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-plug"></i>
+        <strong>Padrão Assíncrono</strong>
+        <p>POST retorna task_id imediatamente. GET /jobs/{id} faz polling de status. SUCCESS entrega resultado. API nunca bloqueia durante inferência</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-16-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 16 — Segurança em APIs de ML: JWT, Rate Limiting e Auditoria</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 08 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ──────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:#4ade80;}.icon-list li i.no{color:#f87171;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* layers diagram */
+.layers{display:flex;flex-direction:column;gap:2px;margin:1rem 0;}
+.layer{padding:.7rem 1.1rem;border-radius:8px;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;}
+.layer-label{font-weight:600;}
+.layer-desc{font-size:.75rem;opacity:.7;}
+.layer-base{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15);color:var(--purple-300);}
+.layer-deps{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.12);color:#93c5fd;}
+.layer-code{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.12);color:#6ee7b7;}
+.layer-model{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.12);color:#fbbf24;}
+.layer-cmd{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.12);color:#f87171;}
+
+/* multi-stage diagram */
+.stages-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;margin:1rem 0;}
+.stage-box{border-radius:12px;padding:1.1rem 1.25rem;}
+.stage-build{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);}
+.stage-build h4{color:#60a5fa;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.stage-runtime{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);}
+.stage-runtime h4{color:var(--purple-400);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.stage-arrow{text-align:center;color:var(--purple-500);font-size:1.5rem;padding:0 .75rem;}
+.stage-list{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.stage-list li{font-size:.78rem;color:var(--text-secondary);padding-left:12px;position:relative;line-height:1.5;}
+.stage-list li::before{content:'▸';position:absolute;left:0;color:var(--purple-500);font-size:.65rem;top:3px;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .stages-flow{grid-template-columns:1fr;}.stage-arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">08</div>
+    <h1 class="capa-titulo">Empacotamento de<br>Modelos com<br><em>Docker para ML</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do modelo treinado à imagem de inferência</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Docker revisitado — layers, cache e imagens enxutas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ship"></i></div><span>Dockerfile de inferência — do modelo ao container</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cut"></i></div><span>Multi-stage build — separar build de runtime</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-boxes"></i></div><span>docker-compose — orquestrar modelo + dependências</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: empacotar modelo em container e testar localmente</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Empacotar o modelo treinado nas semanas anteriores em um container Docker de inferência otimizado e testá-lo localmente com curl.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que Docker para inferência?</div>
+      <ul class="info-lista">
+        <li>Modelo + dependências + código = unidade portátil imutável</li>
+        <li>Garante mesmo comportamento em dev, staging e produção</li>
+        <li>Facilita rollback: basta trocar a tag da imagem</li>
+        <li>Isolamento: modelo não interfere com outros serviços</li>
+        <li>Base para Kubernetes e serviços cloud na Semana 14</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 2: Dockerfile básico e conceito de layers</li>
+        <li>Sem. 5: modelo no Registry (o que vamos empacotar)</li>
+        <li>Sem. 7: pipeline que gera o modelo a empacotar</li>
+        <li>Sem. 9: FastAPI para servir o modelo dentro do container</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li>Docker Desktop instalado (Windows/Mac) ou Docker Engine (Linux)</li>
+        <li>Modelo treinado salvo como <code style="font-size:.8rem;">models/model.pkl</code></li>
+        <li><code style="font-size:.8rem;">pip install fastapi uvicorn</code> no ambiente virtual</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-07-mlops.html"><i class="fas fa-arrow-left"></i> Semana 7 — Pipelines Automatizados</a>
+
+  <!-- ── AULA 1: Docker revisitado + layers de inferência ──────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Docker Revisitado — Layers, Cache e Imagens para ML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Como Docker constrói imagens em camadas</div>
+      <p>Na Semana 2 você viu o Dockerfile básico. Agora vamos entender o mecanismo interno de <strong>layers</strong> — porque ele determina diretamente o tamanho da imagem, a velocidade de build e os problemas de reprodutibilidade.</p>
+      <p>Cada instrução no Dockerfile (<code>FROM</code>, <code>COPY</code>, <code>RUN</code>) cria uma nova camada imutável. As camadas são <strong>cacheadas</strong>: se uma camada e tudo que veio antes não mudou, o Docker reutiliza o cache em vez de re-executar.</p>
+
+      <div class="layers">
+        <div class="layer layer-cmd"><span class="layer-label">CMD / ENTRYPOINT</span><span class="layer-desc">Comando ao iniciar — muda a cada deploy</span></div>
+        <div class="layer layer-model"><span class="layer-label">COPY models/ .</span><span class="layer-desc">Modelo serializado — muda quando retreina</span></div>
+        <div class="layer layer-code"><span class="layer-label">COPY src/ .</span><span class="layer-desc">Código da API — muda com frequência</span></div>
+        <div class="layer layer-deps"><span class="layer-label">RUN pip install -r requirements.txt</span><span class="layer-desc">Dependências — muda raramente · cacheável</span></div>
+        <div class="layer layer-deps"><span class="layer-label">COPY requirements.txt .</span><span class="layer-desc">Lockfile — deve vir antes do código</span></div>
+        <div class="layer layer-base"><span class="layer-label">FROM python:3.11-slim</span><span class="layer-desc">Imagem base — muda nunca (fixada)</span></div>
+      </div>
+
+      <div class="destaque">
+        <strong>Regra de ouro da ordem no Dockerfile:</strong> coloque o que muda menos frequentemente nas camadas inferiores. O <code>pip install</code> deve vir antes do <code>COPY</code> do código — se só o código mudou, o Docker reutiliza a camada de dependências sem reinstalar nada. Em projetos com 50+ pacotes, isso economiza vários minutos por build.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-weight-hanging"></i>O problema das imagens gordas em ML</div>
+      <p>Imagens de ML tendem a ficar enormes se não houver cuidado — e isso tem custo real: mais tempo para fazer pull em produção, mais espaço em registry, mais superfície de ataque de segurança.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Problema</th><th>Causa</th><th>Tamanho típico</th><th>Solução</th></tr></thead>
+          <tbody>
+            <tr><td>Imagem base pesada</td><td><code>FROM python:3.11</code> (imagem completa)</td><td>~900 MB</td><td><code>FROM python:3.11-slim</code> (~130 MB)</td></tr>
+            <tr><td>Dados de treino na imagem</td><td><code>COPY data/ .</code> sem .dockerignore</td><td>+GB</td><td>Adicionar <code>data/</code> ao .dockerignore</td></tr>
+            <tr><td>Cache do pip na imagem</td><td><code>pip install</code> sem flags</td><td>+100–300 MB</td><td><code>pip install --no-cache-dir</code></td></tr>
+            <tr><td>Ferramentas de build</td><td>gcc, make, headers na imagem final</td><td>+500 MB</td><td>Multi-stage build (próxima seção)</td></tr>
+            <tr><td>Notebooks incluídos</td><td><code>COPY . .</code> sem .dockerignore</td><td>+MB a GB</td><td>.dockerignore com <code>notebooks/</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>Dockerfile de inferência — versão cuidadosa</div>
+      <p>Uma imagem de inferência só precisa rodar predições — não precisa de ferramentas de desenvolvimento, compiladores ou datasets. Cada linha abaixo tem um motivo específico.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dockerfile — imagem de inferência</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># slim: sem compiladores e ferramentas de build (~130MB vs ~900MB)</span>
+<span class="kw">FROM</span> python:<span class="num">3.11</span>-slim
+
+<span class="cm"># Variáveis de ambiente de boas práticas para Python em containers</span>
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="num">1</span>   <span class="cm"># não gera .pyc</span>
+<span class="kw">ENV</span> PYTHONUNBUFFERED=<span class="num">1</span>          <span class="cm"># logs aparecem imediatamente (não bufferiza)</span>
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># 1. Dependências PRIMEIRO — camada cacheável</span>
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="cm"># 2. Código da API</span>
+<span class="kw">COPY</span> src/serve.py ./src/serve.py
+
+<span class="cm"># 3. Modelo serializado — camada separada do código</span>
+<span class="cm"># (muda com retreinamento, independente do código da API)</span>
+<span class="kw">COPY</span> models/model.pkl ./models/model.pkl
+
+<span class="cm"># Usuário não-root por segurança</span>
+<span class="kw">RUN</span> useradd -m appuser
+<span class="kw">USER</span> appuser
+
+<span class="kw">EXPOSE</span> <span class="num">8000</span>
+
+<span class="cm"># Iniciar o servidor de inferência</span>
+<span class="kw">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"src.serve:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">.dockerignore — o que não vai para a imagem</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Ambiente Python</span>
+.venv/
+__pycache__/
+*.pyc
+
+<span class="cm"># Dados (grandes demais — use DVC/S3)</span>
+data/
+*.csv
+*.parquet
+
+<span class="cm"># Notebooks de experimentação</span>
+notebooks/
+
+<span class="cm"># Git e IDE</span>
+.git/
+.gitignore
+.vscode/
+
+<span class="cm"># Secrets</span>
+.env
+*.env
+
+<span class="cm"># MLflow runs locais</span>
+mlruns/
+mlartifacts/
+mlflow.db</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Multi-stage + docker-compose ──────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Multi-stage Build e docker-compose para ML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cut"></i>Multi-stage build — o padrão profissional</div>
+      <p>Alguns pacotes Python precisam ser <strong>compilados</strong> durante a instalação (ex: numpy com BLAS, psycopg2, alguns pacotes de ML). Isso exige ferramentas de build (gcc, headers) que são pesadas e desnecessárias em runtime.</p>
+      <p>O multi-stage build resolve isso: você usa uma imagem "gorda" só para compilar, e copia apenas os artefatos finais para uma imagem "magra" de produção. O resultado é uma imagem final muito menor e mais segura.</p>
+
+      <div class="stages-flow">
+        <div class="stage-box stage-build">
+          <h4><i class="fas fa-hammer" style="margin-right:6px;"></i>Stage: builder</h4>
+          <ul class="stage-list">
+            <li>FROM python:3.11 (imagem completa)</li>
+            <li>gcc, g++, build-essential</li>
+            <li>pip install — compila pacotes</li>
+            <li>Wheels gerados em /wheels/</li>
+          </ul>
+        </div>
+        <div class="stage-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="stage-box stage-runtime">
+          <h4><i class="fas fa-rocket" style="margin-right:6px;"></i>Stage: runtime</h4>
+          <ul class="stage-list">
+            <li>FROM python:3.11-slim (imagem enxuta)</li>
+            <li>Sem compiladores ou headers</li>
+            <li>Copia apenas os wheels compilados</li>
+            <li>Instala sem compilar (já compilado)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dockerfile — multi-stage build</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ════ Stage 1: build ════════════════════════════════════════════</span>
+<span class="kw">FROM</span> python:<span class="num">3.11</span> <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /build
+<span class="kw">COPY</span> requirements.txt .
+
+<span class="cm"># Compila e empacota dependências como wheels</span>
+<span class="kw">RUN</span> pip install --no-cache-dir wheel && \
+    pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
+
+
+<span class="cm"># ════ Stage 2: runtime ══════════════════════════════════════════</span>
+<span class="kw">FROM</span> python:<span class="num">3.11</span>-slim
+
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="num">1</span> PYTHONUNBUFFERED=<span class="num">1</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Copia apenas os wheels compilados do stage anterior</span>
+<span class="kw">COPY</span> --from=builder /wheels /wheels
+
+<span class="cm"># Instala a partir dos wheels (sem compilar, sem gcc necessário)</span>
+<span class="kw">RUN</span> pip install --no-cache-dir --no-index \
+    --find-links=/wheels /wheels/*.whl && \
+    rm -rf /wheels
+
+<span class="cm"># Código e modelo</span>
+<span class="kw">COPY</span> src/serve.py ./src/serve.py
+<span class="kw">COPY</span> models/model.pkl ./models/model.pkl
+
+<span class="kw">RUN</span> useradd -m appuser
+<span class="kw">USER</span> appuser
+
+<span class="kw">EXPOSE</span> <span class="num">8000</span>
+<span class="kw">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"src.serve:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span>O <code>--from=builder</code> copia arquivos do stage anterior. A imagem final nunca viu o gcc — ele existiu apenas no stage de build e é descartado. Para ML puro com scikit-learn/pandas, a diferença de tamanho costuma ser de 200–400 MB.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-boxes"></i>docker-compose — orquestrar serviços em desenvolvimento</div>
+      <p>Em desenvolvimento, um serviço de ML raramente existe sozinho. Ele precisa de um banco de dados, talvez um servidor MLflow, talvez um cache Redis. O <code>docker-compose</code> define todos esses serviços em um único arquivo YAML e os inicializa com um comando.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">docker-compose.yml — modelo + MLflow server</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>services:
+
+  <span class="cm"># Servidor MLflow para rastreamento e Registry</span>
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    ports:
+      - <span class="str">"5000:5000"</span>
+    volumes:
+      - ./mlartifacts:/mlartifacts
+      - ./mlflow.db:/mlflow.db
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlartifacts
+      --host 0.0.0.0
+
+  <span class="cm"># Serviço de inferência — nossa imagem</span>
+  modelo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - <span class="str">"8000:8000"</span>
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow      <span class="cm"># espera o MLflow subir antes</span>
+    volumes:
+      - ./models:/app/models  <span class="cm"># monta modelos sem rebuildar imagem</span>
+
+  <span class="cm"># PostgreSQL opcional — para persistência de dados</span>
+  db:
+    image: postgres:<span class="num">15</span>-alpine
+    environment:
+      POSTGRES_DB: mlops_db
+      POSTGRES_USER: mlops
+      POSTGRES_PASSWORD: ${DB_PASSWORD}   <span class="cm"># vem do .env</span>
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — comandos docker-compose essenciais</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Subir todos os serviços (build se necessário)</span>
+docker compose up --build
+
+<span class="cm"># Subir em segundo plano (detached)</span>
+docker compose up -d
+
+<span class="cm"># Ver logs de um serviço específico</span>
+docker compose logs -f modelo
+
+<span class="cm"># Reiniciar apenas o serviço do modelo (sem rebuildar)</span>
+docker compose restart modelo
+
+<span class="cm"># Parar tudo</span>
+docker compose down
+
+<span class="cm"># Parar e remover volumes (cuidado: apaga dados do BD)</span>
+docker compose down -v</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>O script de inferência — serve.py mínimo</div>
+      <p>Antes de empacotar, precisamos de um script que carrega o modelo e serve predições. Esta semana fazemos a versão mínima — na Semana 9 vamos aprofundar FastAPI com validação de input, documentação e testes.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — src/serve.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+app = FastAPI(title=<span class="str">"Modelo de Inferência"</span>, version=<span class="str">"1.0"</span>)
+
+<span class="cm"># Carrega o modelo na inicialização do servidor (uma vez só)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    MODEL = pickle.load(f)
+
+<span class="kw">class</span> <span class="fn">InputData</span>(BaseModel):
+    features: List[float]
+
+<span class="kw">class</span> <span class="fn">Prediction</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+
+<span class="dec">@app.get</span>(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>, <span class="str">"modelo"</span>: <span class="fn">str</span>(<span class="fn">type</span>(MODEL).__name__)}
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>, response_model=Prediction)
+<span class="kw">def</span> <span class="fn">predict</span>(data: InputData):
+    X = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+    pred  = MODEL.predict(X)[<span class="num">0</span>]
+    proba = MODEL.predict_proba(X)[<span class="num">0</span>][pred]
+    <span class="kw">return</span> Prediction(prediction=<span class="fn">int</span>(pred), probability=<span class="fn">float</span>(proba))</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — testar com curl depois do docker run</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Build da imagem</span>
+docker build -t modelo-inferencia:<span class="num">1</span>.<span class="num">0</span> .
+
+<span class="cm"># Rodar o container</span>
+docker run <span class="flag">-p</span> <span class="num">8000</span>:<span class="num">8000</span> <span class="flag">--rm</span> modelo-inferencia:<span class="num">1</span>.<span class="num">0</span>
+
+<span class="cm"># Testar health check</span>
+curl http://localhost:<span class="num">8000</span>/
+
+<span class="cm"># Fazer predição</span>
+curl <span class="flag">-X</span> POST http://localhost:<span class="num">8000</span>/predict \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features": [0.5, -1.2, 0.8, 1.1, -0.3, 0.6, 1.5, -0.9, 0.2, 0.7]}'</span>
+
+<span class="cm"># Documentação automática do FastAPI</span>
+<span class="cm"># Abra: http://localhost:8000/docs</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Estratégias de Atualização + Prática</span></div>
+
+  <!-- ── AULA 3: Estratégias + Prática ─────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Estratégias de Atualização e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>Como atualizar o modelo sem downtime</div>
+      <p>Quando o modelo é retreinado, como você leva a nova versão para produção sem interromper o serviço? Existem três padrões principais, cada um com trade-offs diferentes.</p>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Estratégia</th><th>Como funciona</th><th>Vantagem</th><th>Risco</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Rebuildar imagem</strong></td>
+              <td>Novo modelo → novo Dockerfile → nova tag → trocar container</td>
+              <td>Imagem 100% reproduzível, rollback por tag</td>
+              <td>Downtime durante a troca (mitigado com orquestrador)</td>
+            </tr>
+            <tr>
+              <td><strong>Volume mount</strong></td>
+              <td>Modelo em volume montado — trocar o arquivo sem rebuildar</td>
+              <td>Atualização instantânea, sem rebuild</td>
+              <td>Imagem não é mais autossuficiente — depende do volume</td>
+            </tr>
+            <tr>
+              <td><strong>Carregar do Registry</strong></td>
+              <td>Container busca modelo do MLflow Registry na inicialização</td>
+              <td>Desacoplado — trocar no Registry, restartar container</td>
+              <td>Dependência de rede na inicialização</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>Padrão recomendado em produção:</strong> imagem com modelo embutido (opção 1) + tag semântica (<code>v1.2.3</code>) + rollback por tag. O volume mount é aceitável em desenvolvimento para agilizar iterações. O Registry serve bem para ambientes com Kubernetes (Semana 14).
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tag"></i>Versionando imagens Docker de ML</div>
+      <p>Tags informativas são essenciais para rastrear qual modelo está em cada imagem — especialmente quando há rollbacks.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — convenção de tags para imagens de ML</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Tag com versão semântica</span>
+docker build -t modelo-churn:<span class="num">1</span>.<span class="num">2</span>.<span class="num">0</span> .
+
+<span class="cm"># Tag com hash do commit Git — rastreável ao código exato</span>
+GIT_SHA=$(git rev-parse --short HEAD)
+docker build -t modelo-churn:${GIT_SHA} .
+
+<span class="cm"># Tag com data — útil para modelos retreinados periodicamente</span>
+docker build -t modelo-churn:$(date +%Y%m%d) .
+
+<span class="cm"># Combinar: versão + sha</span>
+docker build \
+  -t modelo-churn:<span class="num">1</span>.<span class="num">2</span>.<span class="num">0</span> \
+  -t modelo-churn:<span class="num">1</span>.<span class="num">2</span>.<span class="num">0</span>-${GIT_SHA} \
+  -t modelo-churn:latest \
+  .
+
+<span class="cm"># Rollback: basta trocar a tag no docker run / compose</span>
+docker run modelo-churn:<span class="num">1</span>.<span class="num">1</span>.<span class="num">0</span>   <span class="cm"># versão anterior</span></code></pre>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Nunca use <code>:latest</code> como única tag em produção.</strong> A tag <code>latest</code> é mutável — o mesmo nome pode apontar para imagens completamente diferentes em momentos diferentes. Se você fizer rollback para <code>:latest</code>, pode não saber qual versão realmente está rodando. Use sempre tags imutáveis (<code>1.2.0</code>, hash do commit) para produção.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud-download-alt"></i>Carregando modelo do MLflow Registry no container</div>
+      <p>Uma alternativa ao modelo embutido na imagem é fazer o container buscar o modelo do Registry na inicialização. A imagem fica menor e a atualização do modelo não exige rebuild — mas o container precisa de acesso à rede e ao servidor MLflow.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — src/serve_registry.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> os
+<span class="kw">import</span> mlflow.pyfunc
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+app = FastAPI()
+
+<span class="cm"># URI do servidor MLflow vem de variável de ambiente</span>
+TRACKING_URI = os.getenv(<span class="str">"MLFLOW_TRACKING_URI"</span>, <span class="str">"http://localhost:5000"</span>)
+MODEL_NAME   = os.getenv(<span class="str">"MODEL_NAME"</span>, <span class="str">"classificador-churn"</span>)
+MODEL_STAGE  = os.getenv(<span class="str">"MODEL_STAGE"</span>, <span class="str">"Production"</span>)
+
+mlflow.set_tracking_uri(TRACKING_URI)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Carregando {MODEL_NAME}/{MODEL_STAGE} de {TRACKING_URI}..."</span>)
+MODEL = mlflow.pyfunc.load_model(<span class="fn">f</span><span class="str">"models:/{MODEL_NAME}/{MODEL_STAGE}"</span>)
+<span class="fn">print</span>(<span class="str">"Modelo carregado com sucesso."</span>)
+
+<span class="kw">class</span> <span class="fn">InputData</span>(BaseModel):
+    features: List[float]
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(data: InputData):
+    <span class="kw">import</span> pandas <span class="kw">as</span> pd
+    X = pd.DataFrame([data.features])
+    pred = MODEL.predict(X)
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="fn">int</span>(pred[<span class="num">0</span>])}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Container de Inferência</div>
+        <div class="secao-titulo">Do modelo.pkl à predição via curl — tudo dentro do Docker</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o modelo treinado nas semanas anteriores. Ao final, você deve conseguir fazer uma predição via <code>curl</code> ou <code>Postman</code> contra um container local — sem Python no host, apenas Docker.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Criar o serve.py</div>
+      <p>Crie <code>src/serve.py</code> com o código FastAPI mínimo da aula: endpoint <code>GET /</code> para health check e <code>POST /predict</code> que recebe uma lista de floats e retorna predição e probabilidade. O modelo deve ser carregado de <code>models/model.pkl</code> na inicialização.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/serve.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+app = FastAPI(title=<span class="str">"Modelo de Inferência"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    MODEL = pickle.load(f)
+
+<span class="kw">class</span> <span class="fn">InputData</span>(BaseModel):
+    features: List[float]
+
+<span class="dec">@app.get</span>(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>, <span class="str">"modelo"</span>: <span class="fn">type</span>(MODEL).__name__}
+
+<span class="dec">@app.post</span>(<span class="str">"/predict"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(data: InputData):
+    X     = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+    pred  = MODEL.predict(X)[<span class="num">0</span>]
+    proba = MODEL.predict_proba(X)[<span class="num">0</span>][<span class="fn">int</span>(pred)]
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="fn">int</span>(pred), <span class="str">"probability"</span>: <span class="fn">round</span>(<span class="fn">float</span>(proba), <span class="num">4</span>)}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Escrever o Dockerfile e o .dockerignore</div>
+      <p>Escreva o Dockerfile de inferência com todas as boas práticas: imagem slim, variáveis de ambiente Python, cópia do requirements.txt antes do código, usuário não-root, EXPOSE e CMD correto. Escreva também o <code>.dockerignore</code> excluindo dados, notebooks, .venv e mlruns.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Dockerfile</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">FROM</span> python:<span class="num">3.11</span>-slim
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=<span class="num">1</span> PYTHONUNBUFFERED=<span class="num">1</span>
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+<span class="kw">COPY</span> src/serve.py ./src/serve.py
+<span class="kw">COPY</span> models/model.pkl ./models/model.pkl
+<span class="kw">RUN</span> useradd -m appuser
+<span class="kw">USER</span> appuser
+<span class="kw">EXPOSE</span> <span class="num">8000</span>
+<span class="kw">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"src.serve:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Build, run e testar com curl</div>
+      <p>Execute o build com a tag <code>modelo-inferencia:1.0</code>. Inicie o container mapeando a porta 8000. Faça uma requisição <code>GET /</code> para confirmar o health check e uma <code>POST /predict</code> com features válidas. Verifique que a resposta contém <code>prediction</code> e <code>probability</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>docker build -t modelo-inferencia:<span class="num">1</span>.<span class="num">0</span> .
+docker run <span class="flag">-p</span> <span class="num">8000</span>:<span class="num">8000</span> <span class="flag">--rm</span> modelo-inferencia:<span class="num">1</span>.<span class="num">0</span>
+
+<span class="cm"># Em outro terminal:</span>
+curl http://localhost:<span class="num">8000</span>/
+
+curl <span class="flag">-X</span> POST http://localhost:<span class="num">8000</span>/predict \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features": [0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>
+
+<span class="cm"># Esperado: {"prediction": 0, "probability": 0.87} (valores variam)</span>
+<span class="cm"># Docs: http://localhost:8000/docs</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Inspecionar o tamanho da imagem</div>
+      <p>Use <code>docker images</code> para ver o tamanho da imagem gerada. Depois altere o Dockerfile para usar <code>FROM python:3.11</code> (sem o <code>-slim</code>), rebuilde com a tag <code>modelo-inferencia:gordinha</code> e compare os tamanhos. Qual a diferença? O que justificaria usar a versão não-slim?</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>docker images | grep modelo-inferencia
+<span class="cm"># modelo-inferencia   1.0        ~350MB  (com slim)</span>
+<span class="cm"># modelo-inferencia   gordinha   ~950MB  (sem slim)</span></code></pre>
+        </div>
+        <div class="destaque">
+          A diferença típica é de 500–700 MB. A versão não-slim só se justifica quando um pacote do requirements precisa de compiladores em runtime — o que é raro para inferência com scikit-learn. Para pacotes que exigem compilação na instalação, o correto é usar multi-stage build (compilar no stage gordo, copiar para o slim).
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Criar o docker-compose.yml</div>
+      <p>Crie um <code>docker-compose.yml</code> que suba o serviço de modelo na porta 8000. Adicione a variável de ambiente <code>MODEL_VERSION=1.0</code> e um volume que monta a pasta <code>./models</code> para o caminho <code>/app/models</code> dentro do container. Execute com <code>docker compose up --build</code> e confirme o funcionamento.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">docker-compose.yml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>services:
+  modelo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - <span class="str">"8000:8000"</span>
+    environment:
+      - MODEL_VERSION=<span class="num">1.0</span>
+    volumes:
+      - ./models:/app/models</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>docker compose up --build
+<span class="cm"># Para em segundo plano: docker compose up -d --build</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 06 — Desafio: multi-stage build</div>
+      <p>Reescreva o Dockerfile usando multi-stage build: stage <code>builder</code> com <code>python:3.11</code> para compilar os wheels, e stage <code>runtime</code> com <code>python:3.11-slim</code> que copia apenas os wheels compilados. Compare o tamanho final com a versão de passo único. Adicione também a tag com o hash do commit Git usando a variável <code>$(git rev-parse --short HEAD)</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> o comando <code>curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"features": [...]}'</code> deve retornar um JSON com <code>prediction</code> e <code>probability</code> — sem nenhum Python instalado no host, apenas Docker rodando.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 8</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Layers e Cache</strong>
+        <p>Ordem importa: requirements.txt antes do código. slim reduz 600+ MB. PYTHONDONTWRITEBYTECODE e PYTHONUNBUFFERED são padrão para Python em containers</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cut"></i>
+        <strong>Multi-stage Build</strong>
+        <p>Stage builder compila com imagem gorda. Stage runtime copia só os wheels para a imagem slim. Resultado: imagem menor, sem compiladores expostos</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-boxes"></i>
+        <strong>docker-compose</strong>
+        <p>Orquestra modelo + MLflow + banco em um único arquivo. depends_on garante ordem de inicialização. Volumes permitem atualizar modelo sem rebuild</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-09-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 9 — Servindo Modelos com FastAPI: Endpoints, Validação e Documentação</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

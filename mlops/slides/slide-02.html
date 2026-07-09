@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 02 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;
+  --purple-900:#2e1065;
+  --purple-800:#4c1d95;
+  --purple-700:#6d28d9;
+  --purple-500:#8b5cf6;
+  --purple-400:#a78bfa;
+  --purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;
+  --code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--purple-950);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── CAPA ─────────────────────────────────────────────────────────── */
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(167,139,250,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);
+  border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--purple-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+  background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);
+}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(167,139,250,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;border:none;letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+.var{color:#6ee7b7;}
+.flag{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-red{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);
+  font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+.aviso-green{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);
+  font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;
+}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* step list */
+.steps{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.step{display:flex;gap:14px;align-items:flex-start;}
+.step-num{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:rgba(167,139,250,.18);color:var(--purple-400);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;font-family:'Montserrat',sans-serif;
+  margin-top:1px;
+}
+.step-content{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.step-content strong{color:var(--text-primary);}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* nav anterior */
+.nav-anterior{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.75rem;color:var(--text-muted);text-decoration:none;
+  padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);
+  margin-bottom:2rem;transition:color .2s,border-color .2s;
+}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     CAPA
+════════════════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">02</div>
+    <h1 class="capa-titulo"><em>Reprodutibilidade:</em><br>ambientes, dependências<br>e Git para ML</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Fundação do trabalho em equipe</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-box-open"></i></div><span>Ambientes virtuais — venv e conda na prática</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-list-ol"></i></div><span>requirements.txt e lockfiles — fixando versões</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-docker" style="font-family:sans-serif;">🐳</i></div><span>Docker para ML — containers como ambientes portáteis</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code-branch"></i></div><span>Git para ML — boas práticas e .gitignore</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: criar ambiente reproduzível e versionar no Git</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Criar ambiente virtual isolado, fixar dependências, escrever Dockerfile mínimo e versionar tudo em repositório Git com estrutura de projeto ML.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-bullseye"></i>Por que reprodutibilidade importa</div>
+      <ul class="info-lista">
+        <li>Sem ambiente fixo: "funciona na minha máquina"</li>
+        <li>Sem lockfile: atualização silenciosa quebra o modelo</li>
+        <li>Sem Docker: servidor de prod tem versão diferente</li>
+        <li>Sem Git estruturado: impossível rastrear mudanças</li>
+        <li>Com tudo isso: qualquer pessoa reproduz em minutos</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-toolbox"></i>Ferramentas desta semana</div>
+      <ul class="info-lista">
+        <li><strong>venv</strong> — ambiente virtual nativo do Python</li>
+        <li><strong>conda</strong> — gerenciador de ambientes e pacotes</li>
+        <li><strong>pip freeze / pip-tools</strong> — lockfiles de dependências</li>
+        <li><strong>Docker</strong> — containerização do ambiente completo</li>
+        <li><strong>Git + GitHub</strong> — versionamento do projeto ML</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Pré-requisitos de setup</div>
+      <ul class="info-lista">
+        <li>Python 3.10+ instalado</li>
+        <li>Docker Desktop instalado (Windows/Mac) ou Docker Engine (Linux)</li>
+        <li>Git instalado e conta no GitHub</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CONTEÚDO
+════════════════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-01-mlops.html"><i class="fas fa-arrow-left"></i> Semana 1 — O que é MLOps</a>
+
+  <!-- ── AULA 1: venv, conda, requirements ─────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Ambientes Virtuais e Gerenciamento de Dependências</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O problema que ambientes virtuais resolvem</div>
+      <p>Python instala pacotes de forma global por padrão. Isso cria um conflito clássico: o projeto A precisa de <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">scikit-learn==1.2</code> e o projeto B precisa de <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">scikit-learn==1.5</code>. Sem ambientes isolados, um deles vai quebrar.</p>
+      <p>Em ML esse problema é ainda pior porque modelos são <strong>sensíveis a versões</strong>. Um modelo treinado com <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">numpy==1.24</code> pode gerar resultados ligeiramente diferentes com <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">numpy==2.0</code>, e algumas APIs foram removidas entre versões.</p>
+      <div class="destaque">
+        <strong>Regra de ouro:</strong> cada projeto de ML tem seu próprio ambiente isolado. Nunca instale pacotes de projeto no Python global do sistema.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-box-open"></i>venv — ambiente virtual nativo do Python</div>
+      <p>O <strong>venv</strong> é a solução padrão e mais simples. Está incluído no Python 3.3+ sem instalação adicional. Cria uma cópia isolada do interpretador e da pasta de pacotes.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — criando e ativando um venv</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># 1. Criar o ambiente virtual na pasta .venv</span>
+python -m venv .venv
+
+<span class="cm"># 2. Ativar o ambiente</span>
+<span class="cm">#    Linux / Mac:</span>
+source .venv/bin/activate
+
+<span class="cm">#    Windows (PowerShell):</span>
+.venv\Scripts\Activate.ps1
+
+<span class="cm"># 3. Verificar que está no ambiente correto</span>
+which python          <span class="cm"># deve apontar para .venv/bin/python</span>
+python --version
+
+<span class="cm"># 4. Instalar pacotes normalmente — ficam isolados</span>
+pip install scikit-learn pandas numpy
+
+<span class="cm"># 5. Desativar o ambiente quando terminar</span>
+deactivate</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-folder-minus"></i>
+        <span><strong>Nunca versione a pasta .venv no Git.</strong> Ela contém binários específicos do sistema e pode ter centenas de MB. Adicione <code style="font-size:.8rem;">.venv/</code> no seu <code style="font-size:.8rem;">.gitignore</code> — vamos ver isso na Aula 3.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>conda — quando venv não basta</div>
+      <p>O <strong>conda</strong> vai além do venv: gerencia não só pacotes Python, mas também dependências de sistema (C libraries, CUDA, etc.). É essencial para projetos com <strong>GPU, TensorFlow ou PyTorch</strong>, onde as versões de CUDA precisam ser compatíveis.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — conda básico</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Criar ambiente com Python específico</span>
+conda create -n mlops-projeto python=3.11
+
+<span class="cm"># Ativar</span>
+conda activate mlops-projeto
+
+<span class="cm"># Instalar pacotes — prefira conda quando disponível</span>
+conda install scikit-learn pandas numpy
+
+<span class="cm"># Instalar o que não está no conda via pip (dentro do conda env)</span>
+pip install mlflow evidently
+
+<span class="cm"># Exportar ambiente completo</span>
+conda env export > environment.yml
+
+<span class="cm"># Recriar ambiente a partir do arquivo</span>
+conda env create -f environment.yml</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>venv + pip</th><th>conda</th></tr></thead>
+          <tbody>
+            <tr><td>Velocidade de setup</td><td>Mais rápido</td><td>Mais lento</td></tr>
+            <tr><td>Dependências de sistema (CUDA, etc)</td><td>❌ Não gerencia</td><td>✅ Gerencia</td></tr>
+            <tr><td>Disponível sem instalação extra</td><td>✅ Sim (built-in)</td><td>❌ Instalar Miniconda</td></tr>
+            <tr><td>Projetos com GPU / deep learning</td><td>Trabalhoso</td><td>Recomendado</td></tr>
+            <tr><td>Uso neste semestre</td><td>✅ Padrão</td><td>Quando explicitamente indicado</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-lock"></i>requirements.txt e lockfiles — fixando versões</div>
+      <p>Ter um ambiente virtual não é suficiente se outra pessoa instalar versões diferentes dos pacotes. Para garantir reprodutibilidade total, precisamos <strong>fixar as versões exatas</strong> de cada dependência.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — gerando requirements.txt</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Gerar lista de todos os pacotes instalados com suas versões</span>
+pip freeze > requirements.txt
+
+<span class="cm"># Instalar a partir do arquivo (em outro computador / CI)</span>
+pip install -r requirements.txt</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">requirements.txt — exemplo de projeto ML</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># requirements.txt — versões fixas para reprodutibilidade</span>
+scikit-learn==1.4.2
+pandas==2.2.1
+numpy==1.26.4
+matplotlib==3.8.4
+mlflow==2.12.1
+fastapi==0.111.0
+uvicorn==0.29.0
+pydantic==2.7.1</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Boa prática:</strong> mantenha dois arquivos. O <code style="font-size:.83rem;">requirements.in</code> com as dependências diretas (sem versão ou com versão mínima), e o <code style="font-size:.83rem;">requirements.txt</code> com o lockfile completo gerado pelo <code style="font-size:.83rem;">pip-compile</code> (ferramenta pip-tools). Assim você sabe o que você pediu vs o que realmente foi instalado.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Docker para ML ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Docker para ML — Ambientes Portáteis e Reproduzíveis</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ship"></i>Por que Docker vai além do venv</div>
+      <p>O venv isola pacotes Python, mas não isola o sistema operacional, a versão do Python em si, variáveis de ambiente, ou bibliotecas de sistema. No servidor de produção podem existir diferenças sutis que quebram o modelo.</p>
+      <p><strong>Docker empacota tudo:</strong> o OS, o Python, os pacotes, o código e as configurações — em uma imagem portátil que roda identicamente em qualquer máquina com Docker instalado.</p>
+
+      <div class="destaque">
+        <strong>Analogia:</strong> o venv é como separar as roupas numa gaveta diferente — ainda no mesmo guarda-roupa. O Docker é como colocar tudo numa mala: você pode levar para qualquer lugar e está tudo lá dentro, exatamente igual.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>Dockerfile — o receio de criação da imagem</div>
+      <p>O <strong>Dockerfile</strong> é um arquivo de texto com as instruções para construir a imagem. É o "requirements.txt do ambiente completo".</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dockerfile — imagem mínima para modelo ML</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Imagem base oficial do Python — versão fixada</span>
+<span class="kw">FROM</span> python:<span class="num">3.11</span>-slim
+
+<span class="cm"># Definir diretório de trabalho dentro do container</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Copiar e instalar dependências ANTES do código</span>
+<span class="cm"># (aproveita o cache do Docker se requirements não mudou)</span>
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="cm"># Copiar o restante do código</span>
+<span class="kw">COPY</span> . .
+
+<span class="cm"># Porta que a aplicação vai expor</span>
+<span class="kw">EXPOSE</span> <span class="num">8000</span>
+
+<span class="cm"># Comando padrão ao iniciar o container</span>
+<span class="kw">CMD</span> [<span class="str">"python"</span>, <span class="str">"src/serve.py"</span>]</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Por que copiar requirements.txt antes do código?</strong> O Docker constrói por camadas (layers). Se você copiar tudo de uma vez, qualquer mudança no código refaz a instalação de dependências do zero. Separando, o Docker usa o cache da camada de dependências enquanto só o código mudou — build muito mais rápido.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Comandos essenciais do Docker</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — build, run e inspecionar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Build: construir a imagem a partir do Dockerfile</span>
+<span class="cm"># -t nomeia a imagem  |  . indica o diretório com o Dockerfile</span>
+docker build <span class="flag">-t</span> meu-modelo:<span class="num">1.0</span> .
+
+<span class="cm"># Run: iniciar um container a partir da imagem</span>
+<span class="cm"># -p mapeia porta do host:porta do container</span>
+<span class="cm"># --rm remove o container ao parar</span>
+docker run <span class="flag">-p</span> <span class="num">8000</span>:<span class="num">8000</span> <span class="flag">--rm</span> meu-modelo:<span class="num">1.0</span>
+
+<span class="cm"># Run interativo: abrir terminal dentro do container (debug)</span>
+docker run <span class="flag">-it</span> <span class="flag">--rm</span> meu-modelo:<span class="num">1.0</span> bash
+
+<span class="cm"># Listar imagens locais</span>
+docker images
+
+<span class="cm"># Listar containers em execução</span>
+docker ps
+
+<span class="cm"># Ver logs de um container rodando</span>
+docker logs &lt;container_id&gt;
+
+<span class="cm"># Remover imagem</span>
+docker rmi meu-modelo:<span class="num">1.0</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>.dockerignore — o que não vai para a imagem</div>
+      <p>Assim como o <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">.gitignore</code>, o <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">.dockerignore</code> lista o que não deve ser copiado para dentro da imagem. Sem ele, você pode incluir acidentalmente dados sensíveis, notebooks pesados ou a pasta <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.82rem;">.venv</code> inteira.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">.dockerignore</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Ambiente virtual Python</span>
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+<span class="cm"># Dados (normalmente grandes demais para a imagem)</span>
+data/raw/
+data/processed/
+*.csv
+*.parquet
+
+<span class="cm"># Modelos salvos (versionados separadamente)</span>
+models/
+
+<span class="cm"># Git e IDE</span>
+.git/
+.gitignore
+.vscode/
+
+<span class="cm"># Notebooks de experimentação</span>
+notebooks/
+
+<span class="cm"># Variáveis de ambiente com segredos</span>
+.env
+*.env</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Git para ML + Prática</span></div>
+
+  <!-- ── AULA 3: Git para ML + Prática ─────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Git para ML — Estrutura, Boas Práticas e Atividade</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code-branch"></i>Git para ML — o que é diferente</div>
+      <p>Git é obrigatório em qualquer projeto de software — mas projetos de ML têm particularidades que exigem atenção extra:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-database"></i><span><strong>Dados não entram no Git</strong> — datasets podem ter GBs. Use DVC (veremos na Semana 3) para versionar dados separadamente.</span></li>
+        <li><i class="fas fa-weight-hanging"></i><span><strong>Modelos serializados não entram no Git</strong> — arquivos <code style="font-size:.8rem;">.pkl</code>, <code style="font-size:.8rem;">.joblib</code>, <code style="font-size:.8rem;">.h5</code> são binários pesados. Versione com DVC ou MLflow.</span></li>
+        <li><i class="fas fa-book"></i><span><strong>Notebooks são problemáticos</strong> — o formato JSON do <code style="font-size:.8rem;">.ipynb</code> inclui outputs (imagens, tabelas) que poluem diffs. Limpe os outputs antes de commitar ou use <code style="font-size:.8rem;">nbstripout</code>.</span></li>
+        <li><i class="fas fa-key"></i><span><strong>Segredos nunca entram no Git</strong> — API keys, senhas e tokens ficam em arquivos <code style="font-size:.8rem;">.env</code> que estão no <code style="font-size:.8rem;">.gitignore</code>.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-folder-open"></i>Estrutura de projeto ML recomendada</div>
+      <p>Projetos bem estruturados são mais fáceis de colaborar, auditar e manter. Adote uma estrutura consistente desde o início.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura de diretórios — projeto ML padrão</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>meu-projeto-ml/
+│
+├── <span class="var">data/</span>
+│   ├── raw/          <span class="cm"># dados originais — nunca modificar</span>
+│   └── processed/    <span class="cm"># dados após limpeza/feature eng.</span>
+│
+├── <span class="var">notebooks/</span>        <span class="cm"># exploração e prototipagem</span>
+│   └── 01_eda.ipynb
+│
+├── <span class="var">src/</span>
+│   ├── data.py       <span class="cm"># carregamento e limpeza</span>
+│   ├── features.py   <span class="cm"># feature engineering</span>
+│   ├── train.py      <span class="cm"># treinamento do modelo</span>
+│   ├── evaluate.py   <span class="cm"># avaliação de métricas</span>
+│   └── serve.py      <span class="cm"># API de inferência</span>
+│
+├── <span class="var">models/</span>           <span class="cm"># modelos salvos (no .gitignore)</span>
+│
+├── <span class="var">tests/</span>            <span class="cm"># testes automatizados</span>
+│
+├── <span class="fn">Dockerfile</span>
+├── <span class="fn">requirements.txt</span>
+├── <span class="fn">.gitignore</span>
+├── <span class="fn">.env.example</span>      <span class="cm"># template sem valores reais</span>
+└── <span class="fn">README.md</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ban"></i>.gitignore para projetos ML</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">.gitignore — projeto Python + ML</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Python</span>
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+<span class="cm"># Ambientes virtuais</span>
+.venv/
+venv/
+env/
+
+<span class="cm"># Dados (versionar com DVC)</span>
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.json.gz
+
+<span class="cm"># Modelos serializados (versionar com DVC/MLflow)</span>
+models/
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.onnx
+
+<span class="cm"># Notebooks com output (limpe antes de commitar)</span>
+<span class="cm"># Alternativa: usar nbstripout como git hook</span>
+
+<span class="cm"># Variáveis de ambiente e segredos</span>
+.env
+*.env
+secrets/
+
+<span class="cm"># MLflow</span>
+mlruns/
+mlflow.db
+
+<span class="cm"># IDEs</span>
+.vscode/
+.idea/
+*.DS_Store</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-history"></i>Boas práticas de commit em projetos ML</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — fluxo de trabalho Git</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Inicializar repositório</span>
+git init
+git remote add origin https://github.com/usuario/meu-projeto-ml.git
+
+<span class="cm"># Verificar o que será commitado (sempre antes de add)</span>
+git status
+git diff
+
+<span class="cm"># Adicionar arquivos específicos — evite "git add ."</span>
+git add src/train.py requirements.txt Dockerfile
+
+<span class="cm"># Commit com mensagem descritiva</span>
+<span class="cm"># Use verbos no imperativo + contexto do que mudou</span>
+git commit -m <span class="str">"feat: adicionar pipeline de treinamento com RandomForest"</span>
+git commit -m <span class="str">"fix: corrigir encoding de features categóricas"</span>
+git commit -m <span class="str">"refactor: extrair limpeza de dados para src/data.py"</span>
+git commit -m <span class="str">"docs: atualizar README com instruções de setup"</span>
+
+<span class="cm"># Criar branch para experimento (não commitar direto na main)</span>
+git checkout -b experimento/xgboost-v2
+<span class="cm"># ... trabalhar, commitar ...</span>
+git checkout main
+git merge experimento/xgboost-v2</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que branches para experimentos?</strong> Você pode ter 3 experimentos diferentes rodando em paralelo, cada um com seu próprio código de treinamento, sem interferir na versão estável. Quando um experimento vencer, você faz merge. Os outros ficam arquivados no histórico — rastreáveis, mas não ativos.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Ambiente Reproduzível do Zero</div>
+        <div class="secao-titulo">Criar, containerizar e versionar um projeto ML mínimo</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Atividade individual. Siga os passos em ordem — cada um depende do anterior. O objetivo é ter, ao final, um projeto ML mínimo completamente reproduzível: qualquer colega pode clonar e rodar com um único comando.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Estrutura e ambiente</div>
+      <p>Crie a estrutura de pastas do projeto ML padrão mostrada na aula. Inicialize um ambiente virtual com <strong>venv</strong>, instale as dependências abaixo e gere o <code style="font-size:.83rem;">requirements.txt</code> com as versões fixadas.</p>
+      <p style="margin-top:.5rem;"><strong>Pacotes:</strong> <code style="font-size:.83rem;">scikit-learn</code>, <code style="font-size:.83rem;">pandas</code>, <code style="font-size:.83rem;">numpy</code>, <code style="font-size:.83rem;">matplotlib</code></p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Criar estrutura de pastas</span>
+mkdir meu-projeto-ml
+cd meu-projeto-ml
+mkdir -p data/raw data/processed notebooks src models tests
+
+<span class="cm"># Criar ambiente virtual</span>
+python -m venv .venv
+source .venv/bin/activate   <span class="cm"># Linux/Mac</span>
+
+<span class="cm"># Instalar dependências</span>
+pip install scikit-learn pandas numpy matplotlib
+
+<span class="cm"># Gerar lockfile</span>
+pip freeze > requirements.txt</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Script de treinamento mínimo</div>
+      <p>Crie o arquivo <code style="font-size:.83rem;">src/train.py</code> com um script que: (1) gera dados sintéticos com <code style="font-size:.83rem;">make_classification</code>, (2) treina um <code style="font-size:.83rem;">RandomForestClassifier</code>, (3) imprime a acurácia no console e (4) salva o modelo em <code style="font-size:.83rem;">models/model.pkl</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — src/train.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pickle
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">import</span> os
+
+<span class="cm"># Gerar dados sintéticos</span>
+X, y = make_classification(
+    n_samples=<span class="num">1000</span>, n_features=<span class="num">10</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># Split treino/teste</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># Treinar modelo</span>
+model = RandomForestClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+model.fit(X_train, y_train)
+
+<span class="cm"># Avaliar</span>
+acc = accuracy_score(y_test, model.predict(X_test))
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Acurácia: {acc:.4f}"</span>)
+
+<span class="cm"># Salvar modelo</span>
+os.makedirs(<span class="str">"models"</span>, exist_ok=<span class="kw">True</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"wb"</span>) <span class="kw">as</span> f:
+    pickle.dump(model, f)
+
+<span class="fn">print</span>(<span class="str">"Modelo salvo em models/model.pkl"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Dockerfile e .gitignore</div>
+      <p>Crie o <code style="font-size:.83rem;">Dockerfile</code> para a imagem do projeto e o <code style="font-size:.83rem;">.gitignore</code> adequado para um projeto ML. O Dockerfile deve executar o <code style="font-size:.83rem;">src/train.py</code> ao iniciar o container. Teste com <code style="font-size:.83rem;">docker build</code> e <code style="font-size:.83rem;">docker run</code>.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Dockerfile</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">FROM</span> python:<span class="num">3.11</span>-slim
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+<span class="kw">COPY</span> src/ ./src/
+<span class="kw">CMD</span> [<span class="str">"python"</span>, <span class="str">"src/train.py"</span>]</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — build e teste</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>docker build -t meu-modelo:<span class="num">1.0</span> .
+docker run --rm meu-modelo:<span class="num">1.0</span>
+<span class="cm"># Esperado: "Acurácia: 0.XXXX" e "Modelo salvo em models/model.pkl"</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Versionar no Git e publicar no GitHub</div>
+      <p>Inicialize um repositório Git, faça o primeiro commit com a estrutura do projeto (sem <code style="font-size:.83rem;">.venv</code>, dados ou modelos), e publique no GitHub. Verifique que o repositório não contém arquivos que deveriam estar no <code style="font-size:.83rem;">.gitignore</code>.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>git init
+git add requirements.txt Dockerfile .gitignore src/ README.md
+git status   <span class="cm"># confirmar que .venv/ e models/ NÃO aparecem</span>
+git commit -m <span class="str">"feat: estrutura inicial do projeto ML com Docker"</span>
+git remote add origin https://github.com/seu-usuario/meu-projeto-ml.git
+git push -u origin main</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: validação de reprodutibilidade</div>
+      <p>Troque de computador (ou use uma pasta diferente / máquina virtual). Clone seu repositório do GitHub, crie um novo ambiente virtual do zero a partir do <code style="font-size:.83rem;">requirements.txt</code>, e execute o treinamento. O resultado deve ser <strong>idêntico</strong> ao da máquina original. Se não for, por quê? O que garante a reprodutibilidade aqui?</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> ao final dessa atividade, qualquer pessoa com Git e Docker instalados deve conseguir clonar seu repositório e rodar <code style="font-size:.8rem;">docker build -t modelo . && docker run --rm modelo</code> e obter o mesmo resultado que você. Isso é reprodutibilidade real.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 2</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-box-open"></i>
+        <strong>Ambientes Virtuais</strong>
+        <p>venv para projetos Python puros, conda quando há dependências de sistema. Sempre isolado, nunca global</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-ship"></i>
+        <strong>Docker</strong>
+        <p>Isola sistema operacional, runtime e dependências. Dockerfile + .dockerignore = ambiente portátil e determinístico</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-code-branch"></i>
+        <strong>Git para ML</strong>
+        <p>Estrutura de projeto, .gitignore adequado, commits descritivos. Dados e modelos fora do Git — próxima semana: DVC</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-03-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 3 — Versionamento de Dados e Modelos com DVC</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

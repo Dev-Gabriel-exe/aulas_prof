@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 14 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* k8s objects */
+.k8s-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.k8s-obj{border-radius:12px;padding:1rem;}
+.k8s-obj h4{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.k8s-obj p{font-size:.77rem;color:var(--text-muted);line-height:1.5;}
+.k8s-pod{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.18);}
+.k8s-pod h4{color:#60a5fa;}
+.k8s-dep{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.18);}
+.k8s-dep h4{color:var(--purple-400);}
+.k8s-svc{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);}
+.k8s-svc h4{color:#34d399;}
+.k8s-hpa{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);}
+.k8s-hpa h4{color:#fbbf24;}
+.k8s-cm{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);}
+.k8s-cm h4{color:#f87171;}
+.k8s-sec{background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.18);}
+.k8s-sec h4{color:#fb923c;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .k8s-grid{grid-template-columns:1fr 1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">14</div>
+    <h1 class="capa-titulo"><em>Kubernetes</em><br>para ML</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Do container ao cluster escalável</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que Kubernetes — o que o docker-compose não faz</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cubes"></i></div><span>Objetos essenciais: Pod, Deployment, Service e ConfigMap</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-expand-arrows-alt"></i></div><span>HPA — escalonamento automático por CPU e métricas customizadas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-exchange-alt"></i></div><span>Rolling update e rollback de modelos sem downtime</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: deploy do modelo no kind (Kubernetes local)</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Deploy da API FastAPI no Kubernetes local (kind), com Service LoadBalancer, HPA baseado em CPU e simulação de rolling update do modelo.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>O que o docker-compose não faz</div>
+      <ul class="info-lista">
+        <li>Não reinicia automaticamente containers que falham em produção</li>
+        <li>Não distribui carga entre múltiplas instâncias do serviço</li>
+        <li>Não escala o número de réplicas conforme a demanda</li>
+        <li>Não faz deploy sem downtime (rolling update)</li>
+        <li>Não gerencia secrets de forma segura em produção</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 8: imagem Docker — o que vamos fazer deploy</li>
+        <li>Sem. 9: FastAPI — o serviço que vamos expor</li>
+        <li>Sem. 12: Prometheus — integra nativamente com k8s</li>
+        <li>Sem. 15: Celery — workers que também rodam no k8s</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">kind</code> — Kubernetes local via Docker</li>
+        <li><code style="font-size:.8rem;">kubectl</code> — CLI do Kubernetes</li>
+        <li>Imagem Docker da Semana 8/9 disponível localmente</li>
+        <li>Instalação: <code style="font-size:.8rem;">brew install kind kubectl</code> (ou equivalente)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-13-mlops.html"><i class="fas fa-arrow-left"></i> Semana 13 — Avaliação P2</a>
+
+  <!-- AULA 1: Por que K8s + objetos essenciais -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que Kubernetes — e os Objetos Essenciais para ML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Kubernetes — o orquestrador de containers</div>
+      <p>Kubernetes (k8s) é um sistema de orquestração de containers que resolve os problemas que surgem quando você precisa rodar sua aplicação de forma confiável em produção: alta disponibilidade, escalonamento automático, auto-recuperação e deploys sem interrupção.</p>
+      <p>A ideia central é simples: você declara o <strong>estado desejado</strong> (quero 3 réplicas do meu modelo rodando, com 500m de CPU cada) e o Kubernetes trabalha continuamente para manter esse estado — reiniciando containers que morrem, distribuindo carga, agendando workloads em nodes disponíveis.</p>
+
+      <div class="destaque">
+        <strong>Docker Compose vs Kubernetes:</strong> o Compose é excelente para desenvolvimento local — simples, rápido, sem overhead. O Kubernetes é para produção — complexo, mas com garantias que o Compose não oferece: self-healing, rolling updates, escalonamento automático, gerenciamento de secrets, scheduling inteligente entre múltiplas máquinas.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cubes"></i>Os objetos essenciais que você precisa conhecer</div>
+
+      <div class="k8s-grid">
+        <div class="k8s-obj k8s-pod">
+          <h4><i class="fas fa-box" style="margin-right:5px;"></i>Pod</h4>
+          <p>Menor unidade do k8s. Encapsula um ou mais containers que compartilham rede e storage. Efêmero — pode morrer e ser recriado a qualquer momento.</p>
+        </div>
+        <div class="k8s-obj k8s-dep">
+          <h4><i class="fas fa-layer-group" style="margin-right:5px;"></i>Deployment</h4>
+          <p>Gerencia um conjunto de Pods idênticos (réplicas). Garante que o número desejado está sempre rodando. Controla rolling updates e rollbacks.</p>
+        </div>
+        <div class="k8s-obj k8s-svc">
+          <h4><i class="fas fa-network-wired" style="margin-right:5px;"></i>Service</h4>
+          <p>Expõe Pods com um IP e DNS estáveis. Faz load balancing entre réplicas. Tipos: ClusterIP (interno), NodePort, LoadBalancer (externo).</p>
+        </div>
+        <div class="k8s-obj k8s-hpa">
+          <h4><i class="fas fa-chart-line" style="margin-right:5px;"></i>HPA</h4>
+          <p>HorizontalPodAutoscaler. Ajusta o número de réplicas do Deployment automaticamente com base em métricas (CPU, memória, métricas customizadas).</p>
+        </div>
+        <div class="k8s-obj k8s-cm">
+          <h4><i class="fas fa-file-alt" style="margin-right:5px;"></i>ConfigMap</h4>
+          <p>Armazena configurações não-sensíveis (variáveis de ambiente, arquivos de config). Injetado nos Pods sem rebuildar a imagem.</p>
+        </div>
+        <div class="k8s-obj k8s-sec">
+          <h4><i class="fas fa-lock" style="margin-right:5px;"></i>Secret</h4>
+          <p>Como ConfigMap, mas para dados sensíveis (senhas, tokens, chaves de API). Armazenado codificado em base64 (não criptografado por padrão — use Vault em prod).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>Deployment para o modelo de inferência</div>
+      <p>O manifesto YAML do Deployment declara como o Kubernetes deve rodar seu modelo. Cada campo tem um propósito específico para garantir estabilidade e performance.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — deployment.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modelo-inferencia
+  labels:
+    app: modelo-inferencia
+spec:
+  replicas: <span class="num">3</span>                    <span class="cm"># 3 réplicas para alta disponibilidade</span>
+  selector:
+    matchLabels:
+      app: modelo-inferencia
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: <span class="num">1</span>               <span class="cm"># máximo 1 pod extra durante update</span>
+      maxUnavailable: <span class="num">0</span>         <span class="cm"># nunca derrubar pod antes de outro subir</span>
+  template:
+    metadata:
+      labels:
+        app: modelo-inferencia
+    spec:
+      containers:
+        - name: modelo
+          image: modelo-inferencia:<span class="num">1.0</span>
+          ports:
+            - containerPort: <span class="num">8000</span>
+          resources:
+            requests:
+              cpu: <span class="str">"250m"</span>          <span class="cm"># 0.25 CPU garantido</span>
+              memory: <span class="str">"256Mi"</span>      <span class="cm"># 256MB RAM garantido</span>
+            limits:
+              cpu: <span class="str">"500m"</span>          <span class="cm"># máximo 0.5 CPU</span>
+              memory: <span class="str">"512Mi"</span>      <span class="cm"># máximo 512MB RAM</span>
+          env:
+            - name: MODEL_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: modelo-config
+                  key: version
+          readinessProbe:          <span class="cm"># só recebe tráfego quando pronto</span>
+            httpGet:
+              path: /health
+              port: <span class="num">8000</span>
+            initialDelaySeconds: <span class="num">10</span>
+            periodSeconds: <span class="num">5</span>
+          livenessProbe:           <span class="cm"># reinicia se não responder</span>
+            httpGet:
+              path: /health
+              port: <span class="num">8000</span>
+            initialDelaySeconds: <span class="num">30</span>
+            periodSeconds: <span class="num">10</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>readinessProbe vs livenessProbe:</strong> a readiness sinaliza "este Pod está pronto para receber tráfego" — enquanto não passar, o Service não envia requisições para ele (crucial durante a inicialização do modelo). A liveness sinaliza "este Pod ainda está vivo" — se falhar repetidamente, o k8s mata e reinicia o container. Para modelos ML, o endpoint <code>/health</code> que verifica se o modelo carregou é essencial para ambos.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-network-wired"></i>Service e ConfigMap</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — service.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: modelo-inferencia-svc
+spec:
+  selector:
+    app: modelo-inferencia    <span class="cm"># aponta para pods com este label</span>
+  ports:
+    - port: <span class="num">80</span>               <span class="cm"># porta exposta pelo Service</span>
+      targetPort: <span class="num">8000</span>       <span class="cm"># porta do container</span>
+  type: LoadBalancer          <span class="cm"># em cloud: IP externo | em kind: NodePort</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — configmap.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modelo-config
+data:
+  version: <span class="str">"1.2.0"</span>
+  mlflow_tracking_uri: <span class="str">"http://mlflow-svc:5000"</span>
+  n_features: <span class="str">"10"</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: HPA + Rolling Update -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">HPA — Escalonamento Automático e Rolling Update sem Downtime</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-expand-arrows-alt"></i>HorizontalPodAutoscaler — escalar conforme a demanda</div>
+      <p>O HPA monitora métricas do cluster e ajusta automaticamente o número de réplicas do Deployment. Para modelos de ML, os casos de uso mais comuns são: escalar quando a CPU está alta (picos de inferência) ou quando uma métrica customizada do Prometheus ultrapassa um limiar.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — hpa.yaml baseado em CPU</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: modelo-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: modelo-inferencia
+  minReplicas: <span class="num">2</span>            <span class="cm"># mínimo 2 réplicas (sempre disponível)</span>
+  maxReplicas: <span class="num">10</span>           <span class="cm"># máximo 10 réplicas</span>
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: <span class="num">70</span>   <span class="cm"># escalar quando CPU média > 70%</span>
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: <span class="num">80</span>   <span class="cm"># escalar quando memória > 80%</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">YAML — hpa com métrica customizada do Prometheus</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Requer prometheus-adapter instalado no cluster</span>
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: modelo-hpa-custom
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: modelo-inferencia
+  minReplicas: <span class="num">2</span>
+  maxReplicas: <span class="num">10</span>
+  metrics:
+    - type: Pods
+      pods:
+        metric:
+          name: predicoes_por_segundo   <span class="cm"># métrica do Prometheus</span>
+        target:
+          type: AverageValue
+          averageValue: <span class="str">"50"</span>           <span class="cm"># escalar acima de 50 pred/s por pod</span></code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Como o HPA funciona:</strong> a cada 15 segundos, o HPA consulta as métricas. Se a CPU média das réplicas ultrapassar 70%, ele aumenta o número de réplicas (scale-out). Quando a carga diminui por um período configurável (padrão 5 minutos), reduz as réplicas (scale-in). O <code>minReplicas: 2</code> garante que nunca haverá menos de 2 réplicas — importante para alta disponibilidade.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>Rolling Update — atualizar o modelo sem derrubar o serviço</div>
+      <p>Quando você treina um novo modelo e quer colocá-lo em produção, o Kubernetes faz o Rolling Update: sobe novos Pods com a nova imagem enquanto mantém os antigos respondendo, e só remove os antigos quando os novos passam na readinessProbe.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — fluxo completo de atualização do modelo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># 1. Retreinar e gerar nova versão do modelo</span>
+python pipeline.py run  <span class="cm"># ou mlflow pipelines run</span>
+
+<span class="cm"># 2. Buildar nova imagem Docker com o modelo atualizado</span>
+docker build -t modelo-inferencia:<span class="num">1</span>.<span class="num">3</span>.<span class="num">0</span> .
+
+<span class="cm"># Em ambiente com registry (kind usa imagem local):</span>
+<span class="cm"># docker push meu-registry/modelo-inferencia:1.3.0</span>
+
+<span class="cm"># 3. Atualizar o Deployment com a nova imagem</span>
+kubectl set image deployment/modelo-inferencia \
+  modelo=modelo-inferencia:<span class="num">1</span>.<span class="num">3</span>.<span class="num">0</span>
+
+<span class="cm"># 4. Acompanhar o rollout em tempo real</span>
+kubectl rollout status deployment/modelo-inferencia
+
+<span class="cm"># 5. Verificar histórico de versões</span>
+kubectl rollout history deployment/modelo-inferencia
+
+<span class="cm"># 6. Rollback para versão anterior se algo der errado</span>
+kubectl rollout undo deployment/modelo-inferencia
+
+<span class="cm"># Rollback para versão específica</span>
+kubectl rollout undo deployment/modelo-inferencia \
+  --to-revision=<span class="num">2</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>A readinessProbe é o que garante zero downtime:</strong> com <code>maxUnavailable: 0</code> no Deployment, o Kubernetes nunca remove um Pod antigo antes que o novo passe na readinessProbe. Como nosso <code>/health</code> verifica que o modelo está carregado, o tráfego só vai para o novo Pod depois que o modelo inicializou completamente.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Comandos kubectl essenciais</div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td><code style="font-size:.78rem;">kubectl apply -f manifesto.yaml</code></td><td>Cria ou atualiza recursos declarados no YAML</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl get pods</code></td><td>Lista todos os Pods e seus status</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl get pods -w</code></td><td>Lista Pods em modo watch (atualiza em tempo real)</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl describe pod &lt;nome&gt;</code></td><td>Detalhes completos de um Pod (eventos, erros)</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl logs &lt;pod&gt; -f</code></td><td>Logs em tempo real de um Pod</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl exec -it &lt;pod&gt; -- bash</code></td><td>Terminal interativo dentro do container</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl port-forward svc/&lt;svc&gt; 8080:80</code></td><td>Redireciona porta local para o Service</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl scale deployment &lt;nome&gt; --replicas=5</code></td><td>Ajusta manualmente o número de réplicas</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl delete -f manifesto.yaml</code></td><td>Remove recursos declarados no YAML</td></tr>
+            <tr><td><code style="font-size:.78rem;">kubectl get hpa</code></td><td>Lista HPAs e mostra métricas atuais e target</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Kind + Prática</span></div>
+
+  <!-- AULA 3: kind setup + Prática -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Kind — Kubernetes Local e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-laptop-code"></i>kind — Kubernetes in Docker</div>
+      <p>O <strong>kind</strong> (Kubernetes in Docker) cria um cluster Kubernetes completo usando containers Docker como nodes. É a forma mais simples de ter um k8s local para desenvolvimento e aprendizado — sem precisar de VMs ou cloud.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — setup completo com kind</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Instalar kind e kubectl (macOS)</span>
+brew install kind kubectl
+
+<span class="cm"># Linux</span>
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+chmod +x ./kind && mv ./kind /usr/local/bin/kind
+
+<span class="cm"># Criar cluster com 1 control-plane e 2 workers</span>
+cat <<EOF | kind create cluster --name mlops --config=-
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
+EOF
+
+<span class="cm"># Verificar que o cluster está rodando</span>
+kubectl cluster-info --context kind-mlops
+kubectl get nodes
+
+<span class="cm"># Carregar imagem local para dentro do cluster kind</span>
+<span class="cm"># (kind não acessa o Docker registry local automaticamente)</span>
+kind load docker-image modelo-inferencia:<span class="num">1</span>.<span class="num">0</span> --name mlops</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-code"></i>Aplicar todos os manifestos</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — deploy completo no kind</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Criar namespace dedicado para o projeto</span>
+kubectl create namespace mlops
+
+<span class="cm"># Aplicar todos os manifestos</span>
+kubectl apply -f k8s/configmap.yaml  -n mlops
+kubectl apply -f k8s/deployment.yaml -n mlops
+kubectl apply -f k8s/service.yaml    -n mlops
+kubectl apply -f k8s/hpa.yaml        -n mlops
+
+<span class="cm"># Acompanhar o deploy</span>
+kubectl get pods -n mlops -w
+
+<span class="cm"># Quando todos estiverem Running, acessar a API</span>
+kubectl port-forward svc/modelo-inferencia-svc <span class="num">8080</span>:<span class="num">80</span> -n mlops
+
+<span class="cm"># Em outro terminal — testar</span>
+curl http://localhost:<span class="num">8080</span>/health
+curl -X POST http://localhost:<span class="num">8080</span>/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Deploy no Kubernetes Local</div>
+        <div class="secao-titulo">Do docker-compose ao cluster kind — com HPA e rolling update</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use a imagem Docker da Semana 8/9. Ao final, seu modelo deve estar rodando com 3 réplicas em um cluster kind, acessível via port-forward, com HPA configurado e um rolling update bem-sucedido demonstrado.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Criar cluster kind e carregar a imagem</div>
+      <p>Instale o kind e kubectl. Crie um cluster chamado <code>mlops</code> com 1 control-plane e 2 workers. Carregue a imagem <code>modelo-inferencia:1.0</code> para dentro do cluster com <code>kind load docker-image</code>. Verifique que os 3 nodes aparecem como <code>Ready</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>kind create cluster --name mlops
+kind load docker-image modelo-inferencia:<span class="num">1</span>.<span class="num">0</span> --name mlops
+kubectl get nodes   <span class="cm"># deve mostrar 1 control-plane + 2 workers</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Escrever e aplicar os manifestos</div>
+      <p>Crie a pasta <code>k8s/</code> com os arquivos <code>deployment.yaml</code>, <code>service.yaml</code> e <code>configmap.yaml</code>. O Deployment deve ter 3 réplicas, requests de 250m CPU e 256Mi de memória, e as probes de readiness e liveness apontando para <code>/health</code>. Aplique com <code>kubectl apply -f k8s/</code> e aguarde todos os Pods ficarem <code>Running</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Acessar a API via port-forward</div>
+      <p>Use <code>kubectl port-forward svc/modelo-inferencia-svc 8080:80</code> para acessar o Service localmente. Em outro terminal, faça um <code>GET /health</code> e um <code>POST /predict</code> com curl. Verifique nos logs de qual Pod a requisição foi atendida usando <code>kubectl logs</code>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>kubectl port-forward svc/modelo-inferencia-svc <span class="num">8080</span>:<span class="num">80</span> &
+curl http://localhost:<span class="num">8080</span>/health
+curl -X POST http://localhost:<span class="num">8080</span>/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span>
+
+<span class="cm"># Ver logs de todos os pods do deployment</span>
+kubectl logs -l app=modelo-inferencia --tail=<span class="num">5</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Configurar o HPA</div>
+      <p>Aplique o <code>hpa.yaml</code> com <code>minReplicas: 2</code>, <code>maxReplicas: 8</code> e target de CPU em 70%. Execute <code>kubectl get hpa</code> e observe as colunas <code>TARGETS</code> e <code>REPLICAS</code>. Escale manualmente para 1 réplica com <code>kubectl scale</code> e veja o HPA corrigir para 2 automaticamente.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>kubectl apply -f k8s/hpa.yaml
+kubectl get hpa -w
+
+<span class="cm"># Tentar escalar abaixo do mínimo</span>
+kubectl scale deployment/modelo-inferencia --replicas=<span class="num">1</span>
+kubectl get pods -w  <span class="cm"># HPA vai subir para 2 em ~30s</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Simular rolling update e rollback</div>
+      <p>Crie uma versão <code>1.1.0</code> da imagem (pode ser a mesma com tag diferente), carregue no kind com <code>kind load</code>, e execute o rolling update com <code>kubectl set image</code>. Acompanhe com <code>kubectl rollout status</code>. Enquanto o update acontece, faça requisições à API — confirme que não há interrupção. Depois, faça rollback para <code>1.0</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> <code>kubectl get pods</code> deve mostrar 3 pods <code>Running</code>. <code>kubectl get hpa</code> deve mostrar o HPA ativo. Uma requisição <code>POST /predict</code> via port-forward deve retornar predição. <code>kubectl rollout history</code> deve mostrar pelo menos 2 revisões.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 14</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-cubes"></i>
+        <strong>Objetos K8s</strong>
+        <p>Pod (menor unidade), Deployment (gerencia réplicas + rolling update), Service (expõe com load balancing), ConfigMap/Secret (configuração)</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-expand-arrows-alt"></i>
+        <strong>HPA</strong>
+        <p>Escalonamento automático por CPU, memória ou métricas customizadas. minReplicas garante disponibilidade. maxReplicas controla custo</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>Rolling Update</strong>
+        <p>maxUnavailable=0 garante zero downtime. readinessProbe controla quando o novo Pod recebe tráfego. kubectl rollout undo para rollback imediato</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-15-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 15 — Processamento Assíncrono com Celery e RabbitMQ</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

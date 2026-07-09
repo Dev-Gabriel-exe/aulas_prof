@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 11 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* CONTEÚDO */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:#4ade80;}.icon-list li i.warn{color:#fbbf24;}.icon-list li i.no{color:#f87171;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* drift cards */
+.drift-tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.drift-card{border-radius:12px;padding:1.1rem;}
+.drift-card h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;}
+.drift-card p{font-size:.77rem;color:var(--text-muted);line-height:1.5;}
+.drift-card .ex{font-size:.73rem;margin-top:.4rem;font-style:italic;}
+.drift-data{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);}
+.drift-data h4{color:#60a5fa;}
+.drift-concept{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);}
+.drift-concept h4{color:#fbbf24;}
+.drift-pred{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);}
+.drift-pred h4{color:#f87171;}
+
+/* métricas drift */
+.metric-row{display:flex;align-items:center;gap:12px;padding:.65rem .85rem;border-radius:8px;background:var(--card-bg);border:1px solid var(--card-border);margin-bottom:.45rem;}
+.metric-nome{font-size:.82rem;color:var(--text-primary);flex:1;font-weight:500;}
+.metric-desc{font-size:.75rem;color:var(--text-muted);flex:2;}
+.metric-uso{font-size:.68rem;padding:2px 7px;border-radius:5px;font-weight:600;background:rgba(167,139,250,.1);color:var(--purple-400);border:1px solid rgba(167,139,250,.18);}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+  .drift-tipos{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">11</div>
+    <h1 class="capa-titulo">Monitoramento<br>em Produção —<br><em>Data Drift</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Detectar degradação antes do usuário perceber</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-ghost"></i></div><span>O modelo fantasma — degradação silenciosa em produção</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-wave-square"></i></div><span>Data drift, concept drift e prediction drift — as diferenças</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-calculator"></i></div><span>Métricas estatísticas de drift — KS, PSI, chi-quadrado</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-eye"></i></div><span>Evidently AI — relatórios e testes automatizados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline de monitoramento com alertas automáticos</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir um pipeline de monitoramento com Evidently AI que detecta drift automaticamente e gera relatório HTML comparando dados de treino com dados de produção.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 1 — ciclo de vida: monitoramento é a fase 4</li>
+        <li>Sem. 3 — DVC: dados de treino versionados (referência de comparação)</li>
+        <li>Sem. 5 — Registry: rollback quando drift for detectado</li>
+        <li>Sem. 12 — Grafana: visualizar métricas de drift em tempo real</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-toolbox"></i>Ferramentas desta semana</div>
+      <ul class="info-lista">
+        <li><strong>Evidently AI</strong> — relatórios e testes de drift open-source</li>
+        <li><strong>scipy.stats</strong> — testes estatísticos (KS, chi-quadrado)</li>
+        <li><strong>pandas</strong> — manipulação dos dados de comparação</li>
+        <li>Próxima: Prometheus + Grafana para dashboards em tempo real</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install evidently</code></li>
+        <li>Dataset de treino salvo (referência)</li>
+        <li>Dataset de produção simulado (com drift intencional)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-10-mlops.html"><i class="fas fa-arrow-left"></i> Semana 10 — BentoML e Triton</a>
+
+  <!-- AULA 1: O que é drift e por que importa -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">O que é Drift — Tipos, Causas e Métricas Estatísticas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-ghost"></i>O modelo fantasma — o problema que o monitoramento resolve</div>
+      <p>Você colocou o modelo em produção. As métricas de treino eram excelentes. Todos estavam satisfeitos. Seis meses depois, silenciosamente, o modelo passou a errar muito mais — mas como ninguém monitorava, ninguém sabia.</p>
+      <p>Esse é o <strong>modelo fantasma</strong>: tecnicamente vivo, servindo predições, mas produzindo resultados cada vez piores enquanto o mundo ao redor muda.</p>
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Por que acontece:</strong> modelos aprendem padrões dos dados de treino. Quando os dados do mundo real mudam — comportamento de usuários, sazonalidade, mudanças econômicas, novos produtos — o modelo continua usando o padrão antigo. A distância entre o que o modelo espera e o que chegam se chama <strong>drift</strong>.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wave-square"></i>Os três tipos de drift</div>
+
+      <div class="drift-tipos">
+        <div class="drift-card drift-data">
+          <h4><i class="fas fa-database" style="margin-right:6px;"></i>Data Drift</h4>
+          <p>A distribuição dos dados de entrada (features) muda em relação aos dados de treino. O modelo não foi "avisado" dessas mudanças.</p>
+          <p class="ex">Ex.: sistema de crédito treinado antes de uma crise — o perfil de renda dos clientes muda drasticamente.</p>
+        </div>
+        <div class="drift-card drift-concept">
+          <h4><i class="fas fa-lightbulb" style="margin-right:6px;"></i>Concept Drift</h4>
+          <p>A relação entre features e target muda. Os dados de entrada podem parecer normais, mas o que eles significam mudou.</p>
+          <p class="ex">Ex.: modelo de detecção de spam — atacantes aprendem a contornar os padrões e o comportamento de spam muda.</p>
+        </div>
+        <div class="drift-card drift-pred">
+          <h4><i class="fas fa-chart-pie" style="margin-right:6px;"></i>Prediction Drift</h4>
+          <p>A distribuição das predições do modelo muda. Sintoma de data drift ou concept drift — mais fácil de detectar quando não há labels reais.</p>
+          <p class="ex">Ex.: recomendação de produtos — as predições passam a concentrar em poucos itens, sem variedade.</p>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Qual monitorar primeiro?</strong> Sempre comece com data drift e prediction drift — são detectáveis sem precisar de labels reais (que muitas vezes só chegam dias ou semanas depois). Concept drift é mais difícil de detectar e geralmente requer comparação de métricas do modelo ao longo do tempo com dados rotulados.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calculator"></i>Métricas estatísticas para detectar drift</div>
+      <p>A detecção de drift é essencialmente um problema de comparação de distribuições. Os testes estatísticos abaixo quantificam o quanto a distribuição atual diverge da distribuição de referência (treino).</p>
+
+      <div class="metric-row">
+        <span class="metric-nome">Kolmogorov-Smirnov (KS)</span>
+        <span class="metric-desc">Compara distribuições contínuas. Mede a maior diferença entre as CDFs das duas amostras.</span>
+        <span class="metric-uso">Numéricas</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-nome">Population Stability Index (PSI)</span>
+        <span class="metric-desc">Mede quanto a distribuição de uma variável mudou. PSI &lt; 0.1 = estável; 0.1–0.2 = monitorar; &gt; 0.2 = drift significativo.</span>
+        <span class="metric-uso">Numéricas</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-nome">Chi-Quadrado (χ²)</span>
+        <span class="metric-desc">Testa se a distribuição de frequências de uma variável categórica mudou significativamente.</span>
+        <span class="metric-uso">Categóricas</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-nome">Jensen-Shannon Divergence</span>
+        <span class="metric-desc">Versão simétrica da divergência de Kullback-Leibler. Valor entre 0 (igual) e 1 (totalmente diferente).</span>
+        <span class="metric-uso">Ambas</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-nome">Wasserstein Distance</span>
+        <span class="metric-desc">Mede o "custo de transporte" para transformar uma distribuição na outra. Intuitiva e robusta a outliers.</span>
+        <span class="metric-uso">Numéricas</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — calculando KS e PSI manualmente</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> scipy <span class="kw">import</span> stats
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">calcular_psi</span>(referencia, producao, n_bins=<span class="num">10</span>):
+    <span class="cm">"""PSI: < 0.1 estável | 0.1-0.2 monitorar | > 0.2 drift"""</span>
+    bins = np.percentile(referencia, np.linspace(<span class="num">0</span>, <span class="num">100</span>, n_bins + <span class="num">1</span>))
+    ref_freq = np.histogram(referencia, bins=bins)[<span class="num">0</span>] / <span class="fn">len</span>(referencia)
+    prod_freq = np.histogram(producao, bins=bins)[<span class="num">0</span>] / <span class="fn">len</span>(producao)
+    <span class="cm"># Evitar log(0)</span>
+    ref_freq  = np.where(ref_freq  == <span class="num">0</span>, <span class="num">0.0001</span>, ref_freq)
+    prod_freq = np.where(prod_freq == <span class="num">0</span>, <span class="num">0.0001</span>, prod_freq)
+    psi = np.sum((prod_freq - ref_freq) * np.log(prod_freq / ref_freq))
+    <span class="kw">return</span> psi
+
+<span class="cm"># Simular dados com drift</span>
+treino    = np.random.normal(<span class="num">0</span>,   <span class="num">1</span>, <span class="num">1000</span>)   <span class="cm"># referência</span>
+producao  = np.random.normal(<span class="num">0.8</span>, <span class="num">1</span>, <span class="num">500</span>)    <span class="cm"># com drift</span>
+
+ks_stat, ks_pval = stats.ks_2samp(treino, producao)
+psi               = calcular_psi(treino, producao)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"KS statistic : {ks_stat:.4f} (p-value: {ks_pval:.4f})"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"PSI          : {psi:.4f} → {'DRIFT' if psi > 0.2 else 'OK'}"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- AULA 2: Evidently AI -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Evidently AI — Relatórios, Testes e Alertas Automáticos</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-eye"></i>O que é Evidently AI</div>
+      <p>Evidently AI é uma biblioteca open-source para monitoramento de modelos de ML. Ela automatiza a comparação entre um dataset de referência (treino) e um dataset atual (produção), gerando relatórios visuais em HTML e resultados de testes estruturados em JSON.</p>
+      <p>Dois modos principais:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-file-alt"></i><span><strong>Reports (Relatórios):</strong> análise exploratória — gera HTML com distribuições, métricas de drift e qualidade dos dados. Ideal para auditoria manual periódica.</span></li>
+        <li><i class="fas fa-vial"></i><span><strong>Test Suites (Suítes de Testes):</strong> testes automatizáveis com critério de passou/falhou. Ideal para CI/CD — se o drift ultrapassar o limiar, o pipeline falha e dispara alerta.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Gerando relatórios com Evidently</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — relatório de drift de dados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> evidently.report <span class="kw">import</span> Report
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> DataDriftPreset, DataQualityPreset
+
+<span class="cm"># Simular dados de treino (referência)</span>
+np.random.seed(<span class="num">42</span>)
+n = <span class="num">1000</span>
+treino = pd.DataFrame({
+    <span class="str">"feature_1"</span>: np.random.normal(<span class="num">0</span>, <span class="num">1</span>, n),
+    <span class="str">"feature_2"</span>: np.random.normal(<span class="num">5</span>, <span class="num">2</span>, n),
+    <span class="str">"categoria"</span>: np.random.choice([<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>], n),
+    <span class="str">"target"</span>   : np.random.randint(<span class="num">0</span>, <span class="num">2</span>, n),
+})
+
+<span class="cm"># Simular dados de produção COM drift</span>
+producao = pd.DataFrame({
+    <span class="str">"feature_1"</span>: np.random.normal(<span class="num">1.5</span>, <span class="num">1.5</span>, n // <span class="num">2</span>),  <span class="cm"># drift na média e desvio</span>
+    <span class="str">"feature_2"</span>: np.random.normal(<span class="num">5</span>,   <span class="num">2</span>,   n // <span class="num">2</span>),  <span class="cm"># sem drift</span>
+    <span class="str">"categoria"</span>: np.random.choice([<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>, <span class="str">"D"</span>], n // <span class="num">2</span>),  <span class="cm"># nova categoria D</span>
+    <span class="str">"target"</span>   : np.random.randint(<span class="num">0</span>, <span class="num">2</span>, n // <span class="num">2</span>),
+})
+
+<span class="cm"># Criar e executar o relatório</span>
+relatorio = Report(metrics=[
+    DataDriftPreset(),    <span class="cm"># drift por feature + resumo geral</span>
+    DataQualityPreset(),  <span class="cm"># nulos, duplicatas, outliers</span>
+])
+
+relatorio.run(reference_data=treino, current_data=producao)
+
+<span class="cm"># Salvar como HTML interativo</span>
+relatorio.save_html(<span class="str">"reports/drift_report.html"</span>)
+<span class="fn">print</span>(<span class="str">"Relatório salvo em reports/drift_report.html"</span>)
+
+<span class="cm"># Também disponível como dicionário Python</span>
+resultado = relatorio.as_dict()
+n_drift = resultado[<span class="str">"metrics"</span>][<span class="num">0</span>][<span class="str">"result"</span>][<span class="str">"number_of_drifted_columns"</span>]
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Features com drift detectado: {n_drift}"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-vial"></i>Test Suites — monitoramento automatizável com critérios</div>
+      <p>Enquanto os Reports são para análise humana, as Test Suites são para automação — cada teste tem um critério de aprovação e retorna True/False. Isso permite integrar no pipeline de CI/CD ou rodar como job agendado.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — test suite de monitoramento</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> evidently.test_suite <span class="kw">import</span> TestSuite
+<span class="kw">from</span> evidently.tests <span class="kw">import</span> (
+    TestNumberOfDriftedColumns,
+    TestShareOfDriftedColumns,
+    TestColumnDrift,
+    TestNumberOfMissingValues,
+)
+
+suite = TestSuite(tests=[
+    <span class="cm"># Máximo de 1 feature com drift</span>
+    TestNumberOfDriftedColumns(lt=<span class="num">2</span>),
+
+    <span class="cm"># No máximo 30% das features com drift</span>
+    TestShareOfDriftedColumns(lt=<span class="num">0.3</span>),
+
+    <span class="cm"># feature_1 especificamente não pode ter drift</span>
+    TestColumnDrift(column_name=<span class="str">"feature_1"</span>, stattest=<span class="str">"ks"</span>),
+
+    <span class="cm"># Nenhum valor nulo nos dados de produção</span>
+    TestNumberOfMissingValues(lt=<span class="num">10</span>),
+])
+
+suite.run(reference_data=treino, current_data=producao)
+
+<span class="cm"># Verificar se passou em todos os testes</span>
+resultado = suite.as_dict()
+passou = <span class="fn">all</span>(
+    test[<span class="str">"status"</span>] == <span class="str">"SUCCESS"</span>
+    <span class="kw">for</span> test <span class="kw">in</span> resultado[<span class="str">"tests"</span>]
+)
+
+<span class="kw">if</span> <span class="kw">not</span> passou:
+    <span class="fn">print</span>(<span class="str">"⚠️  ALERTA: drift detectado — considerar retreinamento"</span>)
+    suite.save_html(<span class="str">"reports/drift_alerta.html"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"✅ Dados dentro dos limites esperados"</span>)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Integração com CI/CD:</strong> esse script pode ser executado como um job agendado (cron diário, por exemplo). Se <code>passou == False</code>, o script pode: (1) salvar o relatório, (2) enviar email/Slack de alerta, (3) abrir uma issue no GitHub automaticamente, e (4) acionar o retreinamento do modelo via pipeline DVC ou MLflow.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sliders-h"></i>Monitorando predições sem labels reais</div>
+      <p>Em muitos cenários reais, os labels verdadeiros chegam muito tempo depois das predições (ex.: inadimplência de crédito demora meses para ser confirmada). O monitoramento de <strong>prediction drift</strong> detecta anomalias sem depender dos labels.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — monitorar distribuição das predições</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pickle
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> evidently.report <span class="kw">import</span> Report
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> DataDriftPreset
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+<span class="cm"># Dados de treino — predições de referência</span>
+X_treino = treino.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>).select_dtypes(<span class="str">"number"</span>)
+pred_treino = pd.DataFrame({
+    <span class="str">"prediction"</span>: model.predict(X_treino),
+    <span class="str">"proba_1"</span>: model.predict_proba(X_treino)[:, <span class="num">1</span>]
+})
+
+<span class="cm"># Dados de produção — predições atuais</span>
+X_prod = producao.drop(<span class="str">"target"</span>, axis=<span class="num">1</span>).select_dtypes(<span class="str">"number"</span>)
+pred_prod = pd.DataFrame({
+    <span class="str">"prediction"</span>: model.predict(X_prod),
+    <span class="str">"proba_1"</span>: model.predict_proba(X_prod)[:, <span class="num">1</span>]
+})
+
+<span class="cm"># Comparar distribuição das predições</span>
+rel_pred = Report(metrics=[DataDriftPreset()])
+rel_pred.run(reference_data=pred_treino, current_data=pred_prod)
+rel_pred.save_html(<span class="str">"reports/prediction_drift.html"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Pipeline de Monitoramento + Prática</span></div>
+
+  <!-- AULA 3: Pipeline completo + Prática -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline de Monitoramento Automatizado e Atividade Prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-robot"></i>Pipeline de monitoramento end-to-end</div>
+      <p>Em produção, o monitoramento não é executado manualmente. É um job agendado que roda periodicamente, coleta os dados de produção do período, compara com a referência e toma ações automáticas.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — monitor.py — script de monitoramento completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">"""
+Pipeline de monitoramento de drift.
+Execute periodicamente (ex: cron diário).
+"""</span>
+<span class="kw">import</span> os, json, logging
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> evidently.test_suite <span class="kw">import</span> TestSuite
+<span class="kw">from</span> evidently.tests <span class="kw">import</span> (
+    TestNumberOfDriftedColumns,
+    TestShareOfDriftedColumns,
+    TestNumberOfMissingValues,
+)
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(<span class="str">"monitor"</span>)
+
+<span class="cm"># ── Configuração ──────────────────────────────────────────────────</span>
+LIMIAR_DRIFT_COLUNAS   = <span class="num">2</span>     <span class="cm"># máximo de features com drift</span>
+LIMIAR_DRIFT_SHARE     = <span class="num">0.3</span>  <span class="cm"># máximo de 30% das features</span>
+LIMIAR_VALORES_NULOS   = <span class="num">50</span>   <span class="cm"># máximo de valores nulos</span>
+PASTA_RELATORIOS       = <span class="str">"reports/"</span>
+os.makedirs(PASTA_RELATORIOS, exist_ok=<span class="kw">True</span>)
+
+<span class="kw">def</span> <span class="fn">carregar_dados_producao</span>():
+    <span class="cm">"""Aqui você conectaria ao banco/log real de produção."""</span>
+    <span class="kw">return</span> pd.read_csv(<span class="str">"data/producao_hoje.csv"</span>)
+
+<span class="kw">def</span> <span class="fn">carregar_referencia</span>():
+    <span class="kw">return</span> pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+
+<span class="kw">def</span> <span class="fn">executar_monitoramento</span>():
+    log.info(<span class="str">"Iniciando monitoramento de drift..."</span>)
+
+    referencia = carregar_referencia()
+    producao   = carregar_dados_producao()
+
+    suite = TestSuite(tests=[
+        TestNumberOfDriftedColumns(lt=LIMIAR_DRIFT_COLUNAS),
+        TestShareOfDriftedColumns(lt=LIMIAR_DRIFT_SHARE),
+        TestNumberOfMissingValues(lt=LIMIAR_VALORES_NULOS),
+    ])
+    suite.run(reference_data=referencia, current_data=producao)
+
+    resultado = suite.as_dict()
+    passou    = <span class="fn">all</span>(t[<span class="str">"status"</span>] == <span class="str">"SUCCESS"</span> <span class="kw">for</span> t <span class="kw">in</span> resultado[<span class="str">"tests"</span>])
+    ts        = datetime.now().strftime(<span class="str">"%Y%m%d_%H%M"</span>)
+
+    <span class="cm"># Salvar relatório HTML sempre</span>
+    html_path = <span class="fn">f</span><span class="str">"{PASTA_RELATORIOS}drift_{ts}.html"</span>
+    suite.save_html(html_path)
+
+    <span class="cm"># Salvar resultado JSON para histórico</span>
+    json_path = <span class="fn">f</span><span class="str">"{PASTA_RELATORIOS}drift_{ts}.json"</span>
+    <span class="kw">with</span> <span class="fn">open</span>(json_path, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        json.dump({<span class="str">"ts"</span>: ts, <span class="str">"passou"</span>: passou, <span class="str">"tests"</span>: resultado[<span class="str">"tests"</span>]}, f, indent=<span class="num">2</span>)
+
+    <span class="kw">if</span> passou:
+        log.info(<span class="str">"✅ Todos os testes passaram. Modelo estável."</span>)
+    <span class="kw">else</span>:
+        log.warning(<span class="str">"⚠️  Drift detectado! Relatório: %s"</span>, html_path)
+        <span class="fn">disparar_alerta</span>(html_path, resultado[<span class="str">"tests"</span>])
+
+    <span class="kw">return</span> passou
+
+<span class="kw">def</span> <span class="fn">disparar_alerta</span>(html_path, testes):
+    <span class="cm"># Na prática: enviar email, mensagem Slack, abrir issue no GitHub</span>
+    falhas = [t[<span class="str">"name"</span>] <span class="kw">for</span> t <span class="kw">in</span> testes <span class="kw">if</span> t[<span class="str">"status"</span>] != <span class="str">"SUCCESS"</span>]
+    log.error(<span class="str">"Testes com falha: %s"</span>, falhas)
+    log.error(<span class="str">"Relatório completo em: %s"</span>, html_path)
+    <span class="cm"># Sugestão: acionar retreinamento via DVC / MLflow Pipeline</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    executar_monitoramento()</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-calendar-alt"></i>Agendando o monitoramento — cron e GitHub Actions</div>
+
+      <div class="grid-2">
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Bash — cron job (Linux/Mac)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+            <pre><code><span class="cm"># Editar crontab</span>
+crontab -e
+
+<span class="cm"># Rodar às 06:00 todo dia</span>
+<span class="num">0</span> <span class="num">6</span> * * * cd /app && \
+  .venv/bin/python monitor.py \
+  >> logs/monitor.log <span class="num">2</span>&<span class="num">1</span></code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">YAML — GitHub Actions agendado</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+            <pre><code>name: Monitoramento Diário
+on:
+  schedule:
+    <span class="cm"># Todo dia às 06:00 UTC</span>
+    - cron: <span class="str">"0 6 * * *"</span>
+  workflow_dispatch:  <span class="cm"># disparo manual</span>
+
+jobs:
+  monitorar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: <span class="str">"3.11"</span>
+      - run: pip install -r requirements.txt
+      - run: python monitor.py</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Pipeline de Monitoramento</div>
+        <div class="secao-titulo">Detectar drift, gerar relatório e simular alerta</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o dataset da Semana 3 como referência (treino). Você vai gerar dois datasets de produção simulados: um sem drift e um com drift intencional — e verificar que o Evidently detecta apenas o segundo.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Instalar Evidently e criar datasets simulados</div>
+      <p>Instale o Evidently. Carregue o dataset de treino como referência. Crie dois datasets de produção: <code>prod_ok.csv</code> (mesma distribuição do treino) e <code>prod_drift.csv</code> (com feature_1 tendo média deslocada em +2 desvios padrão). Salve os três como CSV.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — criar_dados.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+
+np.random.seed(<span class="num">42</span>)
+X, y = make_classification(n_samples=<span class="num">1000</span>, n_features=<span class="num">10</span>, random_state=<span class="num">42</span>)
+cols = [<span class="fn">f</span><span class="str">"f{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]
+treino = pd.DataFrame(X, columns=cols)
+treino[<span class="str">"target"</span>] = y
+treino.to_csv(<span class="str">"data/raw/dataset.csv"</span>, index=<span class="kw">False</span>)
+
+<span class="cm"># Sem drift — mesma distribuição</span>
+X2, y2 = make_classification(n_samples=<span class="num">500</span>, n_features=<span class="num">10</span>, random_state=<span class="num">99</span>)
+prod_ok = pd.DataFrame(X2, columns=cols)
+prod_ok[<span class="str">"target"</span>] = y2
+prod_ok.to_csv(<span class="str">"data/prod_ok.csv"</span>, index=<span class="kw">False</span>)
+
+<span class="cm"># Com drift — feature f0 deslocada</span>
+prod_drift = prod_ok.copy()
+prod_drift[<span class="str">"f0"</span>] = prod_drift[<span class="str">"f0"</span>] + <span class="num">2.0</span>
+prod_drift.to_csv(<span class="str">"data/prod_drift.csv"</span>, index=<span class="kw">False</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Gerar relatórios HTML com Evidently</div>
+      <p>Crie um Report com <code>DataDriftPreset()</code> para cada dataset de produção (ok e drift). Salve os dois relatórios HTML em <code>reports/</code>. Abra os dois no navegador e compare os resultados — observe quais features aparecem como "drifted" no relatório com drift e por quê.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> os, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> evidently.report <span class="kw">import</span> Report
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> DataDriftPreset
+
+os.makedirs(<span class="str">"reports"</span>, exist_ok=<span class="kw">True</span>)
+ref = pd.read_csv(<span class="str">"data/raw/dataset.csv"</span>)
+
+<span class="kw">for</span> nome, path <span class="kw">in</span> [(<span class="str">"ok"</span>, <span class="str">"data/prod_ok.csv"</span>), (<span class="str">"drift"</span>, <span class="str">"data/prod_drift.csv"</span>)]:
+    prod = pd.read_csv(path)
+    r = Report(metrics=[DataDriftPreset()])
+    r.run(reference_data=ref, current_data=prod)
+    r.save_html(<span class="fn">f</span><span class="str">"reports/relatorio_{nome}.html"</span>)
+    res = r.as_dict()[<span class="str">"metrics"</span>][<span class="num">0</span>][<span class="str">"result"</span>]
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{nome}: {res['number_of_drifted_columns']} features com drift"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Test Suite com critérios de alerta</div>
+      <p>Crie uma Test Suite com critérios: máximo 1 feature com drift e máximo 20% das features com drift. Rode contra os dois datasets. O resultado de <code>prod_ok</code> deve passar em todos os testes. O de <code>prod_drift</code> deve falhar em pelo menos um. Imprima qual teste falhou.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> evidently.test_suite <span class="kw">import</span> TestSuite
+<span class="kw">from</span> evidently.tests <span class="kw">import</span> TestNumberOfDriftedColumns, TestShareOfDriftedColumns
+
+<span class="kw">for</span> nome, path <span class="kw">in</span> [(<span class="str">"ok"</span>, <span class="str">"data/prod_ok.csv"</span>), (<span class="str">"drift"</span>, <span class="str">"data/prod_drift.csv"</span>)]:
+    prod = pd.read_csv(path)
+    suite = TestSuite(tests=[
+        TestNumberOfDriftedColumns(lt=<span class="num">2</span>),
+        TestShareOfDriftedColumns(lt=<span class="num">0.2</span>),
+    ])
+    suite.run(reference_data=ref, current_data=prod)
+    res = suite.as_dict()
+    passou = <span class="fn">all</span>(t[<span class="str">"status"</span>] == <span class="str">"SUCCESS"</span> <span class="kw">for</span> t <span class="kw">in</span> res[<span class="str">"tests"</span>])
+    icon = <span class="str">"✅"</span> <span class="kw">if</span> passou <span class="kw">else</span> <span class="str">"⚠️"</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{icon} {nome}: passou={passou}"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> passou:
+        falhas = [t[<span class="str">"name"</span>] <span class="kw">for</span> t <span class="kw">in</span> res[<span class="str">"tests"</span>] <span class="kw">if</span> t[<span class="str">"status"</span>] != <span class="str">"SUCCESS"</span>]
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"  Falhas: {falhas}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Monitor script com histórico JSON</div>
+      <p>Adapte o <code>monitor.py</code> da aula para ler <code>data/prod_drift.csv</code> como dado de produção. Execute-o e verifique que o relatório HTML foi salvo em <code>reports/</code> e o JSON com os resultados dos testes foi gerado com timestamp. Execute uma segunda vez para ter dois arquivos de histórico.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: calcular KS e PSI manualmente e comparar com Evidently</div>
+      <p>Usando as funções <code>calcular_psi</code> e <code>stats.ks_2samp</code> da Aula 1, calcule o KS e PSI da feature <code>f0</code> nos datasets <code>prod_ok</code> e <code>prod_drift</code>. Compare os valores com o que o Evidently detectou para a mesma feature no relatório HTML. Os resultados devem ser consistentes — ambos apontando drift em <code>prod_drift</code> e ausência em <code>prod_ok</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> você deve ter dois relatórios HTML em <code>reports/</code> (um mostrando estabilidade, outro apontando drift na feature f0), e a Test Suite deve retornar <code>passou=True</code> para <code>prod_ok</code> e <code>passou=False</code> para <code>prod_drift</code> com o nome do teste que falhou impresso no console.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 11</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-wave-square"></i>
+        <strong>Tipos de Drift</strong>
+        <p>Data drift (features mudam), concept drift (relação feature-target muda), prediction drift (distribuição das predições muda). Cada um com sintomas e estratégias distintas</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-calculator"></i>
+        <strong>Métricas Estatísticas</strong>
+        <p>KS para distribuições contínuas. PSI com limiares claros (0.1/0.2). Chi-quadrado para categóricas. Evidently aplica automaticamente o mais adequado por coluna</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-eye"></i>
+        <strong>Evidently AI</strong>
+        <p>Reports para análise humana em HTML. Test Suites para automação com critérios passou/falhou. Integra em cron, GitHub Actions ou qualquer pipeline CI/CD</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-12-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 12 — Dashboards de Monitoramento com Prometheus e Grafana</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

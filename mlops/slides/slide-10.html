@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 10 — MLOps · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple-950:#1a0a2e;--purple-900:#2e1065;--purple-800:#4c1d95;
+  --purple-700:#6d28d9;--purple-500:#8b5cf6;--purple-400:#a78bfa;--purple-300:#c4b5fd;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(167,139,250,.06);
+  --code-bg:#0d0520;--code-border:rgba(167,139,250,.22);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--purple-950);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--purple-800);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--purple-900);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--purple-700);top:40%;left:40%;opacity:.15;}
+
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(167,139,250,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--purple-400);border:1px solid rgba(167,139,250,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--purple-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(167,139,250,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--purple-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--purple-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(167,139,250,.18);color:var(--purple-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(167,139,250,.05);border-left:3px solid var(--purple-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--purple-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ──────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(167,139,250,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(167,139,250,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--purple-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(167,139,250,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(167,139,250,.07);border-left:3px solid var(--purple-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--purple-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(167,139,250,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--purple-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(167,139,250,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(167,139,250,.04);}
+
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(167,139,250,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--purple-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#ddd6fe;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}.var{color:#6ee7b7;}.flag{color:#fdba74;}.dec{color:#fdba74;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--purple-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(167,139,250,.12);color:var(--purple-400);border:1px solid rgba(167,139,250,.2);}
+
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-green{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);font-size:.86rem;color:rgba(134,239,172,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-green i{color:#4ade80;flex-shrink:0;margin-top:2px;}
+
+/* comparativo FastAPI vs BentoML */
+.comp-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.comp-card h4{font-size:.82rem;font-weight:700;color:var(--purple-300);margin-bottom:.6rem;display:flex;align-items:center;gap:8px;}
+.comp-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.comp-card ul li{font-size:.8rem;color:var(--text-secondary);padding-left:14px;position:relative;line-height:1.5;}
+.comp-card ul li::before{content:'→';position:absolute;left:0;color:var(--purple-500);font-size:.65rem;top:3px;}
+
+/* throughput visual */
+.throughput-bar{display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0;}
+.t-row{display:flex;align-items:center;gap:10px;}
+.t-label{font-size:.78rem;color:var(--text-secondary);width:160px;flex-shrink:0;}
+.t-bar-wrap{flex:1;height:18px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.t-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple-700),var(--purple-400));}
+.t-val{font-size:.75rem;color:var(--purple-400);font-family:'JetBrains Mono',monospace;width:80px;text-align:right;flex-shrink:0;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--purple-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:.5rem 1rem;color:var(--purple-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(167,139,250,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--purple-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--purple-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--purple-400);}
+
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(167,139,250,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+.nav-anterior{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);text-decoration:none;padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:2rem;transition:color .2s,border-color .2s;}
+.nav-anterior:hover{color:var(--purple-400);border-color:rgba(167,139,250,.2);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>MLOps · Tecnólogo · 3° Período</div>
+    <div class="semana-num">10</div>
+    <h1 class="capa-titulo">Frameworks de<br><em>Serving:</em> BentoML<br>e Triton</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Além do FastAPI — serving especializado</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Quando FastAPI não é suficiente — limites de escala</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-box-open"></i></div><span>BentoML — empacotamento, runners e deploy automático</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Batching dinâmico — throughput vs latência</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-server"></i></div><span>Triton Inference Server — GPU, multi-modelo e backends</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Comparativo de performance e quando usar cada framework</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Deploy de modelo com BentoML: empacotar, servir localmente e comparar throughput com a API FastAPI da Semana 9.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Por que ir além do FastAPI?</div>
+      <ul class="info-lista">
+        <li>FastAPI: excelente para APIs gerais com inferência simples</li>
+        <li>BentoML: empacotamento padronizado + batching + deploy cloud</li>
+        <li>Triton: otimizado para GPU, múltiplos modelos simultâneos</li>
+        <li>A escolha depende do volume, latência e infraestrutura</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com semanas anteriores</div>
+      <ul class="info-lista">
+        <li>Sem. 5: modelo no Registry — BentoML integra nativamente</li>
+        <li>Sem. 8: Docker — BentoML containeriza automaticamente</li>
+        <li>Sem. 9: FastAPI — base de comparação desta semana</li>
+        <li>Sem. 14: Kubernetes — onde BentoML/Triton rodam em prod</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup desta semana</div>
+      <ul class="info-lista">
+        <li><code style="font-size:.8rem;">pip install bentoml</code></li>
+        <li>Modelo treinado salvo (pkl ou via MLflow)</li>
+        <li>Triton: apenas conceitual + demo — requer GPU para produção</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<main class="conteudo">
+
+  <a class="nav-anterior" href="semana-09-mlops.html"><i class="fas fa-arrow-left"></i> Semana 9 — FastAPI</a>
+
+  <!-- ── AULA 1: Limites do FastAPI + BentoML intro ─────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Quando FastAPI Não Basta — e o que é BentoML</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Os limites do FastAPI para serving de ML em escala</div>
+      <p>O FastAPI que construímos na Semana 9 é sólido e serve bem a maioria dos casos — até o momento em que a escala aumenta. Quando o volume de requisições cresce, começam a aparecer problemas que o FastAPI por si só não resolve.</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-clock"></i><span><strong>Sem batching dinâmico:</strong> cada requisição chama <code style="font-size:.83rem;">model.predict()</code> individualmente. Se chegarem 100 requisições simultâneas, o modelo é chamado 100 vezes — mesmo que processar um batch de 100 de uma vez fosse muito mais eficiente.</span></li>
+        <li><i class="fas fa-microchip"></i><span><strong>Sem otimização de GPU:</strong> o FastAPI não tem mecanismo nativo para aproveitar GPU de forma eficiente, gerenciar filas de inferência ou fazer pin de memória entre requisições.</span></li>
+        <li><i class="fas fa-box"></i><span><strong>Empacotamento manual:</strong> empacotar o modelo + código + dependências + Dockerfile requer esforço manual a cada novo modelo. Não há padronização de como salvar, versionar e servir.</span></li>
+        <li><i class="fas fa-server"></i><span><strong>Sem suporte nativo a múltiplos modelos:</strong> servir um pipeline com preprocessador + modelo principal + pós-processador exige código de orquestração manual.</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>A regra de ouro:</strong> FastAPI é a escolha certa para a maioria dos times começando, ou quando a lógica de negócio é complexa e você precisa de controle total. BentoML e Triton fazem sentido quando o throughput e a eficiência de inferência passam a ser gargalo.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-box-open"></i>O que é BentoML</div>
+      <p>BentoML é um framework de serving especializado para modelos de ML. O nome vem de "Bento" — a marmita japonesa que tem todos os componentes em compartimentos separados, organizados e portáteis. A analogia é exata: um Bento ML empacota modelo, runner, API e dependências em uma unidade portátil.</p>
+      <p>Os três conceitos centrais:</p>
+
+      <div class="grid-2">
+        <div class="comp-card">
+          <h4><i class="fas fa-puzzle-piece" style="color:var(--purple-400);"></i> Runner</h4>
+          <ul>
+            <li>Abstração que isola o modelo do servidor HTTP</li>
+            <li>Gerencia o pool de workers de inferência</li>
+            <li>Suporta batching automático entre requisições</li>
+            <li>Escala independentemente da camada HTTP</li>
+          </ul>
+        </div>
+        <div class="comp-card">
+          <h4><i class="fas fa-network-wired" style="color:var(--purple-400);"></i> Service</h4>
+          <ul>
+            <li>Define os endpoints da API (análogo ao FastAPI app)</li>
+            <li>Conecta requisições ao runner correto</li>
+            <li>Declarativo: tipos de entrada/saída definem o contrato</li>
+            <li>Gera documentação automática igual ao FastAPI</li>
+          </ul>
+        </div>
+        <div class="comp-card">
+          <h4><i class="fas fa-archive" style="color:var(--purple-400);"></i> Bento</h4>
+          <ul>
+            <li>Artefato final: modelo + código + dependências + config</li>
+            <li>Imutável e versionado automaticamente</li>
+            <li>Pode ser convertido em imagem Docker com um comando</li>
+            <li>Pode ser publicado em BentoCloud ou registry próprio</li>
+          </ul>
+        </div>
+        <div class="comp-card">
+          <h4><i class="fas fa-layer-group" style="color:var(--purple-400);"></i> bentofile.yaml</h4>
+          <ul>
+            <li>Define dependências Python do serviço</li>
+            <li>Aponta qual arquivo é o service principal</li>
+            <li>Configura labels, versão e metadados</li>
+            <li>Substitui o Dockerfile para o build do Bento</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: BentoML na prática + batching ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">BentoML na Prática — Service, Runner e Batching Dinâmico</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-save"></i>Salvando o modelo no BentoML Model Store</div>
+      <p>O BentoML tem seu próprio registro local de modelos — separado do MLflow. O primeiro passo é salvar o modelo nesse store, que vai rastrear versões automaticamente.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — salvar modelo no BentoML store</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> bentoml
+<span class="kw">import</span> pickle
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+<span class="cm"># Opção 1: salvar diretamente do objeto sklearn</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+bento_model = bentoml.sklearn.save_model(
+    name=<span class="str">"classificador-churn"</span>,
+    model=model,
+    labels={<span class="str">"framework"</span>: <span class="str">"sklearn"</span>, <span class="str">"dataset"</span>: <span class="str">"v2"</span>},
+    metadata={<span class="str">"accuracy"</span>: <span class="num">0.9450</span>, <span class="str">"n_features"</span>: <span class="num">10</span>}
+)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Modelo salvo: {bento_model.tag}"</span>)
+<span class="cm"># Output: classificador-churn:a1b2c3d4ef5678</span>
+
+<span class="cm"># Listar modelos no store</span>
+<span class="kw">for</span> m <span class="kw">in</span> bentoml.models.list():
+    <span class="fn">print</span>(m.tag, m.creation_time)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>Criando o Service BentoML</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — service.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> __future__ <span class="kw">import</span> annotations
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> bentoml
+<span class="kw">from</span> bentoml.io <span class="kw">import</span> NumpyNdarray, JSON
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+<span class="cm"># Criar um runner a partir do modelo salvo no store</span>
+<span class="cm"># "latest" pega a versão mais recente automaticamente</span>
+runner = bentoml.sklearn.get(<span class="str">"classificador-churn:latest"</span>).to_runner()
+
+<span class="cm"># Definir o serviço com seus runners</span>
+svc = bentoml.Service(<span class="str">"servico-churn"</span>, runners=[runner])
+
+<span class="kw">class</span> <span class="fn">InputData</span>(BaseModel):
+    features: List[float]
+
+<span class="kw">class</span> <span class="fn">OutputData</span>(BaseModel):
+    prediction: <span class="fn">int</span>
+    probability: float
+
+<span class="cm"># Endpoint de predição individual</span>
+<span class="dec">@svc.api</span>(input=JSON(pydantic_model=InputData), output=JSON(pydantic_model=OutputData))
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">predict</span>(data: InputData) -> OutputData:
+    X = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+    <span class="cm"># await runner.predict.async_run() — não bloqueia o event loop</span>
+    pred  = <span class="kw">await</span> runner.predict.async_run(X)
+    proba = <span class="kw">await</span> runner.predict_proba.async_run(X)
+    <span class="kw">return</span> OutputData(
+        prediction=<span class="fn">int</span>(pred[<span class="num">0</span>]),
+        probability=<span class="fn">round</span>(<span class="fn">float</span>(proba[<span class="num">0</span>][<span class="fn">int</span>(pred[<span class="num">0</span>])]), <span class="num">4</span>)
+    )
+
+<span class="cm"># Endpoint batch — aceita múltiplas instâncias</span>
+<span class="dec">@svc.api</span>(input=NumpyNdarray(shape=(-<span class="num">1</span>, <span class="num">10</span>), dtype=np.float32), output=NumpyNdarray())
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">predict_batch</span>(X: np.ndarray) -> np.ndarray:
+    <span class="kw">return</span> <span class="kw">await</span> runner.predict.async_run(X)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>bentofile.yaml e build do Bento</div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">bentofile.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>service: <span class="str">"service.py:svc"</span>
+labels:
+  owner: time-ml
+  version: <span class="str">"1.0"</span>
+include:
+  - <span class="str">"service.py"</span>
+python:
+  packages:
+    - scikit-learn==<span class="num">1.4</span>.<span class="num">2</span>
+    - numpy==<span class="num">1.26</span>.<span class="num">4</span>
+    - pandas==<span class="num">2.2</span>.<span class="num">1</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Bash — servir, buildar e containerizar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># Servir localmente para desenvolvimento (hot reload)</span>
+bentoml serve service:svc <span class="flag">--reload</span>
+
+<span class="cm"># Construir o Bento (artefato versionado)</span>
+bentoml build
+
+<span class="cm"># Listar Bentos construídos</span>
+bentoml list
+
+<span class="cm"># Gerar imagem Docker automaticamente a partir do Bento</span>
+<span class="cm"># Sem escrever Dockerfile!</span>
+bentoml containerize servico-churn:latest
+
+<span class="cm"># Rodar o container gerado</span>
+docker run <span class="flag">-p</span> <span class="num">3000</span>:<span class="num">3000</span> servico-churn:<span class="str">&lt;tag&gt;</span>
+
+<span class="cm"># Testar</span>
+curl <span class="flag">-X</span> POST http://localhost:<span class="num">3000</span>/predict \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span></code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>bentoml containerize vs Dockerfile manual:</strong> o <code>bentoml containerize</code> gera uma imagem Docker otimizada automaticamente — com multi-stage build, usuário não-root e cache de layers já configurados. Para a maioria dos casos de sklearn, é mais simples e seguro que escrever o Dockerfile manualmente.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Batching dinâmico — o diferencial de performance</div>
+      <p>O batching dinâmico é a capacidade de acumular múltiplas requisições individuais e processá-las juntas em uma única chamada ao modelo. Isso é especialmente vantajoso quando a overhead de inicializar a computação é maior do que processar dados extras.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — configurar batching no runner</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> bentoml._internal.runner.utils <span class="kw">import</span> Params
+
+<span class="cm"># Runner com batching dinâmico configurado</span>
+runner = bentoml.sklearn.get(<span class="str">"classificador-churn:latest"</span>).to_runner(
+    max_batch_size=<span class="num">32</span>,          <span class="cm"># máximo de itens por batch</span>
+    max_latency_ms=<span class="num">100</span>,         <span class="cm"># espera no máximo 100ms para completar o batch</span>
+)
+
+<span class="cm"># Com max_latency_ms=100:</span>
+<span class="cm"># - Se chegarem 32 requisições em menos de 100ms → processa batch de 32</span>
+<span class="cm"># - Se passarem 100ms sem completar 32 → processa o que tiver (ex: 7)</span>
+<span class="cm"># Isso maximiza throughput sem sacrificar latência de forma excessiva</span></code></pre>
+      </div>
+
+      <p>O trade-off do batching:</p>
+      <div class="throughput-bar">
+        <div class="t-row">
+          <span class="t-label">Sem batching (req individual)</span>
+          <div class="t-bar-wrap"><div class="t-bar" style="width:20%;"></div></div>
+          <span class="t-val">~120 req/s</span>
+        </div>
+        <div class="t-row">
+          <span class="t-label">Batch size 8</span>
+          <div class="t-bar-wrap"><div class="t-bar" style="width:45%;"></div></div>
+          <span class="t-val">~480 req/s</span>
+        </div>
+        <div class="t-row">
+          <span class="t-label">Batch size 32</span>
+          <div class="t-bar-wrap"><div class="t-bar" style="width:75%;"></div></div>
+          <span class="t-val">~900 req/s</span>
+        </div>
+        <div class="t-row">
+          <span class="t-label">Batch size 128</span>
+          <div class="t-bar-wrap"><div class="t-bar" style="width:95%;"></div></div>
+          <span class="t-val">~1100 req/s</span>
+        </div>
+      </div>
+      <p style="font-size:.78rem;color:var(--text-muted);margin-top:.35rem;">* Valores ilustrativos com RandomForest em CPU. Ganhos reais dependem do modelo, hardware e distribuição de carga.</p>
+
+      <div class="destaque">
+        <strong>Custo do batching:</strong> latência individual aumenta — uma requisição que antes era processada em 5ms pode levar até <code>max_latency_ms</code> (100ms) esperando outras. Para aplicações com SLA de latência estrito (&lt;10ms), o batching pode não ser adequado. Para sistemas que priorizam throughput (pipelines de scoring em lote, por exemplo), é o padrão certo.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Triton + Comparativo + Prática</span></div>
+
+  <!-- ── AULA 3: Triton + Comparativo + Prática ─────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Triton Inference Server — Conceitos e Comparativo Final</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-server"></i>Triton Inference Server — o que é e para que serve</div>
+      <p>O Triton é um servidor de inferência open-source da NVIDIA, otimizado para GPU mas funcional em CPU também. Ele foi projetado para cenários de alta escala onde se precisa servir múltiplos modelos simultaneamente com máxima eficiência de hardware.</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-microchip"></i><span><strong>Multi-framework:</strong> suporta modelos TensorFlow, PyTorch, ONNX, TensorRT, scikit-learn e outros com o mesmo servidor — sem precisar de um servidor dedicado por framework.</span></li>
+        <li><i class="fas fa-layer-group"></i><span><strong>Concorrência de modelo:</strong> pode rodar múltiplas instâncias do mesmo modelo em paralelo, em diferentes GPUs ou na mesma GPU com particionamento de memória.</span></li>
+        <li><i class="fas fa-tachometer-alt"></i><span><strong>Batching dinâmico e sequencial:</strong> mais sofisticado que o BentoML — suporta preferred batch sizes e delay scheduler customizável.</span></li>
+        <li><i class="fas fa-chart-bar"></i><span><strong>Métricas nativas:</strong> expõe métricas Prometheus automaticamente — latência por percentil, throughput, utilização de GPU — sem configuração adicional.</span></li>
+      </ul>
+      <div class="aviso">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><strong>Para esta disciplina:</strong> o Triton é apresentado conceitualmente. Para usá-lo com GPU real, é necessário hardware NVIDIA com drivers adequados. A demo prática desta semana usa BentoML, que funciona em qualquer CPU. O Triton aparece novamente na Semana 14 com Kubernetes.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Como o Triton organiza modelos — Model Repository</div>
+      <p>O Triton usa uma estrutura de diretórios chamada <strong>Model Repository</strong>. Cada modelo fica numa pasta com nome e versão, e um arquivo <code>config.pbtxt</code> descreve o contrato de entrada/saída.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura do Model Repository</span></div>
+        <pre><code>model_repository/
+│
+├── classificador-churn/
+│   ├── config.pbtxt        <span class="cm"># configuração do modelo</span>
+│   └── 1/                  <span class="cm"># versão 1</span>
+│       └── model.onnx      <span class="cm"># modelo no formato ONNX</span>
+│
+└── preprocessador/
+    ├── config.pbtxt
+    └── 1/
+        └── model.py        <span class="cm"># backend Python customizado</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">config.pbtxt — configuração do modelo</span></div>
+        <pre><code>name: <span class="str">"classificador-churn"</span>
+backend: <span class="str">"onnxruntime"</span>
+max_batch_size: <span class="num">64</span>
+
+input [
+  {
+    name: <span class="str">"features"</span>
+    data_type: TYPE_FP32
+    dims: [<span class="num">10</span>]
+  }
+]
+
+output [
+  {
+    name: <span class="str">"prediction"</span>
+    data_type: TYPE_INT64
+    dims: [<span class="num">1</span>]
+  }
+]
+
+dynamic_batching {
+  preferred_batch_size: [<span class="num">8</span>, <span class="num">16</span>, <span class="num">32</span>]
+  max_queue_delay_microseconds: <span class="num">50000</span>  <span class="cm"># 50ms</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Comparativo final — FastAPI vs BentoML vs Triton</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>FastAPI</th><th>BentoML</th><th>Triton</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Curva de aprendizado</strong></td><td>Baixa</td><td>Média</td><td>Alta</td></tr>
+            <tr><td><strong>Empacotamento</strong></td><td>Manual (Dockerfile)</td><td>Automático (bentoml build)</td><td>Model Repository</td></tr>
+            <tr><td><strong>Batching dinâmico</strong></td><td>Manual</td><td>Nativo (max_batch_size)</td><td>Nativo e avançado</td></tr>
+            <tr><td><strong>Suporte GPU</strong></td><td>Nenhum</td><td>Parcial</td><td>Otimizado NVIDIA</td></tr>
+            <tr><td><strong>Multi-modelo</strong></td><td>Manual</td><td>Múltiplos runners</td><td>Nativo</td></tr>
+            <tr><td><strong>Métricas nativas</strong></td><td>Não</td><td>Básico</td><td>Prometheus completo</td></tr>
+            <tr><td><strong>Integração MLflow</strong></td><td>Manual</td><td>Nativa</td><td>Via script</td></tr>
+            <tr><td><strong>Melhor para</strong></td><td>Projetos pequenos-médios, controle total</td><td>Times ML que querem abstrair infra</td><td>Produção GPU em escala</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="destaque">
+        <strong>Decisão prática:</strong> comece com FastAPI. Quando throughput virar gargalo e você precisar de batching automático, migre para BentoML — a API do usuário muda pouco. Se chegar em GPU e escala de milhares de requisições por segundo, avalie o Triton.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Deploy com BentoML</div>
+        <div class="secao-titulo">Do modelo ao Bento containerizado — com comparativo de throughput</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o mesmo modelo da Semana 9. Ao final, você terá o modelo servido via BentoML localmente e uma comparação numérica de throughput com a API FastAPI usando a ferramenta <code>hey</code> ou <code>locust</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 01 — Salvar modelo no BentoML store</div>
+      <p>Instale o BentoML e salve o modelo treinado no store local usando <code>bentoml.sklearn.save_model()</code>. Adicione labels com <code>framework</code> e <code>dataset</code> e metadata com a <code>accuracy</code>. Liste os modelos salvos para confirmar.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — salvar_bento.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pickle, bentoml
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"models/model.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+tag = bentoml.sklearn.save_model(
+    <span class="str">"classificador-churn"</span>, model,
+    labels={<span class="str">"framework"</span>: <span class="str">"sklearn"</span>},
+    metadata={<span class="str">"accuracy"</span>: <span class="num">0.9450</span>}
+)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Salvo: {tag}"</span>)
+
+<span class="kw">for</span> m <span class="kw">in</span> bentoml.models.list():
+    <span class="fn">print</span>(m.tag)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 02 — Criar service.py e bentofile.yaml</div>
+      <p>Crie o <code>service.py</code> com um runner do modelo e um endpoint <code>/predict</code> que recebe <code>JSON</code> com <code>features: List[float]</code> e retorna predição. Crie o <code>bentofile.yaml</code> apontando para o service. Suba localmente com <code>bentoml serve service:svc --reload</code> e teste com curl.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — service.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> bentoml
+<span class="kw">from</span> bentoml.io <span class="kw">import</span> JSON
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+runner = bentoml.sklearn.get(<span class="str">"classificador-churn:latest"</span>).to_runner()
+svc = bentoml.Service(<span class="str">"servico-churn"</span>, runners=[runner])
+
+<span class="kw">class</span> <span class="fn">In</span>(BaseModel):
+    features: List[float]
+
+<span class="dec">@svc.api</span>(input=JSON(pydantic_model=In), output=JSON())
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">predict</span>(data: In):
+    X = np.array(data.features).reshape(<span class="num">1</span>, -<span class="num">1</span>)
+    pred = <span class="kw">await</span> runner.predict.async_run(X)
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: <span class="fn">int</span>(pred[<span class="num">0</span>])}</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bentofile.yaml</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>service: <span class="str">"service.py:svc"</span>
+include:
+  - <span class="str">"service.py"</span>
+python:
+  packages:
+    - scikit-learn
+    - numpy</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 03 — Buildar e containerizar o Bento</div>
+      <p>Execute <code>bentoml build</code> para gerar o Bento versionado. Em seguida, use <code>bentoml containerize servico-churn:latest</code> para gerar a imagem Docker automaticamente. Liste a imagem com <code>docker images</code> e compare o tamanho com a imagem que você criou manualmente na Semana 8.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>bentoml build
+bentoml list              <span class="cm"># confirmar que foi criado</span>
+bentoml containerize servico-churn:latest
+docker images | grep servico-churn
+docker run <span class="flag">-p</span> <span class="num">3000</span>:<span class="num">3000</span> servico-churn:<span class="str">&lt;tag&gt;</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 04 — Comparativo de throughput</div>
+      <p>Com ambas as APIs rodando (FastAPI na porta 8000 e BentoML na porta 3000), use o <code>hey</code> (ferramenta de benchmark HTTP) para enviar 500 requisições com 10 workers concorrentes para cada endpoint e compare as métricas de throughput (req/s) e latência média.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — instalar hey e rodar benchmark</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Instalar hey (Go tool)</span>
+go install github.com/rakyll/hey@latest
+<span class="cm"># ou: brew install hey  (macOS)</span>
+
+<span class="cm"># Benchmark FastAPI (porta 8000)</span>
+hey <span class="flag">-n</span> <span class="num">500</span> <span class="flag">-c</span> <span class="num">10</span> \
+  <span class="flag">-m</span> POST \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span> \
+  http://localhost:<span class="num">8000</span>/predict
+
+<span class="cm"># Benchmark BentoML (porta 3000)</span>
+hey <span class="flag">-n</span> <span class="num">500</span> <span class="flag">-c</span> <span class="num">10</span> \
+  <span class="flag">-m</span> POST \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{"features":[0.5,-1.2,0.8,1.1,-0.3,0.6,1.5,-0.9,0.2,0.7]}'</span> \
+  http://localhost:<span class="num">3000</span>/predict</code></pre>
+        </div>
+        <div class="destaque">Com modelo sklearn simples, a diferença de throughput entre FastAPI e BentoML sem batching tende a ser pequena (ambos em CPU). A diferença fica evidente ao ativar batching dinâmico no BentoML e replicar o teste com alta concorrência.</div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Passo 05 — Desafio: ativar batching e medir o impacto</div>
+      <p>Modifique o runner para adicionar <code>max_batch_size=16</code> e <code>max_latency_ms=50</code>. Suba novamente e repita o benchmark com <code>-c 20</code> (20 workers concorrentes). Compare o throughput com e sem batching. Em quais condições o batching ajuda mais — baixa ou alta concorrência? Por quê?</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+    </div>
+
+    <div class="aviso-green">
+      <i class="fas fa-check-circle"></i>
+      <span><strong>Critério de conclusão:</strong> o Bento deve estar rodando no Docker (gerado via <code>bentoml containerize</code>, sem Dockerfile manual), respondendo corretamente em <code>localhost:3000/predict</code>, e você deve ter um número de throughput comparativo entre FastAPI e BentoML anotado.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 10</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-box-open"></i>
+        <strong>BentoML</strong>
+        <p>Runner isola o modelo. Service define endpoints. bentoml build empacota tudo. bentoml containerize gera Docker sem Dockerfile manual</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <strong>Batching Dinâmico</strong>
+        <p>max_batch_size + max_latency_ms: acumula requisições e processa em lote. Multiplica throughput às custas de latência individual</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-balance-scale"></i>
+        <strong>Quando usar cada um</strong>
+        <p>FastAPI: controle total, projetos médios. BentoML: batching e empacotamento automático. Triton: GPU, multi-modelo, alta escala</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-11-mlops.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 11 — Monitoramento em Produção: Data Drift e Evidently AI</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>
