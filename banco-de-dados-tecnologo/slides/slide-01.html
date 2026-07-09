@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 01 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;
+  --green-800:#14532d;
+  --green-700:#166534;
+  --green-600:#16a34a;
+  --green-400:#4ade80;
+  --green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;
+  --code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--green-900);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── CAPA ─────────────────────────────────────────────────────────── */
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(74,222,128,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);
+  border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(74,222,128,.18);color:var(--green-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-card-titulo i{font-size:.8rem;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{
+  content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;
+}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+.scroll-hint i{font-size:1rem;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-info{}
+.secao-label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--green-400);font-weight:600;margin-bottom:2px;
+}
+.secao-titulo{
+  font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;
+  color:var(--white);letter-spacing:-.02em;
+}
+
+/* cards de conteúdo */
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card-titulo i{font-size:.9rem;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+/* grid 2 colunas */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+/* destaque */
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--green-400);}
+
+/* tabela */
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;
+   font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+
+/* código */
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(74,222,128,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;
+}
+.code-copy{
+  font-size:.65rem;color:var(--text-muted);cursor:pointer;background:none;
+  border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;
+  transition:color .2s;
+}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;
+  line-height:1.7;color:#a7f3d0;
+}
+.kw{color:#f9a8d4;}    /* keywords SQL */
+.fn{color:#93c5fd;}    /* funções */
+.str{color:#fde68a;}   /* strings */
+.cm{color:#4b5563;font-style:italic;} /* comentários */
+.num{color:#fca5a5;}   /* números */
+.op{color:#c4b5fd;}    /* operadores */
+
+/* lista com ícones */
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:.88rem;color:var(--text-secondary);line-height:1.55;
+}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+/* badge inline */
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  font-size:.72rem;font-weight:600;letter-spacing:.04em;
+  background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);
+}
+
+/* aviso */
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+/* exercícios */
+.exercicio{
+  counter-increment:ex;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.25rem;margin-bottom:.85rem;
+  position:relative;
+}
+.exercicio-num{
+  font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;
+}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.exercicio .dificuldade{
+  display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;
+  font-size:.65rem;font-weight:600;letter-spacing:.05em;
+}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+/* gabarito toggle */
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.1rem;text-align:center;
+}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+/* próxima semana */
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+
+/* separador de seção */
+.sep{
+  display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;
+}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     CAPA
+════════════════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">01</div>
+    <h1 class="capa-titulo">Apresentação,<br><em>Modelo Relacional</em><br>e SQL Básico</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Semana de abertura</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-rocket"></i></div><span>Apresentação da disciplina e do semestre</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-table"></i></div><span>Modelo relacional — PK, FK, integridade referencial</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Tipos de relacionamento: 1:1, 1:N, N:N</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code"></i></div><span>SQL: SELECT, WHERE, JOINs, GROUP BY, HAVING</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: banco loja_exemplo + 6 exercícios</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Consultas SQL progressivas em banco de exemplo — do básico ao JOIN com 3 tabelas.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-calendar-alt"></i>Calendário do semestre</div>
+      <ul class="info-lista">
+        <li>P1 — Semana 6 · Conteúdo das semanas 1–5</li>
+        <li>P2 — Semana 13 · Conteúdo das semanas 7–12</li>
+        <li>Revisão Geral — Semana 18</li>
+        <li>P3 Final — Semana 19 · Projeto integrador</li>
+        <li>Segunda Chamada — Semana 20</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-map-signs"></i>Trilha do semestre</div>
+      <ul class="info-lista">
+        <li>SQL avançado: window functions, CTEs, otimização</li>
+        <li>Bancos NoSQL e vetoriais para IA</li>
+        <li>Pipelines de dados e feature engineering</li>
+        <li>Governança, qualidade e integração com ML</li>
+        <li>Automação com Airflow + integração Python</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Setup necessário</div>
+      <ul class="info-lista">
+        <li>PostgreSQL instalado <strong>ou</strong> conta gratuita em neon.tech</li>
+        <li>Computador em todas as aulas práticas</li>
+        <li>Pré-requisito: D1.07 (fundamentos de BD)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CONTEÚDO
+════════════════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Apresentação ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Apresentação da Disciplina</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compass"></i>Onde estamos e para onde vamos</div>
+      <p>No 2° período você viu os fundamentos: modelagem, SQL básico, normalização. Aqui no 3° período a pergunta muda. Não é mais <em>"o que é uma tabela"</em>.</p>
+      <p>A pergunta agora é: <strong>como usar bancos de dados de verdade, em aplicações reais, integrados com Inteligência Artificial?</strong></p>
+      <div class="destaque">
+        <strong>Contexto:</strong> Todo pipeline de Machine Learning começa em um banco de dados. Dados mal modelados, inconsistentes ou mal organizados produzem modelos ruins. <strong>Garbage in, garbage out.</strong> O que você aprende aqui é a fundação de qualquer projeto de IA real.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-road"></i>Trilha do semestre</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 1–5:</strong> SQL avançado, window functions, CTEs, NoSQL, pipelines</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 7–12:</strong> Bancos vetoriais, dados para ML, armazenamento distribuído</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 14–17:</strong> Indexação, transações avançadas, integração Python + IA</span></li>
+          <li><i class="fas fa-check-circle"></i><span><strong>Sem. 19:</strong> Projeto integrador: BD → pipeline → modelo → resultado</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-clipboard-list"></i>Avaliações</div>
+        <div class="tabela-wrap">
+          <table>
+            <thead><tr><th>Prova</th><th>Semana</th><th>Conteúdo</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge">P1</span></td><td>6</td><td>Semanas 1–5</td></tr>
+              <tr><td><span class="badge">P2</span></td><td>13</td><td>Semanas 7–12</td></tr>
+              <tr><td><span class="badge">Revisão</span></td><td>18</td><td>Geral</td></tr>
+              <tr><td><span class="badge">P3 Final</span></td><td>19</td><td>14–17 + projeto</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-laptop"></i>
+      <span><strong>Setup hoje:</strong> Instale o PostgreSQL ou crie conta gratuita em <strong>neon.tech</strong> — usaremos nas próximas aulas. Quem tiver dúvida na instalação, ficamos 10 minutos resolvendo agora.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Modelo Relacional ────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Revisão do Modelo Relacional</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-redo"></i>
+      <span>Você já viu isso no 2° período. Vamos revisar de forma objetiva e garantir que todo mundo está na mesma base antes de avançar para SQL avançado na semana que vem.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-key"></i>Chave Primária (PK)</div>
+      <p>Identifica de forma única cada linha de uma tabela. <strong>Não pode ser nula. Não pode se repetir.</strong></p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — PostgreSQL</span>
+          <button class="code-copy" onclick="copiar(this)">copiar</button>
+        </div>
+        <pre><code><span class="kw">CREATE TABLE</span> clientes (
+  id        <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,         <span class="cm">-- PK: auto-incremento</span>
+  nome      <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  email     <span class="fn">VARCHAR</span>(<span class="num">150</span>) <span class="kw">UNIQUE NOT NULL</span>,  <span class="cm">-- único + obrigatório</span>
+  criado_em <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-link"></i>Chave Estrangeira (FK) e Integridade Referencial</div>
+      <p>A FK cria o vínculo entre tabelas. O banco <strong>rejeita automaticamente</strong> operações que quebrariam esse vínculo — você não consegue inserir um pedido para um cliente inexistente.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — PostgreSQL</span>
+          <button class="code-copy" onclick="copiar(this)">copiar</button>
+        </div>
+        <pre><code><span class="kw">CREATE TABLE</span> pedidos (
+  id         <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+  cliente_id <span class="fn">INT</span> <span class="kw">NOT NULL REFERENCES</span> clientes(id) <span class="kw">ON DELETE CASCADE</span>,
+  total      <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  criado_em  <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+
+<span class="cm">-- ON DELETE CASCADE  → deleta os pedidos ao deletar o cliente</span>
+<span class="cm">-- ON DELETE RESTRICT → bloqueia a deleção se houver pedidos (padrão)</span>
+<span class="cm">-- ON DELETE SET NULL → coloca NULL na FK ao deletar o cliente</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>Tipos de Relacionamento</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Tipo</th><th>Exemplo Real</th><th>Como Implementar</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge">1 : 1</span></td><td>Pessoa ↔ CPF</td><td>FK com UNIQUE na tabela filha</td></tr>
+            <tr><td><span class="badge">1 : N</span></td><td>Cliente → Pedidos</td><td>FK na tabela do lado "N"</td></tr>
+            <tr><td><span class="badge">N : N</span></td><td>Pedido ↔ Produto</td><td>Tabela intermediária</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — Tabela N:N</span>
+          <button class="code-copy" onclick="copiar(this)">copiar</button>
+        </div>
+        <pre><code><span class="kw">CREATE TABLE</span> itens_pedido (
+  pedido_id  <span class="fn">INT</span> <span class="kw">REFERENCES</span> pedidos(id)  <span class="kw">ON DELETE CASCADE</span>,
+  produto_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> produtos(id) <span class="kw">ON DELETE RESTRICT</span>,
+  quantidade <span class="fn">INT</span> <span class="kw">NOT NULL</span>,
+  preco_unit <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (pedido_id, produto_id)   <span class="cm">-- PK composta</span>
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Por que isso importa para IA?</div>
+      <p>Modelos de Machine Learning aprendem padrões dos dados. Se o banco tiver <strong>dados duplicados</strong> (falta de normalização), <strong>relacionamentos quebrados</strong> (sem FK) ou <strong>inconsistências</strong> (valores nulos inesperados), o modelo vai aprender padrões errados.</p>
+      <div class="destaque">
+        <strong>Regra de ouro:</strong> modelagem correta → dados limpos → modelo confiável. Não existe atalho.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: SQL + Prática ────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">SQL na Prática — SELECT, JOIN, GROUP BY</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-database"></i>O banco que vamos usar o semestre todo</div>
+      <p>Vamos usar o <strong>loja_exemplo</strong> — 4 tabelas simples que refletem um sistema real. Rode o script abaixo para criar tudo.</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">SQL — Setup do banco loja_exemplo</span>
+          <button class="code-copy" onclick="copiar(this)">copiar</button>
+        </div>
+        <pre><code><span class="kw">CREATE TABLE</span> clientes (
+  id <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>, nome <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  email <span class="fn">VARCHAR</span>(<span class="num">150</span>) <span class="kw">UNIQUE</span>, cidade <span class="fn">VARCHAR</span>(<span class="num">80</span>), criado_em <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+<span class="kw">CREATE TABLE</span> produtos (
+  id <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>, nome <span class="fn">VARCHAR</span>(<span class="num">120</span>) <span class="kw">NOT NULL</span>,
+  categoria <span class="fn">VARCHAR</span>(<span class="num">60</span>), preco <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>, estoque <span class="fn">INT</span> <span class="kw">DEFAULT</span> <span class="num">0</span>
+);
+<span class="kw">CREATE TABLE</span> pedidos (
+  id <span class="fn">SERIAL</span> <span class="kw">PRIMARY KEY</span>, cliente_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> clientes(id),
+  status <span class="fn">VARCHAR</span>(<span class="num">20</span>) <span class="kw">DEFAULT</span> <span class="str">'pendente'</span>, total <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>), criado_em <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);
+<span class="kw">CREATE TABLE</span> itens_pedido (
+  pedido_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> pedidos(id), produto_id <span class="fn">INT</span> <span class="kw">REFERENCES</span> produtos(id),
+  quantidade <span class="fn">INT</span> <span class="kw">NOT NULL</span>, preco_unit <span class="fn">NUMERIC</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  <span class="kw">PRIMARY KEY</span> (pedido_id, produto_id)
+);
+
+<span class="kw">INSERT INTO</span> clientes (nome, email, cidade) <span class="kw">VALUES</span>
+  (<span class="str">'Ana Lima'</span>, <span class="str">'ana@email.com'</span>, <span class="str">'São Paulo'</span>),
+  (<span class="str">'Bruno Costa'</span>, <span class="str">'bruno@email.com'</span>, <span class="str">'Rio de Janeiro'</span>),
+  (<span class="str">'Carla Souza'</span>, <span class="str">'carla@email.com'</span>, <span class="str">'Belo Horizonte'</span>),
+  (<span class="str">'Diego Ferreira'</span>, <span class="str">'diego@email.com'</span>, <span class="str">'São Paulo'</span>),
+  (<span class="str">'Elena Martins'</span>, <span class="str">'elena@email.com'</span>, <span class="str">'Fortaleza'</span>),
+  (<span class="str">'Felipe Nunes'</span>, <span class="kw">NULL</span>, <span class="str">'Recife'</span>);
+
+<span class="kw">INSERT INTO</span> produtos (nome, categoria, preco, estoque) <span class="kw">VALUES</span>
+  (<span class="str">'Notebook Dell'</span>, <span class="str">'Eletrônicos'</span>, <span class="num">3200.00</span>, <span class="num">15</span>),
+  (<span class="str">'Mouse Logitech'</span>, <span class="str">'Eletrônicos'</span>, <span class="num">89.90</span>, <span class="num">80</span>),
+  (<span class="str">'Cadeira Gamer'</span>, <span class="str">'Móveis'</span>, <span class="num">1200.00</span>, <span class="num">8</span>),
+  (<span class="str">'Monitor 24"'</span>, <span class="str">'Eletrônicos'</span>, <span class="num">950.00</span>, <span class="num">22</span>),
+  (<span class="str">'Teclado Mecânico'</span>, <span class="str">'Eletrônicos'</span>, <span class="num">320.00</span>, <span class="num">45</span>),
+  (<span class="str">'Mesa de Escritório'</span>, <span class="str">'Móveis'</span>, <span class="num">680.00</span>, <span class="num">5</span>);
+
+<span class="kw">INSERT INTO</span> pedidos (cliente_id, status, total, criado_em) <span class="kw">VALUES</span>
+  (<span class="num">1</span>, <span class="str">'entregue'</span>,    <span class="num">3289.90</span>, <span class="str">'2024-11-01'</span>),
+  (<span class="num">1</span>, <span class="str">'entregue'</span>,    <span class="num">950.00</span>,  <span class="str">'2024-12-15'</span>),
+  (<span class="num">2</span>, <span class="str">'processando'</span>, <span class="num">1200.00</span>, <span class="str">'2025-01-10'</span>),
+  (<span class="num">3</span>, <span class="str">'pendente'</span>,    <span class="num">399.90</span>,  <span class="str">'2025-01-18'</span>),
+  (<span class="num">4</span>, <span class="str">'entregue'</span>,    <span class="num">4150.00</span>, <span class="str">'2024-10-05'</span>),
+  (<span class="num">4</span>, <span class="str">'cancelado'</span>,   <span class="num">89.90</span>,   <span class="str">'2024-11-20'</span>);
+
+<span class="kw">INSERT INTO</span> itens_pedido <span class="kw">VALUES</span>
+  (<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">3200.00</span>), (<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">89.90</span>),
+  (<span class="num">2</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">950.00</span>),  (<span class="num">3</span>,<span class="num">3</span>,<span class="num">1</span>,<span class="num">1200.00</span>),
+  (<span class="num">4</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">89.90</span>),   (<span class="num">4</span>,<span class="num">5</span>,<span class="num">1</span>,<span class="num">310.00</span>),
+  (<span class="num">5</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">3200.00</span>), (<span class="num">5</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">950.00</span>),
+  (<span class="num">6</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">89.90</span>);</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-filter"></i>SELECT, WHERE e filtros</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Filtro com BETWEEN</span>
+<span class="kw">SELECT</span> nome, preco <span class="kw">FROM</span> produtos
+<span class="kw">WHERE</span> categoria <span class="op">=</span> <span class="str">'Eletrônicos'</span>
+  <span class="kw">AND</span> preco <span class="kw">BETWEEN</span> <span class="num">100</span> <span class="kw">AND</span> <span class="num">1000</span>
+  <span class="kw">AND</span> estoque <span class="op">&gt;</span> <span class="num">0</span>;
+
+<span class="cm">-- ILIKE: busca parcial sem distinção de maiúsculas (PostgreSQL)</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> clientes <span class="kw">WHERE</span> nome <span class="kw">ILIKE</span> <span class="str">'%silva%'</span>;
+
+<span class="cm">-- IN: múltiplos valores</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> pedidos <span class="kw">WHERE</span> status <span class="kw">IN</span> (<span class="str">'pendente'</span>, <span class="str">'processando'</span>);
+
+<span class="cm">-- IS NULL</span>
+<span class="kw">SELECT</span> nome <span class="kw">FROM</span> clientes <span class="kw">WHERE</span> email <span class="kw">IS NULL</span>;
+
+<span class="cm">-- Paginação</span>
+<span class="kw">SELECT</span> nome, preco <span class="kw">FROM</span> produtos
+<span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">5</span> <span class="kw">OFFSET</span> <span class="num">0</span>;   <span class="cm">-- página 1 · 5 produtos mais caros</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code-branch"></i>JOINs — o coração do modelo relacional</div>
+      <div class="destaque">
+        <strong>INNER JOIN</strong> → apenas linhas que têm correspondência nos dois lados.<br>
+        <strong>LEFT JOIN</strong> → todas as linhas da tabela esquerda, com ou sem correspondência.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — INNER JOIN</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Pedidos com nome do cliente</span>
+<span class="kw">SELECT</span>
+  c.nome        <span class="kw">AS</span> cliente,
+  p.criado_em   <span class="kw">AS</span> data_pedido,
+  p.status,
+  p.total
+<span class="kw">FROM</span> pedidos p
+<span class="kw">INNER JOIN</span> clientes c <span class="kw">ON</span> c.id <span class="op">=</span> p.cliente_id
+<span class="kw">ORDER BY</span> p.criado_em <span class="kw">DESC</span>;</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — LEFT JOIN (inclui quem nunca comprou)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">SELECT</span>
+  c.nome,
+  <span class="fn">COUNT</span>(p.id) <span class="kw">AS</span> total_pedidos
+<span class="kw">FROM</span> clientes c
+<span class="kw">LEFT JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">GROUP BY</span> c.id, c.nome
+<span class="kw">ORDER BY</span> total_pedidos <span class="kw">DESC</span>;</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — JOIN com 3 tabelas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Itens de um pedido específico com nome do produto</span>
+<span class="kw">SELECT</span>
+  c.nome                              <span class="kw">AS</span> cliente,
+  pr.nome                             <span class="kw">AS</span> produto,
+  i.quantidade,
+  i.preco_unit,
+  (i.quantidade <span class="op">*</span> i.preco_unit)       <span class="kw">AS</span> subtotal
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> pedidos p      <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.pedido_id  <span class="op">=</span> p.id
+<span class="kw">INNER JOIN</span> produtos pr    <span class="kw">ON</span> pr.id        <span class="op">=</span> i.produto_id
+<span class="kw">WHERE</span> p.id <span class="op">=</span> <span class="num">5</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>GROUP BY + HAVING</div>
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Diferença crucial:</strong> WHERE filtra linhas <em>antes</em> de agrupar. HAVING filtra <em>depois</em> de agrupar, e só aceita condições sobre funções de agregação (COUNT, SUM, AVG...).</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — GROUP BY + HAVING</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Total gasto por cliente — só quem fez 2+ pedidos entregues</span>
+<span class="kw">SELECT</span>
+  c.nome,
+  <span class="fn">COUNT</span>(p.id)      <span class="kw">AS</span> qtd_pedidos,
+  <span class="fn">AVG</span>(p.total)     <span class="kw">AS</span> ticket_medio,
+  <span class="fn">SUM</span>(p.total)     <span class="kw">AS</span> total_gasto
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>       <span class="cm">-- filtra ANTES de agrupar</span>
+<span class="kw">GROUP BY</span> c.id, c.nome
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(p.id) <span class="op">&gt;=</span> <span class="num">2</span>           <span class="cm">-- filtra DEPOIS de agrupar</span>
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Banco loja_exemplo</div>
+        <div class="secao-titulo">6 Exercícios — do básico ao desafio</div>
+      </div>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-info-circle"></i>
+      <span>Tente resolver cada exercício antes de ver o gabarito. O gabarito é uma possibilidade — podem existir outras consultas igualmente corretas.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Liste todos os produtos da categoria <strong>'Eletrônicos'</strong> com preço acima de R$ 200, ordenados do mais barato para o mais caro.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span> nome, preco
+<span class="kw">FROM</span> produtos
+<span class="kw">WHERE</span> categoria <span class="op">=</span> <span class="str">'Eletrônicos'</span> <span class="kw">AND</span> preco <span class="op">&gt;</span> <span class="num">200</span>
+<span class="kw">ORDER BY</span> preco <span class="kw">ASC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Mostre o nome de todos os clientes que <strong>não têm email cadastrado</strong>.</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span> nome <span class="kw">FROM</span> clientes <span class="kw">WHERE</span> email <span class="kw">IS NULL</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Liste o nome do cliente e o status de todos os pedidos. <strong>Inclua também os clientes que nunca fizeram pedido</strong> (eles devem aparecer com status NULL).</p>
+      <span class="dificuldade dif-basico">Básico</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span> c.nome, p.status
+<span class="kw">FROM</span> clientes c
+<span class="kw">LEFT JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Qual o total gasto por cada cliente? Mostre nome, quantidade de pedidos e soma total. Considere <strong>apenas pedidos com status 'entregue'</strong>. Ordene do maior para o menor gasto.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  c.nome,
+  <span class="fn">COUNT</span>(p.id)  <span class="kw">AS</span> qtd_pedidos,
+  <span class="fn">SUM</span>(p.total) <span class="kw">AS</span> total_gasto
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">GROUP BY</span> c.id, c.nome
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05</div>
+      <p>Liste os produtos que aparecem em pelo menos um pedido, com o nome do produto e a <strong>quantidade total vendida</strong> (soma de todos os itens). Ordene do mais vendido para o menos vendido.</p>
+      <span class="dificuldade dif-medio">Médio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  pr.nome,
+  <span class="fn">SUM</span>(i.quantidade) <span class="kw">AS</span> qtd_vendida
+<span class="kw">FROM</span> produtos pr
+<span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.produto_id <span class="op">=</span> pr.id
+<span class="kw">GROUP BY</span> pr.id, pr.nome
+<span class="kw">ORDER BY</span> qtd_vendida <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 06 — Desafio</div>
+      <p>Qual cliente comprou o produto mais caro? Mostre o <strong>nome do cliente</strong>, o <strong>nome do produto</strong> e o <strong>valor pago</strong>. Use 3 JOINs.</p>
+      <span class="dificuldade dif-desafio">Desafio</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  c.nome  <span class="kw">AS</span> cliente,
+  pr.nome <span class="kw">AS</span> produto,
+  i.preco_unit <span class="kw">AS</span> valor_pago
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> pedidos p      <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.pedido_id  <span class="op">=</span> p.id
+<span class="kw">INNER JOIN</span> produtos pr    <span class="kw">ON</span> pr.id        <span class="op">=</span> i.produto_id
+<span class="kw">ORDER BY</span> i.preco_unit <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">1</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 1</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-key"></i>
+        <strong>Modelo Relacional</strong>
+        <p>PK, FK, integridade referencial, ON DELETE, tipos de relacionamento 1:1 / 1:N / N:N</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-code-branch"></i>
+        <strong>JOINs</strong>
+        <p>INNER JOIN, LEFT JOIN, JOIN com 3 tabelas, diferença entre cada tipo</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Agregação</strong>
+        <p>GROUP BY, HAVING, COUNT, SUM, AVG — e a diferença entre WHERE e HAVING</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="semana-02-bd-tecnologo.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 2 — SQL Avançado: Subqueries, CTEs e Window Functions</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

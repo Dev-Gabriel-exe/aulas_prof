@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 05 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* nosql type cards */
+.nosql-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.nosql-card{border-radius:12px;padding:1.25rem;border:1px solid;}
+.nosql-doc{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.2);}
+.nosql-kv{background:rgba(96,165,250,.06);border-color:rgba(96,165,250,.2);}
+.nosql-col{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.2);}
+.nosql-graph{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.2);}
+.nosql-card .nc-icon{font-size:1.4rem;margin-bottom:.5rem;}
+.nosql-doc .nc-icon{color:#4ade80;}
+.nosql-kv .nc-icon{color:#60a5fa;}
+.nosql-col .nc-icon{color:#fbbf24;}
+.nosql-graph .nc-icon{color:#a78bfa;}
+.nosql-card .nc-title{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.3rem;}
+.nosql-doc .nc-title{color:#86efac;}
+.nosql-kv .nc-title{color:#93c5fd;}
+.nosql-col .nc-title{color:#fde68a;}
+.nosql-graph .nc-title{color:#c4b5fd;}
+.nosql-card .nc-ex{font-size:.72rem;margin-bottom:.5rem;opacity:.7;}
+.nosql-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.nosql-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">05</div>
+    <h1 class="capa-titulo">Bancos<br><em>NoSQL</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Última semana antes da P1</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-question-circle"></i></div><span>Por que NoSQL? Quando relacional não basta</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-th-large"></i></div><span>Tipos: documento, chave-valor, colunar, grafos</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-leaf"></i></div><span>MongoDB — modelo de documentos e operações CRUD</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-bolt"></i></div><span>Redis — cache, sessões e estruturas de dados</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-balance-scale"></i></div><span>Relacional vs NoSQL — como decidir</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Operações CRUD no MongoDB e uso de Redis como cache — simulando cenários reais de IA.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 4: pipeline BD relacional → features para ML</li>
+        <li>Mas dados de IA vêm de várias fontes — nem tudo é tabela</li>
+        <li>Logs, perfis, documentos, grafos → NoSQL é mais natural</li>
+        <li>Semana 6: P1 — esta semana fecha o bloco 1–5</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-brain"></i>NoSQL e IA — conexão direta</div>
+      <ul class="info-lista">
+        <li>MongoDB: armazenar embeddings e metadados de documentos</li>
+        <li>Redis: cache de respostas de LLMs e feature store em memória</li>
+        <li>Cassandra: logs de inferência em escala (IoT, streaming)</li>
+        <li>Neo4j: grafos de conhecimento para RAG e recomendação</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-server"></i>Como praticar sem instalar</div>
+      <ul class="info-lista">
+        <li>MongoDB: <strong>mongodb.com/try</strong> — sandbox gratuito no Atlas</li>
+        <li>Redis: <strong>redis.io/try-free</strong> — Redis Cloud gratuito</li>
+        <li>Ambos têm playground online sem cadastro</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Por que NoSQL + Tipos ────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Por que NoSQL? Os quatro tipos</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O que o relacional não resolve bem</div>
+      <p>Bancos relacionais são excelentes para dados estruturados com relacionamentos claros. Mas existem cenários onde eles criam fricção:</p>
+      <ul class="icon-list">
+        <li><i class="fas fa-times"></i><span><strong>Esquema variável:</strong> cada usuário de uma rede social tem campos diferentes — forçar um schema fixo gera colunas nulas em excesso</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Escala horizontal:</strong> um banco relacional escala verticalmente (servidor maior); NoSQL foi projetado para distribuir dados em múltiplos nós</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Alto volume de writes:</strong> 100k inserções/segundo em logs de IoT — o overhead transacional do relacional é impeditivo</span></li>
+        <li><i class="fas fa-times"></i><span><strong>Dados não-tabulares:</strong> documentos JSON, grafos de relacionamentos, séries temporais — forçar em tabelas é trabalhoso e ineficiente</span></li>
+      </ul>
+      <div class="destaque">
+        <strong>NoSQL</strong> não significa "sem SQL" — significa <strong>"Not Only SQL"</strong>. São bancos projetados para casos específicos onde o modelo relacional não é o mais adequado.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th-large"></i>Os quatro tipos de banco NoSQL</div>
+      <div class="nosql-grid">
+        <div class="nosql-card nosql-doc">
+          <div class="nc-icon"><i class="fas fa-file-code"></i></div>
+          <div class="nc-title">Documento</div>
+          <div class="nc-ex">MongoDB, Firestore, CouchDB</div>
+          <p>Armazena documentos JSON/BSON. Esquema flexível — cada documento pode ter campos diferentes. Ideal para perfis, catálogos e conteúdo.</p>
+        </div>
+        <div class="nosql-card nosql-kv">
+          <div class="nc-icon"><i class="fas fa-key"></i></div>
+          <div class="nc-title">Chave-Valor</div>
+          <div class="nc-ex">Redis, DynamoDB, Memcached</div>
+          <p>Acesso ultra-rápido por chave única. Estrutura mais simples. Ideal para cache, sessões, filas e feature stores em memória.</p>
+        </div>
+        <div class="nosql-card nosql-col">
+          <div class="nc-icon"><i class="fas fa-columns"></i></div>
+          <div class="nc-title">Colunar</div>
+          <div class="nc-ex">Cassandra, HBase, ScyllaDB</div>
+          <p>Armazena dados por coluna em vez de linha. Altamente eficiente para séries temporais, IoT e analytics em escala massiva.</p>
+        </div>
+        <div class="nosql-card nosql-graph">
+          <div class="nc-icon"><i class="fas fa-project-diagram"></i></div>
+          <div class="nc-title">Grafos</div>
+          <div class="nc-ex">Neo4j, Amazon Neptune, ArangoDB</div>
+          <p>Nós e arestas como estrutura nativa. Ideal para redes sociais, sistemas de recomendação, grafos de conhecimento e RAG.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Teorema CAP — o trade-off fundamental</div>
+      <p>Todo sistema distribuído precisa escolher <strong>dois dos três</strong>:</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Propriedade</th><th>Significado</th><th>Quem prioriza</th></tr></thead>
+          <tbody>
+            <tr><td><strong>C</strong>onsistency</td><td>Todos os nós veem os mesmos dados ao mesmo tempo</td><td>HBase, Zookeeper</td></tr>
+            <tr><td><strong>A</strong>vailability</td><td>O sistema sempre responde, mesmo com falhas</td><td>Cassandra, CouchDB</td></tr>
+            <tr><td><strong>P</strong>artition tolerance</td><td>Funciona mesmo com falha de comunicação entre nós</td><td>Todos os distribuídos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Na prática:</strong> Partition tolerance é obrigatório em sistemas distribuídos. A escolha real é entre Consistência e Disponibilidade. MongoDB escolhe CP; Cassandra escolhe AP.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Relacional vs NoSQL — tabela de decisão</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>Relacional (PostgreSQL)</th><th>NoSQL (depende do tipo)</th></tr></thead>
+          <tbody>
+            <tr><td>Esquema</td><td>Rígido — DDL obrigatório</td><td>Flexível ou sem schema</td></tr>
+            <tr><td>Joins complexos</td><td>✅ Nativo e eficiente</td><td>❌ Evitar — modelar para acesso direto</td></tr>
+            <tr><td>Transações ACID</td><td>✅ Total</td><td>Parcial (MongoDB 4+ suporta)</td></tr>
+            <tr><td>Escala horizontal</td><td>Difícil (sharding manual)</td><td>✅ Projetado para isso</td></tr>
+            <tr><td>Dados não-tabulares</td><td>Trabalhoso</td><td>✅ Natural</td></tr>
+            <tr><td>Query ad-hoc</td><td>✅ SQL é expressivo</td><td>Limitado (exceto MongoDB)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: MongoDB ───────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">MongoDB — Modelo de Documentos</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Terminologia — relacional vs MongoDB</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Relacional</th><th>MongoDB</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>Database</td><td>Database</td><td>Conjunto de coleções</td></tr>
+            <tr><td>Table</td><td>Collection</td><td>Grupo de documentos</td></tr>
+            <tr><td>Row</td><td>Document</td><td>Um registro em JSON/BSON</td></tr>
+            <tr><td>Column</td><td>Field</td><td>Atributo de um documento</td></tr>
+            <tr><td>Primary Key</td><td><code>_id</code></td><td>Identificador único (ObjectId)</td></tr>
+            <tr><td>JOIN</td><td><code>$lookup</code></td><td>Combinação de coleções no aggregate</td></tr>
+            <tr><td>INDEX</td><td>Index</td><td>Mesmo conceito, sintaxe diferente</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plus-circle"></i>CRUD — Create, Read, Update, Delete</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">MongoDB — INSERT (insertOne / insertMany)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Inserir um único documento</span>
+db.usuarios.insertOne({
+  nome: <span class="str">"Ana Lima"</span>,
+  email: <span class="str">"ana@email.com"</span>,
+  cidade: <span class="str">"Fortaleza"</span>,
+  interesses: [<span class="str">"Python"</span>, <span class="str">"Machine Learning"</span>, <span class="str">"SQL"</span>],
+  metadata: {
+    criado_em: <span class="kw">new</span> Date(),
+    ativo: <span class="kw">true</span>,
+    score_credito: <span class="num">750</span>
+  }
+})
+
+<span class="cm">// Inserir múltiplos documentos</span>
+db.produtos.insertMany([
+  { nome: <span class="str">"Notebook Dell"</span>, categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">3200</span>, estoque: <span class="num">15</span> },
+  { nome: <span class="str">"Mouse Logitech"</span>, categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">89.90</span>, estoque: <span class="num">80</span> },
+  { nome: <span class="str">"Cadeira Gamer"</span>, categoria: <span class="str">"Móveis"</span>, preco: <span class="num">1200</span>, estoque: <span class="num">8</span> }
+])</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">MongoDB — FIND (SELECT)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// find() equivale ao SELECT * FROM + WHERE</span>
+db.usuarios.find({ cidade: <span class="str">"Fortaleza"</span> })
+
+<span class="cm">// Projeção: só retornar campos específicos (1=incluir, 0=excluir)</span>
+db.usuarios.find(
+  { cidade: <span class="str">"Fortaleza"</span> },
+  { nome: <span class="num">1</span>, email: <span class="num">1</span>, _id: <span class="num">0</span> }
+)
+
+<span class="cm">// Operadores de comparação</span>
+db.produtos.find({ preco: { $gt: <span class="num">100</span>, $lt: <span class="num">2000</span> } })  <span class="cm">// $gt, $lt, $gte, $lte</span>
+db.produtos.find({ categoria: { $in: [<span class="str">"Eletrônicos"</span>, <span class="str">"Móveis"</span>] } })
+
+<span class="cm">// Busca em array: todos que têm "Python" no array interesses</span>
+db.usuarios.find({ interesses: <span class="str">"Python"</span> })
+
+<span class="cm">// Ordenar, limitar e pular</span>
+db.produtos.find().sort({ preco: -<span class="num">1</span> }).limit(<span class="num">5</span>).skip(<span class="num">0</span>)
+<span class="cm">// -1 = descendente, 1 = ascendente</span></code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">MongoDB — UPDATE e DELETE</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// updateOne: atualiza o primeiro documento que bater</span>
+db.produtos.updateOne(
+  { nome: <span class="str">"Mouse Logitech"</span> },
+  { $set: { preco: <span class="num">99.90</span>, atualizado_em: <span class="kw">new</span> Date() } }
+)
+
+<span class="cm">// updateMany: atualiza todos que baterem</span>
+db.produtos.updateMany(
+  { categoria: <span class="str">"Eletrônicos"</span> },
+  { $inc: { estoque: -<span class="num">1</span> } }   <span class="cm">// $inc decrementa o estoque de todos</span>
+)
+
+<span class="cm">// deleteOne / deleteMany</span>
+db.usuarios.deleteOne({ email: <span class="str">"ana@email.com"</span> })
+db.pedidos.deleteMany({ status: <span class="str">"cancelado"</span>, criado_em: { $lt: <span class="kw">new</span> Date(<span class="str">"2024-01-01"</span>) } })</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-filter"></i>Aggregation Pipeline — o GROUP BY do MongoDB</div>
+      <p>O pipeline de agregação processa documentos em <strong>estágios sequenciais</strong>. Cada estágio transforma os documentos e passa para o próximo.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">MongoDB — Aggregate</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">// Total gasto por cidade — equivalente ao GROUP BY + SUM do SQL</span>
+db.pedidos.aggregate([
+  <span class="cm">// Estágio 1: filtrar pedidos entregues</span>
+  { $match: { status: <span class="str">"entregue"</span> } },
+
+  <span class="cm">// Estágio 2: join com coleção de clientes (equivalente ao LEFT JOIN)</span>
+  { $lookup: {
+    from: <span class="str">"clientes"</span>,
+    localField: <span class="str">"cliente_id"</span>,
+    foreignField: <span class="str">"_id"</span>,
+    as: <span class="str">"cliente"</span>
+  }},
+
+  <span class="cm">// Estágio 3: desempilhar o array resultado do lookup</span>
+  { $unwind: <span class="str">"$cliente"</span> },
+
+  <span class="cm">// Estágio 4: agrupar por cidade e calcular métricas</span>
+  { $group: {
+    _id: <span class="str">"$cliente.cidade"</span>,
+    total_pedidos: { $sum: <span class="num">1</span> },
+    receita_total: { $sum: <span class="str">"$total"</span> },
+    ticket_medio:  { $avg: <span class="str">"$total"</span> }
+  }},
+
+  <span class="cm">// Estágio 5: ordenar pela receita total</span>
+  { $sort: { receita_total: -<span class="num">1</span> } },
+
+  <span class="cm">// Estágio 6: limitar ao top 10</span>
+  { $limit: <span class="num">10</span> }
+])</code></pre>
+      </div>
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Os estágios mais comuns: <strong>$match</strong> (filtrar), <strong>$group</strong> (agregar), <strong>$sort</strong> (ordenar), <strong>$project</strong> (selecionar campos), <strong>$lookup</strong> (join), <strong>$unwind</strong> (desempilhar array), <strong>$limit</strong> e <strong>$skip</strong>.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-python"></i>MongoDB com Python — pymongo</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pymongo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> pymongo <span class="kw">import</span> MongoClient
+<span class="kw">import</span> os
+
+<span class="cm"># Conectar ao MongoDB Atlas (cloud) ou local</span>
+client = MongoClient(os.getenv(<span class="str">"MONGODB_URI"</span>))
+db = client[<span class="str">"loja"</span>]
+
+<span class="cm"># Inserir documento</span>
+db.usuarios.insert_one({
+    <span class="str">"nome"</span>: <span class="str">"Bruno Costa"</span>,
+    <span class="str">"email"</span>: <span class="str">"bruno@email.com"</span>,
+    <span class="str">"interesses"</span>: [<span class="str">"Docker"</span>, <span class="str">"FastAPI"</span>]
+})
+
+<span class="cm"># Buscar e iterar</span>
+<span class="kw">for</span> usuario <span class="kw">in</span> db.usuarios.find({ <span class="str">"interesses"</span>: <span class="str">"Python"</span> }):
+    print(usuario[<span class="str">"nome"</span>], usuario[<span class="str">"email"</span>])
+
+<span class="cm"># Converter resultado de aggregate em DataFrame</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+pipeline = [
+    { <span class="str">"$match"</span>: { <span class="str">"status"</span>: <span class="str">"entregue"</span> } },
+    { <span class="str">"$group"</span>: { <span class="str">"_id"</span>: <span class="str">"$cliente_id"</span>, <span class="str">"total"</span>: { <span class="str">"$sum"</span>: <span class="str">"$valor"</span> } } }
+]
+df = pd.DataFrame(list(db.pedidos.aggregate(pipeline)))
+print(df.head())</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Redis + Prática</span></div>
+
+  <!-- ── AULA 3: Redis ─────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Redis — Cache e Estruturas de Dados em Memória</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-bolt"></i>O que é Redis e por que ele é tão rápido</div>
+      <p>Redis é um banco de dados <strong>in-memory</strong> — todos os dados ficam na RAM. Isso o torna <strong>10–100x mais rápido</strong> que um banco em disco para leituras e escritas simples.</p>
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">Casos de uso principais</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check"></i><span><strong>Cache</strong> de resultados de queries caras</span></li>
+            <li><i class="fas fa-check"></i><span><strong>Sessões</strong> de usuários autenticados</span></li>
+            <li><i class="fas fa-check"></i><span><strong>Feature store</strong> — features pré-calculadas em memória</span></li>
+            <li><i class="fas fa-check"></i><span><strong>Rate limiting</strong> de APIs</span></li>
+            <li><i class="fas fa-check"></i><span><strong>Cache de respostas</strong> de LLMs (semantic cache)</span></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">Estruturas de dados suportadas</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-minus"></i><span><strong>String</strong> — valor simples, counter, flag</span></li>
+            <li><i class="fas fa-list"></i><span><strong>List</strong> — fila FIFO/LIFO</span></li>
+            <li><i class="fas fa-th"></i><span><strong>Hash</strong> — mapa chave-valor (como um objeto)</span></li>
+            <li><i class="fas fa-star"></i><span><strong>Sorted Set</strong> — ranking com score</span></li>
+            <li><i class="fas fa-circle"></i><span><strong>Set</strong> — conjunto sem duplicatas</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-terminal"></i>Redis — Comandos essenciais</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Redis CLI — Strings e TTL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># SET / GET — chave-valor básico</span>
+SET usuario:1001:nome <span class="str">"Ana Lima"</span>
+GET usuario:1001:nome          <span class="cm"># → "Ana Lima"</span>
+
+<span class="cm"># TTL (Time To Live) — expira automaticamente em segundos</span>
+SET cache:query:clientes_sp <span class="str">"[{...}]"</span> EX <span class="num">300</span>   <span class="cm"># expira em 5 minutos</span>
+TTL cache:query:clientes_sp                    <span class="cm"># → 298 (segundos restantes)</span>
+
+<span class="cm"># Incremento atômico — útil para contadores e rate limiting</span>
+INCR contador:api:usuario:1001
+INCRBY contador:api:usuario:1001 <span class="num">10</span>
+EXPIRE contador:api:usuario:1001 <span class="num">60</span>   <span class="cm"># reset a cada 60s</span></code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Redis CLI — Hash (perfil de usuário)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># HSET armazena múltiplos campos de uma vez (como um objeto)</span>
+HSET usuario:1001 nome <span class="str">"Ana Lima"</span> cidade <span class="str">"Fortaleza"</span> score <span class="num">750</span>
+
+<span class="cm"># HGET — buscar campo específico</span>
+HGET usuario:1001 nome         <span class="cm"># → "Ana Lima"</span>
+
+<span class="cm"># HGETALL — buscar todos os campos</span>
+HGETALL usuario:1001
+<span class="cm"># → { nome: "Ana Lima", cidade: "Fortaleza", score: "750" }</span>
+
+<span class="cm"># HINCRBY — incrementar campo numérico</span>
+HINCRBY usuario:1001 score <span class="num">50</span>   <span class="cm"># score agora = 800</span></code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Redis CLI — Sorted Set (ranking)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># ZADD — adicionar ao ranking com score</span>
+ZADD ranking:produtos <span class="num">152</span> <span class="str">"Notebook Dell"</span>
+ZADD ranking:produtos <span class="num">89</span>  <span class="str">"Mouse Logitech"</span>
+ZADD ranking:produtos <span class="num">43</span>  <span class="str">"Cadeira Gamer"</span>
+
+<span class="cm"># ZREVRANGE — top N em ordem decrescente de score</span>
+ZREVRANGE ranking:produtos <span class="num">0</span> <span class="num">2</span> WITHSCORES
+<span class="cm"># → Notebook Dell 152 / Mouse Logitech 89 / Cadeira Gamer 43</span>
+
+<span class="cm"># ZINCRBY — incrementar score (ex: nova venda)</span>
+ZINCRBY ranking:produtos <span class="num">1</span> <span class="str">"Mouse Logitech"</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-python"></i>Redis com Python — redis-py</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Padrão Cache-Aside com Redis</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> redis, json, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Conectar ao Redis e ao PostgreSQL</span>
+cache = redis.Redis(host=<span class="str">"localhost"</span>, port=<span class="num">6379</span>, decode_responses=<span class="kw">True</span>)
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="kw">def</span> get_features_cliente(cliente_id: int) -> dict:
+    <span class="cm"># 1. Tentar buscar do cache primeiro</span>
+    cache_key = <span class="fn">f</span><span class="str">"features:cliente:{cliente_id}"</span>
+    cached = cache.get(cache_key)
+
+    <span class="kw">if</span> cached:
+        print(<span class="str">"✅ Cache hit"</span>)
+        <span class="kw">return</span> json.loads(cached)
+
+    <span class="cm"># 2. Cache miss — buscar do banco</span>
+    print(<span class="str">"⚠️  Cache miss — buscando do banco"</span>)
+    df = pd.read_sql(<span class="fn">f</span><span class="str">"""
+        SELECT * FROM gold_features_cliente
+        WHERE cliente_id = {cliente_id}
+    """</span>, engine)
+
+    <span class="kw">if</span> df.empty:
+        <span class="kw">return</span> {}
+
+    features = df.iloc[<span class="num">0</span>].to_dict()
+
+    <span class="cm"># 3. Armazenar no cache com TTL de 10 minutos</span>
+    cache.setex(cache_key, <span class="num">600</span>, json.dumps(features, default=str))
+
+    <span class="kw">return</span> features
+
+<span class="cm"># Uso</span>
+f = get_features_cliente(<span class="num">1</span>)
+print(f[<span class="str">"ticket_medio"</span>], f[<span class="str">"dias_inativo"</span>])</code></pre>
+      </div>
+      <div class="destaque">
+        <strong>Padrão Cache-Aside:</strong> leia do cache primeiro → se não existir (miss), busque da fonte e grave no cache com TTL. Reduz carga no banco e latência para o modelo.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · MongoDB + Redis</div>
+        <div class="secao-titulo">6 Exercícios — NoSQL na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Exercícios 1–4 em MongoDB. Exercícios 5–6 em Redis. Use o sandbox online se não tiver instalado.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>No MongoDB, crie uma coleção <code>produtos</code> e insira os 6 produtos do banco loja_exemplo como documentos JSON. Depois, busque apenas os produtos da categoria <strong>'Eletrônicos'</strong> com preço maior que R$ 200, retornando somente <code>nome</code> e <code>preco</code>.</p>
+      <span class="dificuldade dif-basico">Básico — insertMany + find com projeção</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">MongoDB</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">// Inserir</span>
+db.produtos.insertMany([
+  { nome: <span class="str">"Notebook Dell"</span>,   categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">3200</span>, estoque: <span class="num">15</span> },
+  { nome: <span class="str">"Mouse Logitech"</span>,  categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">89.90</span>, estoque: <span class="num">80</span> },
+  { nome: <span class="str">"Cadeira Gamer"</span>,   categoria: <span class="str">"Móveis"</span>,       preco: <span class="num">1200</span>, estoque: <span class="num">8</span>  },
+  { nome: <span class="str">'Monitor 24"'</span>,     categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">950</span>,  estoque: <span class="num">22</span> },
+  { nome: <span class="str">"Teclado Mecânico"</span>,categoria: <span class="str">"Eletrônicos"</span>, preco: <span class="num">320</span>,  estoque: <span class="num">45</span> },
+  { nome: <span class="str">"Mesa de Escritório"</span>,categoria:<span class="str">"Móveis"</span>,      preco: <span class="num">680</span>,  estoque: <span class="num">5</span>  }
+])
+
+<span class="cm">// Buscar Eletrônicos acima de R$ 200, só nome e preço</span>
+db.produtos.find(
+  { categoria: <span class="str">"Eletrônicos"</span>, preco: { $gt: <span class="num">200</span> } },
+  { nome: <span class="num">1</span>, preco: <span class="num">1</span>, _id: <span class="num">0</span> }
+).sort({ preco: <span class="num">1</span> })</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Insira 3 clientes na coleção <code>clientes</code>, cada um com um array <code>interesses</code>. Depois: (a) encontre todos que têm <strong>"SQL"</strong> no array interesses; (b) adicione o interesse <strong>"MongoDB"</strong> a um cliente específico usando <code>$push</code>.</p>
+      <span class="dificuldade dif-basico">Básico — Array operators</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">MongoDB</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>db.clientes.insertMany([
+  { nome: <span class="str">"Ana Lima"</span>,    email: <span class="str">"ana@email.com"</span>,   interesses: [<span class="str">"Python"</span>, <span class="str">"SQL"</span>] },
+  { nome: <span class="str">"Bruno Costa"</span>, email: <span class="str">"bruno@email.com"</span>, interesses: [<span class="str">"Docker"</span>, <span class="str">"SQL"</span>, <span class="str">"FastAPI"</span>] },
+  { nome: <span class="str">"Carla Souza"</span>, email: <span class="str">"carla@email.com"</span>, interesses: [<span class="str">"React"</span>, <span class="str">"TypeScript"</span>] }
+])
+
+<span class="cm">// (a) Quem tem "SQL" nos interesses</span>
+db.clientes.find({ interesses: <span class="str">"SQL"</span> }, { nome: <span class="num">1</span>, _id: <span class="num">0</span> })
+
+<span class="cm">// (b) Adicionar "MongoDB" ao array de Ana Lima</span>
+db.clientes.updateOne(
+  { email: <span class="str">"ana@email.com"</span> },
+  { $push: { interesses: <span class="str">"MongoDB"</span> } }
+)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Usando o <strong>Aggregation Pipeline</strong> no MongoDB, calcule por categoria de produto: total de unidades em estoque, preço médio e produto mais caro (usando <code>$max</code>). Ordene pelo estoque total decrescente.</p>
+      <span class="dificuldade dif-medio">Médio — Aggregation Pipeline</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">MongoDB</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code>db.produtos.aggregate([
+  {
+    $group: {
+      _id: <span class="str">"$categoria"</span>,
+      estoque_total:  { $sum: <span class="str">"$estoque"</span> },
+      preco_medio:    { $avg: <span class="str">"$preco"</span> },
+      preco_maximo:   { $max: <span class="str">"$preco"</span> },
+      qtd_produtos:   { $sum: <span class="num">1</span> }
+    }
+  },
+  {
+    $project: {
+      categoria:     <span class="str">"$_id"</span>,
+      estoque_total: <span class="num">1</span>,
+      preco_medio:   { $round: [<span class="str">"$preco_medio"</span>, <span class="num">2</span>] },
+      preco_maximo:  <span class="num">1</span>,
+      qtd_produtos:  <span class="num">1</span>,
+      _id:           <span class="num">0</span>
+    }
+  },
+  { $sort: { estoque_total: -<span class="num">1</span> } }
+])</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Em Python com <code>pymongo</code>, conecte ao MongoDB, busque todos os produtos com estoque menor que 10, converta para um DataFrame pandas e imprima a média de preço desses produtos.</p>
+      <span class="dificuldade dif-medio">Médio — pymongo + pandas</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> pymongo <span class="kw">import</span> MongoClient
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, os
+
+client = MongoClient(os.getenv(<span class="str">"MONGODB_URI"</span>, <span class="str">"mongodb://localhost:27017"</span>))
+db = client[<span class="str">"loja"</span>]
+
+<span class="cm"># Buscar produtos com estoque baixo</span>
+cursor = db.produtos.find(
+    { <span class="str">"estoque"</span>: { <span class="str">"$lt"</span>: <span class="num">10</span> } },
+    { <span class="str">"_id"</span>: <span class="num">0</span>, <span class="str">"nome"</span>: <span class="num">1</span>, <span class="str">"preco"</span>: <span class="num">1</span>, <span class="str">"estoque"</span>: <span class="num">1</span> }
+)
+
+df = pd.DataFrame(list(cursor))
+print(df)
+print(<span class="fn">f</span><span class="str">"\nPreço médio dos produtos com estoque baixo: R$ {df['preco'].mean():.2f}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05</div>
+      <p>No Redis, construa um <strong>ranking de produtos mais vendidos</strong> usando Sorted Set. Adicione 5 produtos com suas quantidades vendidas, depois incremente as vendas do produto mais popular em 10 e exiba o top 3 com scores.</p>
+      <span class="dificuldade dif-basico">Básico — Redis Sorted Set</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Redis CLI</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm"># Adicionar produtos ao ranking com qtd vendida como score</span>
+ZADD ranking:vendas <span class="num">152</span> <span class="str">"Notebook Dell"</span>
+ZADD ranking:vendas <span class="num">89</span>  <span class="str">"Mouse Logitech"</span>
+ZADD ranking:vendas <span class="num">43</span>  <span class="str">"Cadeira Gamer"</span>
+ZADD ranking:vendas <span class="num">67</span>  <span class="str">'Monitor 24"'</span>
+ZADD ranking:vendas <span class="num">120</span> <span class="str">"Teclado Mecânico"</span>
+
+<span class="cm"># Incrementar 10 vendas do produto mais popular (Notebook Dell)</span>
+ZINCRBY ranking:vendas <span class="num">10</span> <span class="str">"Notebook Dell"</span>
+
+<span class="cm"># Exibir top 3 com scores (ordem decrescente)</span>
+ZREVRANGE ranking:vendas <span class="num">0</span> <span class="num">2</span> WITHSCORES
+<span class="cm"># → Notebook Dell 162 / Teclado Mecânico 120 / Mouse Logitech 89</span></code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 06 — Desafio</div>
+      <p>Implemente em Python o <strong>padrão Cache-Aside</strong> para a função <code>get_produto(produto_id)</code>: (1) tente buscar o produto do Redis (Hash); (2) se não existir, busque do MongoDB e armazene no Redis com TTL de 5 minutos usando <code>HSET</code> + <code>EXPIRE</code>; (3) retorne o produto. Teste chamando a função duas vezes para ver o cache hit.</p>
+      <span class="dificuldade dif-desafio">Desafio — Cache-Aside Redis + MongoDB</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> redis, os
+<span class="kw">from</span> pymongo <span class="kw">import</span> MongoClient
+<span class="kw">from</span> bson <span class="kw">import</span> ObjectId
+
+cache = redis.Redis(host=<span class="str">"localhost"</span>, port=<span class="num">6379</span>, decode_responses=<span class="kw">True</span>)
+mongo = MongoClient(os.getenv(<span class="str">"MONGODB_URI"</span>, <span class="str">"mongodb://localhost:27017"</span>))
+db = mongo[<span class="str">"loja"</span>]
+
+<span class="kw">def</span> get_produto(nome_produto: str) -> dict:
+    cache_key = <span class="fn">f</span><span class="str">"produto:{nome_produto.lower().replace(' ', '_')}"</span>
+
+    <span class="cm"># 1. Tentar do Redis</span>
+    cached = cache.hgetall(cache_key)
+    <span class="kw">if</span> cached:
+        print(<span class="str">f"✅ Cache HIT para '{nome_produto}'"</span>)
+        cached[<span class="str">"preco"</span>] = float(cached[<span class="str">"preco"</span>])
+        cached[<span class="str">"estoque"</span>] = int(cached[<span class="str">"estoque"</span>])
+        <span class="kw">return</span> cached
+
+    <span class="cm"># 2. Cache miss — buscar do MongoDB</span>
+    print(<span class="str">f"⚠️  Cache MISS — buscando '{nome_produto}' do MongoDB"</span>)
+    produto = db.produtos.find_one(
+        { <span class="str">"nome"</span>: nome_produto },
+        { <span class="str">"_id"</span>: <span class="num">0</span> }
+    )
+    <span class="kw">if not</span> produto:
+        <span class="kw">return</span> {}
+
+    <span class="cm"># 3. Armazenar no Redis como Hash</span>
+    cache.hset(cache_key, mapping={
+        <span class="str">"nome"</span>:      produto[<span class="str">"nome"</span>],
+        <span class="str">"categoria"</span>: produto[<span class="str">"categoria"</span>],
+        <span class="str">"preco"</span>:     str(produto[<span class="str">"preco"</span>]),
+        <span class="str">"estoque"</span>:   str(produto[<span class="str">"estoque"</span>])
+    })
+    cache.expire(cache_key, <span class="num">300</span>)  <span class="cm"># TTL de 5 minutos</span>
+
+    <span class="kw">return</span> produto
+
+<span class="cm"># Teste: 1ª chamada = miss, 2ª = hit</span>
+print(get_produto(<span class="str">"Notebook Dell"</span>))
+print(get_produto(<span class="str">"Notebook Dell"</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento · Bloco 1 concluído</div>
+        <div class="secao-titulo">O que vimos na Semana 5</div>
+      </div>
+    </div>
+
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-th-large"></i>
+        <strong>Tipos NoSQL</strong>
+        <p>Documento, chave-valor, colunar, grafos — quando usar cada um e o Teorema CAP</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-leaf"></i>
+        <strong>MongoDB</strong>
+        <p>CRUD completo, operadores de array, Aggregation Pipeline com $match, $group, $lookup</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Redis</strong>
+        <p>String, Hash, Sorted Set, TTL, padrão Cache-Aside para features e respostas de IA</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-balance-scale"></i>
+        <strong>Relacional vs NoSQL</strong>
+        <p>Critérios de decisão: esquema, joins, transações, escala horizontal e tipo de dado</p>
+      </div>
+    </div>
+
+    <div class="aviso" style="margin-top:2rem;">
+      <i class="fas fa-graduation-cap"></i>
+      <span><strong>Próxima semana: Avaliação P1</strong> — cobre Semanas 1 a 5. Revise SQL avançado (CTEs, window functions), normalização (1FN–FNBC), pipelines de dados e os conceitos de NoSQL apresentados hoje.</span>
+    </div>
+
+    <a class="proxima" href="slide-06.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 6 — Avaliação P1 · Semanas 1 a 5</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

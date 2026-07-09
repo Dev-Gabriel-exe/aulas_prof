@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 04 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA ─────────────────────────────────────────────────────────── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+.aviso-erro{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.aviso-erro i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* pipeline flow */
+.pipeline{display:flex;align-items:stretch;gap:0;margin:1.25rem 0;overflow-x:auto;}
+.pipe-step{
+  flex:1;min-width:130px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  padding:1rem .85rem;position:relative;
+}
+.pipe-step:first-child{border-radius:12px 0 0 12px;}
+.pipe-step:last-child{border-radius:0 12px 12px 0;}
+.pipe-step::after{
+  content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  color:var(--green-400);font-size:1.1rem;z-index:1;
+}
+.pipe-step:last-child::after{display:none;}
+.pipe-icon{font-size:1.25rem;color:var(--green-400);margin-bottom:.5rem;}
+.pipe-title{font-size:.75rem;font-weight:700;color:var(--text-primary);margin-bottom:.3rem;font-family:'Montserrat',sans-serif;}
+.pipe-desc{font-size:.72rem;color:var(--text-muted);line-height:1.5;}
+
+/* zona cards */
+.zona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.zona-card{border-radius:12px;padding:1.1rem;}
+.zona-bronze{background:rgba(180,83,9,.12);border:1px solid rgba(180,83,9,.3);}
+.zona-silver{background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.25);}
+.zona-gold{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.25);}
+.zona-card .z-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.zona-bronze .z-label{color:#f97316;}
+.zona-silver .z-label{color:#94a3b8;}
+.zona-gold .z-label{color:#eab308;}
+.zona-card .z-title{font-size:.85rem;font-weight:600;color:var(--text-primary);margin-bottom:.4rem;}
+.zona-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* feature tag */
+.feat-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:600;background:rgba(167,139,250,.12);color:#c4b5fd;border:1px solid rgba(167,139,250,.25);margin:2px;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+/* resumo */
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.zona-grid,.resumo-grid{grid-template-columns:1fr;}
+  .pipeline{flex-direction:column;}
+  .pipe-step{border-radius:10px!important;}.pipe-step::after{content:'↓';right:auto;left:50%;top:auto;bottom:-16px;transform:translateX(-50%);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">04</div>
+    <h1 class="capa-titulo">Pipelines de<br><em>Dados para IA</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Pré-requisito: Semanas 1–3</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Conceito de pipeline de dados — ETL vs ELT</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Arquitetura de zonas: raw, silver e gold</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-broom"></i></div><span>Limpeza e transformação com SQL e Python</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cogs"></i></div><span>Feature engineering direto no banco</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: construir um pipeline completo BD → features</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir um pipeline completo: extrair do banco loja_exemplo, transformar com SQL e exportar features prontas para ML.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Por que pipelines vêm agora?</div>
+      <ul class="info-lista">
+        <li>Semanas 1–3: banco modelado corretamente e consultas avançadas</li>
+        <li>Agora: como mover e transformar esses dados para ML</li>
+        <li>Todo modelo de ML precisa de um pipeline antes de treinar</li>
+        <li>Semana 5: NoSQL — os dados chegam de fontes variadas</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-brain"></i>O que é feature engineering?</div>
+      <ul class="info-lista">
+        <li>Transformar dados brutos em variáveis úteis para o modelo</li>
+        <li>Ex: de "data_nascimento" → "idade" → "faixa_etaria"</li>
+        <li>Ex: de tabela pedidos → "ticket_médio dos últimos 30 dias"</li>
+        <li>Muito do feature engineering pode ser feito diretamente em SQL</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Ferramentas desta semana</div>
+      <ul class="info-lista">
+        <li>SQL — transformações no banco</li>
+        <li>Python + pandas — transformações fora do banco</li>
+        <li>psycopg2 / SQLAlchemy — conexão Python ↔ PostgreSQL</li>
+        <li>Parquet — formato eficiente para armazenar features</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: ETL, ELT e Arquitetura de Zonas ──────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">ETL, ELT e Arquitetura de Zonas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-route"></i>O que é um Pipeline de Dados?</div>
+      <p>Um pipeline é uma <strong>sequência automatizada de etapas</strong> que move dados de uma origem até um destino, aplicando transformações no caminho. É a infraestrutura que conecta o banco de dados ao modelo de ML.</p>
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-icon"><i class="fas fa-database"></i></div>
+          <div class="pipe-title">Fonte</div>
+          <div class="pipe-desc">BD relacional, API, arquivo, stream</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-icon"><i class="fas fa-download"></i></div>
+          <div class="pipe-title">Ingestão</div>
+          <div class="pipe-desc">Extrair dados brutos para o lake</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-icon"><i class="fas fa-broom"></i></div>
+          <div class="pipe-title">Transformação</div>
+          <div class="pipe-desc">Limpar, tipificar, enriquecer</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-icon"><i class="fas fa-cogs"></i></div>
+          <div class="pipe-title">Features</div>
+          <div class="pipe-desc">Calcular variáveis para ML</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-icon"><i class="fas fa-robot"></i></div>
+          <div class="pipe-title">Modelo</div>
+          <div class="pipe-desc">Treino, inferência, resultado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>ETL vs ELT — qual a diferença?</div>
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">ETL — Extract, Transform, Load</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-arrow-right"></i><span>Transforma <strong>antes</strong> de carregar no destino</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Dados chegam já limpos e prontos</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Tradicional — Data Warehouses clássicos</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Mais lento para pipelines grandes</span></li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.75rem;font-weight:600;">ELT — Extract, Load, Transform</p>
+          <ul class="icon-list">
+            <li><i class="fas fa-arrow-right"></i><span>Carrega <strong>bruto</strong> primeiro, transforma depois</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Aproveitam o poder de processamento do BD</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Moderno — Data Lakes, BigQuery, Snowflake</span></li>
+            <li><i class="fas fa-arrow-right"></i><span>Mais flexível — reprocessar sem re-extrair</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="destaque">
+        <strong>Na prática com IA:</strong> ELT é mais comum. Você carrega os dados brutos no lake, depois usa SQL (dbt, Spark SQL) ou Python para criar as features dentro da plataforma.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Arquitetura de Zonas — Raw, Silver, Gold</div>
+      <p>O padrão mais adotado em Data Lakes organiza os dados em <strong>três camadas</strong>, cada uma com nível crescente de qualidade e transformação.</p>
+
+      <div class="zona-grid">
+        <div class="zona-card zona-bronze">
+          <div class="z-label">🥉 Raw / Bronze</div>
+          <div class="z-title">Dados brutos</div>
+          <p>Exatamente como vieram da fonte — sem modificação. Nunca deletar. Servem como histórico e ponto de reprocessamento.</p>
+        </div>
+        <div class="zona-card zona-silver">
+          <div class="z-label">🥈 Silver</div>
+          <div class="z-title">Dados limpos</div>
+          <p>Nulos tratados, tipos corretos, duplicatas removidas, esquema validado. Pode ser consultado com confiança.</p>
+        </div>
+        <div class="zona-card zona-gold">
+          <div class="z-label">🥇 Gold</div>
+          <div class="z-title">Dados prontos</div>
+          <p>Agregados, features calculadas, tabelas wide para ML ou relatórios. Consome direto sem transformação adicional.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura de pastas — S3 / sistema de arquivos</span></div>
+        <pre><code>data-lake/
+├── raw/
+│   ├── clientes/2025-01-15/clientes_dump.csv   <span class="cm"># bruto, imutável</span>
+│   └── pedidos/2025-01-15/pedidos_001.json
+├── silver/
+│   ├── clientes/clientes_clean.parquet          <span class="cm"># limpo e tipado</span>
+│   └── pedidos/pedidos_clean.parquet
+└── gold/
+    └── features_cliente/features_v1.parquet     <span class="cm"># pronto para ML</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Parquet — por que não usar CSV?</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Característica</th><th>CSV</th><th>Parquet</th></tr></thead>
+          <tbody>
+            <tr><td>Formato</td><td>Texto legível</td><td>Binário colunar</td></tr>
+            <tr><td>Tamanho</td><td>Grande (sem compressão)</td><td>3–10x menor (Snappy/Zstd)</td></tr>
+            <tr><td>Leitura seletiva</td><td>Lê tudo, filtra depois</td><td>Lê só colunas necessárias</td></tr>
+            <tr><td>Tipagem</td><td>Sem schema — tudo string</td><td>Schema embutido — tipos preservados</td></tr>
+            <tr><td>Performance em ML</td><td>Lento em datasets grandes</td><td>Muito rápido com pandas/Spark</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — salvar e ler Parquet</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Salvar em Parquet com compressão Snappy</span>
+df.to_parquet(<span class="str">"silver/clientes_clean.parquet"</span>, index=<span class="kw">False</span>, compression=<span class="str">"snappy"</span>)
+
+<span class="cm"># Ler só as colunas que o modelo precisa (muito mais rápido)</span>
+df = pd.read_parquet(
+    <span class="str">"gold/features_cliente/features_v1.parquet"</span>,
+    columns=[<span class="str">"cliente_id"</span>, <span class="str">"ticket_medio"</span>, <span class="str">"total_pedidos"</span>, <span class="str">"dias_inativo"</span>]
+)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Limpeza e Transformação ──────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Limpeza, Transformação e Feature Engineering</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-broom"></i>Limpeza de dados — o que verificar sempre</div>
+      <p>Antes de qualquer transformação, audite o dado bruto. As maiores surpresas acontecem aqui.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Auditoria de qualidade no banco</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- 1. Contar nulos por coluna</span>
+<span class="kw">SELECT</span>
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_linhas,
+  <span class="fn">COUNT</span>(*) <span class="op">-</span> <span class="fn">COUNT</span>(nome)   <span class="kw">AS</span> nulos_nome,
+  <span class="fn">COUNT</span>(*) <span class="op">-</span> <span class="fn">COUNT</span>(email)  <span class="kw">AS</span> nulos_email,
+  <span class="fn">COUNT</span>(*) <span class="op">-</span> <span class="fn">COUNT</span>(cidade) <span class="kw">AS</span> nulos_cidade
+<span class="kw">FROM</span> clientes;
+
+<span class="cm">-- 2. Detectar duplicatas</span>
+<span class="kw">SELECT</span> email, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> ocorrencias
+<span class="kw">FROM</span> clientes
+<span class="kw">WHERE</span> email <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> email
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) <span class="op">&gt;</span> <span class="num">1</span>;
+
+<span class="cm">-- 3. Verificar valores fora do esperado</span>
+<span class="kw">SELECT</span> status, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> qtd
+<span class="kw">FROM</span> pedidos
+<span class="kw">GROUP BY</span> status
+<span class="kw">ORDER BY</span> qtd <span class="kw">DESC</span>;
+<span class="cm">-- esperado: entregue, pendente, processando, cancelado</span>
+<span class="cm">-- se aparecer 'Entregue' ou 'PENDENTE': problema de padronização</span>
+
+<span class="cm">-- 4. Checar ranges inválidos</span>
+<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">AS</span> precos_invalidos
+<span class="kw">FROM</span> produtos
+<span class="kw">WHERE</span> preco <span class="op">&lt;=</span> <span class="num">0</span> <span class="kw">OR</span> preco <span class="kw">IS NULL</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-wrench"></i>Transformações comuns — raw → silver</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Criar tabela silver de clientes</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Tabela silver: dados limpos e padronizados</span>
+<span class="kw">CREATE TABLE</span> silver_clientes <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  id,
+  <span class="cm">-- padronizar texto: trim + capitalizar</span>
+  <span class="fn">INITCAP</span>(<span class="fn">TRIM</span>(nome))                          <span class="kw">AS</span> nome,
+  <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(email))                           <span class="kw">AS</span> email,
+  <span class="cm">-- tratar nulos com valor padrão</span>
+  <span class="fn">COALESCE</span>(<span class="fn">TRIM</span>(cidade), <span class="str">'Desconhecida'</span>)        <span class="kw">AS</span> cidade,
+  criado_em,
+  <span class="cm">-- flag de qualidade</span>
+  <span class="kw">CASE</span> <span class="kw">WHEN</span> email <span class="kw">IS NOT NULL</span> <span class="kw">THEN</span> <span class="kw">TRUE</span> <span class="kw">ELSE</span> <span class="kw">FALSE</span> <span class="kw">END</span> <span class="kw">AS</span> tem_email,
+  <span class="fn">NOW</span>()                                          <span class="kw">AS</span> processado_em
+<span class="kw">FROM</span> clientes;
+
+<span class="cm">-- Tabela silver: pedidos com status padronizado</span>
+<span class="kw">CREATE TABLE</span> silver_pedidos <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  id,
+  cliente_id,
+  <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(status))                          <span class="kw">AS</span> status,
+  <span class="fn">COALESCE</span>(total, <span class="num">0</span>)                             <span class="kw">AS</span> total,
+  criado_em::date                                <span class="kw">AS</span> data_pedido
+<span class="kw">FROM</span> pedidos
+<span class="kw">WHERE</span> total <span class="op">&gt;</span> <span class="num">0</span> <span class="kw">OR</span> total <span class="kw">IS NULL</span>; <span class="cm">-- excluir pedidos com total negativo</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cogs"></i>Feature Engineering no SQL — silver → gold</div>
+      <p>Feature engineering é calcular variáveis que <strong>o modelo não consegue derivar sozinho</strong> a partir dos dados brutos. SQL é uma ferramenta poderosa para isso — especialmente para features baseadas em agregações e janelas temporais.</p>
+
+      <p>Exemplos de features para um modelo de <strong>churn prediction</strong>:</p>
+      <div style="margin:.5rem 0 1rem;">
+        <span class="feat-tag">total_pedidos</span>
+        <span class="feat-tag">ticket_medio</span>
+        <span class="feat-tag">total_gasto</span>
+        <span class="feat-tag">dias_desde_ultimo_pedido</span>
+        <span class="feat-tag">tem_pedido_cancelado</span>
+        <span class="feat-tag">qtd_categorias_distintas</span>
+        <span class="feat-tag">pct_pedidos_entregues</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Tabela gold: features de cliente para ML</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">CREATE TABLE</span> gold_features_cliente <span class="kw">AS</span>
+<span class="kw">WITH</span>
+
+<span class="cm">-- Métricas gerais de pedidos por cliente</span>
+metricas_pedidos <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    cliente_id,
+    <span class="fn">COUNT</span>(*)                                          <span class="kw">AS</span> total_pedidos,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(total)::numeric, <span class="num">2</span>)                     <span class="kw">AS</span> ticket_medio,
+    <span class="fn">SUM</span>(total)                                        <span class="kw">AS</span> total_gasto,
+    <span class="fn">MAX</span>(data_pedido)                                  <span class="kw">AS</span> ultimo_pedido,
+    <span class="fn">MIN</span>(data_pedido)                                  <span class="kw">AS</span> primeiro_pedido,
+    <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'cancelado'</span>)    <span class="kw">AS</span> qtd_cancelados,
+    <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>)     <span class="kw">AS</span> qtd_entregues
+  <span class="kw">FROM</span> silver_pedidos
+  <span class="kw">GROUP BY</span> cliente_id
+),
+
+<span class="cm">-- Diversidade de categorias compradas</span>
+diversidade <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    p.cliente_id,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> pr.categoria) <span class="kw">AS</span> qtd_categorias
+  <span class="kw">FROM</span> silver_pedidos p
+  <span class="kw">INNER JOIN</span> itens_pedido i  <span class="kw">ON</span> i.pedido_id  <span class="op">=</span> p.id
+  <span class="kw">INNER JOIN</span> produtos pr     <span class="kw">ON</span> pr.id        <span class="op">=</span> i.produto_id
+  <span class="kw">GROUP BY</span> p.cliente_id
+)
+
+<span class="cm">-- Tabela gold final</span>
+<span class="kw">SELECT</span>
+  c.id                                                        <span class="kw">AS</span> cliente_id,
+  c.cidade,
+  c.tem_email,
+  mp.total_pedidos,
+  mp.ticket_medio,
+  mp.total_gasto,
+  <span class="fn">CURRENT_DATE</span> <span class="op">-</span> mp.ultimo_pedido                          <span class="kw">AS</span> dias_inativo,
+  mp.ultimo_pedido,
+  mp.qtd_cancelados,
+  mp.qtd_entregues,
+  <span class="fn">ROUND</span>(
+    mp.qtd_cancelados::numeric
+    <span class="op">/</span> <span class="fn">NULLIF</span>(mp.total_pedidos, <span class="num">0</span>) <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                                           <span class="kw">AS</span> pct_cancelados,
+  <span class="fn">COALESCE</span>(d.qtd_categorias, <span class="num">0</span>)                             <span class="kw">AS</span> qtd_categorias,
+  <span class="fn">NOW</span>()                                                       <span class="kw">AS</span> gerado_em
+<span class="kw">FROM</span> silver_clientes c
+<span class="kw">LEFT JOIN</span> metricas_pedidos mp <span class="kw">ON</span> mp.cliente_id <span class="op">=</span> c.id
+<span class="kw">LEFT JOIN</span> diversidade d       <span class="kw">ON</span> d.cliente_id  <span class="op">=</span> c.id;</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>FILTER (WHERE ...)</strong> é uma sintaxe PostgreSQL que aplica uma condição dentro de uma função de agregação — equivalente a um <code>SUM(CASE WHEN ...)</code>, mas muito mais legível.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Python + Integração ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Integração Python ↔ PostgreSQL</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plug"></i>Conectar Python ao banco — SQLAlchemy</div>
+      <p>SQLAlchemy é a forma padrão de conectar Python a bancos relacionais. Junto com pandas, permite ler e escrever tabelas diretamente como DataFrames.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Setup e conexão</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> os
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+<span class="cm"># Nunca hardcode credenciais — use variáveis de ambiente</span>
+DATABASE_URL = os.getenv(<span class="str">"DATABASE_URL"</span>)
+<span class="cm"># ex: "postgresql://usuario:senha@localhost:5432/loja_exemplo"</span>
+
+engine = create_engine(DATABASE_URL)
+
+<span class="cm"># Ler tabela inteira para DataFrame</span>
+df_clientes = pd.read_sql(<span class="str">"SELECT * FROM clientes"</span>, engine)
+
+<span class="cm"># Query com filtro</span>
+df_pedidos = pd.read_sql(<span class="str">"""
+    SELECT p.id, c.nome, p.status, p.total, p.criado_em
+    FROM pedidos p
+    INNER JOIN clientes c ON c.id = p.cliente_id
+    WHERE p.status = 'entregue'
+    ORDER BY p.criado_em DESC
+"""</span>, engine)
+
+print(df_pedidos.head())</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exchange-alt"></i>Pipeline completo — banco → features → arquivo</div>
+      <p>O padrão de um pipeline de preparação de dados para ML em Python:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Pipeline BD → features → Parquet</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, LabelEncoder
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># ── ETAPA 1: Extrair features do banco (gold) ────────────────────</span>
+df = pd.read_sql(<span class="str">"SELECT * FROM gold_features_cliente"</span>, engine)
+print(<span class="fn">f</span><span class="str">"Extraídos {len(df)} clientes"</span>)
+
+<span class="cm"># ── ETAPA 2: Verificar qualidade ─────────────────────────────────</span>
+print(df.isnull().sum())     <span class="cm"># contar nulos</span>
+print(df.dtypes)             <span class="cm"># verificar tipos</span>
+
+<span class="cm"># ── ETAPA 3: Tratar nulos ────────────────────────────────────────</span>
+df[<span class="str">"ticket_medio"</span>].fillna(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+df[<span class="str">"total_gasto"</span>].fillna(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+df[<span class="str">"qtd_categorias"</span>].fillna(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+df[<span class="str">"dias_inativo"</span>].fillna(<span class="num">999</span>, inplace=<span class="kw">True</span>)  <span class="cm"># 999 = nunca comprou</span>
+
+<span class="cm"># ── ETAPA 4: Encoding de categorias ─────────────────────────────</span>
+le = LabelEncoder()
+df[<span class="str">"cidade_enc"</span>] = le.fit_transform(df[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>))
+df[<span class="str">"tem_email_enc"</span>] = df[<span class="str">"tem_email"</span>].astype(<span class="fn">int</span>)
+
+<span class="cm"># ── ETAPA 5: Normalização (apenas no treino!) ────────────────────</span>
+colunas_numericas = [<span class="str">"ticket_medio"</span>, <span class="str">"total_gasto"</span>, <span class="str">"total_pedidos"</span>]
+scaler = StandardScaler()
+df[[c + <span class="str">"_norm"</span> <span class="kw">for</span> c <span class="kw">in</span> colunas_numericas]] = scaler.fit_transform(df[colunas_numericas])
+
+<span class="cm"># ── ETAPA 6: Salvar como Parquet (gold) ─────────────────────────</span>
+df.to_parquet(<span class="str">"gold/features_cliente_v1.parquet"</span>, index=<span class="kw">False</span>, compression=<span class="str">"snappy"</span>)
+print(<span class="fn">f</span><span class="str">"Features salvas: {df.shape[1]} colunas, {len(df)} linhas"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-save"></i>Gravar resultados de volta no banco</div>
+      <p>Depois de treinar o modelo, as predições devem ir para o banco — onde outros sistemas (dashboard, API, CRM) podem consumi-las.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Salvar predições no banco</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> joblib
+
+<span class="cm"># Carregar modelo treinado e fazer predição</span>
+modelo = joblib.load(<span class="str">"modelo_churn_v1.pkl"</span>)
+cols_features = [<span class="str">"ticket_medio_norm"</span>, <span class="str">"total_pedidos"</span>, <span class="str">"dias_inativo"</span>,
+                 <span class="str">"pct_cancelados"</span>, <span class="str">"qtd_categorias"</span>]
+
+df[<span class="str">"prob_churn"</span>] = modelo.predict_proba(df[cols_features])[:, <span class="num">1</span>]
+df[<span class="str">"churn_previsto"</span>] = modelo.predict(df[cols_features])
+
+<span class="cm"># Salvar predições de volta no PostgreSQL</span>
+df[[<span class="str">"cliente_id"</span>, <span class="str">"prob_churn"</span>, <span class="str">"churn_previsto"</span>]].to_sql(
+    <span class="str">"predicoes_churn"</span>,
+    engine,
+    if_exists=<span class="str">"replace"</span>,  <span class="cm"># ou "append" para acumular histórico</span>
+    index=<span class="kw">False</span>
+)
+print(<span class="str">"Predições gravadas no banco."</span>)</code></pre>
+      </div>
+
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>if_exists="replace"</strong> recria a tabela a cada execução. Use <strong>"append"</strong> se quiser acumular histórico de predições com timestamp. Nunca use replace em tabela com dados históricos importantes.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Consultando predições com SQL</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Análise dos resultados do modelo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Top 10 clientes com maior risco de churn</span>
+<span class="kw">SELECT</span>
+  c.nome,
+  c.cidade,
+  f.total_pedidos,
+  f.dias_inativo,
+  <span class="fn">ROUND</span>(p.prob_churn <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>)    <span class="kw">AS</span> risco_pct,
+  <span class="kw">CASE</span>
+    <span class="kw">WHEN</span> p.prob_churn <span class="op">&gt;</span> <span class="num">0.7</span> <span class="kw">THEN</span> <span class="str">'🔴 Alto'</span>
+    <span class="kw">WHEN</span> p.prob_churn <span class="op">&gt;</span> <span class="num">0.4</span> <span class="kw">THEN</span> <span class="str">'🟡 Médio'</span>
+    <span class="kw">ELSE</span> <span class="str">'🟢 Baixo'</span>
+  <span class="kw">END</span>                              <span class="kw">AS</span> categoria_risco
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> gold_features_cliente f  <span class="kw">ON</span> f.cliente_id <span class="op">=</span> c.id
+<span class="kw">INNER JOIN</span> predicoes_churn p        <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+<span class="kw">ORDER BY</span> p.prob_churn <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Banco loja_exemplo</div>
+        <div class="secao-titulo">5 Exercícios — Pipeline de dados na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o banco <strong>loja_exemplo</strong>. Os exercícios 1–3 são em SQL puro; 4–5 combinam SQL e Python.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Escreva uma query de <strong>auditoria de qualidade</strong> para a tabela <code>pedidos</code>: conte o total de linhas, quantos pedidos têm <code>total IS NULL</code>, quantos têm <code>total &lt;= 0</code>, e quantos têm status fora dos valores esperados (<code>entregue</code>, <code>pendente</code>, <code>processando</code>, <code>cancelado</code>).</p>
+      <span class="dificuldade dif-basico">Básico — Auditoria SQL</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  <span class="fn">COUNT</span>(*)                                                            <span class="kw">AS</span> total_linhas,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> total <span class="kw">IS NULL</span>)                           <span class="kw">AS</span> total_nulo,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> total <span class="op">&lt;=</span> <span class="num">0</span>)                              <span class="kw">AS</span> total_invalido,
+  <span class="fn">COUNT</span>(*) <span class="kw">FILTER</span> (
+    <span class="kw">WHERE</span> status <span class="kw">NOT IN</span> (<span class="str">'entregue'</span>,<span class="str">'pendente'</span>,<span class="str">'processando'</span>,<span class="str">'cancelado'</span>)
+  )                                                                   <span class="kw">AS</span> status_invalido
+<span class="kw">FROM</span> pedidos;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Crie uma <strong>view silver</strong> chamada <code>vw_pedidos_silver</code> que normalize os dados da tabela pedidos: status em lowercase e sem espaços, total com COALESCE para 0 quando nulo, e apenas pedidos com total maior que zero.</p>
+      <span class="dificuldade dif-basico">Básico — Silver Layer</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">CREATE OR REPLACE VIEW</span> vw_pedidos_silver <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  id,
+  cliente_id,
+  <span class="fn">LOWER</span>(<span class="fn">TRIM</span>(status))       <span class="kw">AS</span> status,
+  <span class="fn">COALESCE</span>(total, <span class="num">0</span>)         <span class="kw">AS</span> total,
+  criado_em::date            <span class="kw">AS</span> data_pedido
+<span class="kw">FROM</span> pedidos
+<span class="kw">WHERE</span> <span class="fn">COALESCE</span>(total, <span class="num">0</span>) <span class="op">&gt;</span> <span class="num">0</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Usando CTEs, crie uma <strong>tabela gold de features de produto</strong> com as seguintes colunas: <code>produto_id</code>, <code>nome</code>, <code>categoria</code>, <code>preco</code>, <code>total_vendido_qtd</code>, <code>receita_total</code>, <code>qtd_pedidos_distintos</code> e <code>preco_relativo_categoria</code> (quanto o preço está acima/abaixo da média da categoria, em %).</p>
+      <span class="dificuldade dif-medio">Médio — Feature Engineering SQL</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span>
+
+vendas <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    i.produto_id,
+    <span class="fn">SUM</span>(i.quantidade)                         <span class="kw">AS</span> total_vendido_qtd,
+    <span class="fn">SUM</span>(i.quantidade <span class="op">*</span> i.preco_unit)           <span class="kw">AS</span> receita_total,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> i.pedido_id)                <span class="kw">AS</span> qtd_pedidos_distintos
+  <span class="kw">FROM</span> itens_pedido i
+  <span class="kw">GROUP BY</span> i.produto_id
+),
+
+media_categoria <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    categoria,
+    <span class="fn">AVG</span>(preco) <span class="kw">AS</span> media_preco_cat
+  <span class="kw">FROM</span> produtos
+  <span class="kw">GROUP BY</span> categoria
+)
+
+<span class="kw">SELECT</span>
+  p.id             <span class="kw">AS</span> produto_id,
+  p.nome,
+  p.categoria,
+  p.preco,
+  <span class="fn">COALESCE</span>(v.total_vendido_qtd, <span class="num">0</span>)           <span class="kw">AS</span> total_vendido_qtd,
+  <span class="fn">COALESCE</span>(v.receita_total, <span class="num">0</span>)               <span class="kw">AS</span> receita_total,
+  <span class="fn">COALESCE</span>(v.qtd_pedidos_distintos, <span class="num">0</span>)       <span class="kw">AS</span> qtd_pedidos_distintos,
+  <span class="fn">ROUND</span>(
+    (p.preco <span class="op">-</span> mc.media_preco_cat) <span class="op">/</span>
+    <span class="fn">NULLIF</span>(mc.media_preco_cat, <span class="num">0</span>) <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                           <span class="kw">AS</span> preco_relativo_categoria
+<span class="kw">FROM</span> produtos p
+<span class="kw">LEFT JOIN</span> vendas v          <span class="kw">ON</span> v.produto_id <span class="op">=</span> p.id
+<span class="kw">INNER JOIN</span> media_categoria mc <span class="kw">ON</span> mc.categoria <span class="op">=</span> p.categoria
+<span class="kw">ORDER BY</span> receita_total <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Em Python, conecte ao banco, extraia a tabela <code>gold_features_cliente</code> (ou construa a query equivalente inline), trate os nulos nas colunas <code>ticket_medio</code> e <code>dias_inativo</code>, e salve o resultado em um arquivo <strong>Parquet</strong> chamado <code>features_v1.parquet</code>. Imprima o shape final do DataFrame.</p>
+      <span class="dificuldade dif-medio">Médio — Python + Parquet</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> os, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># Extrair features do banco</span>
+df = pd.read_sql(<span class="str">"""
+    SELECT c.id AS cliente_id, c.cidade, c.tem_email,
+           COUNT(p.id) AS total_pedidos,
+           ROUND(AVG(p.total)::numeric, 2) AS ticket_medio,
+           SUM(p.total) AS total_gasto,
+           MAX(CURRENT_DATE - p.criado_em::date) AS dias_inativo
+    FROM silver_clientes c
+    LEFT JOIN silver_pedidos p ON p.cliente_id = c.id
+    GROUP BY c.id, c.cidade, c.tem_email
+"""</span>, engine)
+
+<span class="cm"># Tratar nulos</span>
+df[<span class="str">"ticket_medio"</span>].fillna(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+df[<span class="str">"total_gasto"</span>].fillna(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+df[<span class="str">"dias_inativo"</span>].fillna(<span class="num">999</span>, inplace=<span class="kw">True</span>)
+
+<span class="cm"># Salvar como Parquet</span>
+df.to_parquet(<span class="str">"features_v1.parquet"</span>, index=<span class="kw">False</span>, compression=<span class="str">"snappy"</span>)
+print(<span class="fn">f</span><span class="str">"Shape final: {df.shape}"</span>)
+print(df.dtypes)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Monte um <strong>pipeline completo em Python</strong>: 1) extraia do banco as features de produto (query do exercício 3); 2) normalize as colunas <code>preco</code>, <code>total_vendido_qtd</code> e <code>receita_total</code> com <code>StandardScaler</code>; 3) salve em Parquet; 4) grave uma tabela <code>features_produto_v1</code> de volta no banco com <code>to_sql</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline completo BD → Python → BD</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> os, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># 1. Extrair features de produto do banco</span>
+query = <span class="str">"""
+    WITH vendas AS (
+        SELECT produto_id,
+               SUM(quantidade) AS total_vendido_qtd,
+               SUM(quantidade * preco_unit) AS receita_total
+        FROM itens_pedido GROUP BY produto_id
+    ),
+    media_cat AS (
+        SELECT categoria, AVG(preco) AS media_preco_cat FROM produtos GROUP BY categoria
+    )
+    SELECT p.id AS produto_id, p.nome, p.categoria, p.preco,
+           COALESCE(v.total_vendido_qtd, 0) AS total_vendido_qtd,
+           COALESCE(v.receita_total, 0) AS receita_total,
+           ROUND((p.preco - mc.media_preco_cat) /
+                 NULLIF(mc.media_preco_cat,0)*100,1) AS preco_rel_cat
+    FROM produtos p
+    LEFT JOIN vendas v ON v.produto_id = p.id
+    INNER JOIN media_cat mc ON mc.categoria = p.categoria
+"""</span>
+df = pd.read_sql(query, engine)
+
+<span class="cm"># 2. Normalizar colunas numéricas</span>
+cols = [<span class="str">"preco"</span>, <span class="str">"total_vendido_qtd"</span>, <span class="str">"receita_total"</span>]
+scaler = StandardScaler()
+df[[c + <span class="str">"_norm"</span> <span class="kw">for</span> c <span class="kw">in</span> cols]] = scaler.fit_transform(df[cols])
+
+<span class="cm"># 3. Salvar como Parquet</span>
+df.to_parquet(<span class="str">"features_produto_v1.parquet"</span>, index=<span class="kw">False</span>, compression=<span class="str">"snappy"</span>)
+
+<span class="cm"># 4. Gravar de volta no banco</span>
+df.to_sql(<span class="str">"features_produto_v1"</span>, engine, if_exists=<span class="str">"replace"</span>, index=<span class="kw">False</span>)
+print(<span class="fn">f</span><span class="str">"Pipeline concluído: {df.shape[0]} produtos, {df.shape[1]} features"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 4</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-exchange-alt"></i>
+        <strong>ETL vs ELT</strong>
+        <p>Diferença entre transformar antes e depois de carregar — e quando usar cada abordagem</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Zonas Raw/Silver/Gold</strong>
+        <p>Arquitetura de camadas: bruto imutável, limpo confiável, pronto para consumo</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cogs"></i>
+        <strong>Feature Engineering SQL</strong>
+        <p>FILTER, CTEs encadeadas, NULLIF, COALESCE — construir features diretamente no banco</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-python"></i>
+        <strong>Python ↔ PostgreSQL</strong>
+        <p>SQLAlchemy + pandas: read_sql, to_sql, to_parquet — pipeline completo BD → ML → BD</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-05.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 5 — Bancos NoSQL: MongoDB, Redis e casos de uso para IA</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

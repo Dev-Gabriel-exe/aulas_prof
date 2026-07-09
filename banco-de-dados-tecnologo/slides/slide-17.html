@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 17 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* pipeline fluxo */
+.pipeline-flow{display:flex;align-items:center;gap:0;margin:1rem 0;flex-wrap:wrap;justify-content:center;}
+.pf-box{border-radius:10px;padding:.65rem 1.1rem;text-align:center;min-width:120px;}
+.pf-bd{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.22);color:var(--green-400);}
+.pf-py{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.22);color:#60a5fa;}
+.pf-ml{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.22);color:#a78bfa;}
+.pf-out{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.22);color:#fbbf24;}
+.pf-box .pf-icon{font-size:1.1rem;margin-bottom:.2rem;}
+.pf-box .pf-nome{font-size:.72rem;font-weight:700;}
+.pf-box .pf-desc{font-size:.62rem;color:var(--text-muted);margin-top:2px;}
+.pf-arrow{font-size:1.2rem;color:var(--text-muted);padding:0 .4rem;}
+
+/* feature store */
+.fs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.fs-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.fs-card .fc-icon{font-size:1.2rem;color:var(--green-400);margin-bottom:.4rem;}
+.fs-card .fc-titulo{font-size:.83rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem;}
+.fs-card p{font-size:.76rem;color:var(--text-secondary);line-height:1.5;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.fs-grid,.resumo-grid{grid-template-columns:1fr;}
+  .pipeline-flow{gap:.4rem;}
+  .pf-arrow{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">17</div>
+    <h1 class="capa-titulo">BD + IA —<br><em>Pipeline Integrado</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Bloco 3 — Semana 4</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>BD como fonte de dados para ML — extração e feature engineering</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-brain"></i></div><span>Treinar modelo com dados do banco — scikit-learn + pandas + SQL</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-save"></i></div><span>Armazenar predições de volta no banco — rastreabilidade e auditoria</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-chart-bar"></i></div><span>Consultas analíticas sobre predições — SQL + Window Functions</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline BD → modelo de churn → predições → dashboard SQL</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Pipeline end-to-end: extrair features de clientes do banco, treinar modelo de churn com scikit-learn, gerar predições para todos os clientes e gravá-las no banco, depois analisar os resultados com SQL analítico.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 16: integração BD-Python — psycopg2, SQLAlchemy, pandas</li>
+        <li>Esta semana: fechar o ciclo — BD alimenta o modelo, modelo alimenta o BD</li>
+        <li>Semana 18: revisão geral — tópicos avançados e dúvidas para P3/Final</li>
+        <li>Este é o conteúdo integrador mais importante do semestre para IA</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>O ciclo BD ↔ IA na prática</div>
+      <ul class="info-lista">
+        <li>BD → features: SQL extrai dados brutos, pandas transforma em features</li>
+        <li>Features → modelo: scikit-learn treina e serializa o modelo</li>
+        <li>Modelo → predições: aplicar modelo a todos os clientes</li>
+        <li>Predições → BD: gravar scores para uso em campanhas e análises</li>
+        <li>BD → analytics: SQL analisa padrões nas predições com window functions</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>scikit-learn — RandomForest, treino, predição, serialização</li>
+        <li>pandas + SQLAlchemy — extração e carga de dados</li>
+        <li>joblib — salvar e carregar modelos treinados</li>
+        <li>PostgreSQL — SQL analítico com window functions sobre predições</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: BD → features → modelo ───────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Do banco ao modelo — extração, features e treino</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>O ciclo completo BD ↔ IA</div>
+      <p>Em projetos reais de IA, o banco de dados não é apenas onde os dados ficam — é o <strong>ponto de partida e de chegada</strong> do pipeline. Dados brutos saem do banco, viram features, alimentam o modelo, e as predições voltam para o banco onde serão consumidas por sistemas de negócio.</p>
+
+      <div class="pipeline-flow">
+        <div class="pf-box pf-bd">
+          <div class="pf-icon"><i class="fas fa-database"></i></div>
+          <div class="pf-nome">PostgreSQL</div>
+          <div class="pf-desc">pedidos, clientes</div>
+        </div>
+        <div class="pf-arrow">→</div>
+        <div class="pf-box pf-py">
+          <div class="pf-icon"><i class="fas fa-table"></i></div>
+          <div class="pf-nome">pandas</div>
+          <div class="pf-desc">read_sql + features</div>
+        </div>
+        <div class="pf-arrow">→</div>
+        <div class="pf-box pf-ml">
+          <div class="pf-icon"><i class="fas fa-brain"></i></div>
+          <div class="pf-nome">scikit-learn</div>
+          <div class="pf-desc">treino + predict</div>
+        </div>
+        <div class="pf-arrow">→</div>
+        <div class="pf-box pf-out">
+          <div class="pf-icon"><i class="fas fa-save"></i></div>
+          <div class="pf-nome">to_sql</div>
+          <div class="pf-desc">predições no BD</div>
+        </div>
+        <div class="pf-arrow">→</div>
+        <div class="pf-box pf-bd">
+          <div class="pf-icon"><i class="fas fa-chart-bar"></i></div>
+          <div class="pf-nome">SQL analítico</div>
+          <div class="pf-desc">dashboard + alertas</div>
+        </div>
+      </div>
+
+      <div class="destaque">
+        <strong>Caso de uso desta aula:</strong> prever <em>churn</em> de clientes — quais clientes têm maior probabilidade de parar de comprar nos próximos 30 dias. O banco contém o histórico de pedidos; o modelo aprende padrões; as predições voltam ao banco para que o time de CRM aja sobre os clientes em risco.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Preparar tabelas no banco</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — tabelas de suporte ao pipeline de IA</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-kw">CREATE TABLE IF NOT EXISTS</span> predicoes_churn (
+    id              SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    cliente_id      INTEGER        <span class="sql-kw">NOT NULL REFERENCES</span> clientes(id),
+    score_churn     NUMERIC(<span class="sql-num">5</span>,<span class="sql-num">4</span>)   <span class="sql-kw">NOT NULL</span>,    <span class="sql-cm">-- probabilidade 0.0–1.0</span>
+    classe_churn    BOOLEAN        <span class="sql-kw">NOT NULL</span>,    <span class="sql-cm">-- TRUE = em risco</span>
+    modelo_versao   TEXT           <span class="sql-kw">NOT NULL</span>,    <span class="sql-cm">-- rastreabilidade</span>
+    gerado_em       TIMESTAMP      <span class="sql-kw">DEFAULT NOW</span>(),
+    <span class="sql-kw">UNIQUE</span>(cliente_id, modelo_versao)           <span class="sql-cm">-- uma predição por cliente por versão</span>
+);
+
+<span class="sql-kw">CREATE TABLE IF NOT EXISTS</span> modelos_registrados (
+    id              SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    nome            TEXT           <span class="sql-kw">NOT NULL</span>,
+    versao          TEXT           <span class="sql-kw">NOT NULL UNIQUE</span>,
+    algoritmo       TEXT           <span class="sql-kw">NOT NULL</span>,
+    acuracia_treino NUMERIC(<span class="sql-num">5</span>,<span class="sql-num">4</span>),
+    acuracia_teste  NUMERIC(<span class="sql-num">5</span>,<span class="sql-num">4</span>),
+    n_features      INTEGER,
+    caminho_arquivo TEXT,           <span class="sql-cm">-- onde o .pkl está salvo</span>
+    criado_em       TIMESTAMP <span class="sql-kw">DEFAULT NOW</span>()
+);
+
+<span class="sql-kw">CREATE INDEX IF NOT EXISTS</span> idx_pred_cliente <span class="sql-kw">ON</span> predicoes_churn(cliente_id);
+<span class="sql-kw">CREATE INDEX IF NOT EXISTS</span> idx_pred_score   <span class="sql-kw">ON</span> predicoes_churn(score_churn <span class="sql-kw">DESC</span>);
+<span class="sql-kw">CREATE INDEX IF NOT EXISTS</span> idx_pred_gerado  <span class="sql-kw">ON</span> predicoes_churn(gerado_em);
+
+<span class="sql-kw">SELECT</span> <span class="sql-str">'Tabelas criadas ✓'</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cogs"></i>Feature engineering a partir do banco</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — extrair e construir features de churn</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># ── Extrair dados brutos ──────────────────────────────────────────</span>
+df_pedidos = pd.read_sql(<span class="str">"""
+    SELECT p.id       AS pedido_id,
+           p.cliente_id,
+           p.total,
+           p.status,
+           p.criado_em,
+           c.cidade
+    FROM pedidos p
+    JOIN clientes c ON c.id = p.cliente_id
+"""</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+
+HOJE = pd.Timestamp(<span class="str">"today"</span>).normalize()
+JANELA_CHURN = <span class="num">30</span>  <span class="cm"># dias sem compra = churn</span>
+
+<span class="cm"># ── Feature engineering por cliente ──────────────────────────────</span>
+features = df_pedidos.groupby(<span class="str">"cliente_id"</span>).agg(
+    total_pedidos    =(<span class="str">"pedido_id"</span>,   <span class="str">"count"</span>),
+    ticket_medio     =(<span class="str">"total"</span>,       <span class="str">"mean"</span>),
+    total_gasto      =(<span class="str">"total"</span>,       <span class="str">"sum"</span>),
+    ticket_max       =(<span class="str">"total"</span>,       <span class="str">"max"</span>),
+    ticket_min       =(<span class="str">"total"</span>,       <span class="str">"min"</span>),
+    ultimo_pedido    =(<span class="str">"criado_em"</span>,  <span class="str">"max"</span>),
+    primeiro_pedido  =(<span class="str">"criado_em"</span>,  <span class="str">"min"</span>),
+    qtd_cancelados   =(<span class="str">"status"</span>,     <span class="kw">lambda</span> x: (x==<span class="str">"cancelado"</span>).sum()),
+).reset_index()
+
+features[<span class="str">"dias_inativo"</span>]     = (HOJE - features[<span class="str">"ultimo_pedido"</span>]).dt.days
+features[<span class="str">"antiguidade_dias"</span>]  = (HOJE - features[<span class="str">"primeiro_pedido"</span>]).dt.days
+features[<span class="str">"taxa_cancelamento"</span>] = (features[<span class="str">"qtd_cancelados"</span>] / features[<span class="str">"total_pedidos"</span>]).round(<span class="num">4</span>)
+features[<span class="str">"freq_compra_mensal"</span>] = (features[<span class="str">"total_pedidos"</span>] /
+                                    (features[<span class="str">"antiguidade_dias"</span>] / <span class="num">30</span>).clip(lower=<span class="num">1</span>)).round(<span class="num">4</span>)
+features[<span class="str">"ticket_medio"</span>]      = features[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+
+<span class="cm"># ── Label: churn = inativo há mais de JANELA_CHURN dias ──────────</span>
+features[<span class="str">"churn"</span>] = (features[<span class="str">"dias_inativo"</span>] > JANELA_CHURN).astype(int)
+
+<span class="cm"># Colunas de features para o modelo (sem IDs e datas)</span>
+FEATURE_COLS = [
+    <span class="str">"total_pedidos"</span>, <span class="str">"ticket_medio"</span>, <span class="str">"total_gasto"</span>,
+    <span class="str">"ticket_max"</span>, <span class="str">"ticket_min"</span>, <span class="str">"dias_inativo"</span>,
+    <span class="str">"antiguidade_dias"</span>, <span class="str">"taxa_cancelamento"</span>, <span class="str">"freq_compra_mensal"</span>,
+]
+
+print(<span class="fn">f</span><span class="str">"Clientes com features: {len(features)}"</span>)
+print(<span class="fn">f</span><span class="str">"Taxa de churn na base: {features['churn'].mean():.1%}"</span>)
+print(features[FEATURE_COLS + [<span class="str">"churn"</span>]].describe().round(<span class="num">2</span>))</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-brain"></i>Treinar modelo e registrar no banco</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — treinar RandomForest e registrar metadados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> text
+<span class="kw">import</span> joblib, os
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Assume que 'features' e 'FEATURE_COLS' vêm do bloco anterior</span>
+X = features[FEATURE_COLS].fillna(<span class="num">0</span>)
+y = features[<span class="str">"churn"</span>]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y
+)
+
+<span class="cm"># ── Treinar ───────────────────────────────────────────────────────</span>
+modelo = RandomForestClassifier(
+    n_estimators=<span class="num">100</span>,
+    max_depth=<span class="num">6</span>,
+    min_samples_leaf=<span class="num">5</span>,
+    random_state=<span class="num">42</span>,
+    class_weight=<span class="str">"balanced"</span>,  <span class="cm"># lida com classes desbalanceadas</span>
+)
+modelo.fit(X_train, y_train)
+
+acc_train = accuracy_score(y_train, modelo.predict(X_train))
+acc_test  = accuracy_score(y_test,  modelo.predict(X_test))
+print(<span class="fn">f</span><span class="str">"Acurácia treino: {acc_train:.4f} | teste: {acc_test:.4f}"</span>)
+print(classification_report(y_test, modelo.predict(X_test), target_names=[<span class="str">"Ativo"</span>, <span class="str">"Churn"</span>]))
+
+<span class="cm"># ── Salvar modelo em disco ────────────────────────────────────────</span>
+VERSAO = datetime.now().strftime(<span class="str">"%Y%m%d_%H%M"</span>)
+CAMINHO = <span class="fn">f</span><span class="str">"modelos/churn_rf_{VERSAO}.pkl"</span>
+os.makedirs(<span class="str">"modelos"</span>, exist_ok=<span class="kw">True</span>)
+joblib.dump(modelo, CAMINHO)
+print(<span class="fn">f</span><span class="str">"Modelo salvo em {CAMINHO}"</span>)
+
+<span class="cm"># ── Registrar metadados no banco ──────────────────────────────────</span>
+<span class="kw">with</span> engine.begin() <span class="kw">as</span> conn:
+    conn.execute(text(<span class="str">"""
+        INSERT INTO modelos_registrados
+            (nome, versao, algoritmo, acuracia_treino, acuracia_teste, n_features, caminho_arquivo)
+        VALUES
+            (:nome, :versao, :alg, :acc_train, :acc_test, :n_feat, :caminho)
+        ON CONFLICT (versao) DO NOTHING
+    """</span>), {
+        <span class="str">"nome"</span>:      <span class="str">"churn_cliente"</span>,
+        <span class="str">"versao"</span>:    VERSAO,
+        <span class="str">"alg"</span>:       <span class="str">"RandomForestClassifier"</span>,
+        <span class="str">"acc_train"</span>: round(acc_train, <span class="num">4</span>),
+        <span class="str">"acc_test"</span>:  round(acc_test,  <span class="num">4</span>),
+        <span class="str">"n_feat"</span>:    len(FEATURE_COLS),
+        <span class="str">"caminho"</span>:   CAMINHO,
+    })
+print(<span class="fn">f</span><span class="str">"Modelo v{VERSAO} registrado no banco ✓"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: predições → banco → SQL analítico ─────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Armazenar predições e analisar resultados com SQL</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-save"></i>Gerar predições e gravar no banco</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — predizer para todos os clientes e salvar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, joblib, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># Carregar modelo serializado (em produção viria do banco ou S3)</span>
+VERSAO = <span class="str">"VERSAO_DO_TREINO"</span>  <span class="cm"># substitua pela versão real</span>
+modelo = joblib.load(<span class="fn">f</span><span class="str">"modelos/churn_rf_{VERSAO}.pkl"</span>)
+
+<span class="cm"># Assumindo que 'features' e 'FEATURE_COLS' estão disponíveis
+# (em produção: recomputar as features no momento da predição)</span>
+X_todos = features[FEATURE_COLS].fillna(<span class="num">0</span>)
+
+<span class="cm"># ── Gerar scores de probabilidade ────────────────────────────────</span>
+proba = modelo.predict_proba(X_todos)[:, <span class="num">1</span>]  <span class="cm"># prob. da classe 1 = churn</span>
+classe = (proba > <span class="num">0.5</span>).astype(bool)           <span class="cm"># threshold padrão</span>
+
+df_pred = pd.DataFrame({
+    <span class="str">"cliente_id"</span>:   features[<span class="str">"cliente_id"</span>].values,
+    <span class="str">"score_churn"</span>:  proba.round(<span class="num">4</span>),
+    <span class="str">"classe_churn"</span>: classe,
+    <span class="str">"modelo_versao"</span>: VERSAO,
+})
+
+print(<span class="fn">f</span><span class="str">"Predições geradas: {len(df_pred)}"</span>)
+print(<span class="fn">f</span><span class="str">"Em risco de churn: {classe.sum()} ({classe.mean():.1%})"</span>)
+print(df_pred.sort_values(<span class="str">"score_churn"</span>, ascending=<span class="kw">False</span>).head())
+
+<span class="cm"># ── Gravar no banco ───────────────────────────────────────────────</span>
+df_pred.to_sql(
+    <span class="str">"predicoes_churn"</span>, engine,
+    if_exists=<span class="str">"append"</span>,   <span class="cm"># append — mantém histórico de versões</span>
+    index=<span class="kw">False</span>,
+    chunksize=<span class="num">500</span>,
+    method=<span class="str">"multi"</span>,
+)
+print(<span class="str">"Predições gravadas no banco ✓"</span>)
+
+<span class="cm"># ── Verificar ─────────────────────────────────────────────────────</span>
+df_check = pd.read_sql(
+    <span class="str">"SELECT COUNT(*), AVG(score_churn), SUM(classe_churn::int) FROM predicoes_churn WHERE modelo_versao = :v"</span>,
+    engine, params={<span class="str">"v"</span>: VERSAO}
+)
+print(df_check)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-bar"></i>SQL analítico sobre as predições</div>
+      <p>Com as predições no banco, o time de negócio pode fazer análises diretamente em SQL — sem precisar carregar os dados em Python a cada consulta.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — consultas analíticas sobre predições de churn</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- 1. Top 20 clientes em risco de churn com maior valor histórico</span>
+<span class="sql-kw">SELECT</span>
+    c.id,
+    c.nome,
+    c.cidade,
+    p.score_churn,
+    f.total_gasto,
+    f.dias_inativo,
+    f.total_pedidos
+<span class="sql-kw">FROM</span> predicoes_churn p
+<span class="sql-kw">JOIN</span> clientes c           <span class="sql-kw">ON</span> c.id = p.cliente_id
+<span class="sql-kw">JOIN</span> features_cliente f   <span class="sql-kw">ON</span> f.cliente_id = p.cliente_id
+<span class="sql-kw">WHERE</span> p.classe_churn = <span class="sql-kw">TRUE</span>
+  <span class="sql-kw">AND</span> p.modelo_versao = <span class="sql-str">'VERSAO_DO_TREINO'</span>
+<span class="sql-kw">ORDER BY</span> f.total_gasto <span class="sql-kw">DESC</span>
+<span class="sql-kw">LIMIT</span> <span class="sql-num">20</span>;
+
+<span class="sql-cm">-- 2. Distribuição de risco por cidade (window function)</span>
+<span class="sql-kw">SELECT</span>
+    c.cidade,
+    <span class="sql-fn">COUNT</span>(*) <span class="sql-kw">AS</span> total_clientes,
+    <span class="sql-fn">SUM</span>(p.classe_churn::INT) <span class="sql-kw">AS</span> em_risco,
+    <span class="sql-fn">ROUND</span>(<span class="sql-fn">AVG</span>(p.score_churn)::NUMERIC, <span class="sql-num">4</span>) <span class="sql-kw">AS</span> score_medio,
+    <span class="sql-fn">ROUND</span>(<span class="sql-fn">SUM</span>(p.classe_churn::INT) * <span class="sql-num">100.0</span> / <span class="sql-fn">COUNT</span>(*), <span class="sql-num">1</span>) <span class="sql-kw">AS</span> pct_risco
+<span class="sql-kw">FROM</span> predicoes_churn p
+<span class="sql-kw">JOIN</span> clientes c <span class="sql-kw">ON</span> c.id = p.cliente_id
+<span class="sql-kw">WHERE</span> p.modelo_versao = <span class="sql-str">'VERSAO_DO_TREINO'</span>
+<span class="sql-kw">GROUP BY</span> c.cidade
+<span class="sql-kw">ORDER BY</span> score_medio <span class="sql-kw">DESC</span>;
+
+<span class="sql-cm">-- 3. Decis de risco — dividir clientes em 10 grupos por score</span>
+<span class="sql-kw">SELECT</span>
+    <span class="sql-fn">NTILE</span>(<span class="sql-num">10</span>) <span class="sql-kw">OVER</span> (<span class="sql-kw">ORDER BY</span> score_churn <span class="sql-kw">DESC</span>) <span class="sql-kw">AS</span> decil,
+    <span class="sql-fn">COUNT</span>(*)                                             <span class="sql-kw">AS</span> clientes,
+    <span class="sql-fn">ROUND</span>(<span class="sql-fn">MIN</span>(score_churn)::NUMERIC, <span class="sql-num">4</span>)               <span class="sql-kw">AS</span> score_min,
+    <span class="sql-fn">ROUND</span>(<span class="sql-fn">MAX</span>(score_churn)::NUMERIC, <span class="sql-num">4</span>)               <span class="sql-kw">AS</span> score_max,
+    <span class="sql-fn">ROUND</span>(<span class="sql-fn">AVG</span>(score_churn)::NUMERIC, <span class="sql-num">4</span>)               <span class="sql-kw">AS</span> score_medio
+<span class="sql-kw">FROM</span> predicoes_churn
+<span class="sql-kw">WHERE</span> modelo_versao = <span class="sql-str">'VERSAO_DO_TREINO'</span>
+<span class="sql-kw">GROUP BY</span> decil
+<span class="sql-kw">ORDER BY</span> decil;
+
+<span class="sql-cm">-- 4. Rank de clientes por score dentro de cada cidade</span>
+<span class="sql-kw">SELECT</span>
+    c.nome,
+    c.cidade,
+    p.score_churn,
+    <span class="sql-fn">RANK</span>() <span class="sql-kw">OVER</span> (
+        <span class="sql-kw">PARTITION BY</span> c.cidade
+        <span class="sql-kw">ORDER BY</span> p.score_churn <span class="sql-kw">DESC</span>
+    ) <span class="sql-kw">AS</span> rank_na_cidade
+<span class="sql-kw">FROM</span> predicoes_churn p
+<span class="sql-kw">JOIN</span> clientes c <span class="sql-kw">ON</span> c.id = p.cliente_id
+<span class="sql-kw">WHERE</span> p.modelo_versao = <span class="sql-str">'VERSAO_DO_TREINO'</span>
+  <span class="sql-kw">AND</span> p.classe_churn = <span class="sql-kw">TRUE</span>
+<span class="sql-kw">QUALIFY</span> rank_na_cidade <= <span class="sql-num">3</span>;   <span class="sql-cm">-- PostgreSQL: use subquery ou CTE</span>
+
+<span class="sql-cm">-- Versão PostgreSQL com CTE:</span>
+<span class="sql-kw">WITH</span> ranked <span class="sql-kw">AS</span> (
+    <span class="sql-kw">SELECT</span>
+        c.nome, c.cidade, p.score_churn,
+        <span class="sql-fn">RANK</span>() <span class="sql-kw">OVER</span> (<span class="sql-kw">PARTITION BY</span> c.cidade <span class="sql-kw">ORDER BY</span> p.score_churn <span class="sql-kw">DESC</span>) <span class="sql-kw">AS</span> pos
+    <span class="sql-kw">FROM</span> predicoes_churn p
+    <span class="sql-kw">JOIN</span> clientes c <span class="sql-kw">ON</span> c.id = p.cliente_id
+    <span class="sql-kw">WHERE</span> p.modelo_versao = <span class="sql-str">'VERSAO_DO_TREINO'</span>
+      <span class="sql-kw">AND</span> p.classe_churn = <span class="sql-kw">TRUE</span>
+)
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> ranked <span class="sql-kw">WHERE</span> pos <= <span class="sql-num">3</span> <span class="sql-kw">ORDER BY</span> cidade, pos;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-eye"></i>VIEW analítica — dashboard permanente em SQL</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — criar VIEW para uso recorrente pelo time de negócio</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-kw">CREATE OR REPLACE VIEW</span> vw_churn_dashboard <span class="sql-kw">AS</span>
+<span class="sql-kw">WITH</span> ultima_versao <span class="sql-kw">AS</span> (
+    <span class="sql-kw">SELECT</span> versao <span class="sql-kw">FROM</span> modelos_registrados
+    <span class="sql-kw">ORDER BY</span> criado_em <span class="sql-kw">DESC LIMIT</span> <span class="sql-num">1</span>
+)
+<span class="sql-kw">SELECT</span>
+    c.id            <span class="sql-kw">AS</span> cliente_id,
+    c.nome,
+    c.cidade,
+    p.score_churn,
+    p.classe_churn,
+    p.gerado_em     <span class="sql-kw">AS</span> predicao_em,
+    f.total_gasto,
+    f.dias_inativo,
+    f.ticket_medio,
+    f.total_pedidos,
+    <span class="sql-kw">CASE</span>
+        <span class="sql-kw">WHEN</span> p.score_churn >= <span class="sql-num">0.8</span> <span class="sql-kw">THEN</span> <span class="sql-str">'Alto Risco'</span>
+        <span class="sql-kw">WHEN</span> p.score_churn >= <span class="sql-num">0.5</span> <span class="sql-kw">THEN</span> <span class="sql-str">'Médio Risco'</span>
+        <span class="sql-kw">ELSE</span> <span class="sql-str">'Baixo Risco'</span>
+    <span class="sql-kw">END</span> <span class="sql-kw">AS</span> nivel_risco,
+    <span class="sql-fn">RANK</span>() <span class="sql-kw">OVER</span> (<span class="sql-kw">ORDER BY</span> p.score_churn <span class="sql-kw">DESC</span>) <span class="sql-kw">AS</span> rank_risco_global
+<span class="sql-kw">FROM</span> predicoes_churn p
+<span class="sql-kw">JOIN</span> clientes c         <span class="sql-kw">ON</span> c.id = p.cliente_id
+<span class="sql-kw">JOIN</span> features_cliente f <span class="sql-kw">ON</span> f.cliente_id = p.cliente_id
+<span class="sql-kw">WHERE</span> p.modelo_versao = (<span class="sql-kw">SELECT</span> versao <span class="sql-kw">FROM</span> ultima_versao);
+
+<span class="sql-cm">-- Uso: apenas SELECT para obter o dashboard atualizado</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> vw_churn_dashboard
+<span class="sql-kw">WHERE</span> nivel_risco = <span class="sql-str">'Alto Risco'</span>
+<span class="sql-kw">ORDER BY</span> total_gasto <span class="sql-kw">DESC</span>
+<span class="sql-kw">LIMIT</span> <span class="sql-num">50</span>;</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Por que armazenar predições no banco?</strong> O time de CRM pode consultar diretamente quais clientes contatar sem precisar rodar Python. O histórico de predições por versão permite auditar decisões tomadas no passado. A VIEW sempre aponta para a versão mais recente do modelo — sem nenhuma mudança no código do consumidor.
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: pipeline completo integrado ───────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline integrador — BD → features → modelo → predições → analytics</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-rocket"></i>Script orquestrador completo</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline_ia_bd.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">"""pipeline_ia_bd.py — pipeline BD ↔ IA completo em um script."""</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np, joblib, os, json
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, roc_auc_score
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+HOJE = pd.Timestamp(<span class="str">"today"</span>).normalize()
+VERSAO = datetime.now().strftime(<span class="str">"%Y%m%d_%H%M"</span>)
+FEATURE_COLS = [
+    <span class="str">"total_pedidos"</span>, <span class="str">"ticket_medio"</span>, <span class="str">"total_gasto"</span>,
+    <span class="str">"ticket_max"</span>, <span class="str">"dias_inativo"</span>, <span class="str">"antiguidade_dias"</span>,
+    <span class="str">"taxa_cancelamento"</span>, <span class="str">"freq_compra_mensal"</span>,
+]
+relatorio = {<span class="str">"versao"</span>: VERSAO, <span class="str">"inicio"</span>: datetime.now().isoformat()}
+
+<span class="cm"># ── 1. Extrair ───────────────────────────────────────────────────</span>
+df = pd.read_sql(<span class="str">"""
+    SELECT p.id AS pedido_id, p.cliente_id, p.total, p.status, p.criado_em
+    FROM pedidos p
+"""</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+relatorio[<span class="str">"pedidos_brutos"</span>] = len(df)
+
+<span class="cm"># ── 2. Features ──────────────────────────────────────────────────</span>
+feat = df.groupby(<span class="str">"cliente_id"</span>).agg(
+    total_pedidos   =(<span class="str">"pedido_id"</span>,  <span class="str">"count"</span>),
+    ticket_medio    =(<span class="str">"total"</span>,      <span class="str">"mean"</span>),
+    total_gasto     =(<span class="str">"total"</span>,      <span class="str">"sum"</span>),
+    ticket_max      =(<span class="str">"total"</span>,      <span class="str">"max"</span>),
+    ultimo_pedido   =(<span class="str">"criado_em"</span>, <span class="str">"max"</span>),
+    primeiro_pedido =(<span class="str">"criado_em"</span>, <span class="str">"min"</span>),
+    qtd_cancelados  =(<span class="str">"status"</span>,    <span class="kw">lambda</span> x: (x==<span class="str">"cancelado"</span>).sum()),
+).reset_index()
+feat[<span class="str">"dias_inativo"</span>]     = (HOJE - feat[<span class="str">"ultimo_pedido"</span>]).dt.days
+feat[<span class="str">"antiguidade_dias"</span>]  = (HOJE - feat[<span class="str">"primeiro_pedido"</span>]).dt.days
+feat[<span class="str">"taxa_cancelamento"</span>] = (feat[<span class="str">"qtd_cancelados"</span>] / feat[<span class="str">"total_pedidos"</span>]).fillna(<span class="num">0</span>)
+feat[<span class="str">"freq_compra_mensal"</span>] = (feat[<span class="str">"total_pedidos"</span>] /
+                                (feat[<span class="str">"antiguidade_dias"</span>] / <span class="num">30</span>).clip(lower=<span class="num">1</span>))
+feat[<span class="str">"churn"</span>] = (feat[<span class="str">"dias_inativo"</span>] > <span class="num">30</span>).astype(int)
+relatorio[<span class="str">"clientes"</span>] = len(feat)
+relatorio[<span class="str">"taxa_churn_base"</span>] = round(feat[<span class="str">"churn"</span>].mean(), <span class="num">4</span>)
+
+<span class="cm"># ── 3. Treinar ───────────────────────────────────────────────────</span>
+X = feat[FEATURE_COLS].fillna(<span class="num">0</span>)
+y = feat[<span class="str">"churn"</span>]
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="num">0.2</span>,
+                                            random_state=<span class="num">42</span>, stratify=y)
+clf = RandomForestClassifier(n_estimators=<span class="num">100</span>, max_depth=<span class="num">6</span>,
+                              class_weight=<span class="str">"balanced"</span>, random_state=<span class="num">42</span>)
+clf.fit(X_tr, y_tr)
+
+acc_tr  = round(accuracy_score(y_tr, clf.predict(X_tr)), <span class="num">4</span>)
+acc_te  = round(accuracy_score(y_te, clf.predict(X_te)), <span class="num">4</span>)
+auc_te  = round(roc_auc_score(y_te, clf.predict_proba(X_te)[:, <span class="num">1</span>]), <span class="num">4</span>)
+relatorio.update({<span class="str">"acc_treino"</span>: acc_tr, <span class="str">"acc_teste"</span>: acc_te, <span class="str">"auc_roc"</span>: auc_te})
+print(<span class="fn">f</span><span class="str">"Modelo: acc_treino={acc_tr} | acc_teste={acc_te} | AUC={auc_te}"</span>)
+
+os.makedirs(<span class="str">"modelos"</span>, exist_ok=<span class="kw">True</span>)
+caminho = <span class="fn">f</span><span class="str">"modelos/churn_rf_{VERSAO}.pkl"</span>
+joblib.dump(clf, caminho)
+
+<span class="cm"># ── 4. Predições ─────────────────────────────────────────────────</span>
+proba  = clf.predict_proba(X)[:, <span class="num">1</span>]
+classe = (proba > <span class="num">0.5</span>)
+df_pred = pd.DataFrame({
+    <span class="str">"cliente_id"</span>:   feat[<span class="str">"cliente_id"</span>].values,
+    <span class="str">"score_churn"</span>:  proba.round(<span class="num">4</span>),
+    <span class="str">"classe_churn"</span>: classe,
+    <span class="str">"modelo_versao"</span>: VERSAO,
+})
+relatorio[<span class="str">"em_risco"</span>] = int(classe.sum())
+
+<span class="cm"># ── 5. Gravar no banco ────────────────────────────────────────────</span>
+<span class="kw">with</span> engine.begin() <span class="kw">as</span> conn:
+    conn.execute(text(<span class="str">"""
+        INSERT INTO modelos_registrados
+            (nome,versao,algoritmo,acuracia_treino,acuracia_teste,n_features,caminho_arquivo)
+        VALUES (:nome,:versao,:alg,:acc_tr,:acc_te,:n_feat,:caminho)
+        ON CONFLICT(versao) DO NOTHING
+    """</span>), {<span class="str">"nome"</span>:<span class="str">"churn_cliente"</span>,<span class="str">"versao"</span>:VERSAO,<span class="str">"alg"</span>:<span class="str">"RandomForest"</span>,
+              <span class="str">"acc_tr"</span>:acc_tr,<span class="str">"acc_te"</span>:acc_te,<span class="str">"n_feat"</span>:len(FEATURE_COLS),
+              <span class="str">"caminho"</span>:caminho})
+
+df_pred.to_sql(<span class="str">"predicoes_churn"</span>, engine, if_exists=<span class="str">"append"</span>,
+               index=<span class="kw">False</span>, chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+
+relatorio[<span class="str">"fim"</span>] = datetime.now().isoformat()
+<span class="kw">with</span> open(<span class="fn">f</span><span class="str">"relatorio_v{VERSAO}.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(relatorio, f, indent=<span class="num">2</span>)
+
+print(<span class="fn">f</span><span class="str">"Pipeline v{VERSAO} concluído — {relatorio['em_risco']} clientes em risco"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="kw">pass</span>  <span class="cm"># o código já executa no nível de módulo — OK para script</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · pandas + scikit-learn + PostgreSQL</div>
+        <div class="secao-titulo">5 Exercícios — Pipeline BD ↔ IA na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale: <code>pip install scikit-learn joblib</code> (além do stack da Semana 16). Use as tabelas <code>pedidos</code>, <code>clientes</code> e as novas tabelas <code>predicoes_churn</code> e <code>modelos_registrados</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Escreva uma função <code>extrair_features(engine, janela_churn=30)</code> que extrai os dados da tabela <code>pedidos</code> via <code>read_sql</code> e retorna um DataFrame com as seguintes features por cliente: <code>total_pedidos</code>, <code>ticket_medio</code>, <code>total_gasto</code>, <code>dias_inativo</code>, <code>taxa_cancelamento</code>, e a coluna <code>churn</code> (1 se <code>dias_inativo &gt; janela_churn</code>, 0 caso contrário). Imprima as primeiras 5 linhas e a taxa de churn na base.</p>
+      <span class="dificuldade dif-basico">Básico — Feature engineering via SQL + pandas</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="kw">def</span> <span class="fn">extrair_features</span>(engine, janela_churn=<span class="num">30</span>):
+    df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+    hoje = pd.Timestamp(<span class="str">"today"</span>).normalize()
+
+    feat = df.groupby(<span class="str">"cliente_id"</span>).agg(
+        total_pedidos  =(<span class="str">"id"</span>,       <span class="str">"count"</span>),
+        ticket_medio   =(<span class="str">"total"</span>,    <span class="str">"mean"</span>),
+        total_gasto    =(<span class="str">"total"</span>,    <span class="str">"sum"</span>),
+        ultimo_pedido  =(<span class="str">"criado_em"</span>,<span class="str">"max"</span>),
+        qtd_cancelados =(<span class="str">"status"</span>,   <span class="kw">lambda</span> x: (x==<span class="str">"cancelado"</span>).sum()),
+    ).reset_index()
+
+    feat[<span class="str">"dias_inativo"</span>]     = (hoje - feat[<span class="str">"ultimo_pedido"</span>]).dt.days
+    feat[<span class="str">"taxa_cancelamento"</span>] = (feat[<span class="str">"qtd_cancelados"</span>] / feat[<span class="str">"total_pedidos"</span>]).fillna(<span class="num">0</span>).round(<span class="num">4</span>)
+    feat[<span class="str">"ticket_medio"</span>]     = feat[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+    feat[<span class="str">"churn"</span>]            = (feat[<span class="str">"dias_inativo"</span>] > janela_churn).astype(int)
+    <span class="kw">return</span> feat
+
+feat = extrair_features(engine)
+print(feat[[<span class="str">"cliente_id"</span>,<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,<span class="str">"dias_inativo"</span>,<span class="str">"churn"</span>]].head())
+print(<span class="fn">f</span><span class="str">"Taxa de churn: {feat['churn'].mean():.1%}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Usando as features extraídas no exercício anterior, treine um <code>RandomForestClassifier</code> com <code>n_estimators=50</code>, <code>class_weight="balanced"</code> e <code>random_state=42</code>. Faça o split 80/20 com estratificação. Imprima a acurácia de treino e teste e a importância das features ordenada da mais para a menos importante. Salve o modelo com <code>joblib.dump</code>.</p>
+      <span class="dificuldade dif-basico">Básico — Treino e serialização do modelo</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">import</span> joblib, pandas <span class="kw">as</span> pd
+
+COLS = [<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,<span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>,<span class="str">"taxa_cancelamento"</span>]
+X = feat[COLS].fillna(<span class="num">0</span>)
+y = feat[<span class="str">"churn"</span>]
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y)
+clf = RandomForestClassifier(n_estimators=<span class="num">50</span>, class_weight=<span class="str">"balanced"</span>, random_state=<span class="num">42</span>)
+clf.fit(X_tr, y_tr)
+
+print(<span class="fn">f</span><span class="str">"Acurácia treino: {accuracy_score(y_tr, clf.predict(X_tr)):.4f}"</span>)
+print(<span class="fn">f</span><span class="str">"Acurácia teste:  {accuracy_score(y_te, clf.predict(X_te)):.4f}"</span>)
+
+importancias = pd.Series(clf.feature_importances_, index=COLS).sort_values(ascending=<span class="kw">False</span>)
+print(<span class="str">"\nImportância das features:"</span>)
+print(importancias.round(<span class="num">4</span>))
+
+joblib.dump(clf, <span class="str">"modelos/churn_ex02.pkl"</span>)
+print(<span class="str">"Modelo salvo ✓"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Carregue o modelo salvo no exercício anterior com <code>joblib.load</code>. Gere predições de probabilidade para <strong>todos</strong> os clientes (não apenas o conjunto de teste). Crie um DataFrame com <code>cliente_id</code>, <code>score_churn</code>, <code>classe_churn</code> e <code>modelo_versao="v_exercicio"</code>. Grave no banco na tabela <code>predicoes_churn</code> usando <code>to_sql</code> com <code>if_exists="append"</code>. Imprima quantos clientes ficaram com score acima de 0.7.</p>
+      <span class="dificuldade dif-medio">Médio — Predição em batch e carga no banco</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> joblib, pandas <span class="kw">as</span> pd
+
+clf = joblib.load(<span class="str">"modelos/churn_ex02.pkl"</span>)
+
+X_todos = feat[COLS].fillna(<span class="num">0</span>)
+proba   = clf.predict_proba(X_todos)[:, <span class="num">1</span>]
+classe  = (proba > <span class="num">0.5</span>)
+
+df_pred = pd.DataFrame({
+    <span class="str">"cliente_id"</span>:   feat[<span class="str">"cliente_id"</span>].values,
+    <span class="str">"score_churn"</span>:  proba.round(<span class="num">4</span>),
+    <span class="str">"classe_churn"</span>: classe,
+    <span class="str">"modelo_versao"</span>: <span class="str">"v_exercicio"</span>,
+})
+
+df_pred.to_sql(<span class="str">"predicoes_churn"</span>, engine, if_exists=<span class="str">"append"</span>,
+               index=<span class="kw">False</span>, chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+
+alto_risco = (proba > <span class="num">0.7</span>).sum()
+print(<span class="fn">f</span><span class="str">"Predições gravadas: {len(df_pred)}"</span>)
+print(<span class="fn">f</span><span class="str">"Score > 0.7: {alto_risco} clientes ({alto_risco/len(df_pred):.1%})"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Usando SQL analítico (via <code>pd.read_sql</code>), responda as seguintes perguntas sobre as predições gravadas com <code>modelo_versao = 'v_exercicio'</code>: (a) Qual cidade tem a maior proporção de clientes em risco de churn? (b) Qual é o ticket médio dos clientes em risco vs. não em risco? (c) Use <code>NTILE(5)</code> para dividir os clientes em quintis de risco e mostre o score mínimo, máximo e médio de cada quintil. Mostre os resultados como DataFrames.</p>
+      <span class="dificuldade dif-medio">Médio — SQL analítico sobre predições</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python + SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+VERSAO = <span class="str">"v_exercicio"</span>
+
+<span class="cm"># (a) Risco por cidade</span>
+df_cidade = pd.read_sql(<span class="str">f"""
+    SELECT c.cidade,
+           COUNT(*) AS total,
+           SUM(p.classe_churn::INT) AS em_risco,
+           ROUND(AVG(p.score_churn)::NUMERIC, 4) AS score_medio,
+           ROUND(SUM(p.classe_churn::INT)*100.0/COUNT(*), 1) AS pct_risco
+    FROM predicoes_churn p
+    JOIN clientes c ON c.id = p.cliente_id
+    WHERE p.modelo_versao = '{VERSAO}'
+    GROUP BY c.cidade
+    ORDER BY pct_risco DESC
+"""</span>, engine)
+print(<span class="str">"(a) Risco por cidade:"</span>)
+print(df_cidade.head(<span class="num">5</span>).to_string(index=<span class="kw">False</span>))
+
+<span class="cm"># (b) Ticket médio em risco vs não em risco</span>
+df_comp = pd.read_sql(<span class="str">f"""
+    SELECT p.classe_churn,
+           ROUND(AVG(f.ticket_medio)::NUMERIC, 2) AS ticket_medio_medio,
+           COUNT(*) AS clientes
+    FROM predicoes_churn p
+    JOIN features_cliente f ON f.cliente_id = p.cliente_id
+    WHERE p.modelo_versao = '{VERSAO}'
+    GROUP BY p.classe_churn
+"""</span>, engine)
+print(<span class="str">"\n(b) Ticket médio por grupo:"</span>)
+print(df_comp.to_string(index=<span class="kw">False</span>))
+
+<span class="cm"># (c) Quintis de risco</span>
+df_quintis = pd.read_sql(<span class="str">f"""
+    SELECT quintil,
+           COUNT(*) AS clientes,
+           ROUND(MIN(score_churn)::NUMERIC, 4) AS score_min,
+           ROUND(MAX(score_churn)::NUMERIC, 4) AS score_max,
+           ROUND(AVG(score_churn)::NUMERIC, 4) AS score_medio
+    FROM (
+        SELECT score_churn,
+               NTILE(5) OVER (ORDER BY score_churn DESC) AS quintil
+        FROM predicoes_churn
+        WHERE modelo_versao = '{VERSAO}'
+    ) t
+    GROUP BY quintil
+    ORDER BY quintil
+"""</span>, engine)
+print(<span class="str">"\n(c) Quintis de risco:"</span>)
+print(df_quintis.to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Implemente um sistema de <strong>monitoramento de drift de predições</strong>: (1) rode o pipeline completo duas vezes com pequenas variações nos dados (simule adicionando ruído gaussiano nas features antes do treino na segunda rodada); (2) grave ambas as versões no banco com versões diferentes; (3) consulte o banco para comparar: distribuição de scores (média, desvio padrão, % em risco) entre as duas versões; (4) use uma CTE SQL com <code>LEAD()</code> ou auto-join para mostrar quais clientes mudaram de classe entre as duas versões (saíram do risco ou entraram no risco); (5) imprima um relatório de drift com o percentual de clientes que mudaram de classificação.</p>
+      <span class="dificuldade dif-desafio">Desafio — Monitoramento de drift de modelo</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python + SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np, joblib
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+COLS = [<span class="str">"total_pedidos"</span>,<span class="str">"ticket_medio"</span>,<span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>,<span class="str">"taxa_cancelamento"</span>]
+
+<span class="kw">def</span> <span class="fn">treinar_e_prever</span>(feat, versao, ruido=<span class="num">0.0</span>):
+    X = feat[COLS].fillna(<span class="num">0</span>).copy()
+    <span class="kw">if</span> ruido > <span class="num">0</span>:
+        X += np.random.normal(<span class="num">0</span>, ruido, X.shape)  <span class="cm"># drift simulado</span>
+    y = feat[<span class="str">"churn"</span>]
+    X_tr, _, y_tr, _ = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+    clf = RandomForestClassifier(n_estimators=<span class="num">50</span>, class_weight=<span class="str">"balanced"</span>, random_state=<span class="num">42</span>)
+    clf.fit(X_tr, y_tr)
+    proba = clf.predict_proba(X)[:, <span class="num">1</span>]
+    df_pred = pd.DataFrame({
+        <span class="str">"cliente_id"</span>:   feat[<span class="str">"cliente_id"</span>].values,
+        <span class="str">"score_churn"</span>:  proba.round(<span class="num">4</span>),
+        <span class="str">"classe_churn"</span>: (proba > <span class="num">0.5</span>),
+        <span class="str">"modelo_versao"</span>: versao,
+    })
+    df_pred.to_sql(<span class="str">"predicoes_churn"</span>, engine, if_exists=<span class="str">"append"</span>,
+                   index=<span class="kw">False</span>, chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+    return df_pred
+
+<span class="cm"># Duas rodadas</span>
+df_v1 = treinar_e_prever(feat, <span class="str">"drift_v1"</span>, ruido=<span class="num">0.0</span>)
+df_v2 = treinar_e_prever(feat, <span class="str">"drift_v2"</span>, ruido=<span class="num">0.15</span>)
+
+<span class="cm"># Comparar distribuições</span>
+df_comp = pd.read_sql(<span class="str">"""
+    SELECT modelo_versao,
+           ROUND(AVG(score_churn)::NUMERIC,4)  AS media,
+           ROUND(STDDEV(score_churn)::NUMERIC,4) AS desvio,
+           SUM(classe_churn::INT) AS em_risco,
+           COUNT(*) AS total,
+           ROUND(SUM(classe_churn::INT)*100.0/COUNT(*),1) AS pct_risco
+    FROM predicoes_churn
+    WHERE modelo_versao IN ('drift_v1','drift_v2')
+    GROUP BY modelo_versao
+    ORDER BY modelo_versao
+"""</span>, engine)
+print(<span class="str">"Comparação de distribuições:"</span>)
+print(df_comp.to_string(index=<span class="kw">False</span>))
+
+<span class="cm"># Clientes que mudaram de classe</span>
+df_mudanca = pd.read_sql(<span class="str">"""
+    SELECT v1.cliente_id,
+           v1.classe_churn AS classe_v1,
+           v2.classe_churn AS classe_v2,
+           ROUND((v2.score_churn - v1.score_churn)::NUMERIC,4) AS delta_score
+    FROM predicoes_churn v1
+    JOIN predicoes_churn v2 ON v2.cliente_id = v1.cliente_id
+    WHERE v1.modelo_versao = 'drift_v1'
+      AND v2.modelo_versao = 'drift_v2'
+      AND v1.classe_churn != v2.classe_churn
+    ORDER BY ABS(v2.score_churn - v1.score_churn) DESC
+"""</span>, engine)
+total = len(df_v1)
+mudaram = len(df_mudanca)
+print(<span class="fn">f</span><span class="str">"\nClientes que mudaram de classe: {mudaram}/{total} ({mudaram/total:.1%})"</span>)
+print(df_mudanca.head(<span class="num">10</span>).to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 17</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-table"></i>
+        <strong>BD → Features</strong>
+        <p>SQL extrai dados brutos, pandas agrega por cliente gerando features prontas para ML</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-brain"></i>
+        <strong>Treino + Registro</strong>
+        <p>RandomForest treinado com features do banco. Metadados (acurácia, versão) registrados na tabela <code>modelos_registrados</code></p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-save"></i>
+        <strong>Predições → BD</strong>
+        <p>Score e classe de churn gravados por versão. VIEW sempre aponta para o modelo mais recente</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-chart-bar"></i>
+        <strong>SQL Analítico</strong>
+        <p>NTILE, RANK, PARTITION BY sobre predições. Dashboard em VIEW reutilizável pelo time de negócio</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-18.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 18 — Revisão Geral: replicação, sharding, backup, alta disponibilidade e simulado</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

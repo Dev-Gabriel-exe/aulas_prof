@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 09 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* zona cards */
+.zona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.zona-card{border-radius:12px;padding:1.25rem;}
+.zona-bronze{background:rgba(180,83,9,.12);border:1px solid rgba(180,83,9,.3);}
+.zona-silver{background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.25);}
+.zona-gold{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.25);}
+.zona-card .z-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.zona-bronze .z-label{color:#f97316;}
+.zona-silver .z-label{color:#94a3b8;}
+.zona-gold .z-label{color:#eab308;}
+.zona-card .z-title{font-size:.85rem;font-weight:600;color:var(--text-primary);margin-bottom:.4rem;}
+.zona-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* delta features */
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.feature-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.feature-card .fc-icon{font-size:1.3rem;color:var(--green-400);margin-bottom:.5rem;}
+.feature-card .fc-title{font-size:.83rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.feature-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.zona-grid,.feature-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">09</div>
+    <h1 class="capa-titulo">Armazenamento<br><em>Distribuído</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Bloco 2 — Semana 3</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Revisão das zonas raw/silver/gold — arquitetura Lakehouse</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-archive"></i></div><span>Parquet avançado — particionamento e predicate pushdown</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-cloud"></i></div><span>S3 e armazenamento de objetos — organização e acesso</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-history"></i></div><span>Delta Lake — ACID, time travel e schema evolution</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline de escrita e leitura particionada</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Escrever datasets particionados em Parquet, simular S3 local com MinIO e explorar leitura seletiva com predicate pushdown.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 4: zonas raw/silver/gold — conceito introduzido</li>
+        <li>Semana 8: Parquet básico — to_parquet e read_parquet</li>
+        <li>Esta semana: Parquet avançado, particionamento e Delta Lake</li>
+        <li>Semana 10: Governança — quem acessa o quê no lake</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>O que é Lakehouse?</div>
+      <ul class="info-lista">
+        <li>Combina a flexibilidade de um Data Lake com as garantias ACID de um Data Warehouse</li>
+        <li>Dados ficam em arquivos abertos (Parquet/ORC) no storage</li>
+        <li>Camada de metadados (Delta, Iceberg, Hudi) adiciona transações</li>
+        <li>Elimina a necessidade de copiar dados para o warehouse</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>pandas + pyarrow — Parquet avançado</li>
+        <li>boto3 — S3 / MinIO (S3 local)</li>
+        <li>deltalake (Python) — Delta Lake sem Spark</li>
+        <li>MinIO — S3 compatível, roda localmente</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Parquet Avançado ──────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Parquet avançado — particionamento e leitura seletiva</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Revisão rápida — por que Parquet?</div>
+      <p>Parquet é um formato de arquivo <strong>colunar e binário</strong>. Em vez de guardar dados linha por linha (como CSV), guarda coluna por coluna. O ganho:</p>
+      <div class="grid-2">
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span><strong>Leitura seletiva:</strong> uma query que usa só 3 de 50 colunas lê apenas aquelas 3</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Compressão superior:</strong> valores repetidos na mesma coluna comprimem muito melhor</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Schema embutido:</strong> tipos preservados — sem surpresa com "data lida como string"</span></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span><strong>Estatísticas de coluna:</strong> min/max/null por row group — permite pular blocos inteiros</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Compatível com tudo:</strong> pandas, Spark, DuckDB, Athena, BigQuery</span></li>
+            <li><i class="fas fa-times bad"></i><span><strong>Não é human-readable</strong> — precisa de ferramenta para inspecionar</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sitemap"></i>Particionamento — dividir para conquistar</div>
+      <p>Particionamento organiza os arquivos em <strong>pastas baseadas em valores de colunas</strong>. Ao ler, o engine pula as partições que não atendem ao filtro — sem nem abrir o arquivo.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Estrutura particionada no sistema de arquivos</span></div>
+        <pre><code>pedidos/
+├── ano=2024/
+│   ├── mes=10/
+│   │   └── part-00000.parquet   <span class="cm"># só pedidos de out/2024</span>
+│   ├── mes=11/
+│   │   └── part-00000.parquet
+│   └── mes=12/
+│       └── part-00000.parquet
+└── ano=2025/
+    └── mes=01/
+        └── part-00000.parquet</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — escrever Parquet particionado</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+df = pd.read_sql(<span class="str">"""
+    SELECT id, cliente_id, status, total, criado_em
+    FROM pedidos
+    ORDER BY criado_em
+"""</span>, engine)
+
+<span class="cm"># Criar colunas de partição</span>
+df[<span class="str">"criado_em"</span>] = pd.to_datetime(df[<span class="str">"criado_em"</span>])
+df[<span class="str">"ano"</span>] = df[<span class="str">"criado_em"</span>].dt.year
+df[<span class="str">"mes"</span>] = df[<span class="str">"criado_em"</span>].dt.month
+
+<span class="cm"># Escrever particionado por ano e mês</span>
+df.to_parquet(
+    <span class="str">"silver/pedidos/"</span>,
+    partition_cols=[<span class="str">"ano"</span>, <span class="str">"mes"</span>],    <span class="cm"># cria subpastas automaticamente</span>
+    index=<span class="kw">False</span>,
+    compression=<span class="str">"snappy"</span>,
+    engine=<span class="str">"pyarrow"</span>
+)
+print(<span class="str">"Partições criadas:"</span>)
+<span class="kw">for</span> root, dirs, files <span class="kw">in</span> os.walk(<span class="str">"silver/pedidos"</span>):
+    <span class="kw">for</span> f <span class="kw">in</span> files:
+        print(<span class="fn">f</span><span class="str">"  {os.path.join(root,f)}"</span>)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — ler com predicate pushdown (só 1 partição)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pyarrow.parquet <span class="kw">as</span> pq
+
+<span class="cm"># Ler APENAS janeiro de 2025 — não toca nas outras partições</span>
+dataset = pq.read_table(
+    <span class="str">"silver/pedidos/"</span>,
+    filters=[(<span class="str">"ano"</span>, <span class="str">"="</span>, <span class="num">2025</span>), (<span class="str">"mes"</span>, <span class="str">"="</span>, <span class="num">1</span>)]
+)
+df_jan = dataset.to_pandas()
+print(<span class="fn">f</span><span class="str">"Linhas lidas: {len(df_jan)}"</span>)
+
+<span class="cm"># Também funciona com pandas direto</span>
+df_jan = pd.read_parquet(
+    <span class="str">"silver/pedidos/"</span>,
+    filters=[(<span class="str">"ano"</span>, <span class="str">"="</span>, <span class="num">2025</span>), (<span class="str">"mes"</span>, <span class="str">"="</span>, <span class="num">1</span>)],
+    columns=[<span class="str">"id"</span>, <span class="str">"cliente_id"</span>, <span class="str">"total"</span>]   <span class="cm"># column pruning</span>
+)</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>Predicate pushdown + column pruning</strong> = o engine lê apenas os arquivos das partições filtradas e apenas as colunas solicitadas. Em datasets de TB, isso é a diferença entre segundos e horas.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-compress-alt"></i>Compressões — Snappy vs Zstd vs Gzip</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Codec</th><th>Tamanho</th><th>Velocidade</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><code>snappy</code></td><td>Médio</td><td>⚡⚡⚡ muito rápido</td><td>Padrão para processamento — Spark, Athena</td></tr>
+            <tr><td><code>zstd</code></td><td>Menor</td><td>⚡⚡ rápido</td><td>Melhor trade-off tamanho/velocidade — recomendado</td></tr>
+            <tr><td><code>gzip</code></td><td>Menor ainda</td><td>⚡ lento</td><td>Arquivamento onde espaço importa mais que velocidade</td></tr>
+            <tr><td><code>brotli</code></td><td>Mínimo</td><td>🐢 muito lento</td><td>Raro — só quando armazenamento é crítico</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: S3 e Delta Lake ───────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">S3 e Delta Lake — armazenamento e transações</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cloud"></i>S3 — armazenamento de objetos</div>
+      <p>Amazon S3 (e equivalentes como MinIO, GCS, Azure Blob) é a base de praticamente todo Data Lake moderno. É barato, durável, escalável e agnóstico de formato.</p>
+
+      <div class="zona-grid">
+        <div class="zona-card zona-bronze">
+          <div class="z-label">🥉 s3://lake/raw/</div>
+          <div class="z-title">Dados brutos</div>
+          <p>Exatamente como chegaram — CSV, JSON, logs. Imutável. Serve como backup e ponto de reprocessamento.</p>
+        </div>
+        <div class="zona-card zona-silver">
+          <div class="z-label">🥈 s3://lake/silver/</div>
+          <div class="z-title">Dados limpos</div>
+          <p>Parquet particionado, tipos corretos, nulos tratados. Pode ser consultado com confiança por Spark ou Athena.</p>
+        </div>
+        <div class="zona-card zona-gold">
+          <div class="z-label">🥇 s3://lake/gold/</div>
+          <div class="z-title">Features prontas</div>
+          <p>Tabelas wide para ML, aggregados para BI. Consumo direto sem transformação adicional.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — boto3: upload e download no S3 / MinIO</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> boto3, os
+<span class="kw">from</span> io <span class="kw">import</span> BytesIO
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Conectar ao MinIO local (compatível com S3)</span>
+s3 = boto3.client(
+    <span class="str">"s3"</span>,
+    endpoint_url=<span class="str">"http://localhost:9000"</span>,    <span class="cm"># MinIO local</span>
+    aws_access_key_id=<span class="str">"minioadmin"</span>,
+    aws_secret_access_key=<span class="str">"minioadmin"</span>,
+)
+<span class="cm"># Para S3 real: remover endpoint_url e usar credenciais IAM</span>
+
+BUCKET = <span class="str">"data-lake"</span>
+
+<span class="cm"># Upload de arquivo local</span>
+s3.upload_file(
+    <span class="str">"silver/pedidos/ano=2025/mes=01/part-00000.parquet"</span>,
+    BUCKET,
+    <span class="str">"silver/pedidos/ano=2025/mes=01/part-00000.parquet"</span>
+)
+
+<span class="cm"># Ler Parquet direto do S3 sem baixar o arquivo</span>
+obj = s3.get_object(Bucket=BUCKET, Key=<span class="str">"silver/pedidos/ano=2025/mes=01/part-00000.parquet"</span>)
+df = pd.read_parquet(BytesIO(obj[<span class="str">"Body"</span>].read()))
+print(df.head())
+
+<span class="cm"># Listar objetos com prefixo (equivale a ls de pasta)</span>
+response = s3.list_objects_v2(Bucket=BUCKET, Prefix=<span class="str">"silver/pedidos/"</span>)
+<span class="kw">for</span> obj <span class="kw">in</span> response.get(<span class="str">"Contents"</span>, []):
+    print(obj[<span class="str">"Key"</span>], <span class="str">"|"</span>, obj[<span class="str">"Size"</span>], <span class="str">"bytes"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-history"></i>Delta Lake — ACID sobre arquivos Parquet</div>
+      <p>Delta Lake adiciona uma <strong>camada de metadados transacionais</strong> sobre arquivos Parquet. Os dados continuam em Parquet, mas uma pasta <code>_delta_log/</code> registra todas as operações.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="fc-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="fc-title">ACID Transactions</div>
+          <p>Múltiplos writers simultâneos sem corromper dados. Commit atômico — ou toda a operação funciona ou nada.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon"><i class="fas fa-clock"></i></div>
+          <div class="fc-title">Time Travel</div>
+          <p>Consultar versões anteriores dos dados. "Como estava a tabela ontem às 18h?" — útil para auditoria e ML reproducível.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon"><i class="fas fa-exchange-alt"></i></div>
+          <div class="fc-title">Schema Evolution</div>
+          <p>Adicionar colunas sem reescrever toda a tabela. Registra a mudança de schema no log com timestamp.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon"><i class="fas fa-broom"></i></div>
+          <div class="fc-title">Upsert (MERGE)</div>
+          <p>INSERT + UPDATE em uma operação atômica. Essencial para incrementais — inserir novos e atualizar existentes.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Delta Lake com biblioteca deltalake</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> deltalake <span class="kw">import</span> DeltaTable, write_deltalake
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Escrever tabela Delta pela primeira vez</span>
+df_v1 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">4239.90</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>],
+    <span class="str">"ultima_compra"</span>: [<span class="str">"2025-01-15"</span>, <span class="str">"2025-01-10"</span>, <span class="str">"2025-01-18"</span>],
+})
+write_deltalake(<span class="str">"gold/features_cliente"</span>, df_v1)
+print(<span class="str">"Versão 0 escrita"</span>)
+
+<span class="cm"># Escrever novos dados (append — versão 1)</span>
+df_v2 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">4</span>, <span class="num">5</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">4150.00</span>, <span class="num">89.90</span>],
+    <span class="str">"ultima_compra"</span>: [<span class="str">"2024-10-05"</span>, <span class="str">"2024-11-20"</span>],
+})
+write_deltalake(<span class="str">"gold/features_cliente"</span>, df_v2, mode=<span class="str">"append"</span>)
+print(<span class="str">"Versão 1 (append) escrita"</span>)
+
+<span class="cm"># Ler a tabela atual</span>
+dt = DeltaTable(<span class="str">"gold/features_cliente"</span>)
+df_atual = dt.to_pandas()
+print(<span class="fn">f</span><span class="str">"Versão atual: {dt.version()} | {len(df_atual)} linhas"</span>)
+
+<span class="cm"># TIME TRAVEL — ler versão anterior</span>
+dt_v0 = DeltaTable(<span class="str">"gold/features_cliente"</span>, version=<span class="num">0</span>)
+df_ontem = dt_v0.to_pandas()
+print(<span class="fn">f</span><span class="str">"Versão 0: {len(df_ontem)} linhas"</span>)
+
+<span class="cm"># Ver histórico de todas as versões</span>
+print(dt.history())</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>_delta_log/</strong> é o coração do Delta Lake — uma pasta de arquivos JSON que registra cada operação. Nunca delete essa pasta. O VACUUM remove arquivos de dados antigos, mas o log permanece.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Pipeline completo ─────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline Lakehouse — banco → silver → gold → Delta</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>Pipeline end-to-end com Delta Lake</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline completo BD → Lakehouse</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, os, shutil
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> deltalake <span class="kw">import</span> DeltaTable, write_deltalake
+<span class="kw">import</span> pyarrow.parquet <span class="kw">as</span> pq
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># ── ETAPA 1: raw — extrair do banco bruto ────────────────────────</span>
+df_raw = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine)
+df_raw.to_parquet(
+    <span class="str">"lake/raw/pedidos/"</span>,
+    partition_cols=[<span class="str">"status"</span>],
+    index=<span class="kw">False</span>,
+    compression=<span class="str">"snappy"</span>
+)
+print(<span class="fn">f</span><span class="str">"raw: {len(df_raw)} linhas"</span>)
+
+<span class="cm"># ── ETAPA 2: silver — limpar e tipar ─────────────────────────────</span>
+df_raw[<span class="str">"criado_em"</span>] = pd.to_datetime(df_raw[<span class="str">"criado_em"</span>])
+df_raw[<span class="str">"status"</span>]    = df_raw[<span class="str">"status"</span>].str.lower().str.strip()
+df_raw[<span class="str">"total"</span>]     = df_raw[<span class="str">"total"</span>].fillna(<span class="num">0</span>)
+df_raw[<span class="str">"ano"</span>]       = df_raw[<span class="str">"criado_em"</span>].dt.year
+df_raw[<span class="str">"mes"</span>]       = df_raw[<span class="str">"criado_em"</span>].dt.month
+df_silver = df_raw[df_raw[<span class="str">"total"</span>] > <span class="num">0</span>].copy()
+
+df_silver.to_parquet(
+    <span class="str">"lake/silver/pedidos/"</span>,
+    partition_cols=[<span class="str">"ano"</span>, <span class="str">"mes"</span>],
+    index=<span class="kw">False</span>,
+    compression=<span class="str">"zstd"</span>
+)
+print(<span class="fn">f</span><span class="str">"silver: {len(df_silver)} linhas"</span>)
+
+<span class="cm"># ── ETAPA 3: gold — features de cliente em Delta Lake ────────────</span>
+df_gold = df_silver.groupby(<span class="str">"cliente_id"</span>).agg(
+    total_pedidos    =(<span class="str">"id"</span>,       <span class="str">"count"</span>),
+    ticket_medio     =(<span class="str">"total"</span>,    <span class="str">"mean"</span>),
+    total_gasto      =(<span class="str">"total"</span>,    <span class="str">"sum"</span>),
+    ultimo_pedido    =(<span class="str">"criado_em"</span>,<span class="str">"max"</span>),
+    qtd_cancelados   =(<span class="str">"status"</span>,   <span class="kw">lambda</span> x: (x == <span class="str">"cancelado"</span>).sum()),
+).reset_index()
+
+df_gold[<span class="str">"dias_inativo"</span>] = (pd.Timestamp(<span class="str">"today"</span>) - df_gold[<span class="str">"ultimo_pedido"</span>]).dt.days
+df_gold[<span class="str">"ticket_medio"</span>] = df_gold[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+df_gold[<span class="str">"gerado_em"</span>]    = pd.Timestamp(<span class="str">"now"</span>)
+
+<span class="cm"># Escrever como Delta Lake</span>
+write_deltalake(<span class="str">"lake/gold/features_cliente"</span>, df_gold, mode=<span class="str">"overwrite"</span>)
+
+dt = DeltaTable(<span class="str">"lake/gold/features_cliente"</span>)
+print(<span class="fn">f</span><span class="str">"gold Delta v{dt.version()}: {len(df_gold)} clientes"</span>)
+
+<span class="cm"># Ler de volta para validar</span>
+df_check = dt.to_pandas()
+print(df_check[[<span class="str">"cliente_id"</span>,<span class="str">"total_gasto"</span>,<span class="str">"dias_inativo"</span>]])</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-clock"></i>Time Travel na prática</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — consultar versões históricas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code>dt = DeltaTable(<span class="str">"lake/gold/features_cliente"</span>)
+
+<span class="cm"># Ver todo o histórico</span>
+historico = dt.history()
+<span class="kw">for</span> h <span class="kw">in</span> historico:
+    print(<span class="fn">f</span><span class="str">"v{h['version']} | {h['timestamp']} | {h['operation']}"</span>)
+
+<span class="cm"># Ler versão específica pelo número</span>
+df_v0 = DeltaTable(<span class="str">"lake/gold/features_cliente"</span>, version=<span class="num">0</span>).to_pandas()
+
+<span class="cm"># Ler versão por timestamp (como estava num momento específico)</span>
+df_ontem = DeltaTable(
+    <span class="str">"lake/gold/features_cliente"</span>,
+    version=dt.version_at_timestamp(<span class="str">"2025-01-14T12:00:00"</span>)
+).to_pandas()
+
+<span class="cm"># Comparar versões: quais clientes mudaram?</span>
+v_atual = dt.to_pandas().set_index(<span class="str">"cliente_id"</span>)[<span class="str">"total_gasto"</span>]
+v_antiga = df_v0.set_index(<span class="str">"cliente_id"</span>)[<span class="str">"total_gasto"</span>]
+diff = (v_atual - v_antiga).dropna()
+print(<span class="str">"Clientes com total_gasto alterado:\n"</span>, diff[diff != <span class="num">0</span>])</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · pyarrow + deltalake</div>
+        <div class="secao-titulo">5 Exercícios — Armazenamento distribuído na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale: <code>pip install pyarrow deltalake boto3</code>. Para o MinIO: <code>docker run -p 9000:9000 -p 9001:9001 minio/minio server /data --console-address ":9001"</code></span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Extraia a tabela <code>clientes</code> do banco para um DataFrame. Escreva em Parquet <strong>particionado por cidade</strong> na pasta <code>silver/clientes/</code>. Depois leia de volta filtrando apenas a cidade "São Paulo" usando predicate pushdown e column pruning (só colunas <code>id</code>, <code>nome</code> e <code>email</code>). Compare o tempo de leitura com e sem filtro.</p>
+      <span class="dificuldade dif-basico">Básico — Parquet particionado</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, time, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM clientes"</span>, engine)
+df[<span class="str">"cidade"</span>] = df[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>)
+
+<span class="cm"># Escrever particionado</span>
+df.to_parquet(<span class="str">"silver/clientes/"</span>, partition_cols=[<span class="str">"cidade"</span>],
+              index=<span class="kw">False</span>, compression=<span class="str">"zstd"</span>)
+
+<span class="cm"># Ler SEM filtro</span>
+t0 = time.time()
+df_all = pd.read_parquet(<span class="str">"silver/clientes/"</span>)
+print(<span class="fn">f</span><span class="str">"Sem filtro: {len(df_all)} linhas em {time.time()-t0:.4f}s"</span>)
+
+<span class="cm"># Ler COM predicate pushdown + column pruning</span>
+t0 = time.time()
+df_sp = pd.read_parquet(
+    <span class="str">"silver/clientes/"</span>,
+    filters=[(<span class="str">"cidade"</span>, <span class="str">"="</span>, <span class="str">"São Paulo"</span>)],
+    columns=[<span class="str">"id"</span>, <span class="str">"nome"</span>, <span class="str">"email"</span>]
+)
+print(<span class="fn">f</span><span class="str">"Com filtro: {len(df_sp)} linhas em {time.time()-t0:.4f}s"</span>)
+print(df_sp)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Escreva a tabela <code>pedidos</code> em Parquet particionado por <strong>ano e mês</strong> com compressão <strong>zstd</strong>. Depois use <code>pyarrow.parquet.read_table</code> para ler apenas os pedidos com <code>status = "entregue"</code> e <code>ano = 2024</code>. Liste os arquivos criados com <code>os.walk</code>.</p>
+      <span class="dificuldade dif-basico">Básico — Particionamento temporal</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, pyarrow.parquet <span class="kw">as</span> pq, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine)
+df[<span class="str">"criado_em"</span>] = pd.to_datetime(df[<span class="str">"criado_em"</span>])
+df[<span class="str">"ano"</span>] = df[<span class="str">"criado_em"</span>].dt.year
+df[<span class="str">"mes"</span>] = df[<span class="str">"criado_em"</span>].dt.month
+
+df.to_parquet(<span class="str">"silver/pedidos/"</span>, partition_cols=[<span class="str">"ano"</span>,<span class="str">"mes"</span>],
+              index=<span class="kw">False</span>, compression=<span class="str">"zstd"</span>)
+
+<span class="cm"># Listar arquivos</span>
+<span class="kw">for</span> r, d, files <span class="kw">in</span> os.walk(<span class="str">"silver/pedidos"</span>):
+    <span class="kw">for</span> f <span class="kw">in</span> files:
+        print(os.path.join(r, f))
+
+<span class="cm"># Ler com filtro duplo</span>
+dataset = pq.read_table(
+    <span class="str">"silver/pedidos/"</span>,
+    filters=[(<span class="str">"ano"</span>,<span class="str">"="</span>,<span class="num">2024</span>),(<span class="str">"status"</span>,<span class="str">"="</span>,<span class="str">"entregue"</span>)]
+)
+df_filt = dataset.to_pandas()
+print(<span class="fn">f</span><span class="str">"Filtrado: {len(df_filt)} pedidos entregues em 2024"</span>)
+print(df_filt[[<span class="str">"id"</span>,<span class="str">"status"</span>,<span class="str">"total"</span>,<span class="str">"ano"</span>,<span class="str">"mes"</span>]])</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Crie uma tabela Delta Lake em <code>gold/features_cliente/</code> com os dados de features de clientes (use o resultado do pipeline da Semana 8). Depois faça um <strong>append</strong> simulando novos clientes. Leia o histórico e use time travel para acessar a versão 0.</p>
+      <span class="dificuldade dif-medio">Médio — Delta Lake básico</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> deltalake <span class="kw">import</span> DeltaTable, write_deltalake
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Versão 0 — dados iniciais</span>
+df_v0 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">4239.90</span>,<span class="num">1200.00</span>,<span class="num">399.90</span>,<span class="num">4150.00</span>],
+    <span class="str">"dias_inativo"</span>: [<span class="num">5</span>,<span class="num">51</span>,<span class="num">43</span>,<span class="num">82</span>],
+})
+write_deltalake(<span class="str">"gold/features_cliente"</span>, df_v0)
+
+<span class="cm"># Versão 1 — novos clientes</span>
+df_v1 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">5</span>,<span class="num">6</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">89.90</span>,<span class="num">320.00</span>],
+    <span class="str">"dias_inativo"</span>: [<span class="num">202</span>,<span class="num">15</span>],
+})
+write_deltalake(<span class="str">"gold/features_cliente"</span>, df_v1, mode=<span class="str">"append"</span>)
+
+dt = DeltaTable(<span class="str">"gold/features_cliente"</span>)
+print(<span class="str">"Versão atual:"</span>, dt.version())
+print(<span class="str">"Histórico:"</span>, dt.history())
+
+<span class="cm"># Time travel</span>
+df_original = DeltaTable(<span class="str">"gold/features_cliente"</span>, version=<span class="num">0</span>).to_pandas()
+print(<span class="str">"Versão 0 (4 clientes):"</span>, len(df_original))
+
+df_atual = dt.to_pandas()
+print(<span class="str">"Versão atual (6 clientes):"</span>, len(df_atual))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Compare o tamanho em disco de um mesmo dataset de pedidos salvo em: (a) CSV sem compressão, (b) Parquet com Snappy, (c) Parquet com Zstd. Calcule a razão de compressão relativa ao CSV e imprima a tabela comparativa.</p>
+      <span class="dificuldade dif-medio">Médio — Comparativo de formatos</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine)
+
+formatos = {
+    <span class="str">"CSV (sem compressão)"</span>:   (<span class="kw">lambda</span>: df.to_csv(<span class="str">"pedidos.csv"</span>, index=<span class="kw">False</span>),   <span class="str">"pedidos.csv"</span>),
+    <span class="str">"Parquet Snappy"</span>:          (<span class="kw">lambda</span>: df.to_parquet(<span class="str">"pedidos_snappy.parquet"</span>, compression=<span class="str">"snappy"</span>, index=<span class="kw">False</span>), <span class="str">"pedidos_snappy.parquet"</span>),
+    <span class="str">"Parquet Zstd"</span>:            (<span class="kw">lambda</span>: df.to_parquet(<span class="str">"pedidos_zstd.parquet"</span>,   compression=<span class="str">"zstd"</span>,   index=<span class="kw">False</span>), <span class="str">"pedidos_zstd.parquet"</span>),
+}
+
+resultados = []
+csv_size = <span class="kw">None</span>
+<span class="kw">for</span> nome, (fn, path) <span class="kw">in</span> formatos.items():
+    fn()
+    size = os.path.getsize(path)
+    <span class="kw">if</span> csv_size <span class="kw">is None</span>:
+        csv_size = size
+    resultados.append({<span class="str">"Formato"</span>: nome, <span class="str">"Bytes"</span>: size,
+                        <span class="str">"KB"</span>: round(size/<span class="num">1024</span>,<span class="num">1</span>),
+                        <span class="str">"Razão vs CSV"</span>: <span class="fn">f</span><span class="str">"{csv_size/size:.1f}x menor"</span>})
+
+print(pd.DataFrame(resultados).to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Implemente um <strong>pipeline incremental com Delta Lake</strong>: (1) escreva a versão inicial da tabela gold com os dados atuais; (2) simule uma "nova execução" 1 dia depois adicionando 2 novos clientes e atualizando o <code>total_gasto</code> de 1 cliente existente com um novo append; (3) use time travel para mostrar o antes e o depois do cliente alterado; (4) chame <code>dt.vacuum(retention_hours=0, dry_run=True)</code> para ver quais arquivos seriam removidos.</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline incremental com Delta Lake</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> deltalake <span class="kw">import</span> DeltaTable, write_deltalake
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, shutil
+
+<span class="cm"># Limpar execução anterior (só para teste)</span>
+shutil.rmtree(<span class="str">"gold/incremental"</span>, ignore_errors=<span class="kw">True</span>)
+
+<span class="cm"># 1. Versão inicial</span>
+df_dia1 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">4239.90</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>],
+    <span class="str">"dias_inativo"</span>: [<span class="num">5</span>, <span class="num">51</span>, <span class="num">43</span>],
+})
+write_deltalake(<span class="str">"gold/incremental"</span>, df_dia1)
+print(<span class="str">"v0 escrita — 3 clientes"</span>)
+
+<span class="cm"># 2. Nova execução: 2 novos + 1 atualizado via overwrite parcial</span>
+<span class="cm"># Na prática real usaria MERGE/UPSERT; aqui simulamos com overwrite</span>
+df_dia2 = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>],
+    <span class="str">"total_gasto"</span>: [<span class="num">5189.80</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>, <span class="num">4150.00</span>, <span class="num">89.90</span>],
+    <span class="str">"dias_inativo"</span>: [<span class="num">4</span>, <span class="num">52</span>, <span class="num">44</span>, <span class="num">83</span>, <span class="num">203</span>],
+})
+write_deltalake(<span class="str">"gold/incremental"</span>, df_dia2, mode=<span class="str">"overwrite"</span>)
+print(<span class="str">"v1 escrita — 5 clientes (cliente 1 atualizado)"</span>)
+
+dt = DeltaTable(<span class="str">"gold/incremental"</span>)
+
+<span class="cm"># 3. Comparar versões para o cliente 1</span>
+v0 = DeltaTable(<span class="str">"gold/incremental"</span>, version=<span class="num">0</span>).to_pandas()
+v1 = dt.to_pandas()
+c1_v0 = v0[v0.cliente_id==<span class="num">1</span>][<span class="str">"total_gasto"</span>].values[<span class="num">0</span>]
+c1_v1 = v1[v1.cliente_id==<span class="num">1</span>][<span class="str">"total_gasto"</span>].values[<span class="num">0</span>]
+print(<span class="fn">f</span><span class="str">"Cliente 1 — antes: R${c1_v0:.2f} | depois: R${c1_v1:.2f}"</span>)
+
+<span class="cm"># 4. Vacuum dry run — ver o que seria removido</span>
+arquivos = dt.vacuum(retention_hours=<span class="num">0</span>, dry_run=<span class="kw">True</span>)
+print(<span class="fn">f</span><span class="str">"Arquivos que seriam removidos pelo vacuum: {len(arquivos)}"</span>)
+<span class="kw">for</span> f <span class="kw">in</span> arquivos:
+    print(<span class="str">" "</span>, f)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 9</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-sitemap"></i>
+        <strong>Particionamento</strong>
+        <p>Pastas por valor de coluna — predicate pushdown pula partições sem ler, column pruning lê só colunas necessárias</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-compress-alt"></i>
+        <strong>Compressões</strong>
+        <p>Snappy (velocidade), Zstd (melhor trade-off), Gzip (espaço). Parquet 3–10x menor que CSV</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cloud"></i>
+        <strong>S3 / MinIO</strong>
+        <p>Armazenamento de objetos — base de todo Data Lake moderno. boto3 para upload, download e listagem</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-history"></i>
+        <strong>Delta Lake</strong>
+        <p>ACID + time travel + schema evolution sobre Parquet. _delta_log registra cada operação com timestamp</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-10.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 10 — Governança de Dados: qualidade, linhagem e LGPD</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

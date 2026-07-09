@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 10 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.icon-list li i.warn{color:#fbbf24;}
+.badge-inline{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600;background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* dimensoes lgpd */
+.lgpd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.lgpd-card{border-radius:12px;padding:1.25rem;background:rgba(96,165,250,.05);border:1px solid rgba(96,165,250,.15);}
+.lgpd-card .lc-icon{font-size:1.2rem;color:#60a5fa;margin-bottom:.5rem;}
+.lgpd-card .lc-title{font-size:.83rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.lgpd-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* pilares qualidade */
+.pilar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:.75rem 0;}
+.pilar-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.pilar-card i{font-size:1.3rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.pilar-card .p-title{font-size:.82rem;font-weight:700;color:var(--text-primary);margin-bottom:.3rem;}
+.pilar-card p{font-size:.75rem;color:var(--text-secondary);line-height:1.45;}
+
+/* feature grid */
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.feature-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.feature-card .fc-icon{font-size:1.3rem;color:var(--green-400);margin-bottom:.5rem;}
+.feature-card .fc-title{font-size:.83rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.feature-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.lgpd-grid,.feature-grid,.resumo-grid,.pilar-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">10</div>
+    <h1 class="capa-titulo">Governança<br><em>de Dados</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Bloco 2 — Semana 4</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-star"></i></div><span>Qualidade de dados — as 6 dimensões essenciais</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-route"></i></div><span>Linhagem de dados — rastrear a origem e as transformações</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-book-open"></i></div><span>Catálogo de dados — metadados e descoberta</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-alt"></i></div><span>LGPD aplicada a bancos de dados — obrigações práticas</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: validação com Great Expectations e mascaramento de dados</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Identificar problemas de qualidade em um dataset real, escrever expectativas com Great Expectations e aplicar técnicas de mascaramento de dados sensíveis conforme LGPD.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semana 9: armazenamento distribuído — Parquet, S3, Delta Lake</li>
+        <li>Esta semana: governança — quem acessa o quê e com qual qualidade</li>
+        <li>Semana 11: automação de fluxos — Airflow e orquestração de DAGs</li>
+        <li>Sem governança, dados no lake viram um "data swamp"</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que governança importa para IA?</div>
+      <ul class="info-lista">
+        <li>Modelos treinados com dados ruins produzem predições erradas — "garbage in, garbage out"</li>
+        <li>Linhagem permite reproduzir experimentos e auditar decisões do modelo</li>
+        <li>LGPD exige controle sobre dados pessoais — pipelines de ML não são exceção</li>
+        <li>Catálogos evitam retrabalho: engenheiros encontram datasets existentes em vez de recriar</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>great_expectations — validação de qualidade declarativa</li>
+        <li>pandas — inspeção e mascaramento de dados</li>
+        <li>hashlib / Faker — anonimização e geração de dados sintéticos</li>
+        <li>sqlalchemy — acesso ao banco para validação in-place</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Qualidade e Linhagem ─────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Qualidade de dados — as 6 dimensões e como medi-las</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>O problema do dado ruim</div>
+      <p>Imagine treinar um modelo de recomendação de produtos usando uma coluna <code>preco</code> que tem 30% dos valores nulos, datas de compra lançadas no futuro e IDs de cliente duplicados com nomes diferentes. O modelo vai aprender padrões que não existem no mundo real.</p>
+      <p>Governança de dados é o conjunto de <strong>políticas, processos e ferramentas</strong> que garantem que os dados sejam confiáveis, acessíveis, compreensíveis e protegidos ao longo de todo o seu ciclo de vida.</p>
+      <div class="destaque">
+        <strong>Regra dos 80/20 na prática:</strong> em projetos de dados reais, cerca de 80% do tempo é gasto em limpeza, validação e entendimento dos dados — e apenas 20% em modelagem. Governança busca inverter essa proporção ao longo do tempo.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-star"></i>As 6 dimensões de qualidade de dados</div>
+      <div class="pilar-grid">
+        <div class="pilar-card">
+          <i class="fas fa-check-double"></i>
+          <div class="p-title">Completude</div>
+          <p>Todos os campos obrigatórios estão preenchidos? % de nulos por coluna.</p>
+        </div>
+        <div class="pilar-card">
+          <i class="fas fa-bullseye"></i>
+          <div class="p-title">Acurácia</div>
+          <p>O valor reflete a realidade? CPF válido, e-mail com @, preço positivo.</p>
+        </div>
+        <div class="pilar-card">
+          <i class="fas fa-copy"></i>
+          <div class="p-title">Unicidade</div>
+          <p>Sem duplicatas indesejadas. Um cliente não deve aparecer duas vezes com IDs diferentes.</p>
+        </div>
+        <div class="pilar-card">
+          <i class="fas fa-clock"></i>
+          <div class="p-title">Temporalidade</div>
+          <p>Dados estão atualizados? Data de nascimento não pode ser futura.</p>
+        </div>
+        <div class="pilar-card">
+          <i class="fas fa-link"></i>
+          <div class="p-title">Consistência</div>
+          <p>Mesmo valor em fontes diferentes. Endereço no CRM igual ao do sistema de entregas?</p>
+        </div>
+        <div class="pilar-card" style="grid-column:span 2; max-width:calc(50% - .5rem);">
+          <i class="fas fa-ruler"></i>
+          <div class="p-title">Conformidade</div>
+          <p>Segue o formato esperado? CEP no padrão 00000-000, UF com 2 letras, CNPJ com 14 dígitos.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>Diagnóstico rápido de qualidade com pandas</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — auditoria de qualidade em DataFrame</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM clientes"</span>, engine)
+
+<span class="cm"># ── 1. Completude ────────────────────────────────────────────────</span>
+nulos = df.isnull().sum()
+pct_nulos = (nulos / len(df) * <span class="num">100</span>).round(<span class="num">2</span>)
+print(<span class="str">"=== Completude (% nulos por coluna) ==="</span>)
+print(pd.DataFrame({<span class="str">"nulos"</span>: nulos, <span class="str">"%"</span>: pct_nulos})[pct_nulos > <span class="num">0</span>])
+
+<span class="cm"># ── 2. Unicidade ─────────────────────────────────────────────────</span>
+duplicatas = df.duplicated(subset=[<span class="str">"cpf"</span>]).sum()
+print(<span class="fn">f</span><span class="str">"\n=== Unicidade === \nCPFs duplicados: {duplicatas}"</span>)
+
+<span class="cm"># ── 3. Acurácia — preço positivo, email com @ ────────────────────</span>
+<span class="kw">if</span> <span class="str">"email"</span> <span class="kw">in</span> df.columns:
+    emails_invalidos = df[~df[<span class="str">"email"</span>].str.contains(<span class="str">"@"</span>, na=<span class="kw">False</span>)]
+    print(<span class="fn">f</span><span class="str">"\n=== Acurácia ===\nE-mails inválidos: {len(emails_invalidos)}"</span>)
+
+<span class="cm"># ── 4. Temporalidade — datas no futuro ───────────────────────────</span>
+<span class="kw">if</span> <span class="str">"data_nascimento"</span> <span class="kw">in</span> df.columns:
+    df[<span class="str">"data_nascimento"</span>] = pd.to_datetime(df[<span class="str">"data_nascimento"</span>], errors=<span class="str">"coerce"</span>)
+    futuros = df[df[<span class="str">"data_nascimento"</span>] > pd.Timestamp(<span class="str">"today"</span>)]
+    print(<span class="fn">f</span><span class="str">"Datas de nascimento no futuro: {len(futuros)}"</span>)
+
+<span class="cm"># ── 5. Conformidade — CEP no padrão ──────────────────────────────</span>
+<span class="kw">if</span> <span class="str">"cep"</span> <span class="kw">in</span> df.columns:
+    cep_invalido = df[~df[<span class="str">"cep"</span>].astype(str).str.match(<span class="str">r"^\d{5}-\d{3}$"</span>)]
+    print(<span class="fn">f</span><span class="str">"CEPs fora do padrão: {len(cep_invalido)}"</span>)
+
+<span class="cm"># ── Resumo ───────────────────────────────────────────────────────</span>
+print(<span class="fn">f</span><span class="str">"\nTotal de registros: {len(df)}"</span>)
+print(<span class="fn">f</span><span class="str">"Colunas: {list(df.columns)}"</span>)
+print(<span class="fn">f</span><span class="str">"Tipos:\n{df.dtypes}"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-robot"></i>Great Expectations — validação declarativa e automatizável</div>
+      <p>Great Expectations (GX) permite escrever <strong>expectativas</strong> sobre os dados como código — e testá-las automaticamente a cada execução do pipeline. Se uma expectativa falha, o pipeline para antes de propagar dados ruins.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Great Expectations básico com pandas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> great_expectations <span class="kw">as</span> gx
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Dataset de exemplo</span>
+df = pd.DataFrame({
+    <span class="str">"cliente_id"</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>],
+    <span class="str">"email"</span>:      [<span class="str">"a@b.com"</span>, <span class="str">"c@d.com"</span>, <span class="str">"invalido"</span>, <span class="str">"e@f.com"</span>, <span class="str">"g@h.com"</span>],
+    <span class="str">"total_gasto"</span>:[<span class="num">4239.9</span>, <span class="num">1200.0</span>, <span class="num">-50.0</span>, <span class="num">399.9</span>, <span class="num">4150.0</span>],
+    <span class="str">"status"</span>:     [<span class="str">"ativo"</span>, <span class="str">"inativo"</span>, <span class="str">"ativo"</span>, <span class="str">"suspenso"</span>, <span class="str">"ATIVO"</span>],
+})
+
+<span class="cm"># Criar contexto e dataset validável</span>
+context = gx.get_context()
+ds = context.sources.add_pandas(<span class="str">"minha_fonte"</span>)
+da = ds.add_dataframe_asset(<span class="str">"clientes"</span>)
+batch = da.build_batch_request(dataframe=df)
+
+<span class="cm"># Criar suite de expectativas</span>
+suite = context.add_expectation_suite(<span class="str">"clientes_suite"</span>)
+validator = context.get_validator(batch_request=batch, expectation_suite=suite)
+
+<span class="cm"># ── Definir expectativas ─────────────────────────────────────────</span>
+<span class="cm"># Coluna cliente_id: sem nulos e valores únicos</span>
+validator.expect_column_values_to_not_be_null(<span class="str">"cliente_id"</span>)
+validator.expect_column_values_to_be_unique(<span class="str">"cliente_id"</span>)
+
+<span class="cm"># total_gasto: sempre positivo</span>
+validator.expect_column_values_to_be_between(<span class="str">"total_gasto"</span>, min_value=<span class="num">0</span>)
+
+<span class="cm"># status: só valores válidos do conjunto</span>
+validator.expect_column_values_to_be_in_set(
+    <span class="str">"status"</span>, [<span class="str">"ativo"</span>, <span class="str">"inativo"</span>, <span class="str">"suspenso"</span>]
+)
+
+<span class="cm"># email: não pode ser nulo</span>
+validator.expect_column_values_to_not_be_null(<span class="str">"email"</span>)
+
+<span class="cm"># Salvar e executar a validação</span>
+validator.save_expectation_suite()
+results = validator.validate()
+
+print(<span class="fn">f</span><span class="str">"Sucesso: {results['success']}"</span>)
+<span class="kw">for</span> r <span class="kw">in</span> results[<span class="str">"results"</span>]:
+    status = <span class="str">"✓"</span> <span class="kw">if</span> r[<span class="str">"success"</span>] <span class="kw">else</span> <span class="str">"✗"</span>
+    exp = r[<span class="str">"expectation_config"</span>][<span class="str">"expectation_type"</span>]
+    col = r[<span class="str">"expectation_config"</span>][<span class="str">"kwargs"</span>].get(<span class="str">"column"</span>, <span class="str">""</span>)
+    print(<span class="fn">f</span><span class="str">"  {status} {exp} [{col}]"</span>)</code></pre>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span>Instale com: <code>pip install great-expectations</code>. A versão 1.x mudou a API em relação às versões 0.x — os exemplos aqui usam a API moderna (GX 1.x).</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Linhagem, Catálogo e LGPD ────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Linhagem, catálogo de dados e LGPD na prática</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-route"></i>Linhagem de dados — rastreando a jornada do dado</div>
+      <p>Linhagem (ou <em>data lineage</em>) é a capacidade de responder: <strong>"De onde veio este dado e como ele foi transformado?"</strong></p>
+      <p>Em um pipeline BD → Parquet → Delta Lake → modelo de ML, se o modelo começa a errar, precisamos saber se o problema está nos dados brutos, em alguma transformação intermediária ou no próprio modelo.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Exemplo de mapa de linhagem (texto)</span></div>
+        <pre><code><span class="cm"># Linhagem da feature "ticket_medio"</span>
+
+PostgreSQL (tabela pedidos)
+  └─ raw/pedidos/         <span class="cm"># extração bruta, sem alteração</span>
+       └─ silver/pedidos/ <span class="cm"># limpeza: nulos→0, status.lower(), anomalias removidas</span>
+            └─ gold/features_cliente/
+                 ├─ ticket_medio = mean(total) por cliente_id
+                 └─ usado em: modelo_churn_v2.pkl (treino: 2025-01-15)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — registrar linhagem manualmente em JSON</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> json, hashlib
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">registrar_linhagem</span>(entrada, saida, transformacoes, arquivo=<span class="str">"lineage_log.json"</span>):
+    <span class="str">"""Registra uma etapa de linhagem no arquivo de log."""</span>
+    registro = {
+        <span class="str">"timestamp"</span>: datetime.now().isoformat(),
+        <span class="str">"entrada"</span>: entrada,
+        <span class="str">"saida"</span>: saida,
+        <span class="str">"transformacoes"</span>: transformacoes,
+    }
+    <span class="kw">try</span>:
+        <span class="kw">with</span> open(arquivo) <span class="kw">as</span> f:
+            log = json.load(f)
+    <span class="kw">except</span> FileNotFoundError:
+        log = []
+    log.append(registro)
+    <span class="kw">with</span> open(arquivo, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        json.dump(log, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+    print(<span class="fn">f</span><span class="str">"Linhagem registrada: {entrada} → {saida}"</span>)
+
+<span class="cm"># Uso no pipeline</span>
+registrar_linhagem(
+    entrada=<span class="str">"postgresql://pedidos"</span>,
+    saida=<span class="str">"lake/raw/pedidos/"</span>,
+    transformacoes=[<span class="str">"nenhuma — cópia fiel"</span>]
+)
+
+registrar_linhagem(
+    entrada=<span class="str">"lake/raw/pedidos/"</span>,
+    saida=<span class="str">"lake/silver/pedidos/"</span>,
+    transformacoes=[
+        <span class="str">"total nulo → 0"</span>,
+        <span class="str">"status.lower().strip()"</span>,
+        <span class="str">"removidos registros com total <= 0"</span>,
+        <span class="str">"criadas colunas ano e mes"</span>,
+    ]
+)
+
+registrar_linhagem(
+    entrada=<span class="str">"lake/silver/pedidos/"</span>,
+    saida=<span class="str">"lake/gold/features_cliente"</span>,
+    transformacoes=[
+        <span class="str">"groupby cliente_id"</span>,
+        <span class="str">"agg: count, mean, sum, max, lambda cancelado"</span>,
+        <span class="str">"criada coluna dias_inativo"</span>,
+        <span class="str">"escrita como Delta Lake"</span>,
+    ]
+)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-book-open"></i>Catálogo de dados — metadados e descoberta</div>
+      <p>Um catálogo de dados é o <strong>"Google" interno dos seus dados</strong>. Engenheiros e cientistas buscam datasets disponíveis, entendem o que cada coluna significa e sabem quem é o responsável — sem precisar perguntar para ninguém.</p>
+
+      <div class="grid-2">
+        <div>
+          <p><strong>O que um catálogo contém:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-tag ok"></i><span><strong>Nome e descrição</strong> de cada dataset e coluna</span></li>
+            <li><i class="fas fa-user ok"></i><span><strong>Owner</strong> — equipe ou pessoa responsável</span></li>
+            <li><i class="fas fa-lock ok"></i><span><strong>Classificação de sensibilidade</strong> — público, interno, confidencial, dados pessoais (LGPD)</span></li>
+            <li><i class="fas fa-calendar ok"></i><span><strong>Frequência de atualização</strong> — horária, diária, sob demanda</span></li>
+            <li><i class="fas fa-route ok"></i><span><strong>Linhagem</strong> — de onde vem e para onde vai</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Ferramentas de mercado:</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span><strong>OpenMetadata</strong> — open-source, completo, self-hosted</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>DataHub (LinkedIn)</strong> — open-source, muito usado em Big Data</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>Atlan / Alation</strong> — SaaS empresarial</span></li>
+            <li><i class="fas fa-check ok"></i><span><strong>dbt docs</strong> — catálogo embutido para transformações dbt</span></li>
+            <li><i class="fas fa-check warn"></i><span><strong>README por pasta</strong> — solução mínima válida para projetos pequenos</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — catálogo mínimo em YAML / JSON</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># catalog.json — exemplo de catálogo manual simples</span>
+catalogo = {
+  <span class="str">"datasets"</span>: [
+    {
+      <span class="str">"nome"</span>: <span class="str">"lake/silver/pedidos"</span>,
+      <span class="str">"descricao"</span>: <span class="str">"Pedidos limpos e tipados, particionados por ano e mês"</span>,
+      <span class="str">"owner"</span>: <span class="str">"engenharia-dados@empresa.com"</span>,
+      <span class="str">"atualizacao"</span>: <span class="str">"diária às 02h"</span>,
+      <span class="str">"formato"</span>: <span class="str">"parquet/zstd"</span>,
+      <span class="str">"sensibilidade"</span>: <span class="str">"interno"</span>,
+      <span class="str">"colunas"</span>: [
+        {<span class="str">"nome"</span>: <span class="str">"id"</span>,         <span class="str">"tipo"</span>: <span class="str">"int64"</span>,   <span class="str">"descricao"</span>: <span class="str">"PK do pedido"</span>,            <span class="str">"lgpd"</span>: <span class="kw">False</span>},
+        {<span class="str">"nome"</span>: <span class="str">"cliente_id"</span>, <span class="str">"tipo"</span>: <span class="str">"int64"</span>,   <span class="str">"descricao"</span>: <span class="str">"FK para tabela clientes"</span>,   <span class="str">"lgpd"</span>: <span class="kw">False</span>},
+        {<span class="str">"nome"</span>: <span class="str">"total"</span>,      <span class="str">"tipo"</span>: <span class="str">"float64"</span>, <span class="str">"descricao"</span>: <span class="str">"Valor total do pedido (R$)"</span>,  <span class="str">"lgpd"</span>: <span class="kw">False</span>},
+        {<span class="str">"nome"</span>: <span class="str">"status"</span>,     <span class="str">"tipo"</span>: <span class="str">"object"</span>,  <span class="str">"descricao"</span>: <span class="str">"ativo|entregue|cancelado"</span>,  <span class="str">"lgpd"</span>: <span class="kw">False</span>},
+        {<span class="str">"nome"</span>: <span class="str">"criado_em"</span>, <span class="str">"tipo"</span>: <span class="str">"datetime"</span>,<span class="str">"descricao"</span>: <span class="str">"Timestamp UTC da criação"</span>,  <span class="str">"lgpd"</span>: <span class="kw">False</span>},
+      ],
+      <span class="str">"linhagem"</span>: {<span class="str">"fonte"</span>: <span class="str">"lake/raw/pedidos"</span>, <span class="str">"destino"</span>: <span class="str">"lake/gold/features_cliente"</span>}
+    }
+  ]
+}
+
+<span class="kw">import</span> json
+<span class="kw">with</span> open(<span class="str">"catalog.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(catalogo, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+print(<span class="str">"Catálogo gravado em catalog.json"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shield-alt"></i>LGPD aplicada a bancos de dados</div>
+      <p>A Lei Geral de Proteção de Dados (Lei nº 13.709/2018) regula o tratamento de <strong>dados pessoais</strong> — qualquer informação que identifique ou torne identificável uma pessoa natural. Pipelines de dados não estão isentos.</p>
+
+      <div class="lgpd-grid">
+        <div class="lgpd-card">
+          <div class="lc-icon"><i class="fas fa-id-card"></i></div>
+          <div class="lc-title">Dados pessoais</div>
+          <p>Nome, CPF, e-mail, telefone, endereço, IP, localização, comportamento de compra.</p>
+        </div>
+        <div class="lgpd-card">
+          <div class="lc-icon"><i class="fas fa-heartbeat"></i></div>
+          <div class="lc-title">Dados sensíveis</div>
+          <p>Saúde, biometria, raça, religião, opinião política, vida sexual. Proteção reforçada — base legal mais restrita.</p>
+        </div>
+        <div class="lgpd-card">
+          <div class="lc-icon"><i class="fas fa-user-slash"></i></div>
+          <div class="lc-title">Titular de dados</div>
+          <p>A pessoa a quem os dados se referem tem direitos: acesso, correção, exclusão, portabilidade, revogação de consentimento.</p>
+        </div>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Obrigação LGPD</th><th>Impacto no banco/pipeline</th><th>Técnica</th></tr></thead>
+          <tbody>
+            <tr><td>Minimização</td><td>Não coletar mais do que o necessário</td><td>SELECT só das colunas necessárias; não replicar dados pessoais para todas as zonas</td></tr>
+            <tr><td>Finalidade</td><td>Dados usados só para o propósito declarado</td><td>Controle de acesso por papel (RBAC); catálogo com finalidade documentada</td></tr>
+            <tr><td>Segurança</td><td>Proteger contra acesso não autorizado</td><td>Criptografia em repouso e em trânsito; VPC; secrets manager</td></tr>
+            <tr><td>Exclusão</td><td>Direito ao esquecimento</td><td>Manter mapeamento titular → registros; script de exclusão em cascata</td></tr>
+            <tr><td>Anonimização</td><td>Dado anônimo não é dado pessoal</td><td>Hash irreversível (SHA-256 + salt), generalização, supressão</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso-red">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><strong>Atenção:</strong> copiar dados pessoais brutos para a zona gold ou para datasets de treino de ML sem anonimização é uma violação de LGPD. A zona raw pode ter dados pessoais — a silver e a gold idealmente não.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Mascaramento e pipeline com qualidade ──────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Mascaramento de dados e pipeline com checagem de qualidade</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-mask"></i>Técnicas de mascaramento — da mais fraca à mais forte</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Técnica</th><th>Reversível?</th><th>Uso</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td>Pseudonimização</td><td>Sim (com chave)</td><td>Quando precisar reverter — ex: responder requisição de titular</td><td><code>cliente_id</code> substituído por UUID, mapeamento guardado em cofre</td></tr>
+            <tr><td>Hash (SHA-256+salt)</td><td>Não</td><td>Chave para joins sem expor dado — ex: e-mail hasheado para match entre datasets</td><td><code>sha256(email + salt)</code></td></tr>
+            <tr><td>Generalização</td><td>Não (perde precisão)</td><td>Analytics e ML — mantém distribuição</td><td>Idade exata → faixa etária (20–29, 30–39)</td></tr>
+            <tr><td>Supressão</td><td>Não</td><td>Quando a coluna não é necessária</td><td>Remover coluna CPF do dataset de treino</td></tr>
+            <tr><td>Dados sintéticos</td><td>N/A</td><td>Testes e desenvolvimento — sem dado real</td><td>Gerar com Faker, SDV, CTGAN</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — mascaramento e anonimização de dados pessoais</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, hashlib, os
+<span class="kw">from</span> faker <span class="kw">import</span> Faker
+
+fake = Faker(<span class="str">"pt_BR"</span>)
+
+<span class="cm"># Dataset fictício com dados pessoais</span>
+df_raw = pd.DataFrame({
+    <span class="str">"cliente_id"</span>:   [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>],
+    <span class="str">"nome"</span>:         [<span class="str">"Ana Silva"</span>, <span class="str">"Bruno Costa"</span>, <span class="str">"Carla Melo"</span>, <span class="str">"Diego Nunes"</span>],
+    <span class="str">"cpf"</span>:          [<span class="str">"111.222.333-44"</span>, <span class="str">"555.666.777-88"</span>, <span class="str">"999.000.111-22"</span>, <span class="str">"333.444.555-66"</span>],
+    <span class="str">"email"</span>:        [<span class="str">"ana@x.com"</span>, <span class="str">"bruno@y.com"</span>, <span class="str">"carla@z.com"</span>, <span class="str">"diego@w.com"</span>],
+    <span class="str">"idade"</span>:        [<span class="num">28</span>, <span class="num">45</span>, <span class="num">33</span>, <span class="num">61</span>],
+    <span class="str">"total_gasto"</span>:  [<span class="num">4239.9</span>, <span class="num">1200.0</span>, <span class="num">399.9</span>, <span class="num">4150.0</span>],
+})
+
+SALT = os.getenv(<span class="str">"HASH_SALT"</span>, <span class="str">"meu_salt_secreto"</span>)
+
+<span class="kw">def</span> <span class="fn">hash_campo</span>(valor):
+    <span class="str">"""Hash SHA-256 irreversível com salt."""</span>
+    <span class="kw">return</span> hashlib.sha256(<span class="fn">f</span><span class="str">"{SALT}{valor}"</span>.encode()).hexdigest()[:<span class="num">12</span>]
+
+<span class="kw">def</span> <span class="fn">faixa_etaria</span>(idade):
+    <span class="str">"""Generaliza idade em faixa."""</span>
+    faixas = [(<span class="num">18</span>,<span class="num">24</span>),(< span class="num">25</span>,<span class="num">34</span>),(<span class="num">35</span>,<span class="num">44</span>),(<span class="num">45</span>,<span class="num">59</span>),(<span class="num">60</span>,<span class="num">99</span>)]
+    <span class="kw">for</span> lo, hi <span class="kw">in</span> faixas:
+        <span class="kw">if</span> lo <= idade <= hi:
+            <span class="kw">return</span> <span class="fn">f</span><span class="str">"{lo}-{hi}"</span>
+    <span class="kw">return</span> <span class="str">"desconhecida"</span>
+
+df_silver = df_raw.copy()
+
+<span class="cm"># Supressão — remover nome e CPF da zona silver</span>
+df_silver = df_silver.drop(columns=[<span class="str">"nome"</span>, <span class="str">"cpf"</span>])
+
+<span class="cm"># Pseudonimização por hash — manter email como chave de join, sem expor</span>
+df_silver[<span class="str">"email_hash"</span>] = df_silver[<span class="str">"email"</span>].apply(hash_campo)
+df_silver = df_silver.drop(columns=[<span class="str">"email"</span>])
+
+<span class="cm"># Generalização — substituir idade por faixa etária</span>
+df_silver[<span class="str">"faixa_etaria"</span>] = df_silver[<span class="str">"idade"</span>].apply(faixa_etaria)
+df_silver = df_silver.drop(columns=[<span class="str">"idade"</span>])
+
+print(<span class="str">"=== Dataset raw (DADOS PESSOAIS - zona restrita) ==="</span>)
+print(df_raw.to_string(index=<span class="kw">False</span>))
+print(<span class="str">"\n=== Dataset silver (ANONIMIZADO - pode ser usado em ML) ==="</span>)
+print(df_silver.to_string(index=<span class="kw">False</span>))</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>Pipeline completo com checagem de qualidade embutida</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline BD → raw → silver (com validação GX + linhagem)</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, json, hashlib, os
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+LOG = []
+
+<span class="kw">def</span> <span class="fn">log</span>(entrada, saida, transformacoes):
+    LOG.append({
+        <span class="str">"ts"</span>: datetime.now().isoformat(),
+        <span class="str">"de"</span>: entrada, <span class="str">"para"</span>: saida,
+        <span class="str">"ops"</span>: transformacoes
+    })
+
+<span class="kw">def</span> <span class="fn">validar_qualidade</span>(df, etapa):
+    <span class="str">"""Checagem mínima de qualidade — levanta erro se falhar."""</span>
+    erros = []
+    <span class="kw">if</span> df[<span class="str">"id"</span>].isnull().any():
+        erros.append(<span class="str">"id com nulos"</span>)
+    <span class="kw">if</span> df[<span class="str">"id"</span>].duplicated().any():
+        erros.append(<span class="str">"id duplicado"</span>)
+    <span class="kw">if</span> (<span class="str">"total"</span> <span class="kw">in</span> df.columns) <span class="kw">and</span> (df[<span class="str">"total"</span>] < <span class="num">0</span>).any():
+        erros.append(<span class="str">"total negativo"</span>)
+    <span class="kw">if</span> erros:
+        <span class="kw">raise</span> ValueError(<span class="fn">f</span><span class="str">"[{etapa}] Qualidade reprovada: {erros}"</span>)
+    print(<span class="fn">f</span><span class="str">"[{etapa}] ✓ Qualidade OK — {len(df)} registros"</span>)
+
+SALT = os.getenv(<span class="str">"HASH_SALT"</span>, <span class="str">"salt_dev"</span>)
+
+<span class="cm"># ── ETAPA 1: raw ──────────────────────────────────────────────────</span>
+df_raw = pd.read_sql(<span class="str">"SELECT id, cliente_id, email, total, status, criado_em FROM pedidos"</span>, engine)
+df_raw.to_parquet(<span class="str">"lake/raw/pedidos/"</span>, partition_cols=[<span class="str">"status"</span>], index=<span class="kw">False</span>)
+log(<span class="str">"postgresql/pedidos"</span>, <span class="str">"lake/raw/pedidos"</span>, [<span class="str">"extração sem transformação"</span>])
+validar_qualidade(df_raw, <span class="str">"raw"</span>)
+
+<span class="cm"># ── ETAPA 2: silver — limpar + anonimizar ─────────────────────────</span>
+df_s = df_raw.copy()
+df_s[<span class="str">"criado_em"</span>] = pd.to_datetime(df_s[<span class="str">"criado_em"</span>])
+df_s[<span class="str">"status"</span>]    = df_s[<span class="str">"status"</span>].str.lower().str.strip()
+df_s[<span class="str">"total"</span>]     = df_s[<span class="str">"total"</span>].fillna(<span class="num">0</span>)
+df_s[<span class="str">"ano"</span>]       = df_s[<span class="str">"criado_em"</span>].dt.year
+df_s[<span class="str">"mes"</span>]       = df_s[<span class="str">"criado_em"</span>].dt.month
+
+<span class="cm"># Anonimizar e-mail (hash) e remover se presente</span>
+<span class="kw">if</span> <span class="str">"email"</span> <span class="kw">in</span> df_s.columns:
+    df_s[<span class="str">"email_hash"</span>] = df_s[<span class="str">"email"</span>].apply(
+        <span class="kw">lambda</span> v: hashlib.sha256(<span class="fn">f</span><span class="str">"{SALT}{v}"</span>.encode()).hexdigest()[:<span class="num">16</span>]
+    )
+    df_s = df_s.drop(columns=[<span class="str">"email"</span>])
+
+df_s = df_s[df_s[<span class="str">"total"</span>] > <span class="num">0</span>]
+df_s.to_parquet(<span class="str">"lake/silver/pedidos/"</span>, partition_cols=[<span class="str">"ano"</span>,<span class="str">"mes"</span>], index=<span class="kw">False</span>, compression=<span class="str">"zstd"</span>)
+log(<span class="str">"lake/raw/pedidos"</span>, <span class="str">"lake/silver/pedidos"</span>, [
+    <span class="str">"total nulo → 0"</span>, <span class="str">"status normalizado"</span>, <span class="str">"email substituído por hash SHA-256"</span>,
+    <span class="str">"filtrado total > 0"</span>, <span class="str">"particionado por ano e mês"</span>
+])
+validar_qualidade(df_s, <span class="str">"silver"</span>)
+
+<span class="cm"># ── Gravar linhagem ───────────────────────────────────────────────</span>
+<span class="kw">with</span> open(<span class="str">"lake/lineage_log.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(LOG, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+print(<span class="str">"Linhagem gravada. Pipeline concluído."</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · pandas + great_expectations</div>
+        <div class="secao-titulo">5 Exercícios — Governança de dados na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale: <code>pip install great-expectations faker</code>. Use o banco de dados com as tabelas <code>clientes</code> e <code>pedidos</code> das semanas anteriores.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Carregue a tabela <code>clientes</code> do banco de dados. Faça um diagnóstico de qualidade calculando para cada coluna: percentual de nulos, quantidade de duplicatas no <code>cpf</code>, e-mails sem "@", e datas de nascimento com valores futuros. Apresente um DataFrame resumo com os resultados.</p>
+      <span class="dificuldade dif-basico">Básico — Diagnóstico de qualidade</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM clientes"</span>, engine)
+
+<span class="cm"># 1. % nulos por coluna</span>
+pct_nulos = (df.isnull().mean() * <span class="num">100</span>).round(<span class="num">2</span>)
+
+<span class="cm"># 2. Duplicatas em CPF</span>
+dup_cpf = df.duplicated(subset=[<span class="str">"cpf"</span>]).sum() <span class="kw">if</span> <span class="str">"cpf"</span> <span class="kw">in</span> df.columns <span class="kw">else</span> <span class="num">0</span>
+
+<span class="cm"># 3. E-mails inválidos</span>
+emails_inv = <span class="num">0</span>
+<span class="kw">if</span> <span class="str">"email"</span> <span class="kw">in</span> df.columns:
+    emails_inv = (~df[<span class="str">"email"</span>].str.contains(<span class="str">"@"</span>, na=<span class="kw">False</span>)).sum()
+
+<span class="cm"># 4. Datas futuras</span>
+datas_futuras = <span class="num">0</span>
+<span class="kw">if</span> <span class="str">"data_nascimento"</span> <span class="kw">in</span> df.columns:
+    df[<span class="str">"data_nascimento"</span>] = pd.to_datetime(df[<span class="str">"data_nascimento"</span>], errors=<span class="str">"coerce"</span>)
+    datas_futuras = (df[<span class="str">"data_nascimento"</span>] > pd.Timestamp(<span class="str">"today"</span>)).sum()
+
+print(<span class="str">"=== Completude (% nulos) ==="</span>)
+print(pct_nulos[pct_nulos > <span class="num">0</span>])
+print(<span class="fn">f</span><span class="str">"\nCPFs duplicados: {dup_cpf}"</span>)
+print(<span class="fn">f</span><span class="str">"E-mails inválidos: {emails_inv}"</span>)
+print(<span class="fn">f</span><span class="str">"Datas de nascimento futuras: {datas_futuras}"</span>)
+print(<span class="fn">f</span><span class="str">"Total de registros: {len(df)}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Usando Great Expectations, crie uma suite de expectativas para a tabela <code>pedidos</code> com pelo menos 5 regras: <code>id</code> único e não nulo, <code>total</code> positivo, <code>status</code> com valores controlados, <code>cliente_id</code> não nulo, e <code>criado_em</code> não nulo. Execute a validação e imprima quais expectativas passaram e quais falharam.</p>
+      <span class="dificuldade dif-basico">Básico — Great Expectations</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> great_expectations <span class="kw">as</span> gx
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine)
+
+context = gx.get_context()
+ds = context.sources.add_pandas(<span class="str">"pedidos_source"</span>)
+da = ds.add_dataframe_asset(<span class="str">"pedidos_asset"</span>)
+batch = da.build_batch_request(dataframe=df)
+suite = context.add_expectation_suite(<span class="str">"pedidos_suite"</span>)
+v = context.get_validator(batch_request=batch, expectation_suite=suite)
+
+v.expect_column_values_to_not_be_null(<span class="str">"id"</span>)
+v.expect_column_values_to_be_unique(<span class="str">"id"</span>)
+v.expect_column_values_to_be_between(<span class="str">"total"</span>, min_value=<span class="num">0</span>)
+v.expect_column_values_to_be_in_set(<span class="str">"status"</span>, [<span class="str">"pendente"</span>,<span class="str">"entregue"</span>,<span class="str">"cancelado"</span>,<span class="str">"ativo"</span>])
+v.expect_column_values_to_not_be_null(<span class="str">"cliente_id"</span>)
+v.expect_column_values_to_not_be_null(<span class="str">"criado_em"</span>)
+
+v.save_expectation_suite()
+results = v.validate()
+
+print(<span class="fn">f</span><span class="str">"Suite: {'PASSOU' if results['success'] else 'FALHOU'}\n"</span>)
+<span class="kw">for</span> r <span class="kw">in</span> results[<span class="str">"results"</span>]:
+    s = <span class="str">"✓"</span> <span class="kw">if</span> r[<span class="str">"success"</span>] <span class="kw">else</span> <span class="str">"✗"</span>
+    exp = r[<span class="str">"expectation_config"</span>][<span class="str">"expectation_type"</span>]
+    col = r[<span class="str">"expectation_config"</span>][<span class="str">"kwargs"</span>].get(<span class="str">"column"</span>, <span class="str">""</span>)
+    print(<span class="fn">f</span><span class="str">"  {s} {exp} [{col}]"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Aplique as três técnicas de mascaramento no dataset de clientes: (a) <strong>supressão</strong> — remova as colunas <code>cpf</code> e <code>nome</code>; (b) <strong>hash SHA-256 com salt</strong> — substitua o <code>email</code> por <code>email_hash</code>; (c) <strong>generalização</strong> — converta a coluna <code>idade</code> em faixas etárias (18–24, 25–34, 35–44, 45–59, 60+). Imprima o antes e o depois lado a lado.</p>
+      <span class="dificuldade dif-medio">Médio — Mascaramento LGPD</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, hashlib, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+df = pd.read_sql(<span class="str">"SELECT id, nome, cpf, email, idade, cidade FROM clientes"</span>, engine)
+
+SALT = os.getenv(<span class="str">"HASH_SALT"</span>, <span class="str">"salt_dev"</span>)
+
+<span class="kw">def</span> <span class="fn">hash_email</span>(v):
+    <span class="kw">return</span> hashlib.sha256(<span class="fn">f</span><span class="str">"{SALT}{v}"</span>.encode()).hexdigest()[:<span class="num">16</span>]
+
+<span class="kw">def</span> <span class="fn">faixa</span>(idade):
+    <span class="kw">for</span> lo, hi <span class="kw">in</span> [(<span class="num">18</span>,<span class="num">24</span>),(<span class="num">25</span>,<span class="num">34</span>),(<span class="num">35</span>,<span class="num">44</span>),(<span class="num">45</span>,<span class="num">59</span>),(<span class="num">60</span>,<span class="num">120</span>)]:
+        <span class="kw">if</span> lo <= idade <= hi:
+            <span class="kw">return</span> <span class="fn">f</span><span class="str">"{lo}–{hi}"</span>
+    <span class="kw">return</span> <span class="str">"desconhecida"</span>
+
+df_masked = df.copy()
+df_masked = df_masked.drop(columns=[<span class="str">"nome"</span>, <span class="str">"cpf"</span>])          <span class="cm"># supressão</span>
+df_masked[<span class="str">"email_hash"</span>] = df[<span class="str">"email"</span>].apply(hash_email)       <span class="cm"># hash</span>
+df_masked = df_masked.drop(columns=[<span class="str">"email"</span>])
+df_masked[<span class="str">"faixa_etaria"</span>] = df[<span class="str">"idade"</span>].apply(faixa)         <span class="cm"># generalização</span>
+df_masked = df_masked.drop(columns=[<span class="str">"idade"</span>])
+
+print(<span class="str">"=== ANTES ==="</span>)
+print(df.head(<span class="num">4</span>).to_string(index=<span class="kw">False</span>))
+print(<span class="str">"\n=== DEPOIS (anonimizado) ==="</span>)
+print(df_masked.head(<span class="num">4</span>).to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Crie um catálogo de dados manual em JSON para dois datasets: <code>silver/pedidos</code> e <code>gold/features_cliente</code>. Para cada um, documente: nome, descrição, owner, frequência de atualização, formato, sensibilidade LGPD e lista de colunas com tipo e flag <code>lgpd: true/false</code>. Salve em <code>catalog.json</code> e leia de volta para imprimir as colunas com <code>lgpd: true</code>.</p>
+      <span class="dificuldade dif-medio">Médio — Catálogo de dados</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> json
+
+catalogo = {<span class="str">"datasets"</span>: [
+  {
+    <span class="str">"nome"</span>: <span class="str">"silver/pedidos"</span>,
+    <span class="str">"descricao"</span>: <span class="str">"Pedidos limpos, particionados por ano/mês. Sem dados pessoais."</span>,
+    <span class="str">"owner"</span>: <span class="str">"engenharia@empresa.com"</span>,
+    <span class="str">"atualizacao"</span>: <span class="str">"diária às 02h"</span>,
+    <span class="str">"formato"</span>: <span class="str">"parquet/zstd"</span>,
+    <span class="str">"sensibilidade"</span>: <span class="str">"interno"</span>,
+    <span class="str">"colunas"</span>: [
+      {<span class="str">"nome"</span>:<span class="str">"id"</span>,         <span class="str">"tipo"</span>:<span class="str">"int64"</span>,  <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"cliente_id"</span>, <span class="str">"tipo"</span>:<span class="str">"int64"</span>,  <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"total"</span>,      <span class="str">"tipo"</span>:<span class="str">"float64"</span>,<span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"status"</span>,     <span class="str">"tipo"</span>:<span class="str">"object"</span>, <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"email_hash"</span>, <span class="str">"tipo"</span>:<span class="str">"object"</span>, <span class="str">"lgpd"</span>:<span class="kw">True</span>,
+       <span class="str">"obs"</span>:<span class="str">"SHA-256+salt — não reversível sem a chave"</span>},
+    ]
+  },
+  {
+    <span class="str">"nome"</span>: <span class="str">"gold/features_cliente"</span>,
+    <span class="str">"descricao"</span>: <span class="str">"Features agregadas por cliente para modelos de ML."</span>,
+    <span class="str">"owner"</span>: <span class="str">"data-science@empresa.com"</span>,
+    <span class="str">"atualizacao"</span>: <span class="str">"diária às 03h"</span>,
+    <span class="str">"formato"</span>: <span class="str">"delta lake"</span>,
+    <span class="str">"sensibilidade"</span>: <span class="str">"interno"</span>,
+    <span class="str">"colunas"</span>: [
+      {<span class="str">"nome"</span>:<span class="str">"cliente_id"</span>,    <span class="str">"tipo"</span>:<span class="str">"int64"</span>,  <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"total_pedidos"</span>, <span class="str">"tipo"</span>:<span class="str">"int64"</span>,  <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"ticket_medio"</span>,  <span class="str">"tipo"</span>:<span class="str">"float64"</span>,<span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"dias_inativo"</span>,  <span class="str">"tipo"</span>:<span class="str">"int64"</span>,  <span class="str">"lgpd"</span>:<span class="kw">False</span>},
+      {<span class="str">"nome"</span>:<span class="str">"faixa_etaria"</span>, <span class="str">"tipo"</span>:<span class="str">"object"</span>, <span class="str">"lgpd"</span>:<span class="kw">True</span>,
+       <span class="str">"obs"</span>:<span class="str">"generalizada — não identifica individualmente"</span>},
+    ]
+  }
+]}
+
+<span class="kw">with</span> open(<span class="str">"catalog.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(catalogo, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+
+<span class="cm"># Leitura: colunas com flag LGPD</span>
+<span class="kw">with</span> open(<span class="str">"catalog.json"</span>) <span class="kw">as</span> f:
+    cat = json.load(f)
+print(<span class="str">"=== Colunas com dados pessoais (lgpd: true) ==="</span>)
+<span class="kw">for</span> ds <span class="kw">in</span> cat[<span class="str">"datasets"</span>]:
+    <span class="kw">for</span> col <span class="kw">in</span> ds[<span class="str">"colunas"</span>]:
+        <span class="kw">if</span> col.get(<span class="str">"lgpd"</span>):
+            print(<span class="fn">f</span><span class="str">"  [{ds['nome']}] {col['nome']} — {col.get('obs','')}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Implemente um pipeline completo de governança: (1) carregue a tabela <code>clientes</code>; (2) valide com Great Expectations antes de qualquer transformação — se falhar, grave um log de erros e interrompa o pipeline; (3) se passar, aplique mascaramento (supressão de CPF e nome, hash do email, faixa etária); (4) salve em <code>silver/clientes/</code> como Parquet particionado por <code>cidade</code>; (5) registre a linhagem em JSON com as transformações aplicadas. O pipeline deve imprimir um resumo final com quantidade de registros antes e depois, colunas removidas e expectativas validadas.</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline de governança end-to-end</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, hashlib, json, os
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">import</span> great_expectations <span class="kw">as</span> gx
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+SALT = os.getenv(<span class="str">"HASH_SALT"</span>, <span class="str">"salt_dev"</span>)
+
+<span class="cm"># ── 1. Carregar ───────────────────────────────────────────────────</span>
+df = pd.read_sql(<span class="str">"SELECT id, nome, cpf, email, idade, cidade FROM clientes"</span>, engine)
+registros_antes = len(df)
+print(<span class="fn">f</span><span class="str">"Carregados: {registros_antes} clientes"</span>)
+
+<span class="cm"># ── 2. Validar qualidade com Great Expectations ───────────────────</span>
+context = gx.get_context()
+ds = context.sources.add_pandas(<span class="str">"clientes_gov"</span>)
+da = ds.add_dataframe_asset(<span class="str">"clientes_raw"</span>)
+batch = da.build_batch_request(dataframe=df)
+suite = context.add_expectation_suite(<span class="str">"clientes_gov_suite"</span>)
+v = context.get_validator(batch_request=batch, expectation_suite=suite)
+
+v.expect_column_values_to_not_be_null(<span class="str">"id"</span>)
+v.expect_column_values_to_be_unique(<span class="str">"id"</span>)
+v.expect_column_values_to_not_be_null(<span class="str">"cidade"</span>)
+v.save_expectation_suite()
+results = v.validate()
+
+<span class="kw">if</span> <span class="kw">not</span> results[<span class="str">"success"</span>]:
+    erros = [r <span class="kw">for</span> r <span class="kw">in</span> results[<span class="str">"results"</span>] <span class="kw">if</span> <span class="kw">not</span> r[<span class="str">"success"</span>]]
+    <span class="kw">with</span> open(<span class="str">"quality_errors.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        json.dump(erros, f, indent=<span class="num">2</span>)
+    <span class="kw">raise</span> RuntimeError(<span class="fn">f</span><span class="str">"Pipeline interrompido: {len(erros)} expectativa(s) falhou. Ver quality_errors.json"</span>)
+
+print(<span class="str">"✓ Qualidade validada — prosseguindo"</span>)
+exp_ok = [r[<span class="str">"expectation_config"</span>][<span class="str">"expectation_type"</span>] <span class="kw">for</span> r <span class="kw">in</span> results[<span class="str">"results"</span>] <span class="kw">if</span> r[<span class="str">"success"</span>]]
+
+<span class="cm"># ── 3. Mascaramento ───────────────────────────────────────────────</span>
+df_s = df.copy()
+colunas_removidas = [<span class="str">"nome"</span>, <span class="str">"cpf"</span>]
+df_s = df_s.drop(columns=colunas_removidas)
+df_s[<span class="str">"email_hash"</span>] = df[<span class="str">"email"</span>].apply(
+    <span class="kw">lambda</span> v: hashlib.sha256(<span class="fn">f</span><span class="str">"{SALT}{v}"</span>.encode()).hexdigest()[:<span class="num">16</span>]
+)
+df_s = df_s.drop(columns=[<span class="str">"email"</span>])
+colunas_removidas.append(<span class="str">"email"</span>)
+
+<span class="kw">def</span> <span class="fn">faixa</span>(i):
+    <span class="kw">for</span> lo, hi <span class="kw">in</span> [(<span class="num">18</span>,<span class="num">24</span>),(<span class="num">25</span>,<span class="num">34</span>),(<span class="num">35</span>,<span class="num">44</span>),(<span class="num">45</span>,<span class="num">59</span>),(<span class="num">60</span>,<span class="num">120</span>)]:
+        <span class="kw">if</span> lo <= i <= hi:
+            <span class="kw">return</span> <span class="fn">f</span><span class="str">"{lo}–{hi}"</span>
+    <span class="kw">return</span> <span class="str">"?"</span>
+df_s[<span class="str">"faixa_etaria"</span>] = df_s[<span class="str">"idade"</span>].apply(faixa)
+df_s = df_s.drop(columns=[<span class="str">"idade"</span>])
+colunas_removidas.append(<span class="str">"idade"</span>)
+
+<span class="cm"># ── 4. Salvar Parquet particionado ────────────────────────────────</span>
+df_s[<span class="str">"cidade"</span>] = df_s[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>)
+df_s.to_parquet(<span class="str">"silver/clientes/"</span>, partition_cols=[<span class="str">"cidade"</span>], index=<span class="kw">False</span>, compression=<span class="str">"zstd"</span>)
+
+<span class="cm"># ── 5. Linhagem ───────────────────────────────────────────────────</span>
+linhagem = {
+    <span class="str">"ts"</span>: datetime.now().isoformat(),
+    <span class="str">"de"</span>: <span class="str">"postgresql/clientes"</span>,
+    <span class="str">"para"</span>: <span class="str">"silver/clientes"</span>,
+    <span class="str">"ops"</span>: [
+        <span class="str">"supressão: nome, cpf, email"</span>,
+        <span class="str">"email substituído por email_hash SHA-256+salt"</span>,
+        <span class="str">"idade generalizada em faixa_etaria"</span>,
+        <span class="str">"cidade nula → 'Desconhecida'"</span>,
+        <span class="str">"particionado por cidade"</span>,
+    ]
+}
+<span class="kw">with</span> open(<span class="str">"silver/lineage_clientes.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(linhagem, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+
+<span class="cm"># ── Resumo final ──────────────────────────────────────────────────</span>
+print(<span class="str">"\n══════════ RESUMO DO PIPELINE ══════════"</span>)
+print(<span class="fn">f</span><span class="str">"Registros antes:   {registros_antes}"</span>)
+print(<span class="fn">f</span><span class="str">"Registros depois:  {len(df_s)}"</span>)
+print(<span class="fn">f</span><span class="str">"Colunas removidas: {colunas_removidas}"</span>)
+print(<span class="fn">f</span><span class="str">"Expectativas OK:   {exp_ok}"</span>)
+print(<span class="str">"Linhagem gravada em silver/lineage_clientes.json"</span>)
+print(<span class="str">"════════════════════════════════════════"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 10</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-star"></i>
+        <strong>Qualidade de dados</strong>
+        <p>6 dimensões: completude, acurácia, unicidade, temporalidade, consistência e conformidade</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-route"></i>
+        <strong>Linhagem</strong>
+        <p>Rastrear a origem e cada transformação — essencial para auditoria, debugging e ML reprodutível</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-book-open"></i>
+        <strong>Catálogo</strong>
+        <p>Metadados + owner + sensibilidade por coluna. Evita retrabalho e facilita conformidade</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shield-alt"></i>
+        <strong>LGPD na prática</strong>
+        <p>Supressão, hash, generalização e dados sintéticos. Dado anonimizado não é dado pessoal</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-11.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 11 — Automação de Fluxos: Airflow, DAGs e orquestração</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

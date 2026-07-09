@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 16 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border-left:3px solid #f87171;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-red strong{color:#f87171;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.icon-list li i.warn{color:#fbbf24;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* camadas stack */
+.stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.stack-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.stack-card .sc-nivel{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:.3rem;}
+.stack-card .sc-nome{font-size:.88rem;font-weight:700;color:var(--text-primary);margin-bottom:.3rem;}
+.stack-card .sc-lib{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green-400);margin-bottom:.5rem;}
+.stack-card p{font-size:.76rem;color:var(--text-secondary);line-height:1.45;}
+
+/* boas práticas */
+.bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.75rem 0;}
+.bp-card{border-radius:11px;padding:1rem 1.1rem;}
+.bp-ok{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.18);}
+.bp-bad{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);}
+.bp-card .bc-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.bp-ok .bc-label{color:var(--green-400);}
+.bp-bad .bc-label{color:#f87171;}
+.bp-card ul{list-style:none;display:flex;flex-direction:column;gap:.35rem;}
+.bp-card ul li{font-size:.79rem;color:var(--text-secondary);line-height:1.45;display:flex;align-items:flex-start;gap:7px;}
+.bp-ok ul li::before{content:'✓';color:var(--green-400);flex-shrink:0;font-size:.75rem;}
+.bp-bad ul li::before{content:'✗';color:#f87171;flex-shrink:0;font-size:.75rem;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.stack-grid,.bp-grid,.resumo-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">16</div>
+    <h1 class="capa-titulo">Integração BD<br><em>com Python</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Bloco 3 — Semana 3</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-plug"></i></div><span>psycopg2 — conexão direta, queries, parâmetros seguros</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>SQLAlchemy — ORM, Core, engine, session e connection pool</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-table"></i></div><span>pandas — read_sql, to_sql, tipos e performance</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-alt"></i></div><span>Conexão segura — variáveis de ambiente, SSL, secrets</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: pipeline BD → pandas → transformação → carga de volta</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Construir um pipeline completo que lê dados do PostgreSQL com pandas, transforma com operações vetorizadas, calcula métricas de negócio e grava os resultados de volta no banco via SQLAlchemy — com conexão segura por variáveis de ambiente.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semanas 9–11: pipeline em Parquet/Delta — dados em arquivo</li>
+        <li>Esta semana: pipeline diretamente no banco relacional com Python</li>
+        <li>Semana 17: integração BD com IA — alimentar modelos com dados do banco</li>
+        <li>psycopg2 e SQLAlchemy são a base de todo pipeline de ML que usa PostgreSQL</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Quando usar cada ferramenta?</div>
+      <ul class="info-lista">
+        <li><strong>psycopg2 puro:</strong> controle total, queries complexas, stored procedures, cursores de servidor</li>
+        <li><strong>SQLAlchemy Core:</strong> queries SQL com builder seguro, múltiplos bancos, connection pool</li>
+        <li><strong>SQLAlchemy ORM:</strong> modelos Python mapeados a tabelas, relacionamentos, migrações</li>
+        <li><strong>pandas read_sql:</strong> análise exploratória, pipelines de dados, feature engineering</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>psycopg2-binary — driver nativo PostgreSQL</li>
+        <li>sqlalchemy — ORM e Core, connection pool</li>
+        <li>pandas — read_sql, to_sql, transformações</li>
+        <li>python-dotenv — carregar .env com segurança</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: psycopg2 ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">psycopg2 — o driver nativo do PostgreSQL em Python</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-map"></i>As três camadas de acesso ao banco</div>
+      <div class="stack-grid">
+        <div class="stack-card">
+          <div class="sc-nivel">Nível baixo</div>
+          <div class="sc-nome">Driver nativo</div>
+          <div class="sc-lib">psycopg2</div>
+          <p>Controle total sobre conexão, cursor, transação e tipos PostgreSQL. Mais verboso mas máxima flexibilidade.</p>
+        </div>
+        <div class="stack-card">
+          <div class="sc-nivel">Nível médio</div>
+          <div class="sc-nome">SQL Toolkit</div>
+          <div class="sc-lib">SQLAlchemy Core</div>
+          <p>Constrói SQL programaticamente, gerencia connection pool, abstrai diferenças entre SGBDs.</p>
+        </div>
+        <div class="stack-card">
+          <div class="sc-nivel">Nível alto</div>
+          <div class="sc-nome">ORM + pandas</div>
+          <div class="sc-lib">SQLAlchemy ORM / pandas</div>
+          <p>Mapeia tabelas a classes Python (ORM) ou retorna DataFrames diretamente (pandas). Mais produtivo para análise.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-plug"></i>psycopg2 — conexão, query e segurança</div>
+      <p>psycopg2 é o driver mais popular para PostgreSQL em Python. Importante: <strong>nunca interpolar strings</strong> para montar SQL — use sempre parâmetros (<code>%s</code>) para evitar SQL Injection.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — psycopg2 completo e seguro</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2
+<span class="kw">from</span> psycopg2.extras <span class="kw">import</span> RealDictCursor, execute_values
+<span class="kw">import</span> os
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()  <span class="cm"># carrega variáveis do arquivo .env</span>
+
+<span class="cm"># ── Conectar ──────────────────────────────────────────────────────</span>
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+<span class="cm"># ou com parâmetros individuais:</span>
+conn = psycopg2.connect(
+    host=os.getenv(<span class="str">"DB_HOST"</span>, <span class="str">"localhost"</span>),
+    port=os.getenv(<span class="str">"DB_PORT"</span>, <span class="str">"5432"</span>),
+    dbname=os.getenv(<span class="str">"DB_NAME"</span>),
+    user=os.getenv(<span class="str">"DB_USER"</span>),
+    password=os.getenv(<span class="str">"DB_PASSWORD"</span>),
+    sslmode=<span class="str">"require"</span>,  <span class="cm"># exige SSL em produção</span>
+)
+
+<span class="cm"># ── SELECT com parâmetros seguros ─────────────────────────────────</span>
+cur = conn.cursor()
+cur.execute(
+    <span class="str">"SELECT id, nome, saldo FROM contas WHERE saldo > %s"</span>,
+    (<span class="num">1000</span>,)   <span class="cm"># sempre usar tupla, nunca f-string!</span>
+)
+linhas = cur.fetchall()
+print(linhas)
+
+<span class="cm"># ── RealDictCursor — retorna dicionários em vez de tuplas ─────────</span>
+cur = conn.cursor(cursor_factory=RealDictCursor)
+cur.execute(<span class="str">"SELECT * FROM pedidos WHERE status = %s LIMIT 5"</span>, (<span class="str">"entregue"</span>,))
+<span class="kw">for</span> row <span class="kw">in</span> cur.fetchall():
+    print(row[<span class="str">"id"</span>], row[<span class="str">"total"</span>])
+
+<span class="cm"># ── INSERT com valores múltiplos (execute_values é muito mais rápido)</span>
+dados = [(i, <span class="fn">f</span><span class="str">"cliente_{i}"</span>, i * <span class="num">100.0</span>) <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">1001</span>)]
+execute_values(
+    cur,
+    <span class="str">"INSERT INTO clientes_teste (id, nome, saldo) VALUES %s ON CONFLICT DO NOTHING"</span>,
+    dados,
+    page_size=<span class="num">200</span>   <span class="cm"># agrupa em batches de 200 para eficiência</span>
+)
+conn.commit()
+
+<span class="cm"># ── Fechar recursos corretamente ──────────────────────────────────</span>
+cur.close()
+conn.close()
+
+<span class="cm"># ── Forma mais segura: context manager ───────────────────────────</span>
+<span class="kw">with</span> psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>)) <span class="kw">as</span> conn:
+    <span class="kw">with</span> conn.cursor() <span class="kw">as</span> cur:
+        cur.execute(<span class="str">"SELECT COUNT(*) FROM pedidos"</span>)
+        total = cur.fetchone()[<span class="num">0</span>]
+        print(<span class="fn">f</span><span class="str">"Total de pedidos: {total}"</span>)
+    conn.commit()  <span class="cm"># context manager fecha cursor, mas commit é manual</span></code></pre>
+      </div>
+
+      <div class="destaque-red">
+        <strong>SQL Injection — nunca faça isso:</strong><br>
+        <code>cur.execute(f"SELECT * FROM users WHERE nome = '{nome_usuario}'")</code><br><br>
+        Se <code>nome_usuario = "'; DROP TABLE users; --"</code>, a tabela será apagada. Sempre use parâmetros: <code>cur.execute("SELECT * FROM users WHERE nome = %s", (nome_usuario,))</code>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Arquivo .env — nunca commitar credenciais no Git</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># .env — adicionar ao .gitignore!</span>
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/nome_banco
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=meu_banco
+DB_USER=meu_usuario
+DB_PASSWORD=minha_senha_secreta
+HASH_SALT=salt_para_lgpd_2025</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Cursor de servidor — para grandes volumes</div>
+      <p>O cursor padrão do psycopg2 carrega todos os resultados em memória. Para consultas que retornam milhões de linhas, use <strong>cursor de servidor (named cursor)</strong> — o banco envia os dados em lotes.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — cursor de servidor para tabelas grandes</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">with</span> psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>)) <span class="kw">as</span> conn:
+    <span class="cm"># Named cursor = cursor de servidor (iterador, não carrega tudo)</span>
+    <span class="kw">with</span> conn.cursor(<span class="str">"cursor_grande"</span>) <span class="kw">as</span> cur:
+        cur.itersize = <span class="num">10_000</span>  <span class="cm"># busca 10k linhas por vez do servidor</span>
+        cur.execute(<span class="str">"SELECT id, total, status FROM pedidos ORDER BY id"</span>)
+        processados = <span class="num">0</span>
+        <span class="kw">for</span> row <span class="kw">in</span> cur:   <span class="cm"># itera sem carregar tudo na memória</span>
+            processados += <span class="num">1</span>
+            <span class="kw">if</span> processados % <span class="num">50_000</span> == <span class="num">0</span>:
+                print(<span class="fn">f</span><span class="str">"Processados: {processados:,}"</span>)
+        print(<span class="fn">f</span><span class="str">"Total: {processados:,} linhas"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: SQLAlchemy e pandas ──────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">SQLAlchemy e pandas — a dupla do pipeline de dados</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>SQLAlchemy — engine, connection pool e Core</div>
+      <p>SQLAlchemy é a biblioteca de banco de dados mais completa do ecossistema Python. O <strong>engine</strong> gerencia um pool de conexões automaticamente — você não precisa abrir e fechar conexões manualmente a cada operação.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — SQLAlchemy Core: engine e queries</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">import</span> os
+
+<span class="cm"># Engine com connection pool automático</span>
+engine = create_engine(
+    os.getenv(<span class="str">"DATABASE_URL"</span>),
+    pool_size=<span class="num">5</span>,        <span class="cm"># conexões permanentes no pool</span>
+    max_overflow=<span class="num">10</span>,    <span class="cm"># conexões extras em pico</span>
+    pool_timeout=<span class="num">30</span>,    <span class="cm"># segundos para aguardar conexão disponível</span>
+    pool_recycle=<span class="num">1800</span>,  <span class="cm"># reconecta após 30min (evita conexões stale)</span>
+    echo=<span class="kw">False</span>,         <span class="cm"># True = loga todo SQL (dev only)</span>
+)
+
+<span class="cm"># ── SELECT com parâmetros nomeados ────────────────────────────────</span>
+<span class="kw">with</span> engine.connect() <span class="kw">as</span> conn:
+    resultado = conn.execute(
+        text(<span class="str">"SELECT id, nome, saldo FROM contas WHERE saldo > :minimo"</span>),
+        {<span class="str">"minimo"</span>: <span class="num">1000</span>}
+    )
+    <span class="kw">for</span> row <span class="kw">in</span> resultado:
+        print(row.id, row.nome, row.saldo)
+
+<span class="cm"># ── INSERT com transação explícita ────────────────────────────────</span>
+<span class="kw">with</span> engine.begin() <span class="kw">as</span> conn:  <span class="cm"># begin() faz COMMIT automático ao sair</span>
+    conn.execute(
+        text(<span class="str">"INSERT INTO log_eventos (evento) VALUES (:evento)"</span>),
+        [{<span class="str">"evento"</span>: <span class="str">"pipeline iniciado"</span>}, {<span class="str">"evento"</span>: <span class="str">"pipeline concluído"</span>}]
+    )
+    <span class="cm"># COMMIT automático ao sair do with — ROLLBACK se lançar exceção</span>
+
+<span class="cm"># ── SQLAlchemy ORM — definir modelo e consultar ───────────────────</span>
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> DeclarativeBase, Mapped, mapped_column, Session
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> Integer, String, Numeric
+
+<span class="kw">class</span> <span class="fn">Base</span>(DeclarativeBase): <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="fn">Conta</span>(Base):
+    __tablename__ = <span class="str">"contas"</span>
+    id:    Mapped[int]   = mapped_column(Integer, primary_key=<span class="kw">True</span>)
+    nome:  Mapped[str]   = mapped_column(String(<span class="num">100</span>))
+    saldo: Mapped[float] = mapped_column(Numeric(<span class="num">12</span>, <span class="num">2</span>))
+
+<span class="cm"># Consultar com ORM</span>
+<span class="kw">with</span> Session(engine) <span class="kw">as</span> session:
+    contas_ricas = session.query(Conta).filter(Conta.saldo > <span class="num">2000</span>).all()
+    <span class="kw">for</span> c <span class="kw">in</span> contas_ricas:
+        print(<span class="fn">f</span><span class="str">"{c.nome}: R${c.saldo}"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>pandas + SQLAlchemy — read_sql e to_sql</div>
+      <p>A combinação pandas + SQLAlchemy é a mais produtiva para pipelines de análise e feature engineering. <code>read_sql</code> retorna um DataFrame diretamente da query; <code>to_sql</code> grava o DataFrame de volta no banco.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pandas read_sql e to_sql completo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">import</span> os
+
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+<span class="cm"># ── read_sql: query → DataFrame ───────────────────────────────────</span>
+df_pedidos = pd.read_sql(
+    sql=<span class="str">"""
+        SELECT p.id, p.cliente_id, p.total, p.status, p.criado_em,
+               c.nome AS cliente_nome
+        FROM pedidos p
+        JOIN clientes c ON c.id = p.cliente_id
+        WHERE p.status != 'cancelado'
+        ORDER BY p.criado_em DESC
+    """</span>,
+    con=engine,
+    parse_dates=[<span class="str">"criado_em"</span>],  <span class="cm"># converte coluna para datetime automaticamente</span>
+)
+print(<span class="fn">f</span><span class="str">"Linhas: {len(df_pedidos)} | Tipos:\n{df_pedidos.dtypes}"</span>)
+
+<span class="cm"># ── read_sql com parâmetro seguro ─────────────────────────────────</span>
+status_filtro = <span class="str">"entregue"</span>
+df_entregues = pd.read_sql(
+    sql=text(<span class="str">"SELECT * FROM pedidos WHERE status = :status"</span>),
+    con=engine,
+    params={<span class="str">"status"</span>: status_filtro},
+)
+
+<span class="cm"># ── Transformação pandas ──────────────────────────────────────────</span>
+df_features = df_pedidos.groupby(<span class="str">"cliente_id"</span>).agg(
+    total_pedidos  =(<span class="str">"id"</span>,        <span class="str">"count"</span>),
+    ticket_medio   =(<span class="str">"total"</span>,     <span class="str">"mean"</span>),
+    total_gasto    =(<span class="str">"total"</span>,     <span class="str">"sum"</span>),
+    ultimo_pedido  =(<span class="str">"criado_em"</span>, <span class="str">"max"</span>),
+    cliente_nome   =(<span class="str">"cliente_nome"</span>, <span class="str">"first"</span>),
+).reset_index()
+
+df_features[<span class="str">"dias_inativo"</span>] = (
+    pd.Timestamp(<span class="str">"today"</span>) - df_features[<span class="str">"ultimo_pedido"</span>]
+).dt.days
+df_features[<span class="str">"ticket_medio"</span>] = df_features[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+df_features[<span class="str">"gerado_em"</span>]    = pd.Timestamp(<span class="str">"now"</span>)
+
+print(df_features.head())
+
+<span class="cm"># ── to_sql: DataFrame → banco ─────────────────────────────────────</span>
+df_features.to_sql(
+    name=<span class="str">"features_cliente"</span>,
+    con=engine,
+    if_exists=<span class="str">"replace"</span>,   <span class="cm"># "replace" | "append" | "fail"</span>
+    index=<span class="kw">False</span>,
+    dtype={                   <span class="cm"># forçar tipos específicos</span>
+        <span class="str">"cliente_id"</span>:   <span class="str">"INTEGER"</span>,
+        <span class="str">"ticket_medio"</span>: <span class="str">"NUMERIC(10,2)"</span>,
+        <span class="str">"total_gasto"</span>:  <span class="str">"NUMERIC(12,2)"</span>,
+        <span class="str">"dias_inativo"</span>: <span class="str">"INTEGER"</span>,
+    },
+    chunksize=<span class="num">1000</span>,          <span class="cm"># insere em lotes de 1000 linhas</span>
+    method=<span class="str">"multi"</span>,          <span class="cm"># INSERT múltiplo por batch (mais rápido)</span>
+)
+print(<span class="fn">f</span><span class="str">"Features de {len(df_features)} clientes gravadas no banco ✓"</span>)</code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Parâmetro <code>if_exists</code></th><th>Comportamento</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td><code>"fail"</code></td><td>Lança erro se a tabela já existe</td><td>Criação inicial — previne sobrescrever dados</td></tr>
+            <tr><td><code>"replace"</code></td><td>Apaga e recria a tabela antes de inserir</td><td>Tabelas de features reprocessadas diariamente</td></tr>
+            <tr><td><code>"append"</code></td><td>Insere dados sem alterar a tabela</td><td>Logs, eventos, dados incrementais</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><code>to_sql</code> com <code>method="multi"</code> e <code>chunksize=1000</code> é significativamente mais rápido que o padrão (um INSERT por linha). Para volumes muito grandes (&gt;100k linhas), considere <code>COPY</code> via psycopg2 ou a extensão <code>pgcopy</code>.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Pipeline completo e boas práticas ─────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Pipeline BD → pandas → banco e boas práticas de segurança</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-shield-alt"></i>Boas práticas de segurança e conexão</div>
+
+      <div class="bp-grid">
+        <div class="bp-card bp-ok">
+          <div class="bc-label">✓ Faça isso</div>
+          <ul>
+            <li>Armazene credenciais em variáveis de ambiente ou secrets manager</li>
+            <li>Use sempre parâmetros (<code>%s</code>, <code>:nome</code>) — nunca interpole strings</li>
+            <li>Habilite <code>sslmode="require"</code> em produção</li>
+            <li>Feche cursores e conexões com context manager (<code>with</code>)</li>
+            <li>Use connection pool — nunca abra uma conexão por query</li>
+            <li>Adicione <code>.env</code> ao <code>.gitignore</code></li>
+            <li>Limite permissões do usuário de banco (princípio do menor privilégio)</li>
+          </ul>
+        </div>
+        <div class="bp-card bp-bad">
+          <div class="bc-label">✗ Nunca faça isso</div>
+          <ul>
+            <li>Colocar senha hardcoded no código Python</li>
+            <li>Usar f-string para montar SQL com dados do usuário</li>
+            <li>Commitar arquivo <code>.env</code> no Git</li>
+            <li>Usar usuário <code>postgres</code> (superusuário) em produção</li>
+            <li>Abrir e fechar conexões dentro de loops (muito lento)</li>
+            <li>Ignorar erros de SSL em produção</li>
+            <li>Deixar conexões abertas indefinidamente sem pool_recycle</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — padrão seguro de conexão com .env</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm"># db.py — módulo centralizado de conexão</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()
+
+<span class="kw">def</span> <span class="fn">get_engine</span>(pool_size=<span class="num">5</span>):
+    <span class="str">"""Cria e retorna um engine SQLAlchemy configurado de forma segura."""</span>
+    url = os.getenv(<span class="str">"DATABASE_URL"</span>)
+    <span class="kw">if not</span> url:
+        <span class="kw">raise</span> EnvironmentError(<span class="str">"DATABASE_URL não definida. Verifique o arquivo .env"</span>)
+    <span class="kw">return</span> create_engine(
+        url,
+        pool_size=pool_size,
+        max_overflow=<span class="num">10</span>,
+        pool_recycle=<span class="num">1800</span>,
+        connect_args={<span class="str">"sslmode"</span>: os.getenv(<span class="str">"DB_SSLMODE"</span>, <span class="str">"prefer"</span>)},
+    )
+
+<span class="cm"># Uso em qualquer módulo do projeto:</span>
+<span class="cm"># from db import get_engine</span>
+<span class="cm"># engine = get_engine()</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-stream"></i>Pipeline completo — BD → pandas → transformação → carga</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — pipeline_bd_pandas.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">"""
+Pipeline: PostgreSQL → pandas → feature engineering → carga de volta no BD
+"""</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os, json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+log = []
+
+<span class="kw">def</span> <span class="fn">etapa</span>(nome, fn):
+    <span class="str">"""Executa uma etapa, mede tempo e registra no log."""</span>
+    <span class="kw">import</span> time
+    t0 = time.perf_counter()
+    resultado = fn()
+    elapsed = round((time.perf_counter() - t0) * <span class="num">1000</span>, <span class="num">1</span>)
+    log.append({<span class="str">"etapa"</span>: nome, <span class="str">"ms"</span>: elapsed, <span class="str">"ts"</span>: datetime.now().isoformat()})
+    print(<span class="fn">f</span><span class="str">"  ✓ {nome:<35} {elapsed:>7.1f} ms"</span>)
+    <span class="kw">return</span> resultado
+
+print(<span class="str">"═"</span> * <span class="num">55</span>)
+print(<span class="str">"PIPELINE BD → PANDAS → FEATURE ENGINEERING → BD"</span>)
+print(<span class="str">"═"</span> * <span class="num">55</span>)
+
+<span class="cm"># ── ETAPA 1: Extrair pedidos ──────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">extrair</span>():
+    df = pd.read_sql(
+        sql=<span class="str">"""
+            SELECT p.id, p.cliente_id, p.total, p.status,
+                   p.criado_em, c.nome AS cliente_nome, c.cidade
+            FROM pedidos p
+            JOIN clientes c ON c.id = p.cliente_id
+        """</span>,
+        con=engine,
+        parse_dates=[<span class="str">"criado_em"</span>],
+    )
+    <span class="kw">return</span> df
+
+df_raw = etapa(<span class="str">"Extração do banco"</span>, extrair)
+print(<span class="fn">f</span><span class="str">"     → {len(df_raw):,} linhas, {df_raw.memory_usage(deep=True).sum()/1e6:.1f} MB"</span>)
+
+<span class="cm"># ── ETAPA 2: Limpeza ─────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">limpar</span>():
+    df = df_raw.copy()
+    df[<span class="str">"status"</span>]  = df[<span class="str">"status"</span>].str.lower().str.strip()
+    df[<span class="str">"total"</span>]   = df[<span class="str">"total"</span>].fillna(<span class="num">0</span>)
+    df[<span class="str">"cidade"</span>]  = df[<span class="str">"cidade"</span>].fillna(<span class="str">"Desconhecida"</span>)
+    df[<span class="str">"ano"</span>]     = df[<span class="str">"criado_em"</span>].dt.year
+    df[<span class="str">"mes"</span>]     = df[<span class="str">"criado_em"</span>].dt.month
+    <span class="kw">return</span> df[df[<span class="str">"total"</span>] > <span class="num">0</span>]
+
+df_clean = etapa(<span class="str">"Limpeza e tipagem"</span>, limpar)
+
+<span class="cm"># ── ETAPA 3: Feature engineering ─────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">features</span>():
+    df = df_clean.groupby(<span class="str">"cliente_id"</span>).agg(
+        cliente_nome   =(<span class="str">"cliente_nome"</span>, <span class="str">"first"</span>),
+        cidade         =(<span class="str">"cidade"</span>,       <span class="str">"first"</span>),
+        total_pedidos  =(<span class="str">"id"</span>,           <span class="str">"count"</span>),
+        ticket_medio   =(<span class="str">"total"</span>,        <span class="str">"mean"</span>),
+        total_gasto    =(<span class="str">"total"</span>,        <span class="str">"sum"</span>),
+        ultimo_pedido  =(<span class="str">"criado_em"</span>,   <span class="str">"max"</span>),
+        qtd_cancelados =(<span class="str">"status"</span>,       <span class="kw">lambda</span> x: (x == <span class="str">"cancelado"</span>).sum()),
+    ).reset_index()
+    df[<span class="str">"dias_inativo"</span>]     = (pd.Timestamp(<span class="str">"today"</span>) - df[<span class="str">"ultimo_pedido"</span>]).dt.days
+    df[<span class="str">"taxa_cancelamento"</span>] = (df[<span class="str">"qtd_cancelados"</span>] / df[<span class="str">"total_pedidos"</span>] * <span class="num">100</span>).round(<span class="num">2</span>)
+    df[<span class="str">"ticket_medio"</span>]     = df[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+    df[<span class="str">"total_gasto"</span>]      = df[<span class="str">"total_gasto"</span>].round(<span class="num">2</span>)
+    df[<span class="str">"gerado_em"</span>]        = pd.Timestamp(<span class="str">"now"</span>)
+    <span class="kw">return</span> df
+
+df_feat = etapa(<span class="str">"Feature engineering"</span>, features)
+print(<span class="fn">f</span><span class="str">"     → {len(df_feat):,} clientes com features"</span>)
+
+<span class="cm"># ── ETAPA 4: Validação rápida ─────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">validar</span>():
+    erros = []
+    <span class="kw">if</span> df_feat[<span class="str">"cliente_id"</span>].isnull().any(): erros.append(<span class="str">"cliente_id nulo"</span>)
+    <span class="kw">if</span> df_feat[<span class="str">"cliente_id"</span>].duplicated().any(): erros.append(<span class="str">"cliente_id duplicado"</span>)
+    <span class="kw">if</span> (df_feat[<span class="str">"total_gasto"</span>] < <span class="num">0</span>).any(): erros.append(<span class="str">"total_gasto negativo"</span>)
+    <span class="kw">if</span> erros: <span class="kw">raise</span> ValueError(<span class="fn">f</span><span class="str">"Validação falhou: {erros}"</span>)
+    <span class="kw">return True</span>
+
+etapa(<span class="str">"Validação de qualidade"</span>, validar)
+
+<span class="cm"># ── ETAPA 5: Gravar no banco ──────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">gravar</span>():
+    df_feat.to_sql(
+        <span class="str">"features_cliente"</span>, engine,
+        if_exists=<span class="str">"replace"</span>, index=<span class="kw">False</span>,
+        chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>,
+    )
+    <span class="kw">return True</span>
+
+etapa(<span class="str">"Carga no banco (to_sql)"</span>, gravar)
+
+<span class="cm"># ── Log final ────────────────────────────────────────────────────</span>
+<span class="kw">with</span> open(<span class="str">"pipeline_log.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(log, f, indent=<span class="num">2</span>)
+print(<span class="str">"═"</span>*<span class="num">55</span>)
+print(<span class="fn">f</span><span class="str">"Pipeline concluído. Log em pipeline_log.json"</span>)</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · psycopg2 + SQLAlchemy + pandas</div>
+        <div class="secao-titulo">5 Exercícios — Integração BD com Python na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Instale: <code>pip install psycopg2-binary sqlalchemy pandas python-dotenv</code>. Crie um arquivo <code>.env</code> com <code>DATABASE_URL</code> apontando para seu banco local.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Usando psycopg2, escreva um script que: (a) conecta ao banco via <code>DATABASE_URL</code> do arquivo <code>.env</code>; (b) usa <code>RealDictCursor</code> para buscar os 10 clientes com maior saldo; (c) insere 5 registros de uma só vez na tabela <code>log_eventos</code> usando <code>execute_values</code>; (d) fecha corretamente usando context manager (<code>with</code>). Todos os parâmetros SQL devem usar <code>%s</code> — sem nenhuma interpolação de string.</p>
+      <span class="dificuldade dif-basico">Básico — psycopg2 seguro</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2
+<span class="kw">from</span> psycopg2.extras <span class="kw">import</span> RealDictCursor, execute_values
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> os
+
+load_dotenv()
+
+<span class="kw">with</span> psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>)) <span class="kw">as</span> conn:
+    <span class="cm"># (a) + (b) RealDictCursor</span>
+    <span class="kw">with</span> conn.cursor(cursor_factory=RealDictCursor) <span class="kw">as</span> cur:
+        cur.execute(<span class="str">"SELECT id, nome, saldo FROM clientes ORDER BY saldo DESC LIMIT %s"</span>, (<span class="num">10</span>,))
+        top10 = cur.fetchall()
+        print(<span class="str">"Top 10 clientes por saldo:"</span>)
+        <span class="kw">for</span> row <span class="kw">in</span> top10:
+            print(<span class="fn">f</span><span class="str">"  {row['nome']}: R${row['saldo']}"</span>)
+
+    <span class="cm"># (c) execute_values — 5 registros de uma vez</span>
+    <span class="kw">with</span> conn.cursor() <span class="kw">as</span> cur:
+        eventos = [
+            (<span class="fn">f</span><span class="str">"evento_{i}"</span>, datetime.now())
+            <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">6</span>)
+        ]
+        execute_values(
+            cur,
+            <span class="str">"INSERT INTO log_eventos (evento, ts) VALUES %s"</span>,
+            eventos,
+        )
+    conn.commit()
+    print(<span class="str">"5 eventos inseridos ✓"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Usando SQLAlchemy Core (não ORM), crie um engine com <code>pool_size=3</code> e escreva uma função <code>buscar_pedidos(status, minimo)</code> que retorna todos os pedidos com o status e total mínimo especificados, usando parâmetros nomeados (<code>:status</code>, <code>:minimo</code>) com <code>text()</code>. A função deve retornar uma lista de dicionários. Teste com pelo menos 2 chamadas diferentes.</p>
+      <span class="dificuldade dif-basico">Básico — SQLAlchemy Core com parâmetros</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, text
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>), pool_size=<span class="num">3</span>, max_overflow=<span class="num">5</span>)
+
+<span class="kw">def</span> <span class="fn">buscar_pedidos</span>(status: str, minimo: float) -> list[dict]:
+    <span class="kw">with</span> engine.connect() <span class="kw">as</span> conn:
+        resultado = conn.execute(
+            text(<span class="str">"""
+                SELECT id, cliente_id, total, status, criado_em
+                FROM pedidos
+                WHERE status = :status AND total >= :minimo
+                ORDER BY total DESC
+            """</span>),
+            {<span class="str">"status"</span>: status, <span class="str">"minimo"</span>: minimo}
+        )
+        <span class="kw">return</span> [dict(row._mapping) <span class="kw">for</span> row <span class="kw">in</span> resultado]
+
+entregues_altos = buscar_pedidos(<span class="str">"entregue"</span>, <span class="num">5000</span>)
+print(<span class="fn">f</span><span class="str">"Entregues acima de R$5000: {len(entregues_altos)}"</span>)
+
+pendentes = buscar_pedidos(<span class="str">"pendente"</span>, <span class="num">0</span>)
+print(<span class="fn">f</span><span class="str">"Pendentes: {len(pendentes)}"</span>)
+<span class="kw">for</span> p <span class="kw">in</span> pendentes[:<span class="num">3</span>]:
+    print(<span class="fn">f</span><span class="str">"  id={p['id']} total=R${p['total']}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Use <code>pd.read_sql</code> para carregar a tabela <code>pedidos</code> com <code>parse_dates=["criado_em"]</code>. Em seguida: (a) calcule o ticket médio por mês/ano usando <code>groupby</code> com <code>Grouper(key="criado_em", freq="ME")</code>; (b) filtre apenas pedidos entregues no último ano; (c) grave o resultado em uma tabela chamada <code>metricas_mensais</code> com <code>to_sql</code> usando <code>if_exists="replace"</code>, <code>method="multi"</code> e <code>chunksize=500</code>. Imprima as 5 primeiras linhas do resultado.</p>
+      <span class="dificuldade dif-medio">Médio — pandas read_sql + transformação + to_sql</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()
+engine = create_engine(os.getenv(<span class="str">"DATABASE_URL"</span>))
+
+df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+
+<span class="cm"># (a) Ticket médio por mês</span>
+df_mensal = df.groupby(pd.Grouper(key=<span class="str">"criado_em"</span>, freq=<span class="str">"ME"</span>)).agg(
+    total_pedidos =(<span class="str">"id"</span>,    <span class="str">"count"</span>),
+    ticket_medio  =(<span class="str">"total"</span>, <span class="str">"mean"</span>),
+    receita_total =(<span class="str">"total"</span>, <span class="str">"sum"</span>),
+).reset_index()
+df_mensal.rename(columns={<span class="str">"criado_em"</span>: <span class="str">"mes_ref"</span>}, inplace=<span class="kw">True</span>)
+df_mensal[<span class="str">"ticket_medio"</span>]  = df_mensal[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+df_mensal[<span class="str">"receita_total"</span>] = df_mensal[<span class="str">"receita_total"</span>].round(<span class="num">2</span>)
+
+<span class="cm"># (b) Filtrar último ano</span>
+corte = pd.Timestamp(<span class="str">"today"</span>) - pd.DateOffset(years=<span class="num">1</span>)
+df_mensal = df_mensal[df_mensal[<span class="str">"mes_ref"</span>] >= corte]
+
+<span class="cm"># (c) Gravar no banco</span>
+df_mensal.to_sql(<span class="str">"metricas_mensais"</span>, engine,
+                 if_exists=<span class="str">"replace"</span>, index=<span class="kw">False</span>,
+                 chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+
+print(<span class="str">"Métricas mensais gravadas:"</span>)
+print(df_mensal.head().to_string(index=<span class="kw">False</span>))</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Demonstre a diferença de performance entre inserir 10.000 linhas linha a linha (loop com <code>execute</code>) versus em batch com <code>execute_values</code> (psycopg2) e versus <code>to_sql</code> com <code>method="multi"</code> (pandas). Meça o tempo de cada abordagem com <code>time.perf_counter()</code>, imprima uma tabela comparativa e identifique o ganho percentual entre a abordagem mais lenta e a mais rápida.</p>
+      <span class="dificuldade dif-medio">Médio — Benchmark de inserção em lote</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, pandas <span class="kw">as</span> pd, time, os
+<span class="kw">from</span> psycopg2.extras <span class="kw">import</span> execute_values
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+DB = os.getenv(<span class="str">"DATABASE_URL"</span>)
+engine = create_engine(DB)
+N = <span class="num">10_000</span>
+dados_lista = [(<span class="fn">f</span><span class="str">"evento_{i}"</span>,) <span class="kw">for</span> i <span class="kw">in</span> range(N)]
+dados_df = pd.DataFrame({<span class="str">"evento"</span>: [<span class="fn">f</span><span class="str">"evento_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> range(N)]})
+
+resultados = {}
+
+<span class="cm"># 1. Linha a linha</span>
+conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+cur.execute(<span class="str">"TRUNCATE log_eventos"</span>)
+t0 = time.perf_counter()
+<span class="kw">for</span> d <span class="kw">in</span> dados_lista:
+    cur.execute(<span class="str">"INSERT INTO log_eventos (evento) VALUES (%s)"</span>, d)
+conn.commit(); cur.close(); conn.close()
+resultados[<span class="str">"Linha a linha"</span>] = (time.perf_counter() - t0) * <span class="num">1000</span>
+
+<span class="cm"># 2. execute_values</span>
+conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+cur.execute(<span class="str">"TRUNCATE log_eventos"</span>)
+t0 = time.perf_counter()
+execute_values(cur, <span class="str">"INSERT INTO log_eventos (evento) VALUES %s"</span>, dados_lista, page_size=<span class="num">500</span>)
+conn.commit(); cur.close(); conn.close()
+resultados[<span class="str">"execute_values"</span>] = (time.perf_counter() - t0) * <span class="num">1000</span>
+
+<span class="cm"># 3. to_sql multi</span>
+conn = psycopg2.connect(DB); conn.autocommit = <span class="kw">False</span>; cur = conn.cursor()
+cur.execute(<span class="str">"TRUNCATE log_eventos"</span>)
+conn.commit(); cur.close(); conn.close()
+t0 = time.perf_counter()
+dados_df.to_sql(<span class="str">"log_eventos"</span>, engine, if_exists=<span class="str">"append"</span>, index=<span class="kw">False</span>,
+                chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+resultados[<span class="str">"to_sql multi"</span>] = (time.perf_counter() - t0) * <span class="num">1000</span>
+
+print(<span class="str">f"\n{'Método':<20} {'Tempo (ms)':>12} {'vs linha a linha':>18}"</span>)
+base = resultados[<span class="str">"Linha a linha"</span>]
+<span class="kw">for</span> nome, ms <span class="kw">in</span> resultados.items():
+    ganho = <span class="fn">f</span><span class="str">"{base/ms:.1f}× mais rápido"</span> <span class="kw">if</span> ms < base <span class="kw">else</span> <span class="str">"referência"</span>
+    print(<span class="fn">f</span><span class="str">"{nome:<20} {ms:>12.1f} {ganho:>18}"</span>)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Construa um módulo Python <code>pipeline_completo.py</code> que: (1) lê a tabela <code>pedidos</code> via <code>read_sql</code> usando uma engine com connection pool; (2) valida qualidade com pelo menos 3 checagens (nulos, duplicatas de id, total positivo) — interrompe com log de erro se falhar; (3) calcula features de cliente (ticket médio, dias inativo, taxa de cancelamento, segmento: "VIP" se total_gasto &gt; 10k, "Regular" se &gt; 2k, "Novo" caso contrário); (4) grava em <code>features_cliente_v2</code> via <code>to_sql</code>; (5) registra num arquivo JSON a hora de início, fim, quantidade de registros em cada etapa e status de cada validação. O módulo deve funcionar invocado diretamente (<code>python pipeline_completo.py</code>) e ser importável sem efeitos colaterais.</p>
+      <span class="dificuldade dif-desafio">Desafio — Pipeline modular e rastreável</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — pipeline_completo.py</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="cm">"""pipeline_completo.py — BD → pandas → features → BD com rastreabilidade."""</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, json, os
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+load_dotenv()
+
+<span class="kw">def</span> <span class="fn">get_engine</span>():
+    url = os.getenv(<span class="str">"DATABASE_URL"</span>)
+    <span class="kw">if not</span> url: <span class="kw">raise</span> EnvironmentError(<span class="str">"DATABASE_URL ausente"</span>)
+    <span class="kw">return</span> create_engine(url, pool_size=<span class="num">5</span>, max_overflow=<span class="num">5</span>, pool_recycle=<span class="num">1800</span>)
+
+<span class="kw">def</span> <span class="fn">validar</span>(df) -> list[dict]:
+    checks = []
+    checks.append({<span class="str">"nome"</span>: <span class="str">"id_nulos"</span>,       <span class="str">"ok"</span>: <span class="kw">not</span> df[<span class="str">"id"</span>].isnull().any()})
+    checks.append({<span class="str">"nome"</span>: <span class="str">"id_duplicados"</span>,   <span class="str">"ok"</span>: <span class="kw">not</span> df[<span class="str">"id"</span>].duplicated().any()})
+    checks.append({<span class="str">"nome"</span>: <span class="str">"total_positivo"</span>,  <span class="str">"ok"</span>: (df[<span class="str">"total"</span>] > <span class="num">0</span>).all()})
+    falhas = [c[<span class="str">"nome"</span>] <span class="kw">for</span> c <span class="kw">in</span> checks <span class="kw">if not</span> c[<span class="str">"ok"</span>]]
+    <span class="kw">if</span> falhas: <span class="kw">raise</span> ValueError(<span class="fn">f</span><span class="str">"Validação falhou: {falhas}"</span>)
+    <span class="kw">return</span> checks
+
+<span class="kw">def</span> <span class="fn">segmento</span>(total):
+    <span class="kw">if</span>   total > <span class="num">10_000</span>: <span class="kw">return</span> <span class="str">"VIP"</span>
+    <span class="kw">elif</span> total > <span class="num">2_000</span>:  <span class="kw">return</span> <span class="str">"Regular"</span>
+    <span class="kw">else</span>:                 <span class="kw">return</span> <span class="str">"Novo"</span>
+
+<span class="kw">def</span> <span class="fn">rodar_pipeline</span>():
+    relatorio = {<span class="str">"inicio"</span>: datetime.now().isoformat(), <span class="str">"etapas"</span>: [], <span class="str">"status"</span>: <span class="str">"ok"</span>}
+    engine = get_engine()
+
+    <span class="kw">try</span>:
+        <span class="cm"># 1. Extrair</span>
+        df = pd.read_sql(<span class="str">"SELECT * FROM pedidos"</span>, engine, parse_dates=[<span class="str">"criado_em"</span>])
+        relatorio[<span class="str">"etapas"</span>].append({<span class="str">"nome"</span>: <span class="str">"extracao"</span>, <span class="str">"registros"</span>: len(df)})
+
+        <span class="cm"># 2. Validar</span>
+        checks = validar(df)
+        relatorio[<span class="str">"etapas"</span>].append({<span class="str">"nome"</span>: <span class="str">"validacao"</span>, <span class="str">"checks"</span>: checks})
+
+        <span class="cm"># 3. Features</span>
+        feat = df.groupby(<span class="str">"cliente_id"</span>).agg(
+            total_pedidos  =(<span class="str">"id"</span>,        <span class="str">"count"</span>),
+            ticket_medio   =(<span class="str">"total"</span>,     <span class="str">"mean"</span>),
+            total_gasto    =(<span class="str">"total"</span>,     <span class="str">"sum"</span>),
+            ultimo_pedido  =(<span class="str">"criado_em"</span>, <span class="str">"max"</span>),
+            qtd_cancelados =(<span class="str">"status"</span>,    <span class="kw">lambda</span> x: (x==<span class="str">"cancelado"</span>).sum()),
+        ).reset_index()
+        feat[<span class="str">"dias_inativo"</span>]     = (pd.Timestamp(<span class="str">"today"</span>) - feat[<span class="str">"ultimo_pedido"</span>]).dt.days
+        feat[<span class="str">"taxa_cancelamento"</span>] = (feat[<span class="str">"qtd_cancelados"</span>]/feat[<span class="str">"total_pedidos"</span>]*<span class="num">100</span>).round(<span class="num">2</span>)
+        feat[<span class="str">"ticket_medio"</span>]     = feat[<span class="str">"ticket_medio"</span>].round(<span class="num">2</span>)
+        feat[<span class="str">"total_gasto"</span>]      = feat[<span class="str">"total_gasto"</span>].round(<span class="num">2</span>)
+        feat[<span class="str">"segmento"</span>]         = feat[<span class="str">"total_gasto"</span>].apply(segmento)
+        feat[<span class="str">"gerado_em"</span>]        = pd.Timestamp(<span class="str">"now"</span>)
+        relatorio[<span class="str">"etapas"</span>].append({<span class="str">"nome"</span>: <span class="str">"features"</span>, <span class="str">"clientes"</span>: len(feat),
+                                       <span class="str">"segmentos"</span>: feat[<span class="str">"segmento"</span>].value_counts().to_dict()})
+
+        <span class="cm"># 4. Gravar</span>
+        feat.to_sql(<span class="str">"features_cliente_v2"</span>, engine, if_exists=<span class="str">"replace"</span>,
+                    index=<span class="kw">False</span>, chunksize=<span class="num">500</span>, method=<span class="str">"multi"</span>)
+        relatorio[<span class="str">"etapas"</span>].append({<span class="str">"nome"</span>: <span class="str">"carga"</span>, <span class="str">"tabela"</span>: <span class="str">"features_cliente_v2"</span>})
+
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        relatorio[<span class="str">"status"</span>] = <span class="str">"erro"</span>
+        relatorio[<span class="str">"erro"</span>] = str(e)
+        print(<span class="fn">f</span><span class="str">"✗ Pipeline falhou: {e}"</span>)
+
+    relatorio[<span class="str">"fim"</span>] = datetime.now().isoformat()
+    <span class="kw">with</span> open(<span class="str">"relatorio_pipeline.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+        json.dump(relatorio, f, indent=<span class="num">2</span>, ensure_ascii=<span class="kw">False</span>)
+    print(<span class="fn">f</span><span class="str">"Pipeline: {relatorio['status'].upper()} — relatório em relatorio_pipeline.json"</span>)
+    <span class="kw">return</span> relatorio
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    rodar_pipeline()</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 16</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-plug"></i>
+        <strong>psycopg2</strong>
+        <p>Driver nativo PostgreSQL. Sempre use <code>%s</code>. <code>execute_values</code> para bulk insert. Context manager para fechar recursos.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>SQLAlchemy</strong>
+        <p>Engine com connection pool. Core: <code>text()</code> + parâmetros nomeados. ORM: modelos Python mapeados a tabelas.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-table"></i>
+        <strong>pandas</strong>
+        <p><code>read_sql</code> → DataFrame direto. <code>to_sql</code> com <code>method="multi"</code> e <code>chunksize</code> para performance.</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Segurança</strong>
+        <p>Credenciais em <code>.env</code> + <code>dotenv</code>. Nunca f-string em SQL. <code>sslmode=require</code> em produção.</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-17.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 17 — Integração BD com IA: alimentar modelos, armazenar predições e consultas analíticas</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

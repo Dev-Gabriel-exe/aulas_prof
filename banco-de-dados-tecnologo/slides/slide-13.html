@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 13 — Banco de Dados · Tecnólogo · P2</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+  --red-dim:rgba(239,68,68,.08);--red-border:rgba(239,68,68,.22);
+  --amber-dim:rgba(251,191,36,.07);--amber-border:rgba(251,191,36,.25);
+  --blue-dim:rgba(96,165,250,.06);--blue-border:rgba(96,165,250,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* ── CAPA ── */
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2.2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-prova{background:rgba(239,68,68,.14);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── CONTEÚDO ── */
+.conteudo{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.6rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1rem;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.65rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td strong{color:var(--text-primary);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:var(--amber-dim);border:1px solid var(--amber-border);font-size:.86rem;color:rgba(253,230,138,.85);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-red{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:var(--red-dim);border:1px solid var(--red-border);font-size:.86rem;color:rgba(252,165,165,.9);margin:.75rem 0;line-height:1.6;}
+.aviso-red i{color:#f87171;flex-shrink:0;margin-top:2px;}
+
+/* ── instrucoes ── */
+.instrucoes{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.25rem 0;}
+.instr-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.instr-card i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.instr-card .ic-val{font-family:'Montserrat',sans-serif;font-size:1.25rem;font-weight:800;color:var(--white);margin-bottom:3px;}
+.instr-card .ic-desc{font-size:.75rem;color:var(--text-secondary);line-height:1.4;}
+
+/* ── seções da prova ── */
+.prova-secao-header{display:flex;align-items:center;gap:12px;padding:.75rem 1.25rem;border-radius:10px;margin-bottom:1.25rem;}
+.ps-teoria{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);}
+.ps-pratica{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);}
+.ps-desafio{background:var(--red-dim);border:1px solid var(--red-border);}
+.ps-icon{font-size:1.1rem;}
+.ps-teoria .ps-icon{color:#60a5fa;}
+.ps-pratica .ps-icon{color:var(--green-400);}
+.ps-desafio .ps-icon{color:#f87171;}
+.ps-info{display:flex;flex-direction:column;}
+.ps-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--white);}
+.ps-sub{font-size:.72rem;color:var(--text-muted);}
+
+/* ── questões ── */
+.questao{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.4rem;margin-bottom:1rem;}
+.questao-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.85rem;}
+.questao-meta{display:flex;flex-direction:column;gap:3px;}
+.questao-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;}
+.questao-tema{font-size:.72rem;color:var(--text-muted);}
+.pts-badge{flex-shrink:0;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.3rem .75rem;font-size:.75rem;font-weight:700;color:var(--green-400);white-space:nowrap;}
+.questao-enunciado{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.85rem;}
+.questao-enunciado strong{color:var(--text-primary);}
+.resposta-area{background:rgba(0,0,0,.18);border:1px dashed rgba(74,222,128,.18);border-radius:8px;padding:1rem 1.2rem;font-size:.8rem;color:var(--text-muted);font-style:italic;min-height:80px;display:flex;align-items:flex-start;}
+.gabarito-toggle{display:inline-flex;align-items:center;gap:7px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.45rem .9rem;color:var(--green-400);font-size:.78rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;margin-top:.75rem;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.07);}
+.gabarito-content{display:none;margin-top:.85rem;padding:1rem 1.2rem;border-radius:9px;background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);font-size:.85rem;color:var(--text-secondary);line-height:1.7;}
+.gabarito-content.open{display:block;}
+.gabarito-content strong{color:var(--green-400);}
+.criterios{list-style:none;display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem;}
+.criterios li{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--text-secondary);}
+.criterios li::before{content:'✓';color:var(--green-400);flex-shrink:0;font-size:.75rem;margin-top:2px;}
+
+/* ── gabarito geral ── */
+.gab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:.75rem 0;}
+.gab-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:1rem 1.2rem;}
+.gab-num{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:.4rem;}
+.gab-resp{font-size:.82rem;color:var(--text-secondary);line-height:1.55;}
+.gab-resp strong{color:var(--text-primary);}
+
+.nota-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+.nota-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:.9rem 1rem;text-align:center;}
+.nota-item .ni-num{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--green-400);}
+.nota-item .ni-desc{font-size:.75rem;color:var(--text-muted);margin-top:3px;}
+
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .instrucoes,.grid-2,.gab-grid,.nota-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-prova">🎯 Avaliação P2</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">13</div>
+    <h1 class="capa-titulo">Avaliação<br><em>P2</em></h1>
+    <p class="capa-sub">Prova escrita e prática · 100 pontos · 90 minutos</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-database"></i></div><span>Semana 7 — NoSQL: tipos, casos de uso, MongoDB</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-vector-square"></i></div><span>Semana 8 — Bancos vetoriais, embeddings, pgvector, RAG</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-archive"></i></div><span>Semana 9 — Parquet, particionamento, S3, Delta Lake</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-shield-alt"></i></div><span>Semana 10 — Governança, qualidade, linhagem, LGPD</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-project-diagram"></i></div><span>Semana 11 — Airflow: DAGs, operadores, XCom, retry</span></div>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-list-ol"></i>Distribuição da prova</div>
+      <ul class="info-lista">
+        <li>Parte A — Questões conceituais (40 pts): 4 questões × 10 pts</li>
+        <li>Parte B — Questões práticas em Python (45 pts): 3 questões × 15 pts</li>
+        <li>Parte C — Questão integradora / desafio (15 pts): 1 questão</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-ruler"></i>Critérios gerais de correção</div>
+      <ul class="info-lista">
+        <li>Conceituais: clareza e completude da explicação, não apenas o termo</li>
+        <li>Práticas: código funcional, boas práticas, comentários explicativos</li>
+        <li>Parcial: respostas incompletas recebem crédito proporcional</li>
+        <li>Consulta: material de aula permitido; uso de IA não é permitido</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-bullseye"></i>Média e aprovação</div>
+      <ul class="info-lista">
+        <li>Aprovação direta: média ≥ 7,0 considerando P1, P2 e P3</li>
+        <li>Segunda chamada: Semana 20 — alunos com frequência válida</li>
+        <li>Próxima aula (Sem. 14): retomada — indexação e otimização</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para a prova</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ PROVA ══════════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── INSTRUÇÕES ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">!</div>
+      <div class="secao-info">
+        <div class="secao-label">Antes de começar</div>
+        <div class="secao-titulo">Instruções gerais</div>
+      </div>
+    </div>
+
+    <div class="instrucoes">
+      <div class="instr-card">
+        <i class="fas fa-clock"></i>
+        <div class="ic-val">90 min</div>
+        <div class="ic-desc">Duração total da avaliação</div>
+      </div>
+      <div class="instr-card">
+        <i class="fas fa-star"></i>
+        <div class="ic-val">100 pts</div>
+        <div class="ic-desc">Pontuação máxima</div>
+      </div>
+      <div class="instr-card">
+        <i class="fas fa-layer-group"></i>
+        <div class="ic-val">3 partes</div>
+        <div class="ic-desc">A: conceitual · B: prática · C: integradora</div>
+      </div>
+      <div class="instr-card">
+        <i class="fas fa-book"></i>
+        <div class="ic-val">Consulta</div>
+        <div class="ic-desc">Slides e anotações permitidos</div>
+      </div>
+    </div>
+
+    <div class="aviso-red">
+      <i class="fas fa-ban"></i>
+      <span><strong>Não é permitido:</strong> uso de assistentes de IA (ChatGPT, Claude, Copilot etc.), comunicação entre alunos durante a prova ou compartilhamento de código. Avaliações com evidências de uso de IA ou cola terão nota zerada.</span>
+    </div>
+
+    <div class="aviso">
+      <i class="fas fa-lightbulb"></i>
+      <span><strong>Dica:</strong> leia todas as questões antes de começar. Questões conceituais valem 10 pts cada — responda com clareza, não apenas com o nome do conceito. Para as práticas, código com pequenos erros de sintaxe mas lógica correta recebe crédito parcial.</span>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte A — Questões Conceituais · 40 pontos</span></div>
+
+  <!-- ── PARTE A ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">A</div>
+      <div class="secao-info">
+        <div class="secao-label">4 questões × 10 pontos</div>
+        <div class="secao-titulo">Questões conceituais e dissertativas</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-teoria">
+      <span class="ps-icon"><i class="fas fa-pen"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte A — Conceitual</span>
+        <span class="ps-sub">Responda com clareza e exemplos quando possível · 10 pts cada</span>
+      </div>
+    </div>
+
+    <!-- A1 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A1</div>
+          <div class="questao-tema">NoSQL — tipos e decisão de uso</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Uma startup de streaming de música precisa armazenar três tipos diferentes de dados: <strong>(1)</strong> sessões de usuário com tempo de expiração de 30 minutos; <strong>(2)</strong> histórico completo de músicas ouvidas por cada usuário, com metadados variáveis por faixa; <strong>(3)</strong> relacionamentos entre usuários (seguidores) para gerar recomendações baseadas em amigos.<br><br>
+        Para cada tipo de dado, indique <strong>qual categoria de banco NoSQL</strong> você usaria, qual <strong>produto específico</strong> e <strong>justifique</strong> a escolha em uma ou duas frases.
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(1) Sessões com expiração:</strong> <strong>chave-valor</strong> — Redis. Suporta TTL (time-to-live) nativo por chave, operações de leitura/escrita em O(1) e armazenamento em memória para latência mínima. Ideal para cache e sessões temporárias.<br><br>
+        <strong>(2) Histórico de músicas com metadados variáveis:</strong> <strong>banco de documentos</strong> — MongoDB. Cada faixa pode ter atributos diferentes (podcast tem episódio; álbum tem tracklist); documentos JSON/BSON acomodam schema flexível sem colunas NULL em excesso.<br><br>
+        <strong>(3) Relacionamentos entre usuários para recomendação:</strong> <strong>banco de grafos</strong> — Neo4j. A estrutura de nós (usuários) e arestas (segue) permite consultas de "amigos de amigos" e recomendações por similaridade de grafo de forma natural e eficiente — em SQL, isso exigiria auto-JOINs recursivos muito custosos.
+        <ul class="criterios">
+          <li>3 pts por tipo de dado: categoria correta (1 pt) + produto correto (1 pt) + justificativa adequada (1 pt)</li>
+          <li>Aceitar Cassandra para (2) com justificativa de alta escrita de eventos</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A2</div>
+          <div class="questao-tema">Lakehouse — Parquet e Delta Lake</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        <strong>(a)</strong> Explique o que é <strong>predicate pushdown</strong> e como ele difere de <strong>column pruning</strong> no contexto de leitura de arquivos Parquet. Use um exemplo concreto com um dataset de pedidos.<br><br>
+        <strong>(b)</strong> Um engenheiro afirmou que "Delta Lake substitui o Parquet". Essa afirmação está <strong>correta ou incorreta</strong>? Justifique explicando a relação real entre os dois.
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong> <strong>Predicate pushdown</strong> é a capacidade de filtrar dados <em>no nível do sistema de arquivos</em>, sem ler arquivos que não atendem ao predicado. Em um dataset particionado por <code>ano/mes</code>, a query <code>WHERE ano=2025 AND mes=3</code> lê apenas a pasta <code>ano=2025/mes=3/</code> — os demais arquivos nem são abertos. <strong>Column pruning</strong> opera dentro de cada arquivo Parquet: como o formato é colunar, a query <code>SELECT total</code> lê apenas o bloco da coluna <code>total</code>, ignorando as demais 49 colunas do arquivo. Ambos juntos: poucas partições + poucas colunas = fração mínima do I/O total.<br><br>
+        <strong>(b) Incorreto.</strong> Delta Lake não substitui o Parquet — ele <em>usa</em> Parquet como formato de armazenamento físico. O que o Delta Lake adiciona é uma camada de controle transacional: a pasta <code>_delta_log/</code> com arquivos JSON registra cada operação (insert, update, delete), permitindo ACID, time travel e schema evolution. Os dados continuam em arquivos <code>.parquet</code> normais — o Delta Lake é uma camada de metadados sobre eles, não um formato alternativo.
+        <ul class="criterios">
+          <li>(a) 6 pts: definição correta de pushdown (2 pt) + definição correta de pruning (2 pt) + exemplo concreto (2 pt)</li>
+          <li>(b) 4 pts: posição correta: "incorreto" (1 pt) + explicação da relação real (3 pt)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A3</div>
+          <div class="questao-tema">Governança — LGPD e qualidade</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Um dataset de clientes contém: <code>id</code>, <code>nome</code>, <code>cpf</code>, <code>email</code>, <code>idade</code>, <code>cidade</code>, <code>total_gasto</code>.<br><br>
+        <strong>(a)</strong> Identifique quais colunas são <strong>dados pessoais</strong> segundo a LGPD e quais não são.<br><br>
+        <strong>(b)</strong> A equipe precisa usar esse dataset para treinar um modelo de machine learning. Descreva quais técnicas de mascaramento você aplicaria em cada coluna pessoal, justificando a escolha (supressão, hash, generalização ou pseudonimização).
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a) Dados pessoais:</strong> <code>nome</code>, <code>cpf</code>, <code>email</code>, <code>idade</code> (podem identificar ou contribuir para identificar individualmente). <code>cidade</code> sozinha geralmente não é pessoal (identifica um lugar). <code>id</code> interno e <code>total_gasto</code> não são dados pessoais por si só.<br><br>
+        <strong>(b) Técnicas por coluna:</strong><br>
+        — <code>nome</code> e <code>cpf</code>: <strong>supressão</strong> — remover completamente. O modelo não precisa dessas colunas para prever comportamento de compra; mantê-las, mesmo mascaradas, aumenta o risco sem benefício.<br>
+        — <code>email</code>: <strong>hash SHA-256 + salt</strong> (<code>email_hash</code>) — permite fazer joins entre datasets sem expor o endereço real. Irreversível sem a chave secreta.<br>
+        — <code>idade</code>: <strong>generalização</strong> em faixas etárias (18–24, 25–34, 35–44, 45–59, 60+) — mantém o sinal preditivo para o modelo (faixa etária influencia comportamento) sem identificar individualmente.<br>
+        — <code>cidade</code>: pode ser mantida sem mascaramento.
+        <ul class="criterios">
+          <li>(a) 4 pts: identificação correta das colunas pessoais (2 pt) + distinção correta de não-pessoais (2 pt)</li>
+          <li>(b) 6 pts: técnica correta e justificada para cada coluna pessoal (1,5 pt cada × 4)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão A4</div>
+          <div class="questao-tema">Airflow — conceitos e funcionamento</div>
+        </div>
+        <span class="pts-badge">10 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        <strong>(a)</strong> Explique a diferença entre <strong>DAG</strong>, <strong>Task</strong> e <strong>DAG Run</strong> no Airflow usando uma analogia ou exemplo do cotidiano.<br><br>
+        <strong>(b)</strong> O que é <strong>XCom</strong> e qual é a diferença de uso correto entre XCom e armazenamento em arquivo/banco? Dê um exemplo de quando usar cada um.<br><br>
+        <strong>(c)</strong> Por que é recomendado usar <code>catchup=False</code> ao criar uma DAG nova em produção?
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong> <strong>DAG</strong> é o plano completo — como uma receita de bolo: define quais etapas existem, em qual ordem e com qual frequência. <strong>Task</strong> é cada etapa individual — misturar, assar, decorar. <strong>DAG Run</strong> é a execução concreta da receita em uma data específica — a vez que você fez o bolo na quinta-feira às 14h. O mesmo plano pode gerar múltiplos runs em datas diferentes.<br><br>
+        <strong>(b)</strong> XCom (Cross-Communication) é o mecanismo do Airflow para passar <em>pequenos valores</em> entre tasks — o retorno de uma função vira XCom automaticamente na TaskFlow API. Deve ser usado para <strong>metadados</strong>: número de linhas processadas, caminho de um arquivo, status de uma operação. Para DataFrames ou grandes volumes de dados, use <strong>armazenamento externo</strong> (arquivo Parquet, S3, banco) e passe apenas o caminho via XCom. Exemplo: <code>return len(df)</code> → XCom; o próprio <code>df</code> deve ser salvo em disco.<br><br>
+        <strong>(c)</strong> <code>catchup=True</code> (padrão) faz o Airflow executar automaticamente todas as DAG Runs desde o <code>start_date</code> até hoje ao ativar a DAG. Se o <code>start_date</code> for 6 meses atrás, o Airflow vai tentar executar ~180 runs em paralelo, sobrecarregando o banco, os workers e potencialmente duplicando dados. <code>catchup=False</code> evita esse efeito — e quando necessário, o backfill é feito manualmente e de forma controlada.
+        <ul class="criterios">
+          <li>(a) 4 pts: os três conceitos definidos corretamente com distinção clara</li>
+          <li>(b) 4 pts: definição de XCom (1 pt) + distinção correto/incorreto de uso (2 pt) + exemplo (1 pt)</li>
+          <li>(c) 2 pts: risco correto explicado (runs em cascata / sobrecarga)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte B — Questões Práticas · 45 pontos</span></div>
+
+  <!-- ── PARTE B ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">B</div>
+      <div class="secao-info">
+        <div class="secao-label">3 questões × 15 pontos</div>
+        <div class="secao-titulo">Questões práticas — código Python</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-pratica">
+      <span class="ps-icon"><i class="fas fa-terminal"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte B — Prática em Python</span>
+        <span class="ps-sub">Escreva o código completo e funcional · 15 pts cada · Comentários são bem-vindos</span>
+      </div>
+    </div>
+
+    <!-- B1 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B1</div>
+          <div class="questao-tema">Parquet particionado + Delta Lake</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Dado o DataFrame abaixo (ou equivalente carregado do banco), escreva um script Python que:<br><br>
+        <strong>(1)</strong> Salve os dados em Parquet particionado por <code>ano</code> e <code>mes</code> na pasta <code>silver/pedidos/</code> com compressão <code>zstd</code>.<br>
+        <strong>(2)</strong> Leia de volta apenas os pedidos de <code>ano=2025</code> e <code>mes=1</code> usando predicate pushdown, selecionando somente as colunas <code>id</code>, <code>cliente_id</code> e <code>total</code>.<br>
+        <strong>(3)</strong> Salve o resultado da leitura filtrada como tabela Delta Lake em <code>gold/pedidos_jan25/</code>.<br>
+        <strong>(4)</strong> Imprima o número da versão Delta e a contagem de registros.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dataset de referência</span></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">"id"</span>:         [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>],
+    <span class="str">"cliente_id"</span>: [<span class="num">10</span>, <span class="num">20</span>, <span class="num">10</span>, <span class="num">30</span>, <span class="num">20</span>],
+    <span class="str">"total"</span>:      [<span class="num">4239.90</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>, <span class="num">4150.00</span>, <span class="num">89.90</span>],
+    <span class="str">"status"</span>:     [<span class="str">"entregue"</span>, <span class="str">"entregue"</span>, <span class="str">"cancelado"</span>, <span class="str">"entregue"</span>, <span class="str">"pendente"</span>],
+    <span class="str">"criado_em"</span>:  pd.to_datetime([<span class="str">"2025-01-10"</span>, <span class="str">"2025-01-15"</span>,
+                                   <span class="str">"2024-12-20"</span>, <span class="str">"2025-01-22"</span>, <span class="str">"2024-11-05"</span>]),
+})</code></pre>
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B1</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> deltalake <span class="kw">import</span> DeltaTable, write_deltalake
+
+df = pd.DataFrame({
+    <span class="str">"id"</span>:         [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>],
+    <span class="str">"cliente_id"</span>: [<span class="num">10</span>, <span class="num">20</span>, <span class="num">10</span>, <span class="num">30</span>, <span class="num">20</span>],
+    <span class="str">"total"</span>:      [<span class="num">4239.90</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>, <span class="num">4150.00</span>, <span class="num">89.90</span>],
+    <span class="str">"status"</span>:     [<span class="str">"entregue"</span>, <span class="str">"entregue"</span>, <span class="str">"cancelado"</span>, <span class="str">"entregue"</span>, <span class="str">"pendente"</span>],
+    <span class="str">"criado_em"</span>:  pd.to_datetime([<span class="str">"2025-01-10"</span>, <span class="str">"2025-01-15"</span>,
+                                   <span class="str">"2024-12-20"</span>, <span class="str">"2025-01-22"</span>, <span class="str">"2024-11-05"</span>]),
+})
+
+<span class="cm"># (1) Criar colunas de partição e salvar Parquet particionado</span>
+df[<span class="str">"ano"</span>] = df[<span class="str">"criado_em"</span>].dt.year
+df[<span class="str">"mes"</span>] = df[<span class="str">"criado_em"</span>].dt.month
+
+df.to_parquet(
+    <span class="str">"silver/pedidos/"</span>,
+    partition_cols=[<span class="str">"ano"</span>, <span class="str">"mes"</span>],
+    index=<span class="kw">False</span>,
+    compression=<span class="str">"zstd"</span>,
+    engine=<span class="str">"pyarrow"</span>,
+)
+print(<span class="str">"Parquet silver escrito com particionamento ano/mes"</span>)
+
+<span class="cm"># (2) Ler com predicate pushdown + column pruning</span>
+df_jan = pd.read_parquet(
+    <span class="str">"silver/pedidos/"</span>,
+    filters=[(<span class="str">"ano"</span>, <span class="str">"="</span>, <span class="num">2025</span>), (<span class="str">"mes"</span>, <span class="str">"="</span>, <span class="num">1</span>)],
+    columns=[<span class="str">"id"</span>, <span class="str">"cliente_id"</span>, <span class="str">"total"</span>],
+)
+print(<span class="fn">f</span><span class="str">"Pedidos jan/2025 lidos: {len(df_jan)}"</span>)
+
+<span class="cm"># (3) Salvar como Delta Lake</span>
+write_deltalake(<span class="str">"gold/pedidos_jan25/"</span>, df_jan, mode=<span class="str">"overwrite"</span>)
+
+<span class="cm"># (4) Versão e contagem</span>
+dt = DeltaTable(<span class="str">"gold/pedidos_jan25/"</span>)
+print(<span class="fn">f</span><span class="str">"Delta versão: {dt.version()} | registros: {len(dt.to_pandas())}"</span>)</code></pre>
+        </div>
+        <ul class="criterios">
+          <li>3 pts — criação correta das colunas ano/mes e escrita particionada com zstd</li>
+          <li>4 pts — leitura com filtros corretos no predicate pushdown E column pruning</li>
+          <li>4 pts — escrita correta em Delta Lake com mode overwrite</li>
+          <li>4 pts — impressão de versão e contagem via DeltaTable</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- B2 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B2</div>
+          <div class="questao-tema">Validação de qualidade + mascaramento LGPD</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Usando o DataFrame de clientes abaixo, escreva um script que:<br><br>
+        <strong>(1)</strong> Calcule e imprima um diagnóstico de qualidade: % de nulos por coluna, quantidade de CPFs duplicados e quantidade de e-mails sem "@".<br>
+        <strong>(2)</strong> Aplique mascaramento LGPD: <strong>suprima</strong> as colunas <code>nome</code> e <code>cpf</code>; substitua <code>email</code> por <code>email_hash</code> usando SHA-256 com o salt <code>"p2_2025"</code>; converta <code>idade</code> em <code>faixa_etaria</code> (18–29, 30–44, 45–59, 60+).<br>
+        <strong>(3)</strong> Imprima o DataFrame resultante e liste as colunas que foram removidas.
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Dataset de referência</span></div>
+        <pre><code>df = pd.DataFrame({
+    <span class="str">"id"</span>:    [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>],
+    <span class="str">"nome"</span>:  [<span class="str">"Ana Silva"</span>, <span class="str">"Bruno Costa"</span>, <span class="kw">None</span>, <span class="str">"Diego"</span>],
+    <span class="str">"cpf"</span>:   [<span class="str">"111.222.333-44"</span>, <span class="str">"555.666.777-88"</span>,
+              <span class="str">"111.222.333-44"</span>, <span class="str">"999.000.111-22"</span>],  <span class="cm"># CPF duplicado</span>
+    <span class="str">"email"</span>: [<span class="str">"ana@x.com"</span>, <span class="str">"bruno_invalido"</span>, <span class="str">"carla@z.com"</span>, <span class="str">"diego@w.com"</span>],
+    <span class="str">"idade"</span>: [<span class="num">28</span>, <span class="num">45</span>, <span class="num">33</span>, <span class="num">62</span>],
+    <span class="str">"cidade"</span>:[<span class="str">"SP"</span>, <span class="str">"RJ"</span>, <span class="str">"BH"</span>, <span class="str">"PI"</span>],
+})</code></pre>
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B2</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd, hashlib
+
+df = pd.DataFrame({
+    <span class="str">"id"</span>:    [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>],
+    <span class="str">"nome"</span>:  [<span class="str">"Ana Silva"</span>, <span class="str">"Bruno Costa"</span>, <span class="kw">None</span>, <span class="str">"Diego"</span>],
+    <span class="str">"cpf"</span>:   [<span class="str">"111.222.333-44"</span>, <span class="str">"555.666.777-88"</span>,
+              <span class="str">"111.222.333-44"</span>, <span class="str">"999.000.111-22"</span>],
+    <span class="str">"email"</span>: [<span class="str">"ana@x.com"</span>, <span class="str">"bruno_invalido"</span>, <span class="str">"carla@z.com"</span>, <span class="str">"diego@w.com"</span>],
+    <span class="str">"idade"</span>: [<span class="num">28</span>, <span class="num">45</span>, <span class="num">33</span>, <span class="num">62</span>],
+    <span class="str">"cidade"</span>:[<span class="str">"SP"</span>, <span class="str">"RJ"</span>, <span class="str">"BH"</span>, <span class="str">"PI"</span>],
+})
+
+<span class="cm"># (1) Diagnóstico de qualidade</span>
+print(<span class="str">"=== Diagnóstico de Qualidade ==="</span>)
+pct_nulos = (df.isnull().mean() * <span class="num">100</span>).round(<span class="num">2</span>)
+print(<span class="str">"% nulos:\n"</span>, pct_nulos[pct_nulos > <span class="num">0</span>])
+print(<span class="fn">f</span><span class="str">"CPFs duplicados: {df['cpf'].duplicated().sum()}"</span>)
+print(<span class="fn">f</span><span class="str">"E-mails sem '@': {(~df['email'].str.contains('@', na=False)).sum()}"</span>)
+
+<span class="cm"># (2) Mascaramento LGPD</span>
+SALT = <span class="str">"p2_2025"</span>
+df_masked = df.copy()
+
+<span class="cm"># Supressão</span>
+colunas_removidas = [<span class="str">"nome"</span>, <span class="str">"cpf"</span>]
+df_masked = df_masked.drop(columns=colunas_removidas)
+
+<span class="cm"># Hash do email</span>
+df_masked[<span class="str">"email_hash"</span>] = df[<span class="str">"email"</span>].apply(
+    <span class="kw">lambda</span> v: hashlib.sha256(<span class="fn">f</span><span class="str">"{SALT}{v}"</span>.encode()).hexdigest()[:<span class="num">16</span>]
+)
+df_masked = df_masked.drop(columns=[<span class="str">"email"</span>])
+colunas_removidas.append(<span class="str">"email"</span>)
+
+<span class="cm"># Generalização da idade</span>
+<span class="kw">def</span> <span class="fn">faixa</span>(i):
+    <span class="kw">if</span>   i <= <span class="num">29</span>: <span class="kw">return</span> <span class="str">"18–29"</span>
+    <span class="kw">elif</span> i <= <span class="num">44</span>: <span class="kw">return</span> <span class="str">"30–44"</span>
+    <span class="kw">elif</span> i <= <span class="num">59</span>: <span class="kw">return</span> <span class="str">"45–59"</span>
+    <span class="kw">else</span>:          <span class="kw">return</span> <span class="str">"60+"</span>
+
+df_masked[<span class="str">"faixa_etaria"</span>] = df[<span class="str">"idade"</span>].apply(faixa)
+df_masked = df_masked.drop(columns=[<span class="str">"idade"</span>])
+colunas_removidas.append(<span class="str">"idade"</span>)
+
+<span class="cm"># (3) Imprimir resultado</span>
+print(<span class="str">"\n=== Dataset Anonimizado ==="</span>)
+print(df_masked.to_string(index=<span class="kw">False</span>))
+print(<span class="fn">f</span><span class="str">"\nColunas removidas: {colunas_removidas}"</span>)</code></pre>
+        </div>
+        <ul class="criterios">
+          <li>5 pts — diagnóstico correto: nulos, duplicatas CPF e e-mails inválidos</li>
+          <li>4 pts — supressão correta de nome e cpf</li>
+          <li>3 pts — hash SHA-256 com salt correto e drop do email original</li>
+          <li>3 pts — generalização de idade em faixas e drop da coluna original</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- B3 -->
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão B3</div>
+          <div class="questao-tema">Airflow — DAG com TaskFlow API</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Escreva uma DAG completa do Airflow chamada <code>dag_p2</code> usando a <strong>TaskFlow API</strong> com as seguintes especificações:<br><br>
+        <strong>(1)</strong> Agendamento diário às 03h30, sem catchup, com <code>retries=2</code> e <code>retry_delay</code> de 5 minutos.<br>
+        <strong>(2)</strong> Task <code>extrair</code>: cria um DataFrame com 3 pedidos fictícios (id, cliente_id, total, status) e retorna a contagem de linhas via XCom.<br>
+        <strong>(3)</strong> Task <code>validar</code>: recebe a contagem e levanta <code>ValueError</code> se for menor que 1. Imprime "✓ N registros válidos" se passar.<br>
+        <strong>(4)</strong> Task <code>reportar</code>: recebe a contagem e imprime "Relatório: pipeline concluído com N registros em [data de hoje]".<br>
+        <strong>(5)</strong> As tasks devem executar em sequência: extrair → validar → reportar.
+      </div>
+      <div class="resposta-area">Espaço para o código do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python — gabarito B3</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">from</span> airflow.decorators <span class="kw">import</span> dag, task
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, date
+
+<span class="kw">@dag</span>(
+    dag_id=<span class="str">"dag_p2"</span>,
+    schedule=<span class="str">"30 3 * * *"</span>,
+    start_date=datetime(<span class="num">2025</span>, <span class="num">1</span>, <span class="num">1</span>),
+    catchup=<span class="kw">False</span>,
+    default_args={
+        <span class="str">"retries"</span>: <span class="num">2</span>,
+        <span class="str">"retry_delay"</span>: timedelta(minutes=<span class="num">5</span>),
+    },
+    tags=[<span class="str">"p2"</span>, <span class="str">"banco-de-dados"</span>],
+)
+<span class="kw">def</span> <span class="fn">dag_p2</span>():
+
+    <span class="kw">@task</span>
+    <span class="kw">def</span> <span class="fn">extrair</span>():
+        <span class="kw">import</span> pandas <span class="kw">as</span> pd
+        df = pd.DataFrame({
+            <span class="str">"id"</span>:         [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+            <span class="str">"cliente_id"</span>: [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>],
+            <span class="str">"total"</span>:      [<span class="num">4239.90</span>, <span class="num">1200.00</span>, <span class="num">399.90</span>],
+            <span class="str">"status"</span>:     [<span class="str">"entregue"</span>, <span class="str">"entregue"</span>, <span class="str">"cancelado"</span>],
+        })
+        <span class="kw">return</span> len(df)   <span class="cm"># XCom automático</span>
+
+    <span class="kw">@task</span>
+    <span class="kw">def</span> <span class="fn">validar</span>(n: int):
+        <span class="kw">if</span> n < <span class="num">1</span>:
+            <span class="kw">raise</span> ValueError(<span class="fn">f</span><span class="str">"Pipeline sem registros: {n}"</span>)
+        print(<span class="fn">f</span><span class="str">"✓ {n} registros válidos"</span>)
+        <span class="kw">return</span> n
+
+    <span class="kw">@task</span>
+    <span class="kw">def</span> <span class="fn">reportar</span>(n: int):
+        hoje = date.today().isoformat()
+        print(<span class="fn">f</span><span class="str">"Relatório: pipeline concluído com {n} registros em {hoje}"</span>)
+
+    n = extrair()
+    n_v = validar(n)
+    reportar(n_v)
+
+dag_p2()</code></pre>
+        </div>
+        <ul class="criterios">
+          <li>3 pts — configuração correta do @dag: schedule, catchup=False, retries e retry_delay</li>
+          <li>4 pts — task extrair com DataFrame e return correto para XCom</li>
+          <li>4 pts — task validar recebendo XCom, ValueError correto e mensagem de sucesso</li>
+          <li>2 pts — task reportar com data e mensagem corretas</li>
+          <li>2 pts — encadeamento sequencial correto com passagem de valores</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Parte C — Questão Integradora · 15 pontos</span></div>
+
+  <!-- ── PARTE C ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">C</div>
+      <div class="secao-info">
+        <div class="secao-label">1 questão · 15 pontos</div>
+        <div class="secao-titulo">Questão integradora — pipeline completo com análise de decisão</div>
+      </div>
+    </div>
+
+    <div class="prova-secao-header ps-desafio">
+      <span class="ps-icon"><i class="fas fa-star"></i></span>
+      <div class="ps-info">
+        <span class="ps-titulo">Parte C — Integradora</span>
+        <span class="ps-sub">Questão aberta que combina conceitos de múltiplas semanas · 15 pts</span>
+      </div>
+    </div>
+
+    <div class="questao">
+      <div class="questao-top">
+        <div class="questao-meta">
+          <div class="questao-num">Questão C1</div>
+          <div class="questao-tema">Projeto de arquitetura — decisão técnica fundamentada</div>
+        </div>
+        <span class="pts-badge">15 pts</span>
+      </div>
+      <div class="questao-enunciado">
+        Uma empresa de saúde digital quer construir um sistema de dados para alimentar um modelo de ML que prevê risco de abandono de tratamento. Os dados disponíveis são:<br><br>
+        — Registros de consultas médicas (PostgreSQL relacional existente)<br>
+        — Histórico de mensagens de suporte (texto livre, ~500 GB, crescendo 5 GB/dia)<br>
+        — Perfil dos pacientes: nome, CPF, data de nascimento, condição clínica, cidade<br><br>
+        <strong>Responda:</strong><br>
+        <strong>(a)</strong> Qual banco você usaria para armazenar e buscar as mensagens de suporte para um sistema de recuperação semântica (RAG)? Justifique.<br>
+        <strong>(b)</strong> Descreva as <strong>3 zonas do Lakehouse</strong> para esse cenário — o que entra em cada zona e em qual formato.<br>
+        <strong>(c)</strong> Quais colunas do perfil do paciente precisam de mascaramento LGPD antes de chegar à zona gold? Qual técnica para cada uma?<br>
+        <strong>(d)</strong> Escreva a estrutura (não precisa de código completo, mas precisa de pseudocódigo ou estrutura de tasks) de uma DAG Airflow para orquestrar esse pipeline, com pelo menos 4 tasks e suas dependências.
+      </div>
+      <div class="resposta-area">Espaço para resposta do aluno...</div>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> gabarito</button>
+      <div class="gabarito-content">
+        <strong>(a)</strong> Para busca semântica em texto livre, a escolha ideal é um <strong>banco vetorial</strong>. As mensagens são convertidas em embeddings (ex: via OpenAI ou modelo local) e armazenadas com pgvector (PostgreSQL + extensão vector) ou Pinecone/Chroma. Quando o modelo de ML ou um sistema RAG precisa contexto, a query é vetorizada e os documentos mais similares são recuperados por distância cosseno. Um banco relacional com LIKE ou full-text search não captura semântica — "paciente melhorou" e "tratamento evoluiu positivamente" têm sentidos similares mas palavras diferentes.<br><br>
+        <strong>(b) Zonas do Lakehouse:</strong><br>
+        — <strong>Raw/bronze:</strong> dados exatamente como chegaram do PostgreSQL e do sistema de mensagens. Arquivos Parquet snappy, sem nenhuma transformação. Contém CPF, nome, condição clínica — zona de acesso restrito.<br>
+        — <strong>Silver:</strong> dados limpos e mascarados. CPF e nome suprimidos, email hasheado, data de nascimento generalizada em faixa etária. Parquet zstd particionado por data. Textos de mensagens tokenizados. Sem dados pessoais identificáveis.<br>
+        — <strong>Gold:</strong> features agregadas para o modelo — score de engajamento, dias desde última consulta, frequência de mensagens negativas, faixa etária, condição clínica anonimizada. Delta Lake para rastreabilidade e time travel.<br><br>
+        <strong>(c) Mascaramento por coluna:</strong><br>
+        — <code>nome</code>: supressão<br>
+        — <code>cpf</code>: supressão<br>
+        — <code>data_nascimento</code>: generalização → faixa etária<br>
+        — <code>condição_clínica</code>: é dado sensível (saúde) → supressão ou generalização em categorias amplas (ex: "doença crônica", "saúde mental") sem diagnóstico específico<br>
+        — <code>cidade</code>: pode ser mantida<br><br>
+        <strong>(d) Estrutura da DAG:</strong>
+        <code style="display:block;margin-top:.5rem;font-size:.78rem;line-height:1.8;">
+        @dag dag_saude_digital, schedule="0 3 * * *", catchup=False<br>
+        &nbsp;&nbsp;@task extrair_consultas() → n_consultas<br>
+        &nbsp;&nbsp;@task extrair_mensagens() → n_msgs<br>
+        &nbsp;&nbsp;@task [extrair_consultas, extrair_mensagens] → transformar_silver(n_consultas, n_msgs)<br>
+        &nbsp;&nbsp;@task transformar_silver → validar_qualidade(n_silver)<br>
+        &nbsp;&nbsp;@task validar_qualidade → gerar_features_gold(n_silver)<br>
+        &nbsp;&nbsp;@task gerar_features_gold → registrar_linhagem(n_gold)
+        </code>
+        <ul class="criterios">
+          <li>(a) 3 pts — banco vetorial correto com justificativa semântica</li>
+          <li>(b) 4 pts — 3 zonas descritas corretamente com formato e conteúdo (1,3 pt cada)</li>
+          <li>(c) 4 pts — identificação e técnica correta por coluna pessoal/sensível</li>
+          <li>(d) 4 pts — pelo menos 4 tasks com dependências lógicas corretas e estrutura DAG válida</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Gabarito e Pontuação</span></div>
+
+  <!-- ── GABARITO FINAL ────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Para o professor</div>
+        <div class="secao-titulo">Distribuição de pontos por questão</div>
+      </div>
+    </div>
+
+    <div class="nota-grid">
+      <div class="nota-item">
+        <div class="ni-num">Parte A · 40 pts</div>
+        <div class="ni-desc">A1 (10) + A2 (10) + A3 (10) + A4 (10)</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Parte B · 45 pts</div>
+        <div class="ni-desc">B1 (15) + B2 (15) + B3 (15)</div>
+      </div>
+      <div class="nota-item">
+        <div class="ni-num">Parte C · 15 pts</div>
+        <div class="ni-desc">C1 integradora (15)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Critérios gerais de correção</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Situação</th><th>Crédito sugerido</th></tr></thead>
+          <tbody>
+            <tr><td>Resposta completa e correta, com justificativa</td><td><strong>100%</strong> da questão</td></tr>
+            <tr><td>Resposta correta mas sem justificativa adequada</td><td><strong>60–70%</strong></td></tr>
+            <tr><td>Conceito correto, aplicação parcialmente errada</td><td><strong>40–60%</strong></td></tr>
+            <tr><td>Código com erro de sintaxe mas lógica correta</td><td><strong>70–80%</strong> da prática</td></tr>
+            <tr><td>Apenas o nome do conceito sem explicação</td><td><strong>20%</strong></td></tr>
+            <tr><td>Resposta em branco ou totalmente errada</td><td><strong>0%</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-14.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 14 — Indexação e Otimização: B-tree, EXPLAIN e plano de execução</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  const aberto = c.classList.contains('open');
+  btn.innerHTML = aberto
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>

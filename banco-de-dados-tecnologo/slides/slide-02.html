@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 02 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;
+  --green-800:#14532d;
+  --green-700:#166534;
+  --green-600:#16a34a;
+  --green-400:#4ade80;
+  --green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);
+  --text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;
+  --code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--green-900);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ─── CAPA ─────────────────────────────────────────────────────────── */
+.capa{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1.4fr;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+
+.capa-left{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;
+  border-right:1px solid rgba(74,222,128,.15);
+}
+.semana-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);
+  border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;
+  width:fit-content;margin-bottom:2rem;
+}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+.semana-num{
+  font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;
+  color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;
+}
+.capa-titulo{
+  font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;
+}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{
+  display:flex;align-items:center;gap:12px;
+  padding:.6rem 1rem;border-radius:10px;
+  background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);
+  color:var(--text-primary);font-size:.83rem;
+  animation:slideIn .5s ease both;
+}
+.topico:nth-child(1){animation-delay:.1s;}
+.topico:nth-child(2){animation-delay:.2s;}
+.topico:nth-child(3){animation-delay:.3s;}
+.topico:nth-child(4){animation-delay:.4s;}
+.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  background:rgba(74,222,128,.18);color:var(--green-400);
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;
+}
+.atividade-box{
+  margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;
+  background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);
+}
+.atividade-box .label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green-400);font-weight:600;margin-bottom:4px;
+}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+
+.capa-right{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 3rem;gap:1.25rem;
+}
+.info-card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.25rem 1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.info-card:nth-child(1){animation-delay:.2s;}
+.info-card:nth-child(2){animation-delay:.35s;}
+.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:8px;
+}
+.info-card-titulo i{font-size:.8rem;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{
+  font-size:.82rem;color:var(--text-secondary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-lista li::before{
+  content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;
+}
+
+.tipo-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:10;
+  font-size:.63rem;padding:4px 12px;border-radius:100px;
+  text-transform:uppercase;letter-spacing:.09em;font-weight:700;
+}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  animation:bounce 2.5s ease-in-out infinite;z-index:10;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── CONTEÚDO ──────────────────────────────────────────────────────── */
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+.secao{margin-bottom:4rem;}
+.secao-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:2rem;
+  padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);
+}
+.secao-num{
+  font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;
+  color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;
+}
+.secao-label{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--green-400);font-weight:600;margin-bottom:2px;
+}
+.secao-titulo{
+  font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;
+  color:var(--white);letter-spacing:-.02em;
+}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;
+  transition:border-color .2s,background .2s;
+}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{
+  font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:.85rem;display:flex;align-items:center;gap:8px;
+}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+
+.destaque{
+  padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);
+  font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;
+}
+.destaque strong{color:var(--green-400);}
+
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;
+   font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+
+.code-block{
+  background:var(--code-bg);border:1px solid var(--code-border);
+  border-radius:12px;overflow:hidden;margin:.75rem 0;
+}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1rem;background:rgba(74,222,128,.08);
+  border-bottom:1px solid var(--code-border);
+}
+.code-lang{
+  font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;
+}
+.code-copy{
+  font-size:.65rem;cursor:pointer;background:none;border:none;
+  color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;
+}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}
+.fn{color:#93c5fd;}
+.str{color:#fde68a;}
+.cm{color:#4b5563;font-style:italic;}
+.num{color:#fca5a5;}
+.op{color:#c4b5fd;}
+
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:.88rem;color:var(--text-secondary);line-height:1.55;
+}
+.icon-list li i{color:var(--green-400);font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+
+.badge-inline{
+  display:inline-block;padding:2px 8px;border-radius:6px;
+  font-size:.72rem;font-weight:600;letter-spacing:.04em;
+  background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.2);
+}
+
+.aviso{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);
+  font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+
+.aviso-info{
+  display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;
+  background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);
+  font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;
+}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+.exercicio{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.25rem;margin-bottom:.85rem;
+}
+.exercicio-num{
+  font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;
+  color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;
+}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{
+  display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;
+  font-size:.65rem;font-weight:600;letter-spacing:.05em;
+}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+
+.gabarito-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;
+  padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;
+  font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;
+}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.resumo-item{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:12px;padding:1.1rem;text-align:center;
+}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.8rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.85rem;margin-bottom:3px;}
+
+.proxima{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-radius:14px;
+  background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);
+  margin-top:3rem;text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+
+.sep{
+  display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;
+}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+
+/* diagrama CTE */
+.cte-flow{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:1rem 1.25rem;background:rgba(74,222,128,.05);
+  border:1px solid rgba(74,222,128,.15);border-radius:10px;margin:.75rem 0;
+}
+.cte-step{
+  background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);
+  border-radius:8px;padding:.4rem .85rem;font-size:.8rem;
+  font-family:'JetBrains Mono',monospace;color:var(--green-400);
+}
+.cte-arrow{color:rgba(74,222,128,.5);font-size:1rem;}
+
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}
+  .capa-right{display:none;}
+  .grid-2{grid-template-columns:1fr;}
+  .resumo-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ CAPA ═══════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">02</div>
+    <h1 class="capa-titulo">SQL Avançado:<br><em>Subqueries, CTEs</em><br>e Window Functions</h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Pré-requisito: Semana 1</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Subqueries: escalares, no WHERE e no FROM</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-stream"></i></div><span>Subqueries correlacionadas e EXISTS / NOT EXISTS</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-code-branch"></i></div><span>CTEs com WITH — consultas legíveis e reutilizáveis</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-window-restore"></i></div><span>Window functions: OVER, PARTITION BY, ORDER BY</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-terminal"></i></div><span>Prática: 6 exercícios analíticos no banco loja_exemplo</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Consultas analíticas progressivas — ranking de clientes, médias móveis e relatórios com CTEs encadeadas.</p>
+    </div>
+  </div>
+
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Conexão com a Semana 1</div>
+      <ul class="info-lista">
+        <li>Você sabe SELECT, WHERE, JOIN e GROUP BY</li>
+        <li>Agora: como usar o resultado de uma query dentro de outra</li>
+        <li>CTEs tornam queries complexas legíveis e modulares</li>
+        <li>Window functions fazem o que GROUP BY não consegue</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-brain"></i>Por que isso importa para IA?</div>
+      <ul class="info-lista">
+        <li>Feature engineering começa aqui — calcular médias, rankings e variações diretamente no SQL</li>
+        <li>CTEs substituem subqueries aninhadas ilegíveis em pipelines reais</li>
+        <li>Window functions calculam lag/lead para séries temporais sem sair do banco</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-database"></i>Banco utilizado</div>
+      <ul class="info-lista">
+        <li>Mesmo loja_exemplo da Semana 1</li>
+        <li>clientes · produtos · pedidos · itens_pedido</li>
+        <li>Se ainda não criou, rode o script da Semana 1</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>role para o conteúdo</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CONTEÚDO ═══════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: Subqueries ──────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">Subqueries — consultas dentro de consultas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-question-circle"></i>O que é uma subquery?</div>
+      <p>Uma subquery é uma <strong>consulta SELECT dentro de outra consulta</strong>. O resultado interno é usado como valor, filtro ou tabela pela consulta externa.</p>
+      <div class="destaque">
+        <strong>Quando usar:</strong> quando você precisa de um valor calculado dinamicamente — como a média de todos os preços — sem precisar rodá-lo separadamente e substituir manualmente.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-equals"></i>Subquery Escalar — retorna um único valor</div>
+      <p>A subquery retorna exatamente <strong>uma linha e uma coluna</strong>. Pode aparecer onde um valor literal seria usado.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Subquery Escalar</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Produtos com preço ACIMA da média geral</span>
+<span class="kw">SELECT</span> nome, preco
+<span class="kw">FROM</span> produtos
+<span class="kw">WHERE</span> preco <span class="op">&gt;</span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(preco) <span class="kw">FROM</span> produtos   <span class="cm">-- retorna um número: 745.65</span>
+)
+<span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>;
+
+<span class="cm">-- No SELECT: mostrar quanto cada produto está acima da média</span>
+<span class="kw">SELECT</span>
+  nome,
+  preco,
+  <span class="fn">ROUND</span>(<span class="fn">AVG</span>(preco) <span class="kw">OVER</span> (), <span class="num">2</span>)      <span class="kw">AS</span> media_geral,
+  <span class="fn">ROUND</span>(preco <span class="op">-</span> (<span class="kw">SELECT</span> <span class="fn">AVG</span>(preco) <span class="kw">FROM</span> produtos), <span class="num">2</span>) <span class="kw">AS</span> diferenca_media
+<span class="kw">FROM</span> produtos
+<span class="kw">ORDER BY</span> diferenca_media <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>Subquery no FROM — como se fosse uma tabela</div>
+      <p>A subquery vira uma <strong>tabela temporária</strong> (derivada) que pode ser consultada normalmente. <strong>Obrigatório dar um alias.</strong></p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Subquery no FROM</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Total gasto por cliente → filtrar só quem gastou acima da média</span>
+<span class="kw">SELECT</span> cliente_nome, total_gasto
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span>
+    c.nome          <span class="kw">AS</span> cliente_nome,
+    <span class="fn">SUM</span>(p.total)    <span class="kw">AS</span> total_gasto
+  <span class="kw">FROM</span> clientes c
+  <span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+  <span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+  <span class="kw">GROUP BY</span> c.id, c.nome
+) <span class="kw">AS</span> resumo_clientes   <span class="cm">-- alias obrigatório</span>
+<span class="kw">WHERE</span> total_gasto <span class="op">&gt;</span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(total) <span class="kw">FROM</span> pedidos <span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>
+)
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sync-alt"></i>Subquery Correlacionada — referencia a query externa</div>
+      <p>A subquery <strong>referencia uma coluna da query externa</strong>. É executada uma vez para cada linha da query externa — pode ser lenta em tabelas grandes, mas é muito expressiva.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Correlacionada</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Clientes que têm pelo menos um pedido com total > 2000</span>
+<span class="kw">SELECT</span> c.nome, c.cidade
+<span class="kw">FROM</span> clientes c
+<span class="kw">WHERE</span> <span class="kw">EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span>
+  <span class="kw">FROM</span> pedidos p
+  <span class="kw">WHERE</span> p.cliente_id <span class="op">=</span> c.id   <span class="cm">-- ← referencia c da query externa</span>
+    <span class="kw">AND</span> p.total <span class="op">&gt;</span> <span class="num">2000</span>
+);
+
+<span class="cm">-- Clientes que NUNCA fizeram pedido</span>
+<span class="kw">SELECT</span> c.nome
+<span class="kw">FROM</span> clientes c
+<span class="kw">WHERE</span> <span class="kw">NOT EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> pedidos p <span class="kw">WHERE</span> p.cliente_id <span class="op">=</span> c.id
+);</code></pre>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>EXISTS vs IN:</strong> use <code>EXISTS</code> quando a subquery pode retornar muitas linhas — ele para na primeira correspondência. Use <code>IN</code> quando a lista é pequena e estática.</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-check-circle"></i>Quando usar subquery</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-check"></i><span>Valor calculado dinamicamente (média, máximo)</span></li>
+          <li><i class="fas fa-check"></i><span>Filtrar por resultado de agregação sem GROUP BY</span></li>
+          <li><i class="fas fa-check"></i><span>EXISTS para verificar existência com eficiência</span></li>
+          <li><i class="fas fa-check"></i><span>Tabela derivada no FROM para pré-filtrar</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-titulo"><i class="fas fa-times-circle"></i>Limitações</div>
+        <ul class="icon-list">
+          <li><i class="fas fa-exclamation-triangle"></i><span>Subquery correlacionada em tabela grande = lento</span></li>
+          <li><i class="fas fa-exclamation-triangle"></i><span>Subqueries aninhadas demais = difícil de manter</span></li>
+          <li><i class="fas fa-exclamation-triangle"></i><span>Solução: substituir por CTE (próximo bloco)</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: CTEs ──────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">CTEs com WITH — modularidade e legibilidade</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-cubes"></i>O que é uma CTE?</div>
+      <p>CTE (<em>Common Table Expression</em>) é uma <strong>consulta nomeada temporária</strong> definida com <code>WITH</code> antes do SELECT principal. É como dar um nome a uma subquery para reutilizá-la.</p>
+
+      <div class="cte-flow">
+        <span class="cte-step">WITH nome AS ( query )</span>
+        <span class="cte-arrow">→</span>
+        <span class="cte-step">SELECT * FROM nome</span>
+        <span class="cte-arrow">→</span>
+        <span class="cte-step">resultado final</span>
+      </div>
+
+      <div class="destaque">
+        <strong>Vantagem real:</strong> uma CTE com 4 partes encadeadas é muito mais legível do que 4 subqueries aninhadas. Em pipelines de BI e feature engineering, CTEs são padrão de mercado.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-code"></i>CTE simples — uma etapa</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — CTE básica</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Clientes com total gasto acima da média</span>
+<span class="kw">WITH</span> total_por_cliente <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    c.id,
+    c.nome,
+    <span class="fn">SUM</span>(p.total) <span class="kw">AS</span> total_gasto
+  <span class="kw">FROM</span> clientes c
+  <span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+  <span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+  <span class="kw">GROUP BY</span> c.id, c.nome
+)
+<span class="kw">SELECT</span> nome, total_gasto
+<span class="kw">FROM</span> total_por_cliente
+<span class="kw">WHERE</span> total_gasto <span class="op">&gt;</span> (<span class="kw">SELECT</span> <span class="fn">AVG</span>(total_gasto) <span class="kw">FROM</span> total_por_cliente)
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-project-diagram"></i>CTEs encadeadas — múltiplos WITH</div>
+      <p>Você pode definir <strong>várias CTEs</strong> em sequência, onde cada uma pode referenciar as anteriores. Isso cria um pipeline de transformação legível.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — CTEs encadeadas</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">WITH</span>
+
+<span class="cm">-- Etapa 1: pedidos entregues por cliente</span>
+pedidos_entregues <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> cliente_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> qtd, <span class="fn">SUM</span>(total) <span class="kw">AS</span> total_gasto
+  <span class="kw">FROM</span> pedidos
+  <span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>
+  <span class="kw">GROUP BY</span> cliente_id
+),
+
+<span class="cm">-- Etapa 2: classificar clientes como VIP ou regular</span>
+clientes_classificados <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    c.nome,
+    c.cidade,
+    pe.qtd,
+    pe.total_gasto,
+    <span class="kw">CASE</span>
+      <span class="kw">WHEN</span> pe.total_gasto <span class="op">&gt;</span> <span class="num">3000</span> <span class="kw">THEN</span> <span class="str">'VIP'</span>
+      <span class="kw">WHEN</span> pe.total_gasto <span class="op">&gt;</span> <span class="num">500</span>  <span class="kw">THEN</span> <span class="str">'Regular'</span>
+      <span class="kw">ELSE</span> <span class="str">'Ocasional'</span>
+    <span class="kw">END</span> <span class="kw">AS</span> categoria
+  <span class="kw">FROM</span> clientes c
+  <span class="kw">INNER JOIN</span> pedidos_entregues pe <span class="kw">ON</span> pe.cliente_id <span class="op">=</span> c.id  <span class="cm">-- referencia CTE anterior</span>
+),
+
+<span class="cm">-- Etapa 3: só os VIP</span>
+clientes_vip <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> * <span class="kw">FROM</span> clientes_classificados <span class="kw">WHERE</span> categoria <span class="op">=</span> <span class="str">'VIP'</span>
+)
+
+<span class="cm">-- Query final: usar a CTE do passo 3</span>
+<span class="kw">SELECT</span> nome, cidade, qtd <span class="kw">AS</span> pedidos, total_gasto
+<span class="kw">FROM</span> clientes_vip
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+      </div>
+      <div class="aviso-info">
+        <i class="fas fa-info-circle"></i>
+        <span>Cada CTE existe apenas dentro da query que a define. Ela não é uma VIEW permanente — é descartada assim que a query termina.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-balance-scale"></i>Subquery vs CTE — quando usar cada um</div>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Critério</th><th>Subquery</th><th>CTE</th></tr></thead>
+          <tbody>
+            <tr><td>Legibilidade</td><td>Difícil em múltiplos níveis</td><td>✅ Excelente — cada etapa nomeada</td></tr>
+            <tr><td>Reutilização</td><td>❌ Precisa repetir</td><td>✅ Referencia pelo nome</td></tr>
+            <tr><td>Depuração</td><td>Difícil isolar partes</td><td>✅ Testa cada CTE separada</td></tr>
+            <tr><td>Performance</td><td>Similar</td><td>Similar (PostgreSQL materializa quando vantajoso)</td></tr>
+            <tr><td>Recursão</td><td>❌ Não suporta</td><td>✅ WITH RECURSIVE</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Window Functions ─────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Window Functions — análise sem perder as linhas</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-window-restore"></i>O problema que window functions resolvem</div>
+      <p>Com <code>GROUP BY</code>, você agrega e <strong>perde as linhas originais</strong>. Com window functions, você calcula valores analíticos <strong>mantendo todas as linhas</strong>.</p>
+      <div class="grid-2">
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">GROUP BY — perde as linhas</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL</span></div>
+            <pre><code><span class="kw">SELECT</span> categoria, <span class="fn">AVG</span>(preco)
+<span class="kw">FROM</span> produtos
+<span class="kw">GROUP BY</span> categoria;
+<span class="cm">-- retorna 2 linhas (uma por categoria)</span>
+<span class="cm">-- perdemos os produtos individuais</span></code></pre>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Window Function — mantém as linhas</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">SQL</span></div>
+            <pre><code><span class="kw">SELECT</span> nome, categoria, preco,
+  <span class="fn">AVG</span>(preco) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria)
+             <span class="kw">AS</span> media_categoria
+<span class="kw">FROM</span> produtos;
+<span class="cm">-- retorna TODOS os produtos + a média</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-sort-numeric-down"></i>ROW_NUMBER, RANK e DENSE_RANK</div>
+      <p>As três funções de ranking — diferem apenas quando há <strong>empates</strong>:</p>
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Função</th><th>Comportamento no empate</th><th>Exemplo (empate na posição 2)</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-inline">ROW_NUMBER()</span></td><td>Numera sem repetir — ordem arbitrária no empate</td><td>1, 2, 3, 4</td></tr>
+            <tr><td><span class="badge-inline">RANK()</span></td><td>Pula posições após empate</td><td>1, 2, 2, 4</td></tr>
+            <tr><td><span class="badge-inline">DENSE_RANK()</span></td><td>Não pula posições</td><td>1, 2, 2, 3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Ranking de produtos por preço dentro da categoria</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">SELECT</span>
+  nome,
+  categoria,
+  preco,
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+  <span class="fn">RANK</span>()       <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>) <span class="kw">AS</span> rank,
+  <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>) <span class="kw">AS</span> dense_rank
+<span class="kw">FROM</span> produtos
+<span class="kw">ORDER BY</span> categoria, preco <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-chart-line"></i>SUM, AVG e COUNT com OVER — acumulados e particionados</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Agregações com janela</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- Total acumulado de vendas por data (running total)</span>
+<span class="kw">SELECT</span>
+  criado_em::date                          <span class="kw">AS</span> data,
+  <span class="fn">SUM</span>(total)                               <span class="kw">AS</span> vendas_dia,
+  <span class="fn">SUM</span>(<span class="fn">SUM</span>(total)) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> criado_em::date
+    <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+  )                                        <span class="kw">AS</span> total_acumulado
+<span class="kw">FROM</span> pedidos
+<span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">GROUP BY</span> criado_em::date
+<span class="kw">ORDER BY</span> data;
+
+<span class="cm">-- % que cada pedido representa do total do cliente</span>
+<span class="kw">SELECT</span>
+  c.nome                                   <span class="kw">AS</span> cliente,
+  p.id                                     <span class="kw">AS</span> pedido,
+  p.total,
+  <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> c.id)    <span class="kw">AS</span> total_cliente,
+  <span class="fn">ROUND</span>(
+    p.total <span class="op">/</span> <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> c.id) <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                        <span class="kw">AS</span> pct_do_cliente
+<span class="kw">FROM</span> pedidos p
+<span class="kw">INNER JOIN</span> clientes c <span class="kw">ON</span> c.id <span class="op">=</span> p.cliente_id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">ORDER BY</span> c.nome, p.total <span class="kw">DESC</span>;</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-arrows-alt-h"></i>LAG e LEAD — comparando com linhas vizinhas</div>
+      <p><code>LAG(col, n)</code> acessa <strong>n linhas antes</strong>. <code>LEAD(col, n)</code> acessa <strong>n linhas depois</strong>. Essencial para séries temporais e feature engineering.</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — LAG para variação diária</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">WITH</span> vendas_diarias <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    criado_em::date    <span class="kw">AS</span> data,
+    <span class="fn">SUM</span>(total)         <span class="kw">AS</span> vendas
+  <span class="kw">FROM</span> pedidos
+  <span class="kw">WHERE</span> status <span class="op">=</span> <span class="str">'entregue'</span>
+  <span class="kw">GROUP BY</span> criado_em::date
+)
+<span class="kw">SELECT</span>
+  data,
+  vendas,
+  <span class="fn">LAG</span>(vendas, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> data)             <span class="kw">AS</span> vendas_dia_anterior,
+  vendas <span class="op">-</span> <span class="fn">LAG</span>(vendas, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> data)     <span class="kw">AS</span> variacao_abs,
+  <span class="fn">ROUND</span>(
+    (vendas <span class="op">-</span> <span class="fn">LAG</span>(vendas, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> data))
+    <span class="op">/</span> <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(vendas, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> data), <span class="num">0</span>) <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                                   <span class="kw">AS</span> variacao_pct
+<span class="kw">FROM</span> vendas_diarias
+<span class="kw">ORDER BY</span> data;</code></pre>
+      </div>
+      <div class="aviso">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>NULLIF(expr, 0):</strong> evita divisão por zero — retorna NULL quando o divisor é 0, em vez de lançar erro.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-th-list"></i>NTILE, FIRST_VALUE e LAST_VALUE</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — Outros window functions úteis</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="cm">-- NTILE(4): dividir clientes em quartis de gasto</span>
+<span class="kw">WITH</span> gastos <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> c.nome, <span class="fn">SUM</span>(p.total) <span class="kw">AS</span> total
+  <span class="kw">FROM</span> clientes c <span class="kw">JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+  <span class="kw">GROUP BY</span> c.id, c.nome
+)
+<span class="kw">SELECT</span> nome, total,
+  <span class="fn">NTILE</span>(<span class="num">4</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> total) <span class="kw">AS</span> quartil  <span class="cm">-- 1=menor, 4=maior</span>
+<span class="kw">FROM</span> gastos;
+
+<span class="cm">-- FIRST_VALUE / LAST_VALUE: produto mais barato e mais caro da categoria</span>
+<span class="kw">SELECT</span>
+  nome, categoria, preco,
+  <span class="fn">FIRST_VALUE</span>(nome) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> preco)     <span class="kw">AS</span> mais_barato,
+  <span class="fn">FIRST_VALUE</span>(nome) <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>) <span class="kw">AS</span> mais_caro
+<span class="kw">FROM</span> produtos;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · Banco loja_exemplo</div>
+        <div class="secao-titulo">6 Exercícios — Subqueries, CTEs e Window Functions</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o banco <strong>loja_exemplo</strong> criado na Semana 1. Tente resolver antes de ver o gabarito.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Liste os produtos cujo preço está <strong>acima da média geral de preços</strong>. Mostre nome, preço e a diferença em relação à média. Ordene do maior para o menor preço.</p>
+      <span class="dificuldade dif-basico">Básico — Subquery Escalar</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  nome,
+  preco,
+  <span class="fn">ROUND</span>(preco <span class="op">-</span> (<span class="kw">SELECT</span> <span class="fn">AVG</span>(preco) <span class="kw">FROM</span> produtos), <span class="num">2</span>) <span class="kw">AS</span> acima_da_media
+<span class="kw">FROM</span> produtos
+<span class="kw">WHERE</span> preco <span class="op">&gt;</span> (<span class="kw">SELECT</span> <span class="fn">AVG</span>(preco) <span class="kw">FROM</span> produtos)
+<span class="kw">ORDER BY</span> preco <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Liste os clientes que <strong>nunca fizeram um pedido</strong>. Use <code>NOT EXISTS</code>.</p>
+      <span class="dificuldade dif-basico">Básico — NOT EXISTS</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span> c.nome, c.cidade
+<span class="kw">FROM</span> clientes c
+<span class="kw">WHERE</span> <span class="kw">NOT EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> pedidos p <span class="kw">WHERE</span> p.cliente_id <span class="op">=</span> c.id
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Usando uma <strong>CTE</strong>, calcule o total gasto por cada cliente em pedidos entregues. Em seguida, classifique como <strong>'VIP'</strong> (acima de R$ 3.000), <strong>'Regular'</strong> (entre R$ 500 e R$ 3.000) ou <strong>'Ocasional'</strong> (abaixo de R$ 500).</p>
+      <span class="dificuldade dif-medio">Médio — CTE + CASE WHEN</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span> gastos_cliente <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    c.nome,
+    <span class="fn">SUM</span>(p.total) <span class="kw">AS</span> total_gasto
+  <span class="kw">FROM</span> clientes c
+  <span class="kw">INNER JOIN</span> pedidos p <span class="kw">ON</span> p.cliente_id <span class="op">=</span> c.id
+  <span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+  <span class="kw">GROUP BY</span> c.id, c.nome
+)
+<span class="kw">SELECT</span>
+  nome,
+  total_gasto,
+  <span class="kw">CASE</span>
+    <span class="kw">WHEN</span> total_gasto <span class="op">&gt;</span> <span class="num">3000</span> <span class="kw">THEN</span> <span class="str">'VIP'</span>
+    <span class="kw">WHEN</span> total_gasto <span class="op">&gt;</span> <span class="num">500</span>  <span class="kw">THEN</span> <span class="str">'Regular'</span>
+    <span class="kw">ELSE</span> <span class="str">'Ocasional'</span>
+  <span class="kw">END</span> <span class="kw">AS</span> categoria
+<span class="kw">FROM</span> gastos_cliente
+<span class="kw">ORDER BY</span> total_gasto <span class="kw">DESC</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Para cada produto que já foi vendido, mostre o nome, a <strong>quantidade total vendida</strong> e o <strong>ranking</strong> dentro da sua categoria (do mais vendido para o menos). Use <code>RANK()</code> com <code>PARTITION BY</code>.</p>
+      <span class="dificuldade dif-medio">Médio — RANK + PARTITION BY</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span> vendas_produto <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    pr.nome        <span class="kw">AS</span> produto,
+    pr.categoria,
+    <span class="fn">SUM</span>(i.quantidade) <span class="kw">AS</span> qtd_vendida
+  <span class="kw">FROM</span> produtos pr
+  <span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.produto_id <span class="op">=</span> pr.id
+  <span class="kw">GROUP BY</span> pr.id, pr.nome, pr.categoria
+)
+<span class="kw">SELECT</span>
+  produto,
+  categoria,
+  qtd_vendida,
+  <span class="fn">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> qtd_vendida <span class="kw">DESC</span>) <span class="kw">AS</span> rank_categoria
+<span class="kw">FROM</span> vendas_produto
+<span class="kw">ORDER BY</span> categoria, rank_categoria;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05</div>
+      <p>Mostre cada pedido entregue com o seu total, o <strong>total acumulado</strong> (running sum) até aquele pedido (ordenado por data) e o <strong>percentual</strong> que ele representa do total geral de pedidos entregues.</p>
+      <span class="dificuldade dif-medio">Médio — SUM OVER + Running Total</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">SELECT</span>
+  p.id,
+  c.nome                                                        <span class="kw">AS</span> cliente,
+  p.criado_em::date                                             <span class="kw">AS</span> data,
+  p.total,
+  <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> p.criado_em
+    <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>)          <span class="kw">AS</span> total_acumulado,
+  <span class="fn">ROUND</span>(
+    p.total <span class="op">/</span> <span class="fn">SUM</span>(p.total) <span class="kw">OVER</span> () <span class="op">*</span> <span class="num">100</span>, <span class="num">1</span>
+  )                                                             <span class="kw">AS</span> pct_total
+<span class="kw">FROM</span> pedidos p
+<span class="kw">INNER JOIN</span> clientes c <span class="kw">ON</span> c.id <span class="op">=</span> p.cliente_id
+<span class="kw">WHERE</span> p.status <span class="op">=</span> <span class="str">'entregue'</span>
+<span class="kw">ORDER BY</span> p.criado_em;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 06 — Desafio</div>
+      <p>Usando <strong>CTEs encadeadas</strong>: 1) calcule o total vendido por produto; 2) rankei por categoria com <code>DENSE_RANK()</code>; 3) retorne apenas os <strong>top 1 de cada categoria</strong> (o produto mais vendido em cada categoria).</p>
+      <span class="dificuldade dif-desafio">Desafio — CTEs + DENSE_RANK + Filtro de ranking</span>
+      <br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">WITH</span>
+
+vendas_produto <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    pr.nome        <span class="kw">AS</span> produto,
+    pr.categoria,
+    <span class="fn">SUM</span>(i.quantidade) <span class="kw">AS</span> qtd_vendida,
+    <span class="fn">SUM</span>(i.quantidade <span class="op">*</span> i.preco_unit) <span class="kw">AS</span> receita
+  <span class="kw">FROM</span> produtos pr
+  <span class="kw">INNER JOIN</span> itens_pedido i <span class="kw">ON</span> i.produto_id <span class="op">=</span> pr.id
+  <span class="kw">GROUP BY</span> pr.id, pr.nome, pr.categoria
+),
+
+rankeados <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> categoria <span class="kw">ORDER BY</span> qtd_vendida <span class="kw">DESC</span>) <span class="kw">AS</span> pos
+  <span class="kw">FROM</span> vendas_produto
+)
+
+<span class="kw">SELECT</span> categoria, produto, qtd_vendida, receita
+<span class="kw">FROM</span> rankeados
+<span class="kw">WHERE</span> pos <span class="op">=</span> <span class="num">1</span>    <span class="cm">-- só o top 1 de cada categoria</span>
+<span class="kw">ORDER BY</span> categoria;</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 2</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Subqueries</strong>
+        <p>Escalar no WHERE, tabela derivada no FROM, correlacionada com EXISTS / NOT EXISTS</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-cubes"></i>
+        <strong>CTEs</strong>
+        <p>WITH para modularizar consultas, CTEs encadeadas, comparativo com subquery</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-window-restore"></i>
+        <strong>Window Functions</strong>
+        <p>ROW_NUMBER, RANK, DENSE_RANK, SUM/AVG OVER, LAG/LEAD, NTILE, PARTITION BY</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-03.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 3 — Normalização Avançada: 1FN, 2FN, 3FN e FNBC</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn) {
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+  btn.innerHTML = content.classList.contains('open')
+    ? '<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    : '<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn) {
+  const code = btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'copiado!';
+    setTimeout(() => btn.textContent = 'copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>

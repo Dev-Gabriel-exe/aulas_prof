@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Semana 14 — Banco de Dados · Tecnólogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green-900:#052e16;--green-800:#14532d;--green-700:#166534;
+  --green-600:#16a34a;--green-400:#4ade80;--green-300:#86efac;
+  --white:#ffffff;
+  --text-primary:rgba(255,255,255,.92);--text-secondary:rgba(255,255,255,.6);
+  --text-muted:rgba(255,255,255,.35);
+  --card-bg:rgba(255,255,255,.04);--card-border:rgba(255,255,255,.08);
+  --card-hover:rgba(74,222,128,.06);
+  --code-bg:#0a1a0e;--code-border:rgba(74,222,128,.2);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--green-900);color:var(--text-primary);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+.capa{min-height:100vh;display:grid;grid-template-columns:1fr 1.4fr;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.3;pointer-events:none;}
+.blob-1{width:650px;height:650px;background:var(--green-700);top:-220px;left:-180px;}
+.blob-2{width:550px;height:550px;background:var(--green-800);bottom:-200px;right:-120px;}
+.blob-3{width:300px;height:300px;background:var(--green-600);top:40%;left:40%;opacity:.15;}
+.capa-left{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;border-right:1px solid rgba(74,222,128,.15);}
+.semana-badge{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green-400);border:1px solid rgba(74,222,128,.25);padding:5px 14px;border-radius:100px;width:fit-content;margin-bottom:2rem;}
+.semana-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green-400);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.semana-num{font-family:'Montserrat',sans-serif;font-size:7rem;font-weight:800;color:rgba(74,222,128,.1);line-height:1;letter-spacing:-.05em;margin-bottom:.25rem;}
+.capa-titulo{font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:800;color:var(--white);line-height:1.15;margin-bottom:.4rem;letter-spacing:-.025em;}
+.capa-titulo em{font-style:normal;color:var(--green-400);}
+.capa-sub{font-size:.88rem;color:var(--text-secondary);margin-bottom:2.5rem;}
+.divider{width:44px;height:3px;background:var(--green-400);border-radius:2px;margin-bottom:2rem;}
+.topicos{display:flex;flex-direction:column;gap:.65rem;}
+.topico{display:flex;align-items:center;gap:12px;padding:.6rem 1rem;border-radius:10px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.12);color:var(--text-primary);font-size:.83rem;animation:slideIn .5s ease both;}
+.topico:nth-child(1){animation-delay:.1s;}.topico:nth-child(2){animation-delay:.2s;}.topico:nth-child(3){animation-delay:.3s;}.topico:nth-child(4){animation-delay:.4s;}.topico:nth-child(5){animation-delay:.5s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.topico-icon{width:30px;height:30px;border-radius:8px;flex-shrink:0;background:rgba(74,222,128,.18);color:var(--green-400);display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.atividade-box{margin-top:1.75rem;padding:.85rem 1.1rem;border-radius:10px;background:rgba(74,222,128,.05);border-left:3px solid var(--green-400);}
+.atividade-box .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-weight:600;margin-bottom:4px;}
+.atividade-box p{font-size:.82rem;color:var(--text-secondary);}
+.capa-right{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;gap:1.25rem;}
+.info-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.25rem 1.5rem;animation:fadeUp .6s ease both;}
+.info-card:nth-child(1){animation-delay:.2s;}.info-card:nth-child(2){animation-delay:.35s;}.info-card:nth-child(3){animation-delay:.5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.info-card-titulo{font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;display:flex;align-items:center;gap:8px;}
+.info-lista{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
+.info-lista li{font-size:.82rem;color:var(--text-secondary);line-height:1.5;display:flex;align-items:flex-start;gap:8px;}
+.info-lista li::before{content:'▸';color:var(--green-400);font-size:.7rem;margin-top:3px;flex-shrink:0;}
+.tipo-badge{position:absolute;top:1.5rem;right:1.5rem;z-index:10;font-size:.63rem;padding:4px 12px;border-radius:100px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.tipo-conteudo{background:rgba(74,222,128,.12);color:var(--green-400);border:1px solid rgba(74,222,128,.25);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;animation:bounce 2.5s ease-in-out infinite;z-index:10;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+.conteudo{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+.secao{margin-bottom:4rem;}
+.secao-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(74,222,128,.15);}
+.secao-num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(74,222,128,.18);line-height:1;letter-spacing:-.04em;flex-shrink:0;}
+.secao-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green-400);font-weight:600;margin-bottom:2px;}
+.secao-titulo{font-family:'Montserrat',sans-serif;font-size:1.35rem;font-weight:700;color:var(--white);letter-spacing:-.02em;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;transition:border-color .2s,background .2s;}
+.card:hover{border-color:rgba(74,222,128,.2);background:var(--card-hover);}
+.card-titulo{font-family:'Montserrat',sans-serif;font-size:.85rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.85rem;display:flex;align-items:center;gap:8px;}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7;margin-bottom:.75rem;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text-primary);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
+.destaque{padding:1rem 1.25rem;border-radius:10px;background:rgba(74,222,128,.07);border-left:3px solid var(--green-400);font-size:.88rem;color:var(--text-secondary);margin:.75rem 0;line-height:1.6;}
+.destaque strong{color:var(--green-400);}
+.destaque-red{padding:1rem 1.25rem;border-radius:10px;background:rgba(239,68,68,.06);border-left:3px solid #f87171;font-size:.88rem;color:rgba(252,165,165,.85);margin:.75rem 0;line-height:1.6;}
+.destaque-red strong{color:#f87171;}
+.tabela-wrap{overflow-x:auto;margin:.75rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead tr{background:rgba(74,222,128,.12);}
+th{padding:.6rem 1rem;text-align:left;color:var(--green-400);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid rgba(74,222,128,.2);}
+td{padding:.6rem 1rem;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(74,222,128,.04);}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;}
+td strong{color:var(--text-primary);}
+.code-block{background:var(--code-bg);border:1px solid var(--code-border);border-radius:12px;overflow:hidden;margin:.75rem 0;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;background:rgba(74,222,128,.08);border-bottom:1px solid var(--code-border);}
+.code-lang{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);font-family:'JetBrains Mono',monospace;font-weight:500;}
+.code-copy{font-size:.65rem;cursor:pointer;background:none;border:none;color:var(--text-muted);letter-spacing:.05em;font-family:'Inter',sans-serif;transition:color .2s;}
+.code-copy:hover{color:var(--green-400);}
+pre{padding:1.25rem;overflow-x:auto;}
+code{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.7;color:#a7f3d0;}
+.kw{color:#f9a8d4;}.fn{color:#93c5fd;}.str{color:#fde68a;}.cm{color:#4b5563;font-style:italic;}.num{color:#fca5a5;}.op{color:#c4b5fd;}
+.sql-kw{color:#f9a8d4;}.sql-fn{color:#93c5fd;}.sql-str{color:#fde68a;}.sql-cm{color:#4b5563;font-style:italic;}.sql-num{color:#fca5a5;}
+.icon-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;}
+.icon-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--text-secondary);line-height:1.55;}
+.icon-list li i{font-size:.8rem;margin-top:3px;flex-shrink:0;width:14px;}
+.icon-list li i.ok{color:var(--green-400);}
+.icon-list li i.bad{color:#f87171;}
+.icon-list li i.warn{color:#fbbf24;}
+.aviso{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);font-size:.86rem;color:rgba(253,230,138,.8);margin:.75rem 0;line-height:1.6;}
+.aviso i{color:#fbbf24;flex-shrink:0;margin-top:2px;}
+.aviso-info{display:flex;gap:12px;padding:1rem 1.25rem;border-radius:10px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);font-size:.86rem;color:rgba(186,230,253,.8);margin:.75rem 0;line-height:1.6;}
+.aviso-info i{color:#60a5fa;flex-shrink:0;margin-top:2px;}
+
+/* árvore B-tree visual */
+.btree{display:flex;flex-direction:column;align-items:center;gap:.75rem;margin:1.25rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.btree-row{display:flex;justify-content:center;gap:.5rem;}
+.btree-node{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green-400);border-radius:7px;padding:.35rem .8rem;white-space:nowrap;}
+.btree-leaf{background:rgba(74,222,128,.05);border:1px dashed rgba(74,222,128,.2);color:var(--text-secondary);border-radius:7px;padding:.35rem .7rem;font-size:.72rem;}
+.btree-arrow{color:var(--text-muted);font-size:.75rem;text-align:center;}
+
+/* explain output estilo */
+.explain-out{background:#080f09;border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:1.1rem 1.25rem;margin:.75rem 0;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.8;overflow-x:auto;}
+.ex-node{color:#a7f3d0;}
+.ex-cost{color:#fde68a;}
+.ex-rows{color:#f9a8d4;}
+.ex-width{color:#c4b5fd;}
+.ex-bad{color:#f87171;}
+.ex-good{color:#4ade80;}
+.ex-label{color:#60a5fa;}
+
+/* índice tipo cards */
+.idx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.75rem 0;}
+.idx-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;}
+.idx-card .ic-tipo{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem;color:var(--green-400);}
+.idx-card .ic-nome{font-size:.85rem;font-weight:700;color:var(--text-primary);margin-bottom:.4rem;}
+.idx-card p{font-size:.77rem;color:var(--text-secondary);line-height:1.5;}
+.idx-card .ic-ok{font-size:.72rem;color:var(--green-400);margin-top:.5rem;}
+.idx-card .ic-bad{font-size:.72rem;color:#f87171;margin-top:.3rem;}
+
+/* exercícios */
+.exercicio{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;}
+.exercicio-num{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:700;color:var(--green-400);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.exercicio p{font-size:.88rem;color:var(--text-secondary);line-height:1.6;}
+.dificuldade{display:inline-block;margin-top:.6rem;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:600;letter-spacing:.05em;}
+.dif-basico{background:rgba(74,222,128,.1);color:var(--green-400);border:1px solid rgba(74,222,128,.2);}
+.dif-medio{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.dif-desafio{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.gabarito-toggle{display:flex;align-items:center;gap:8px;background:none;border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:.5rem 1rem;color:var(--green-400);font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .2s;}
+.gabarito-toggle:hover{background:rgba(74,222,128,.08);}
+.gabarito-content{display:none;margin-top:.75rem;}
+.gabarito-content.open{display:block;}
+
+.resumo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.resumo-item{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.1rem;text-align:center;}
+.resumo-item i{font-size:1.4rem;color:var(--green-400);margin-bottom:.5rem;display:block;}
+.resumo-item p{font-size:.78rem;color:var(--text-secondary);line-height:1.5;}
+.resumo-item strong{color:var(--text-primary);display:block;font-size:.82rem;margin-bottom:3px;}
+.proxima{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-radius:14px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);margin-top:3rem;text-decoration:none;transition:background .2s,border-color .2s;}
+.proxima:hover{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35);}
+.proxima-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--green-400);margin-bottom:3px;}
+.proxima-titulo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--white);}
+.proxima i{font-size:1.25rem;color:var(--green-400);}
+.sep{display:flex;align-items:center;gap:12px;margin:3rem 0 2rem;}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:rgba(74,222,128,.12);}
+.sep span{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);}
+@media(max-width:900px){
+  .capa{grid-template-columns:1fr;}.capa-right{display:none;}
+  .grid-2,.grid-3,.idx-grid,.resumo-grid{grid-template-columns:1fr;}
+  .btree-row{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ CAPA ══════════════════════════════════════════ -->
+<section class="capa">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <span class="tipo-badge tipo-conteudo">📚 Conteúdo</span>
+  <div class="capa-left">
+    <div class="semana-badge"><span class="dot"></span>Banco de Dados · Tecnólogo · 3° Período</div>
+    <div class="semana-num">14</div>
+    <h1 class="capa-titulo">Indexação e<br><em>Otimização</em></h1>
+    <p class="capa-sub">3 aulas · 150 minutos · Bloco 3 — Semana 1</p>
+    <div class="divider"></div>
+    <div class="topicos">
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tree"></i></div><span>B-tree — estrutura, busca em O(log n) e range scan</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-hashtag"></i></div><span>Hash index — busca exata em O(1) e suas limitações</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-layer-group"></i></div><span>Índices compostos — ordem das colunas e seletividade</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-search"></i></div><span>EXPLAIN ANALYZE — lendo o plano de execução do PostgreSQL</span></div>
+      <div class="topico"><div class="topico-icon"><i class="fas fa-tachometer-alt"></i></div><span>Prática: benchmark com e sem índice, interpretação de planos</span></div>
+    </div>
+    <div class="atividade-box">
+      <div class="label">Atividade Prática</div>
+      <p>Criar tabela com 1 milhão de registros, medir tempo de query sem índice, criar índices B-tree e composto, re-medir e interpretar a saída do EXPLAIN ANALYZE antes e depois.</p>
+    </div>
+  </div>
+  <div class="capa-right">
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-link"></i>Contexto no semestre</div>
+      <ul class="info-lista">
+        <li>Semanas 1–5: SQL avançado — agora vemos por que algumas queries são lentas</li>
+        <li>Esta semana: indexação — a ferramenta mais impactante de otimização em BD</li>
+        <li>Semana 15: transações avançadas e concorrência — ACID, MVCC, deadlock</li>
+        <li>Índices afetam diretamente performance de pipelines de ML (semanas 9–11)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-question-circle"></i>Por que queries ficam lentas?</div>
+      <ul class="info-lista">
+        <li>Sem índice, o banco lê todas as linhas da tabela (Seq Scan) — O(n)</li>
+        <li>Com índice B-tree, o banco navega pela árvore — O(log n)</li>
+        <li>Uma tabela com 10M linhas: Seq Scan lê 10M; índice lê ~24 nós</li>
+        <li>Índice errado pode ser pior que nenhum índice — overhead de manutenção</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-titulo"><i class="fas fa-tools"></i>Stack desta semana</div>
+      <ul class="info-lista">
+        <li>PostgreSQL — EXPLAIN, EXPLAIN ANALYZE, CREATE INDEX</li>
+        <li>psycopg2 + SQLAlchemy — conexão e benchmark em Python</li>
+        <li>time / timeit — medir tempo de execução de queries</li>
+        <li>pg_stat_user_indexes — inspecionar índices existentes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>role para o conteúdo</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- ═══════════════════ CONTEÚDO ══════════════════════════════════════ -->
+<main class="conteudo">
+
+  <!-- ── AULA 1: B-tree e Hash ─────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">01</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 1 · ~50 minutos</div>
+        <div class="secao-titulo">B-tree e Hash — como os índices funcionam por dentro</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-table"></i>O problema sem índice — Sequential Scan</div>
+      <p>Imagine uma tabela <code>pedidos</code> com 5 milhões de linhas. A query <code>WHERE cliente_id = 42</code> precisa encontrar todos os pedidos desse cliente. Sem índice, o PostgreSQL não tem escolha: lê <strong>cada linha da tabela</strong>, uma a uma, da primeira à última — isso se chama <strong>Sequential Scan</strong>.</p>
+      <div class="grid-2">
+        <div>
+          <p><strong>Sequential Scan (sem índice):</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-times bad"></i><span>Lê todas as 5M linhas independente do filtro</span></li>
+            <li><i class="fas fa-times bad"></i><span>Complexidade O(n) — dobrar a tabela dobra o tempo</span></li>
+            <li><i class="fas fa-check ok"></i><span>Eficiente quando retorna a maioria das linhas (&gt;10–15%)</span></li>
+            <li><i class="fas fa-check ok"></i><span>Sem custo de manutenção — não há estrutura extra</span></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Index Scan (com B-tree):</strong></p>
+          <ul class="icon-list">
+            <li><i class="fas fa-check ok"></i><span>Navega pela árvore em O(log n) — 5M linhas = ~23 comparações</span></li>
+            <li><i class="fas fa-check ok"></i><span>Salta direto para os registros que satisfazem o filtro</span></li>
+            <li><i class="fas fa-times bad"></i><span>Custo de manutenção: cada INSERT/UPDATE/DELETE atualiza o índice</span></li>
+            <li><i class="fas fa-times bad"></i><span>Ocupa espaço em disco — tipicamente 10–30% do tamanho da tabela</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tree"></i>Índice B-tree — a estrutura padrão do PostgreSQL</div>
+      <p>B-tree (Balanced Tree) é o tipo de índice padrão do PostgreSQL. É uma árvore onde todos os nós folha estão na mesma profundidade, garantindo O(log n) para qualquer busca. Suporta comparações de igualdade (<code>=</code>), intervalo (<code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code>), ordenação e LIKE com prefixo fixo (<code>LIKE 'abc%'</code>).</p>
+
+      <!-- B-tree visual -->
+      <div class="btree">
+        <div class="btree-row">
+          <div class="btree-node">50</div>
+        </div>
+        <div class="btree-arrow">↙&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↘</div>
+        <div class="btree-row">
+          <div class="btree-node">20 | 35</div>
+          <div style="width:3rem;"></div>
+          <div class="btree-node">70 | 85</div>
+        </div>
+        <div class="btree-arrow">↙↘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↙↘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↙↘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↙↘</div>
+        <div class="btree-row" style="gap:.3rem;">
+          <div class="btree-leaf">10·15</div>
+          <div class="btree-leaf">22·30</div>
+          <div class="btree-leaf">36·42</div>
+          <div class="btree-leaf">55·65</div>
+          <div class="btree-leaf">71·75</div>
+          <div class="btree-leaf">80·82</div>
+          <div class="btree-leaf">88·95</div>
+        </div>
+      </div>
+
+      <p>Para encontrar <code>cliente_id = 42</code>: compara com raiz (50 → vai para esquerda), compara com 20|35 (maior que 35 → vai para direita), chega ao nó folha 36·42 — <strong>3 comparações para uma tabela com milhões de registros.</strong></p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — criação de índices B-tree</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Índice simples em uma coluna</span>
+<span class="sql-kw">CREATE INDEX</span> idx_pedidos_cliente_id
+    <span class="sql-kw">ON</span> pedidos (cliente_id);
+
+<span class="sql-cm">-- Índice com nome descritivo (boa prática)</span>
+<span class="sql-kw">CREATE INDEX</span> idx_pedidos_criado_em
+    <span class="sql-kw">ON</span> pedidos (criado_em);
+
+<span class="sql-cm">-- Índice UNIQUE — garante unicidade E cria índice</span>
+<span class="sql-kw">CREATE UNIQUE INDEX</span> idx_clientes_cpf
+    <span class="sql-kw">ON</span> clientes (cpf);
+
+<span class="sql-cm">-- Ver índices de uma tabela</span>
+<span class="sql-kw">SELECT</span> indexname, indexdef
+<span class="sql-kw">FROM</span> pg_indexes
+<span class="sql-kw">WHERE</span> tablename = <span class="sql-str">'pedidos'</span>;
+
+<span class="sql-cm">-- Remover índice</span>
+<span class="sql-kw">DROP INDEX</span> idx_pedidos_cliente_id;
+
+<span class="sql-cm">-- Criar índice sem bloquear tabela (produção)</span>
+<span class="sql-kw">CREATE INDEX CONCURRENTLY</span> idx_pedidos_status
+    <span class="sql-kw">ON</span> pedidos (status);</code></pre>
+      </div>
+
+      <div class="destaque">
+        <strong>CREATE INDEX CONCURRENTLY</strong> cria o índice sem bloquear leituras e escritas na tabela — essencial em produção. O índice normal (<code>CREATE INDEX</code>) bloqueia escritas durante a construção, o que pode causar indisponibilidade em tabelas grandes.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-hashtag"></i>Hash index — busca exata em O(1)</div>
+      <p>Índices Hash armazenam um mapa de <strong>hash(valor) → localização no disco</strong>. A busca é O(1) — independentemente do tamanho da tabela, sempre são feitas exatamente 1–2 operações. A limitação fatal: só funciona com igualdade exata (<code>=</code>). Não suporta <code>&lt;</code>, <code>&gt;</code>, <code>BETWEEN</code>, <code>ORDER BY</code> ou <code>LIKE</code>.</p>
+
+      <div class="idx-grid">
+        <div class="idx-card">
+          <div class="ic-tipo">B-tree (padrão)</div>
+          <div class="ic-nome">Balanced Tree</div>
+          <p>Árvore balanceada. O(log n) para buscas.</p>
+          <div class="ic-ok">✓ =, &lt;, &gt;, BETWEEN, LIKE 'x%', ORDER BY</div>
+          <div class="ic-bad">✗ Não é O(1)</div>
+        </div>
+        <div class="idx-card">
+          <div class="ic-tipo">Hash</div>
+          <div class="ic-nome">Hash Index</div>
+          <p>Mapa hash direto ao bloco. O(1) para igualdade.</p>
+          <div class="ic-ok">✓ Apenas = — muito rápido</div>
+          <div class="ic-bad">✗ Sem range, sem ORDER BY, sem LIKE</div>
+        </div>
+        <div class="idx-card">
+          <div class="ic-tipo">GIN / GiST</div>
+          <div class="ic-nome">Tipos especiais</div>
+          <p>Para arrays, JSONB, texto completo, vetores (pgvector).</p>
+          <div class="ic-ok">✓ @&gt;, &lt;@, @@, &lt;=&gt; (distância vetorial)</div>
+          <div class="ic-bad">✗ Mais lento para manter — escrita cara</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — hash index e comparação de uso</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Hash index — SOMENTE para buscas de igualdade exata</span>
+<span class="sql-kw">CREATE INDEX</span> idx_sessoes_token_hash
+    <span class="sql-kw">ON</span> sessoes <span class="sql-kw">USING</span> hash (token);
+
+<span class="sql-cm">-- Esta query USA o hash index (igualdade exata)</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> sessoes <span class="sql-kw">WHERE</span> token = <span class="sql-str">'abc123xyz'</span>;
+
+<span class="sql-cm">-- Esta query NÃO usa o hash index (range scan)</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> criado_em > <span class="sql-str">'2025-01-01'</span>;
+<span class="sql-cm">-- Para isso, use B-tree em criado_em</span>
+
+<span class="sql-cm">-- Quando B-tree é melhor que Hash mesmo para igualdade:
+-- quando a query também ordena ou faz range — use B-tree sempre por padrão</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 2</span></div>
+
+  <!-- ── AULA 2: Índices compostos e EXPLAIN ───────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">02</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 2 · ~50 minutos</div>
+        <div class="secao-titulo">Índices compostos e lendo o EXPLAIN ANALYZE</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-layer-group"></i>Índices compostos — a ordem das colunas importa</div>
+      <p>Um índice composto cobre múltiplas colunas em uma só estrutura. A regra fundamental: o índice é útil se a query filtrar <strong>pelo prefixo do índice</strong> — ou seja, pelas primeiras colunas na ordem em que foram declaradas.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — índice composto e regra do prefixo</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Índice composto: (status, criado_em)</span>
+<span class="sql-kw">CREATE INDEX</span> idx_pedidos_status_data
+    <span class="sql-kw">ON</span> pedidos (status, criado_em);
+
+<span class="sql-cm">-- ✓ USA o índice — filtra pela 1ª coluna (status)</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span>;
+
+<span class="sql-cm">-- ✓ USA o índice — filtra por ambas as colunas</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos
+<span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span> <span class="sql-kw">AND</span> criado_em > <span class="sql-str">'2025-01-01'</span>;
+
+<span class="sql-cm">-- ✗ NÃO usa o índice — pula a 1ª coluna do prefixo</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> criado_em > <span class="sql-str">'2025-01-01'</span>;
+<span class="sql-cm">-- Para isso, precisaria de um índice separado em (criado_em)</span>
+
+<span class="sql-cm">-- Índice covering (INCLUDE) — evita heap fetch</span>
+<span class="sql-kw">CREATE INDEX</span> idx_pedidos_covering
+    <span class="sql-kw">ON</span> pedidos (cliente_id)
+    <span class="sql-kw">INCLUDE</span> (total, status);
+<span class="sql-cm">-- Query que usa só cliente_id, total e status
+-- nunca precisa acessar a tabela principal (index-only scan)</span></code></pre>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Índice criado</th><th>Query</th><th>Usa o índice?</th></tr></thead>
+          <tbody>
+            <tr><td><code>(status, criado_em)</code></td><td><code>WHERE status = 'entregue'</code></td><td>✅ Sim — prefixo (status)</td></tr>
+            <tr><td><code>(status, criado_em)</code></td><td><code>WHERE status = 'X' AND criado_em &gt; '2025'</code></td><td>✅ Sim — prefixo completo</td></tr>
+            <tr><td><code>(status, criado_em)</code></td><td><code>WHERE criado_em &gt; '2025'</code></td><td>❌ Não — pula status</td></tr>
+            <tr><td><code>(cliente_id)</code></td><td><code>WHERE cliente_id = 42 ORDER BY criado_em</code></td><td>⚠️ Parcial — usa índice p/ filtro, ordena na memória</td></tr>
+            <tr><td><code>(cliente_id, criado_em)</code></td><td><code>WHERE cliente_id = 42 ORDER BY criado_em</code></td><td>✅ Sim — filtra e ordena pelo índice</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="destaque">
+        <strong>Regra prática para compostos:</strong> coloque primeiro a coluna com maior seletividade (menos valores distintos para filtrar mais) e que aparece mais em filtros de igualdade. Colunas de range (<code>&gt;</code>, <code>BETWEEN</code>) ficam por último no índice.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-search"></i>EXPLAIN ANALYZE — lendo o plano de execução</div>
+      <p><code>EXPLAIN</code> mostra o <strong>plano que o PostgreSQL pretende executar</strong>. <code>EXPLAIN ANALYZE</code> executa a query de verdade e mostra o plano com <strong>tempos reais</strong>. É a ferramenta essencial para entender por que uma query é lenta.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — usando EXPLAIN ANALYZE</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- EXPLAIN: só mostra o plano (não executa)</span>
+<span class="sql-kw">EXPLAIN</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> cliente_id = <span class="sql-num">42</span>;
+
+<span class="sql-cm">-- EXPLAIN ANALYZE: executa E mostra tempos reais</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos <span class="sql-kw">WHERE</span> cliente_id = <span class="sql-num">42</span>;
+
+<span class="sql-cm">-- EXPLAIN (ANALYZE, BUFFERS): mostra cache hits/misses também</span>
+<span class="sql-kw">EXPLAIN</span> (ANALYZE, BUFFERS)
+<span class="sql-kw">SELECT</span> p.id, p.total, c.nome
+<span class="sql-kw">FROM</span> pedidos p
+<span class="sql-kw">JOIN</span> clientes c <span class="sql-kw">ON</span> c.id = p.cliente_id
+<span class="sql-kw">WHERE</span> p.status = <span class="sql-str">'entregue'</span>
+  <span class="sql-kw">AND</span> p.criado_em > <span class="sql-str">'2025-01-01'</span>;</code></pre>
+      </div>
+
+      <p><strong>Saída típica — sem índice (ruim):</strong></p>
+      <div class="explain-out">
+        <span class="ex-bad">Seq Scan</span> on pedidos  (cost=<span class="ex-cost">0.00..185432.00</span> rows=<span class="ex-rows">12</span> width=<span class="ex-width">87</span>)<br>
+        &nbsp;&nbsp;(actual time=<span class="ex-bad">2341.023..2341.891</span> rows=12 loops=1)<br>
+        &nbsp;&nbsp;<span class="ex-label">Filter:</span> (cliente_id = 42)<br>
+        &nbsp;&nbsp;<span class="ex-label">Rows Removed by Filter:</span> <span class="ex-bad">4999988</span><br>
+        <span class="ex-label">Planning Time:</span> 0.082 ms<br>
+        <span class="ex-label">Execution Time:</span> <span class="ex-bad">2341.923 ms</span>
+      </div>
+
+      <p><strong>Saída típica — com índice B-tree (bom):</strong></p>
+      <div class="explain-out">
+        <span class="ex-good">Index Scan</span> using idx_pedidos_cliente_id on pedidos<br>
+        &nbsp;&nbsp;(cost=<span class="ex-cost">0.43..52.18</span> rows=<span class="ex-rows">12</span> width=<span class="ex-width">87</span>)<br>
+        &nbsp;&nbsp;(actual time=<span class="ex-good">0.041..0.187</span> rows=12 loops=1)<br>
+        &nbsp;&nbsp;<span class="ex-label">Index Cond:</span> (cliente_id = 42)<br>
+        <span class="ex-label">Planning Time:</span> 0.198 ms<br>
+        <span class="ex-label">Execution Time:</span> <span class="ex-good">0.212 ms</span>
+      </div>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead><tr><th>Termo no EXPLAIN</th><th>O que significa</th><th>Sinal de alerta</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Seq Scan</strong></td><td>Leitura linha a linha da tabela inteira</td><td>Em tabelas grandes com filtros seletivos</td></tr>
+            <tr><td><strong>Index Scan</strong></td><td>Usa índice para localizar linhas, depois busca na tabela</td><td>Muitas linhas retornadas com heap fetch caro</td></tr>
+            <tr><td><strong>Index Only Scan</strong></td><td>Usa só o índice — não precisa ir à tabela</td><td>Ideal — indica índice covering</td></tr>
+            <tr><td><strong>Bitmap Heap Scan</strong></td><td>Usa índice para montar bitmap, depois lê blocos agrupados</td><td>Normal para queries que retornam muitas linhas</td></tr>
+            <tr><td><code>cost=X..Y</code></td><td>Custo estimado (unidades arbitrárias): X = startup, Y = total</td><td>Alto custo total com poucos rows esperados</td></tr>
+            <tr><td><code>rows=N</code> (estimado vs real)</td><td>Estimativa vs linhas reais retornadas</td><td>Grande divergência = estatísticas desatualizadas → <code>ANALYZE</code></td></tr>
+            <tr><td><strong>Rows Removed by Filter</strong></td><td>Linhas lidas mas descartadas pelo filtro</td><td>Número alto = falta de índice na coluna do filtro</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-exclamation-triangle"></i>Quando índices prejudicam a performance</div>
+      <p>Índices não são gratuitos. Cada índice precisa ser atualizado a cada <code>INSERT</code>, <code>UPDATE</code> e <code>DELETE</code>. Em tabelas com alta taxa de escrita, índices demais podem tornar as escritas mais lentas do que as leituras ganharam.</p>
+      <div class="destaque-red">
+        <strong>Evite indexar:</strong> colunas com poucos valores distintos e sem seletividade (ex: coluna <code>ativo BOOLEAN</code> — apenas true/false, índice seria inútil pois retorna 50% das linhas). Colunas raramente usadas em filtros. Tabelas pequenas (menos de ~1.000 linhas) — Seq Scan é mais rápido que Index Scan para tabelas pequenas.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — inspecionar índices usados e não usados</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Índices existentes e quanto espaço ocupam</span>
+<span class="sql-kw">SELECT</span>
+    indexname,
+    <span class="sql-fn">pg_size_pretty</span>(<span class="sql-fn">pg_relation_size</span>(indexrelid)) <span class="sql-kw">AS</span> tamanho,
+    idx_scan     <span class="sql-kw">AS</span> vezes_usado,
+    idx_tup_read <span class="sql-kw">AS</span> linhas_lidas_via_indice
+<span class="sql-kw">FROM</span> pg_stat_user_indexes
+<span class="sql-kw">WHERE</span> relname = <span class="sql-str">'pedidos'</span>
+<span class="sql-kw">ORDER BY</span> idx_scan <span class="sql-kw">DESC</span>;
+
+<span class="sql-cm">-- Índices nunca usados (candidatos a remoção)</span>
+<span class="sql-kw">SELECT</span> schemaname, tablename, indexname
+<span class="sql-kw">FROM</span> pg_stat_user_indexes
+<span class="sql-kw">WHERE</span> idx_scan = <span class="sql-num">0</span>
+  <span class="sql-kw">AND</span> indexname <span class="sql-kw">NOT LIKE</span> <span class="sql-str">'%pkey%'</span>   <span class="sql-cm">-- não remover PKs</span>
+<span class="sql-kw">ORDER BY</span> tablename;
+
+<span class="sql-cm">-- Atualizar estatísticas do planner (usar quando rows estimado ≠ real)</span>
+<span class="sql-kw">ANALYZE</span> pedidos;
+<span class="sql-kw">VACUUM ANALYZE</span> pedidos;  <span class="sql-cm">-- limpa linhas mortas E atualiza estatísticas</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Aula 3 · Prática</span></div>
+
+  <!-- ── AULA 3: Benchmark completo ───────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">03</div>
+      <div class="secao-info">
+        <div class="secao-label">Aula 3 · ~50 minutos</div>
+        <div class="secao-titulo">Benchmark completo — 1 milhão de linhas, antes e depois</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-database"></i>Gerando a tabela de teste com 1 milhão de registros</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL — criar e popular tabela de benchmark</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="sql-cm">-- Criar tabela sem índices (exceto PK)</span>
+<span class="sql-kw">CREATE TABLE</span> pedidos_bench (
+    id          SERIAL <span class="sql-kw">PRIMARY KEY</span>,
+    cliente_id  INTEGER       <span class="sql-kw">NOT NULL</span>,
+    status      VARCHAR(<span class="sql-num">20</span>)   <span class="sql-kw">NOT NULL</span>,
+    total       NUMERIC(<span class="sql-num">10</span>,<span class="sql-num">2</span>) <span class="sql-kw">NOT NULL</span>,
+    criado_em   TIMESTAMP     <span class="sql-kw">NOT NULL</span>
+);
+
+<span class="sql-cm">-- Popular com 1 milhão de linhas via generate_series</span>
+<span class="sql-kw">INSERT INTO</span> pedidos_bench (cliente_id, status, total, criado_em)
+<span class="sql-kw">SELECT</span>
+    (<span class="sql-fn">random</span>() * <span class="sql-num">50000</span>)::INT + <span class="sql-num">1</span>              <span class="sql-kw">AS</span> cliente_id,
+    (<span class="sql-kw">ARRAY</span>[<span class="sql-str">'pendente'</span>,<span class="sql-str">'entregue'</span>,<span class="sql-str">'cancelado'</span>])
+        [(<span class="sql-fn">random</span>()*<span class="sql-num">3</span>)::INT + <span class="sql-num">1</span>]             <span class="sql-kw">AS</span> status,
+    <span class="sql-fn">round</span>((<span class="sql-fn">random</span>() * <span class="sql-num">9900</span> + <span class="sql-num">100</span>)::NUMERIC, <span class="sql-num">2</span>) <span class="sql-kw">AS</span> total,
+    <span class="sql-kw">NOW</span>() - (<span class="sql-fn">random</span>() * <span class="sql-kw">INTERVAL</span> <span class="sql-str">'2 years'</span>)  <span class="sql-kw">AS</span> criado_em
+<span class="sql-kw">FROM</span> <span class="sql-fn">generate_series</span>(<span class="sql-num">1</span>, <span class="sql-num">1000000</span>);
+
+<span class="sql-kw">ANALYZE</span> pedidos_bench;
+<span class="sql-kw">SELECT</span> <span class="sql-fn">count</span>(*) <span class="sql-kw">FROM</span> pedidos_bench;  <span class="sql-cm">-- deve retornar 1000000</span></code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-tachometer-alt"></i>Benchmark em Python — medir impacto real dos índices</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — benchmark completo com e sem índice</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> time, os
+<span class="kw">import</span> psycopg2
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+conn.autocommit = <span class="kw">True</span>
+cur = conn.cursor()
+
+<span class="kw">def</span> <span class="fn">medir</span>(descricao, sql, params=<span class="kw">None</span>, repeticoes=<span class="num">5</span>):
+    <span class="str">"""Executa a query N vezes e retorna a média em ms."""</span>
+    tempos = []
+    <span class="kw">for</span> _ <span class="kw">in</span> range(repeticoes):
+        t0 = time.perf_counter()
+        cur.execute(sql, params)
+        cur.fetchall()
+        tempos.append((time.perf_counter() - t0) * <span class="num">1000</span>)
+    media = sum(tempos) / len(tempos)
+    print(<span class="fn">f</span><span class="str">"  {descricao:<45} {media:>8.1f} ms"</span>)
+    <span class="kw">return</span> media
+
+<span class="cm"># ── Queries de teste ──────────────────────────────────────────────</span>
+Q_IGUALDADE = <span class="str">"SELECT * FROM pedidos_bench WHERE cliente_id = %s"</span>
+Q_RANGE     = <span class="str">"SELECT * FROM pedidos_bench WHERE criado_em > %s"</span>
+Q_COMPOSTO  = <span class="str">"SELECT * FROM pedidos_bench WHERE status = %s AND criado_em > %s"</span>
+Q_COVERING  = <span class="str">"SELECT cliente_id, total FROM pedidos_bench WHERE cliente_id = %s"</span>
+
+print(<span class="str">"="</span>*65)
+print(<span class="str">"FASE 1 — SEM ÍNDICE (apenas PK)"</span>)
+print(<span class="str">"="</span>*65)
+t1_sem = medir(<span class="str">"WHERE cliente_id = 42"</span>,        Q_IGUALDADE, (<span class="num">42</span>,))
+t2_sem = medir(<span class="str">"WHERE criado_em > '2025-01-01'"</span>, Q_RANGE,     (<span class="str">"2025-01-01"</span>,))
+t3_sem = medir(<span class="str">"WHERE status='entregue' AND data"</span>,Q_COMPOSTO,  (<span class="str">"entregue"</span>,<span class="str">"2025-01-01"</span>))
+
+<span class="cm"># ── Criar índices ─────────────────────────────────────────────────</span>
+print(<span class="str">"\nCriando índices..."</span>)
+cur.execute(<span class="str">"CREATE INDEX IF NOT EXISTS idx_bench_cliente ON pedidos_bench(cliente_id)"</span>)
+cur.execute(<span class="str">"CREATE INDEX IF NOT EXISTS idx_bench_data ON pedidos_bench(criado_em)"</span>)
+cur.execute(<span class="str">"CREATE INDEX IF NOT EXISTS idx_bench_composto ON pedidos_bench(status, criado_em)"</span>)
+cur.execute(<span class="str">"CREATE INDEX IF NOT EXISTS idx_bench_covering ON pedidos_bench(cliente_id) INCLUDE (total)"</span>)
+print(<span class="str">"Índices criados.\n"</span>)
+
+print(<span class="str">"="</span>*65)
+print(<span class="str">"FASE 2 — COM ÍNDICES"</span>)
+print(<span class="str">"="</span>*65)
+t1_com = medir(<span class="str">"WHERE cliente_id = 42"</span>,        Q_IGUALDADE, (<span class="num">42</span>,))
+t2_com = medir(<span class="str">"WHERE criado_em > '2025-01-01'"</span>, Q_RANGE,     (<span class="str">"2025-01-01"</span>,))
+t3_com = medir(<span class="str">"WHERE status='entregue' AND data"</span>,Q_COMPOSTO,  (<span class="str">"entregue"</span>,<span class="str">"2025-01-01"</span>))
+t4_cov = medir(<span class="str">"Index Only Scan (covering)"</span>,      Q_COVERING,  (<span class="num">42</span>,))
+
+<span class="cm"># ── Resumo ────────────────────────────────────────────────────────</span>
+print(<span class="str">"\n"</span>+<span class="str">"="</span>*65)
+print(<span class="str">"GANHO DE PERFORMANCE"</span>)
+print(<span class="str">"="</span>*65)
+<span class="kw">for</span> desc, sem, com <span class="kw">in</span> [
+    (<span class="str">"cliente_id = 42"</span>,    t1_sem, t1_com),
+    (<span class="str">"criado_em range"</span>,    t2_sem, t2_com),
+    (<span class="str">"status + data"</span>,      t3_sem, t3_com),
+]:
+    ganho = sem / com <span class="kw">if</span> com > <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+    print(<span class="fn">f</span><span class="str">"  {desc:<30} {ganho:>6.0f}× mais rápido"</span>)
+
+cur.close()
+conn.close()</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo"><i class="fas fa-file-alt"></i>Lendo o EXPLAIN em Python</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — capturar e imprimir o plano de execução</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+        <pre><code><span class="kw">import</span> psycopg2, os, json
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+cur = conn.cursor()
+
+<span class="kw">def</span> <span class="fn">explain</span>(sql, params=<span class="kw">None</span>, analisar=<span class="kw">True</span>):
+    <span class="str">"""Retorna o plano de execução formatado."""</span>
+    modo = <span class="str">"EXPLAIN (ANALYZE, FORMAT JSON)"</span> <span class="kw">if</span> analisar <span class="kw">else</span> <span class="str">"EXPLAIN (FORMAT JSON)"</span>
+    cur.execute(<span class="fn">f</span><span class="str">"{modo} {sql}"</span>, params)
+    plano = cur.fetchone()[<span class="num">0</span>][<span class="num">0</span>]  <span class="cm"># JSON do PostgreSQL</span>
+    <span class="kw">return</span> plano
+
+<span class="cm"># Comparar planos antes e depois do índice</span>
+queries = [
+    (<span class="str">"Sem índice (Seq Scan esperado)"</span>,
+     <span class="str">"SELECT * FROM pedidos_bench WHERE cliente_id = %s"</span>, (<span class="num">42</span>,)),
+    (<span class="str">"Com índice B-tree"</span>,
+     <span class="str">"SELECT * FROM pedidos_bench WHERE cliente_id = %s"</span>, (<span class="num">42</span>,)),
+]
+
+<span class="kw">for</span> desc, sql, params <span class="kw">in</span> queries:
+    plano = explain(sql, params)
+    no_raiz = plano[<span class="str">"Plan"</span>]
+    node_type    = no_raiz.get(<span class="str">"Node Type"</span>, <span class="str">"?"</span>)
+    actual_time  = no_raiz.get(<span class="str">"Actual Total Time"</span>, <span class="num">0</span>)
+    actual_rows  = no_raiz.get(<span class="str">"Actual Rows"</span>, <span class="num">0</span>)
+    total_cost   = no_raiz.get(<span class="str">"Total Cost"</span>, <span class="num">0</span>)
+
+    print(<span class="fn">f</span><span class="str">"\n── {desc} ──"</span>)
+    print(<span class="fn">f</span><span class="str">"  Nó raiz:    {node_type}"</span>)
+    print(<span class="fn">f</span><span class="str">"  Custo est.: {total_cost:.2f}"</span>)
+    print(<span class="fn">f</span><span class="str">"  Tempo real: {actual_time:.3f} ms"</span>)
+    print(<span class="fn">f</span><span class="str">"  Linhas ret: {actual_rows}"</span>)
+
+cur.close()
+conn.close()</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Atividade Prática</span></div>
+
+  <!-- ── EXERCÍCIOS ───────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">→</div>
+      <div class="secao-info">
+        <div class="secao-label">Atividade · PostgreSQL + Python</div>
+        <div class="secao-titulo">5 Exercícios — Indexação e otimização na prática</div>
+      </div>
+    </div>
+
+    <div class="aviso-info">
+      <i class="fas fa-info-circle"></i>
+      <span>Use o banco PostgreSQL com a tabela <code>pedidos_bench</code> criada durante a aula (1 milhão de linhas). Instale: <code>pip install psycopg2-binary sqlalchemy</code>.</span>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 01</div>
+      <p>Execute <code>EXPLAIN ANALYZE</code> para a query <code>SELECT * FROM pedidos_bench WHERE status = 'entregue'</code> <strong>antes</strong> de criar qualquer índice. Identifique na saída: o tipo de nó (Seq Scan ou Index Scan), o tempo de execução real e quantas linhas foram removidas pelo filtro. Em seguida, crie um índice B-tree em <code>status</code>, execute novamente e compare.</p>
+      <span class="dificuldade dif-basico">Básico — EXPLAIN antes e depois</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL + Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="sql-cm">-- Fase 1: sem índice</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos_bench <span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span>;
+<span class="sql-cm">-- Esperado: Seq Scan, ~2000ms, Rows Removed by Filter ~666.666</span>
+
+<span class="sql-cm">-- Criar índice</span>
+<span class="sql-kw">CREATE INDEX</span> idx_bench_status <span class="sql-kw">ON</span> pedidos_bench (status);
+
+<span class="sql-cm">-- Fase 2: com índice
+-- ATENÇÃO: status tem baixa seletividade (3 valores, ~33% cada)
+-- O planner PODE optar por Seq Scan mesmo com índice — normal!
+-- Para forçar: SET enable_seqscan = off;</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos_bench <span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span>;</code></pre>
+        </div>
+        Observação esperada: com apenas 3 valores distintos em <code>status</code>, o PostgreSQL pode preferir Seq Scan mesmo com índice, pois ~33% das linhas seriam retornadas — o planner considera que fazer Index Scan + heap fetch para 333k linhas é mais caro que um Seq Scan direto. Isso demonstra na prática que seletividade importa.
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 02</div>
+      <p>Crie um índice composto <code>(status, criado_em)</code> na tabela <code>pedidos_bench</code>. Teste as 3 queries abaixo com <code>EXPLAIN ANALYZE</code> e identifique quais usam o índice e quais não usam: (a) <code>WHERE status = 'entregue'</code>; (b) <code>WHERE criado_em > '2025-01-01'</code>; (c) <code>WHERE status = 'entregue' AND criado_em > '2025-01-01'</code>. Explique por que cada resultado acontece.</p>
+      <span class="dificuldade dif-basico">Básico — Regra do prefixo em índice composto</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="sql-kw">CREATE INDEX</span> idx_status_data <span class="sql-kw">ON</span> pedidos_bench (status, criado_em);
+
+<span class="sql-cm">-- (a) USA o índice — filtra pela 1ª coluna do prefixo</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span> <span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos_bench <span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span>;
+
+<span class="sql-cm">-- (b) NÃO usa — pula a 1ª coluna (status) do prefixo</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span> <span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos_bench
+<span class="sql-kw">WHERE</span> criado_em > <span class="sql-str">'2025-01-01'</span>;
+
+<span class="sql-cm">-- (c) USA com máxima eficiência — ambas as colunas do índice</span>
+<span class="sql-kw">EXPLAIN ANALYZE</span> <span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> pedidos_bench
+<span class="sql-kw">WHERE</span> status = <span class="sql-str">'entregue'</span> <span class="sql-kw">AND</span> criado_em > <span class="sql-str">'2025-01-01'</span>;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 03</div>
+      <p>Escreva um script Python que execute a query <code>SELECT cliente_id, total FROM pedidos_bench WHERE cliente_id = 42</code> com e sem um índice covering <code>(cliente_id) INCLUDE (total)</code>. Meça o tempo médio de 10 execuções em cada caso, imprima o ganho e use <code>EXPLAIN (ANALYZE, FORMAT JSON)</code> para verificar se o nó raiz mudou de <code>Index Scan</code> para <code>Index Only Scan</code>.</p>
+      <span class="dificuldade dif-medio">Médio — Index Only Scan e covering index</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, time, os
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+conn.autocommit = <span class="kw">True</span>
+cur = conn.cursor()
+
+SQL = <span class="str">"SELECT cliente_id, total FROM pedidos_bench WHERE cliente_id = %s"</span>
+PARAMS = (<span class="num">42</span>,)
+
+<span class="kw">def</span> <span class="fn">media_ms</span>(n=<span class="num">10</span>):
+    ts = []
+    <span class="kw">for</span> _ <span class="kw">in</span> range(n):
+        t0 = time.perf_counter()
+        cur.execute(SQL, PARAMS)
+        cur.fetchall()
+        ts.append((time.perf_counter()-t0)*<span class="num">1000</span>)
+    <span class="kw">return</span> sum(ts)/len(ts)
+
+<span class="kw">def</span> <span class="fn">node_type</span>():
+    cur.execute(<span class="fn">f</span><span class="str">"EXPLAIN (ANALYZE, FORMAT JSON) {SQL}"</span>, PARAMS)
+    plano = cur.fetchone()[<span class="num">0</span>][<span class="num">0</span>]
+    <span class="kw">return</span> plano[<span class="str">"Plan"</span>].get(<span class="str">"Node Type"</span>)
+
+<span class="cm"># Remover índices anteriores em cliente_id para partir do zero</span>
+cur.execute(<span class="str">"DROP INDEX IF EXISTS idx_bench_cliente"</span>)
+cur.execute(<span class="str">"DROP INDEX IF EXISTS idx_bench_covering"</span>)
+
+t_sem = media_ms()
+tipo_sem = node_type()
+print(<span class="fn">f</span><span class="str">"Sem índice:              {t_sem:.2f} ms | {tipo_sem}"</span>)
+
+<span class="cm"># Índice simples (Index Scan — ainda vai ao heap)</span>
+cur.execute(<span class="str">"CREATE INDEX idx_bench_cliente ON pedidos_bench(cliente_id)"</span>)
+t_simples = media_ms()
+tipo_simples = node_type()
+print(<span class="fn">f</span><span class="str">"Com B-tree simples:      {t_simples:.2f} ms | {tipo_simples}"</span>)
+
+<span class="cm"># Covering index (Index Only Scan — não vai ao heap)</span>
+cur.execute(<span class="str">"DROP INDEX idx_bench_cliente"</span>)
+cur.execute(<span class="str">"CREATE INDEX idx_bench_covering ON pedidos_bench(cliente_id) INCLUDE (total)"</span>)
+t_cov = media_ms()
+tipo_cov = node_type()
+print(<span class="fn">f</span><span class="str">"Com covering index:      {t_cov:.2f} ms | {tipo_cov}"</span>)
+print(<span class="fn">f</span><span class="str">"Ganho covering vs sem:   {t_sem/t_cov:.1f}×"</span>)
+
+cur.close(); conn.close()</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 04</div>
+      <p>Identifique índices subutilizados: consulte a view <code>pg_stat_user_indexes</code> para listar todos os índices da tabela <code>pedidos_bench</code> com o nome, tamanho em disco e quantas vezes foram usados (<code>idx_scan</code>). Depois execute 5 queries diferentes e consulte novamente — compare quais contadores aumentaram. Por fim, liste índices com <code>idx_scan = 0</code> (nunca usados) e explique quando seria seguro removê-los.</p>
+      <span class="dificuldade dif-medio">Médio — Auditoria de índices</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL + Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="sql-cm">-- Consultar uso de índices</span>
+<span class="sql-kw">SELECT</span>
+    indexname,
+    <span class="sql-fn">pg_size_pretty</span>(<span class="sql-fn">pg_relation_size</span>(indexrelid)) <span class="sql-kw">AS</span> tamanho,
+    idx_scan <span class="sql-kw">AS</span> usos
+<span class="sql-kw">FROM</span> pg_stat_user_indexes
+<span class="sql-kw">WHERE</span> relname = <span class="sql-str">'pedidos_bench'</span>
+<span class="sql-kw">ORDER BY</span> idx_scan <span class="sql-kw">DESC</span>;
+
+<span class="sql-cm">-- Índices nunca usados</span>
+<span class="sql-kw">SELECT</span> indexname
+<span class="sql-kw">FROM</span> pg_stat_user_indexes
+<span class="sql-kw">WHERE</span> relname = <span class="sql-str">'pedidos_bench'</span>
+  <span class="sql-kw">AND</span> idx_scan = <span class="sql-num">0</span>
+  <span class="sql-kw">AND</span> indexname <span class="sql-kw">NOT LIKE</span> <span class="sql-str">'%pkey%'</span>;</code></pre>
+        </div>
+        Remover índice com <code>idx_scan = 0</code> é seguro quando: (1) a instância já está em produção há tempo suficiente para ter visto todos os padrões de acesso; (2) o índice não é UNIQUE (constraints de unicidade devem ser mantidas); (3) não há queries raras (relatórios mensais) que ainda não foram executadas no período de observação.
+      </div>
+    </div>
+
+    <div class="exercicio">
+      <div class="exercicio-num">Exercício 05 — Desafio</div>
+      <p>Crie uma função Python <code>analisar_query(sql, params)</code> que: (1) executa <code>EXPLAIN (ANALYZE, FORMAT JSON)</code> na query; (2) extrai recursivamente todos os nós do plano (incluindo sub-nós); (3) imprime um resumo com tipo de nó, custo estimado, tempo real e rows para cada nó; (4) identifica automaticamente se há algum Seq Scan em tabela com mais de 100k linhas e emite um aviso de "possível falta de índice". Teste com pelo menos 3 queries diferentes na tabela <code>pedidos_bench</code>.</p>
+      <span class="dificuldade dif-desafio">Desafio — Analisador automático de plano de execução</span><br>
+      <button class="gabarito-toggle" onclick="toggleGab(this)"><i class="fas fa-eye"></i> ver gabarito</button>
+      <div class="gabarito-content">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Python</span><button class="code-copy" onclick="copiar(this)">copiar</button></div>
+          <pre><code><span class="kw">import</span> psycopg2, os
+
+conn = psycopg2.connect(os.getenv(<span class="str">"DATABASE_URL"</span>))
+conn.autocommit = <span class="kw">True</span>
+cur = conn.cursor()
+
+<span class="kw">def</span> <span class="fn">extrair_nos</span>(no, profundidade=<span class="num">0</span>):
+    <span class="str">"""Extrai recursivamente todos os nós do plano."""</span>
+    nos = [(<span class="num">profundidade</span>, no)]
+    <span class="kw">for</span> filho <span class="kw">in</span> no.get(<span class="str">"Plans"</span>, []):
+        nos.extend(extrair_nos(filho, profundidade + <span class="num">1</span>))
+    <span class="kw">return</span> nos
+
+<span class="kw">def</span> <span class="fn">analisar_query</span>(sql, params=<span class="kw">None</span>):
+    <span class="str">"""Analisa uma query e imprime resumo do plano de execução."""</span>
+    cur.execute(<span class="fn">f</span><span class="str">"EXPLAIN (ANALYZE, FORMAT JSON) {sql}"</span>, params)
+    plano = cur.fetchone()[<span class="num">0</span>][<span class="num">0</span>]
+    nos = extrair_nos(plano[<span class="str">"Plan"</span>])
+
+    print(<span class="str">"\n"</span> + <span class="str">"─"</span>*60)
+    print(<span class="fn">f</span><span class="str">"QUERY: {sql[:70]}..."</span> <span class="kw">if</span> len(sql) > <span class="num">70</span> <span class="kw">else</span> <span class="fn">f</span><span class="str">"QUERY: {sql}"</span>)
+    print(<span class="str">"─"</span>*60)
+    alertas = []
+
+    <span class="kw">for</span> prof, no <span class="kw">in</span> nos:
+        indent  = <span class="str">"  "</span> * prof
+        tipo    = no.get(<span class="str">"Node Type"</span>, <span class="str">"?"</span>)
+        custo   = no.get(<span class="str">"Total Cost"</span>, <span class="num">0</span>)
+        t_real  = no.get(<span class="str">"Actual Total Time"</span>, <span class="num">0</span>)
+        rows_e  = no.get(<span class="str">"Plan Rows"</span>, <span class="num">0</span>)
+        rows_r  = no.get(<span class="str">"Actual Rows"</span>, <span class="num">0</span>)
+        tabela  = no.get(<span class="str">"Relation Name"</span>, <span class="str">""</span>)
+
+        sinal = <span class="str">"⚠️ "</span> <span class="kw">if</span> tipo == <span class="str">"Seq Scan"</span> <span class="kw">else</span> <span class="str">"   "</span>
+        print(<span class="fn">f</span><span class="str">"{indent}{sinal}{tipo:<25} custo={custo:>10.1f} | t={t_real:>8.2f}ms | rows est={rows_e} real={rows_r}"</span>)
+
+        <span class="cm"># Detectar Seq Scan suspeito</span>
+        <span class="kw">if</span> tipo == <span class="str">"Seq Scan"</span> <span class="kw">and</span> rows_e > <span class="num">100_000</span>:
+            alertas.append(<span class="fn">f</span><span class="str">"Seq Scan em '{tabela}' com {rows_e:,} linhas estimadas — considere um índice"</span>)
+
+    <span class="kw">if</span> alertas:
+        print(<span class="str">"\n⚠️  ALERTAS:"</span>)
+        <span class="kw">for</span> a <span class="kw">in</span> alertas:
+            print(<span class="fn">f</span><span class="str">"   → {a}"</span>)
+    <span class="kw">else</span>:
+        print(<span class="str">"\n✓ Nenhum Seq Scan suspeito detectado"</span>)
+
+    print(<span class="fn">f</span><span class="str">"Execution Time: {plano.get('Execution Time',0):.2f} ms\n"</span>)
+
+<span class="cm"># Testar com 3 queries</span>
+analisar_query(<span class="str">"SELECT * FROM pedidos_bench WHERE cliente_id = %s"</span>, (<span class="num">42</span>,))
+analisar_query(<span class="str">"SELECT * FROM pedidos_bench WHERE total > %s"</span>, (<span class="num">9000</span>,))
+analisar_query(
+    <span class="str">"SELECT * FROM pedidos_bench WHERE status = %s AND criado_em > %s"</span>,
+    (<span class="str">"entregue"</span>, <span class="str">"2025-01-01"</span>)
+)
+
+cur.close(); conn.close()</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"><span>Resumo</span></div>
+
+  <!-- ── RESUMO ───────────────────────────────────────────────────── -->
+  <section class="secao">
+    <div class="secao-header">
+      <div class="secao-num">✓</div>
+      <div class="secao-info">
+        <div class="secao-label">Fechamento</div>
+        <div class="secao-titulo">O que vimos na Semana 14</div>
+      </div>
+    </div>
+    <div class="resumo-grid">
+      <div class="resumo-item">
+        <i class="fas fa-tree"></i>
+        <strong>B-tree</strong>
+        <p>Índice padrão — O(log n), suporta =, &lt;, &gt;, BETWEEN, LIKE prefixo e ORDER BY</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-hashtag"></i>
+        <strong>Hash</strong>
+        <p>O(1) para igualdade exata apenas — sem range, sem ordem, sem LIKE</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-layer-group"></i>
+        <strong>Composto e Covering</strong>
+        <p>Regra do prefixo: filtrar pela 1ª coluna. INCLUDE elimina heap fetch → Index Only Scan</p>
+      </div>
+      <div class="resumo-item">
+        <i class="fas fa-search"></i>
+        <strong>EXPLAIN ANALYZE</strong>
+        <p>Seq Scan = sem índice. Rows Removed alto = falta índice. Divergência rows = rode ANALYZE</p>
+      </div>
+    </div>
+
+    <a class="proxima" href="slide-15.html">
+      <div>
+        <div class="proxima-label">Próxima semana</div>
+        <div class="proxima-titulo">Semana 15 — Transações Avançadas: ACID, MVCC, níveis de isolamento e deadlock</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+  </section>
+
+</main>
+
+<script>
+function toggleGab(btn){
+  const c=btn.nextElementSibling;
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')
+    ?'<i class="fas fa-eye-slash"></i> ocultar gabarito'
+    :'<i class="fas fa-eye"></i> ver gabarito';
+}
+function copiar(btn){
+  const code=btn.closest('.code-block').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='copiado!';
+    setTimeout(()=>btn.textContent='copiar',2000);
+  });
+}
+</script>
+</body>
+</html>
