@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Introdução à Modelagem de Banco de Dados — Aula Interativa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   ÍNDICE DO CSS
+   1. Tokens de design — ALTERAR CORES/FONTES AQUI
+   2. Reset e base
+   3. Casca do app (header fixo em fluxo, palco, rodapé) — sem posicionamento
+      flutuante concorrente, para eliminar sobreposições
+   4. Slides
+   5. Componentes (botões, cards, pills)
+   6. Cabeçalho, cronômetro, menu de etapas, painel de anotações
+   7. Marcas de registro / grade de fundo (identidade "prancheta técnica")
+   8. Telas específicas de cada etapa
+   9. Responsividade
+   10. Acessibilidade / prefers-reduced-motion
+   ========================================================================= */
+
+/* ---------- 1. TOKENS DE DESIGN ---------- */
+:root{
+  /* ===== ALTERE AS CORES PRINCIPAIS AQUI ===== */
+  --brass:      #D79A4B;  --brass-rgb:    215,154,75;   /* traço técnico / caneta */
+  --teal:       #4FB3AC;  --teal-rgb:      79,179,172;   /* linha de projeto */
+  --success:    #5FC48D;  --success-rgb:   95,196,141;
+  --warning:    #E3A542;  --warning-rgb:  227,165,66;
+  --danger:     #E27B6A;  --danger-rgb:   226,123,106;
+  --on-brass:   #1A1305;  /* cor do texto sobre fundo brass */
+
+  --bg:         #0A121C;
+  --surface:    #101C2B;
+  --surface-2:  #16273A;
+  --surface-3:  #1E3348;
+  --border:     #28405A;  --border-rgb:    40,64,90;
+  --text:       #EAF1F6;
+  --text-dim:   #9FB4C8;
+  --text-faint: #5E7690;
+
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+
+  --shadow-1: 0 2px 12px rgba(0,0,0,.28);
+  --shadow-2: 0 18px 48px rgba(0,0,0,.42);
+  --shadow-glow: 0 0 0 1px rgba(var(--brass-rgb),.32), 0 10px 26px rgba(var(--brass-rgb),.18);
+
+  --ease: cubic-bezier(.22,.9,.32,1);
+  --dur-fast: .18s;
+  --dur-med: .42s;
+  --dur-slow: .8s;
+
+  --header-h: 68px;
+  --footer-h: 82px;
+}
+
+[data-theme="light"]{
+  --brass:      #8C5A1B;  --brass-rgb: 140,90,27;
+  --teal:       #256B66;  --teal-rgb:   37,107,102;
+  --success:    #2E7D53;  --success-rgb: 46,125,83;
+  --warning:    #93600F;  --warning-rgb: 147,96,15;
+  --danger:     #A23F2E;  --danger-rgb: 162,63,46;
+  --on-brass:   #FFFFFF;
+
+  --bg:         #F5F0E3;
+  --surface:    #FFFFFF;
+  --surface-2:  #F0E9D8;
+  --surface-3:  #E6DBC0;
+  --border:     #DCD0AE;  --border-rgb: 220,208,174;
+  --text:       #211A0D;
+  --text-dim:   #5C5236;
+  --text-faint: #8B8062;
+
+  --shadow-1: 0 2px 12px rgba(33,26,13,.08);
+  --shadow-2: 0 18px 48px rgba(33,26,13,.14);
+}
+
+/* ---------- 2. RESET E BASE ---------- */
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+  transition:background var(--dur-med) var(--ease), color var(--dur-med) var(--ease);
+}
+h1,h2,h3,h4{ font-family:var(--font-display); margin:0; letter-spacing:-.01em; }
+p{ margin:0; }
+button{ font-family:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+::selection{ background:var(--brass); color:var(--on-brass); }
+:focus-visible{ outline:3px solid var(--teal); outline-offset:3px; border-radius:6px; }
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; border:2px solid var(--surface); }
+*{ scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+
+/* ---------- 7. GRADE DE FUNDO + MARCAS DE REGISTRO (identidade visual) ---------- */
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(var(--border-rgb),.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--border-rgb),.55) 1px, transparent 1px),
+    radial-gradient(1200px 640px at 85% -10%, rgba(var(--brass-rgb),.10), transparent 60%),
+    radial-gradient(900px 540px at -8% 108%, rgba(var(--teal-rgb),.09), transparent 55%);
+  background-size: 46px 46px, 46px 46px, auto, auto;
+  opacity:.4;
+  transition:opacity var(--dur-med) var(--ease);
+}
+[data-theme="light"] body::before{ opacity:.3; }
+
+.reg-marks{ position:fixed; inset:0; z-index:2; pointer-events:none; }
+.reg-marks span{ position:absolute; width:16px; height:16px; opacity:.5; }
+.reg-marks span::before,.reg-marks span::after{ content:""; position:absolute; background:var(--text-faint); }
+.reg-marks span::before{ width:100%; height:1px; top:50%; left:0; }
+.reg-marks span::after{ width:1px; height:100%; left:50%; top:0; }
+.reg-marks .tl{ top:12px; left:12px; } .reg-marks .tr{ top:12px; right:12px; }
+.reg-marks .bl{ bottom:12px; left:12px; } .reg-marks .br{ bottom:12px; right:12px; }
+@media (max-width:640px){ .reg-marks{ display:none; } }
+
+/* ---------- 3. CASCA DO APP (sem elementos flutuantes concorrendo por espaço) ---------- */
+#app{
+  position:relative; z-index:1;
+  width:100vw; height:100vh; height:100dvh;
+  display:flex; flex-direction:column;
+}
+
+/* ===== Cabeçalho — barra única em fluxo normal (nunca sobrepõe conteúdo) ===== */
+.app-header{
+  flex:0 0 auto; height:var(--header-h);
+  display:flex; align-items:center; gap:16px;
+  padding:0 18px;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  position:relative; z-index:30;
+}
+.header-left{
+  display:flex; align-items:center; gap:8px; flex:0 0 auto;
+  font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:.04em;
+  color:var(--text-dim); white-space:nowrap;
+}
+.header-left .discipline-tag{ color:var(--brass); font-weight:700; }
+.header-left .sep{ opacity:.4; }
+.header-left .sheet-num{ color:var(--text); }
+.header-center{
+  flex:1 1 auto; min-width:0; text-align:center;
+  font-family:var(--font-display); font-weight:700; font-size:14.5px; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.header-right{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+
+.icon-btn{
+  width:40px; height:40px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim);
+  transition:transform var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.icon-btn:hover{ transform:translateY(-1px); color:var(--teal); border-color:var(--teal); }
+.icon-btn.active{ color:var(--on-brass); background:var(--brass); border-color:transparent; }
+.icon-btn svg{ width:19px; height:19px; }
+
+.timer-chip{
+  display:flex; align-items:center; gap:6px;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:11px;
+  padding:5px 6px 5px 12px;
+  transition:border-color var(--dur-med) var(--ease);
+}
+.timer-chip .t-display{ font-family:var(--font-mono); font-weight:700; font-size:14.5px; min-width:50px; letter-spacing:.01em; }
+.timer-chip.warn{ border-color:var(--warning); } .timer-chip.warn .t-display{ color:var(--warning); }
+.timer-chip.alert{ border-color:var(--danger); } .timer-chip.alert .t-display{ color:var(--danger); animation:pulseSoft 1.4s ease-in-out infinite; }
+.timer-chip button{
+  width:28px; height:28px; border-radius:8px; border:none; background:var(--surface-3); color:var(--text);
+  display:flex; align-items:center; justify-content:center; transition:background var(--dur-fast);
+}
+.timer-chip button:hover{ background:var(--border); }
+.timer-chip button svg{ width:14px; height:14px; }
+.timer-chip.is-hidden{ display:none; }
+#timerShow{ display:none; }
+@keyframes pulseSoft{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+/* ===== Palco — área central onde os slides fazem crossfade ===== */
+.stage{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden; }
+.slides{ position:absolute; inset:0; }
+
+.progress-rail{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%); z-index:20;
+  display:flex; flex-direction:column; gap:9px;
+}
+.progress-rail button{
+  width:9px; height:9px; border-radius:50%; background:var(--surface-3);
+  border:none; padding:0; position:relative;
+  transition:background var(--dur-fast), transform var(--dur-fast);
+}
+.progress-rail button.active{ background:var(--teal); transform:scale(1.55); }
+.progress-rail button::after{
+  content:attr(data-label);
+  position:absolute; left:20px; top:50%; transform:translateY(-50%);
+  white-space:nowrap; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); font-weight:600;
+  opacity:0; pointer-events:none; transition:opacity .15s;
+  background:var(--surface); padding:5px 10px; border-radius:7px; border:1px solid var(--border);
+  box-shadow:var(--shadow-1);
+}
+.progress-rail button:hover::after,
+.progress-rail button:focus-visible::after{ opacity:1; }
+@media (max-width:900px){ .progress-rail{ display:none; } }
+
+/* ===== Rodapé — barra de navegação, também em fluxo normal ===== */
+.app-footer{
+  flex:0 0 auto; min-height:var(--footer-h);
+  display:flex; align-items:center; justify-content:center;
+  padding:13px 18px; background:var(--surface); border-top:1px solid var(--border);
+  position:relative; z-index:30;
+}
+.controlbar{
+  display:flex; align-items:center; gap:8px;
+  background:var(--surface-2); border:1px solid var(--border);
+  padding:8px; border-radius:20px; box-shadow:var(--shadow-1);
+  max-width:100%;
+}
+.controlbar .step-label{
+  padding:0 12px; font-family:var(--font-mono); font-size:12.5px; font-weight:700; color:var(--text-dim);
+  min-width:78px; text-align:center; white-space:nowrap;
+}
+.controlbar .nav-btn{
+  width:46px; height:46px; border-radius:15px; border:none; flex-shrink:0;
+  background:var(--surface-3); color:var(--text);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform var(--dur-fast), background var(--dur-fast);
+}
+.controlbar .nav-btn:hover{ background:var(--border); transform:translateY(-2px); }
+.controlbar .nav-btn:disabled{ opacity:.35; cursor:not-allowed; transform:none; }
+.controlbar .nav-btn svg{ width:22px; height:22px; }
+.controlbar .bar-progress{ width:120px; height:6px; border-radius:99px; background:var(--surface-3); overflow:hidden; flex-shrink:0; }
+.controlbar .bar-progress > span{ display:block; height:100%; border-radius:99px; background:var(--brass); transition:width var(--dur-med) var(--ease); }
+@media (max-width:560px){ .controlbar .step-label{ display:none; } .controlbar .bar-progress{ width:72px; } }
+
+/* ---------- 4. SLIDES ---------- */
+.slide{
+  position:absolute; inset:0;
+  background:var(--bg); /* opaco — impede que o slide anterior "vaze" por trás durante a troca */
+  display:flex; flex-direction:column;
+  padding: clamp(26px,4vw,52px) clamp(22px,5vw,64px) clamp(22px,3vw,36px);
+  opacity:0; visibility:hidden;
+  transform:translateX(40px) scale(.985);
+  transition:opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease), visibility 0s linear var(--dur-med);
+  overflow-y:auto;
+  z-index:1;
+}
+.slide.active{
+  opacity:1; visibility:visible; transform:translateX(0) scale(1);
+  transition:opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease), visibility 0s;
+  z-index:2;
+}
+/* Itens flex encolhem por padrão quando faltam espaço — isso comprimia o
+   título/subtítulo e fazia o texto vazar por cima do conteúdo abaixo.
+   Trava todo mundo, exceto o slide-body (que pode ceder espaço e rolar). */
+.slide > *{ flex-shrink:0; }
+
+.slide-kicker{
+  display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;
+  font-family:var(--font-mono); color:var(--text-dim); font-size:12.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+}
+.slide-kicker .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+.slide-kicker .sep{ opacity:.4; }
+.slide-time{ margin-left:auto; display:flex; align-items:center; gap:8px; color:var(--text-faint); font-weight:500; text-transform:none; letter-spacing:0; font-size:12px; }
+
+.slide-title{ font-size:clamp(26px,3.4vw,44px); font-weight:700; line-height:1.16; }
+.slide-subtitle{ margin-top:10px; font-size:clamp(14.5px,1.3vw,18px); color:var(--text-dim); font-weight:400; max-width:760px; line-height:1.55; }
+
+.slide-body{ flex:1; display:flex; flex-direction:column; justify-content:flex-start; margin-top:24px; min-height:0; }
+
+.pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 14px; border-radius:999px;
+  background:var(--surface-2); border:1px solid var(--border);
+  font-size:12.5px; font-weight:600; color:var(--text-dim);
+}
+.pill.accent{ background:rgba(var(--teal-rgb),.14); color:var(--teal); border-color:rgba(var(--teal-rgb),.35); }
+
+.attention-tag{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px; border-radius:var(--radius-sm);
+  background:rgba(var(--brass-rgb),.13); border:1px solid rgba(var(--brass-rgb),.4);
+  color:var(--brass); font-size:13px; font-weight:700;
+}
+
+/* ---------- 5. COMPONENTES ---------- */
+.grid{ display:grid; gap:18px; }
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:22px 24px; box-shadow:var(--shadow-1); min-width:0;
+  transition:transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.card h3{ font-size:16.5px; font-weight:700; }
+.card p{ color:var(--text-dim); font-size:14.5px; line-height:1.55; margin-top:8px; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:14px 24px; min-height:50px;
+  border-radius:var(--radius-md); border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text);
+  font-size:14.5px; font-weight:700; font-family:var(--font-body);
+  transition:transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.btn:hover{ transform:translateY(-2px); border-color:var(--brass); }
+.btn:active{ transform:translateY(0) scale(.98); }
+.btn.primary{ background:var(--brass); border-color:transparent; color:var(--on-brass); box-shadow:var(--shadow-glow); }
+.btn.primary:hover{ filter:brightness(.96); }
+.btn.ghost{ background:transparent; }
+.btn.big{ padding:18px 36px; font-size:16px; border-radius:var(--radius-lg); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+.btn svg{ width:18px; height:18px; flex-shrink:0; }
+
+.hint-btn{
+  background:none; border:1px dashed var(--border); color:var(--text-dim);
+  border-radius:999px; padding:9px 16px; font-size:13px; font-weight:600;
+}
+.hint-btn:hover{ border-color:var(--teal); color:var(--teal); }
+
+/* ---------- 6. MENU DE ETAPAS ---------- */
+.menu-overlay{
+  position:fixed; inset:0; z-index:60;
+  background:rgba(4,6,10,.6); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity var(--dur-fast) var(--ease);
+}
+.menu-overlay.open{ opacity:1; pointer-events:auto; }
+.menu-panel{
+  width:min(760px,92vw); max-height:82vh; overflow:auto;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-xl); padding:28px; box-shadow:var(--shadow-2);
+  transform:translateY(14px) scale(.97); transition:transform var(--dur-med) var(--ease);
+}
+.menu-overlay.open .menu-panel{ transform:translateY(0) scale(1); }
+.menu-panel h2{ font-size:21px; font-weight:700; }
+.menu-panel .menu-sub{ color:var(--text-dim); font-size:13.5px; margin-top:4px; }
+.menu-list{ list-style:none; margin:20px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; }
+.menu-list li button{
+  width:100%; text-align:left; display:flex; align-items:center; gap:12px;
+  padding:13px 15px; border-radius:14px; border:1px solid var(--border); background:var(--surface-2); color:var(--text);
+}
+.menu-list li button:hover{ border-color:var(--brass); }
+.menu-list li button .num{
+  width:26px; height:26px; border-radius:8px; background:var(--surface-3); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--text-dim);
+}
+.menu-list li button.current{ border-color:var(--teal); background:rgba(var(--teal-rgb),.12); }
+.menu-close-row{ margin-top:20px; display:flex; justify-content:flex-end; }
+
+/* ---------- 6b. PAINEL DE ANOTAÇÕES — gaveta lateral com fundo, nunca sobrepõe conteúdo sem contexto ---------- */
+.notes-backdrop{
+  position:fixed; inset:0; z-index:55; background:rgba(4,6,10,.5); backdrop-filter:blur(3px);
+  opacity:0; pointer-events:none; transition:opacity var(--dur-fast) var(--ease);
+}
+.notes-backdrop.open{ opacity:1; pointer-events:auto; }
+.notes-panel{
+  position:fixed; top:0; right:0; height:100%; width:min(400px,88vw); z-index:56;
+  background:var(--surface); border-left:1px solid var(--border); box-shadow:var(--shadow-2);
+  padding:22px 22px 24px; display:flex; flex-direction:column;
+  transform:translateX(100%); transition:transform var(--dur-med) var(--ease);
+}
+.notes-panel.open{ transform:translateX(0); }
+.notes-panel-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.notes-panel h4{ font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); font-weight:700; }
+.notes-step{ font-size:12px; color:var(--text-faint); margin-top:3px; }
+#btnNotesClose{ width:34px; height:34px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-dim); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+#btnNotesClose:hover{ color:var(--teal); border-color:var(--teal); }
+#btnNotesClose svg{ width:16px; height:16px; }
+.notes-textarea{
+  margin-top:14px; width:100%; flex:1; min-height:220px; resize:vertical;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:13px 15px; font-family:var(--font-body); font-size:14.5px; line-height:1.6; color:var(--text);
+}
+.notes-textarea::placeholder{ color:var(--text-faint); }
+.notes-saved{ margin-top:8px; font-size:11.5px; color:var(--text-faint); text-align:right; min-height:14px; font-family:var(--font-mono); }
+
+/* ---------- 8. TELAS ESPECÍFICAS ---------- */
+
+/* Abertura */
+.opening{ justify-content:center; align-items:center; text-align:center; }
+.opening .pill{ margin-bottom:24px; }
+.opening h1{ font-size:clamp(32px,5.2vw,64px); font-weight:700; line-height:1.05; max-width:1020px; }
+.opening h1 .accent-word{ color:var(--brass); }
+.opening .lead{ margin-top:18px; font-size:clamp(15.5px,1.5vw,20px); color:var(--text-dim); max-width:640px; font-weight:400; }
+.opening > *{ animation:riseIn .7s var(--ease) backwards; }
+.opening > *:nth-child(1){ animation-delay:.04s; }
+.opening > *:nth-child(2){ animation-delay:.10s; }
+.opening > *:nth-child(3){ animation-delay:.17s; }
+.opening > *:nth-child(4){ animation-delay:.24s; }
+.opening > *:nth-child(5){ animation-delay:.32s; }
+.opening > *:nth-child(6){ animation-delay:.40s; }
+.opening > *:nth-child(7){ animation-delay:.48s; }
+.opening > *:nth-child(8){ animation-delay:.56s; }
+@keyframes riseIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+
+.blueprint-compare{ margin-top:40px; display:flex; gap:24px; align-items:stretch; justify-content:center; flex-wrap:wrap; }
+.compare-card{
+  width:280px; height:196px; border-radius:var(--radius-lg); position:relative; overflow:hidden;
+  border:1px solid var(--border); background:var(--surface); box-shadow:var(--shadow-1);
+}
+.compare-card .label{ position:absolute; bottom:12px; left:14px; font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--text-dim); letter-spacing:.05em; text-transform:uppercase; }
+.blueprint-svg, .datamodel-svg{ width:100%; height:100%; }
+.vs-badge{
+  align-self:center; width:48px; height:48px; border-radius:50%;
+  background:var(--brass); color:var(--on-brass);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:12.5px; box-shadow:var(--shadow-glow);
+}
+.opening .question-line{ margin-top:32px; font-size:17.5px; font-weight:600; color:var(--text); max-width:600px; }
+.opening .start-cta{ margin-top:32px; }
+
+.titleblock{
+  margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center;
+  border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;
+  background:var(--surface); box-shadow:var(--shadow-1);
+}
+.tb-row{ display:flex; flex-direction:column; gap:3px; padding:10px 20px; border-right:1px solid var(--border); }
+.tb-row:last-child{ border-right:none; }
+.tb-label{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint); }
+.tb-value{ font-family:var(--font-mono); font-size:12.5px; font-weight:600; color:var(--text); }
+@media (max-width:640px){
+  .titleblock{ flex-direction:column; width:100%; }
+  .tb-row{ border-right:none; border-bottom:1px solid var(--border); align-items:center; }
+  .tb-row:last-child{ border-bottom:none; }
+}
+
+/* Situação problema */
+.messy-table-wrap{ overflow:auto; border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow:var(--shadow-1); }
+.messy-table{ width:100%; border-collapse:collapse; font-size:13px; min-width:720px; }
+.messy-table th{ background:var(--surface-2); color:var(--text-dim); text-align:left; padding:11px 14px; font-weight:700; position:sticky; top:0; font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; }
+.messy-table td{ padding:10px 14px; border-top:1px solid var(--border); color:var(--text); }
+.messy-table tr:nth-child(even) td{ background:rgba(var(--border-rgb),.12); }
+.messy-table td.dup{ position:relative; }
+.messy-table td.dup::after{ content:"↺ repetido"; margin-left:8px; font-size:10.5px; color:var(--warning); font-weight:700; }
+.problems-row{ margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+.problem-chip{ padding:14px 16px; border-radius:var(--radius-md); background:rgba(var(--danger-rgb),.08); border:1px solid rgba(var(--danger-rgb),.32); min-width:0; }
+.problem-chip .p-icon{ color:var(--danger); font-weight:800; font-size:12.5px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.03em; }
+.problem-chip p{ margin-top:6px; font-size:13.5px; color:var(--text-dim); }
+
+/* fluxo mundo real -> modelo */
+.flow-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+.flow-node{
+  padding:16px 20px; border-radius:var(--radius-lg); background:var(--surface); border:1px solid var(--border);
+  min-width:160px; text-align:center; box-shadow:var(--shadow-1);
+  opacity:0; transform:translateY(14px); transition:opacity .55s var(--ease), transform .55s var(--ease);
+}
+.flow-node.show{ opacity:1; transform:translateY(0); }
+.flow-node .fn-title{ font-weight:700; font-size:14.5px; }
+.flow-node .fn-sub{ font-size:12px; color:var(--text-dim); margin-top:4px; }
+.flow-arrow{ width:32px; height:14px; opacity:0; transition:opacity .5s var(--ease); flex-shrink:0; }
+.flow-arrow.show{ opacity:1; }
+.flow-arrow svg{ width:100%; height:100%; stroke:var(--teal); }
+
+/* Entidades / atributos */
+.two-col{ display:grid; grid-template-columns:1.1fr .9fr; gap:30px; align-items:start; }
+.two-col > *{ min-width:0; }
+.entity-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; }
+.mini-entity{ padding:15px 17px; border-radius:var(--radius-md); border:1px solid var(--border); background:var(--surface); display:flex; align-items:center; gap:12px; min-width:0; }
+.mini-entity .sq{ width:32px; height:32px; border-radius:9px; background:var(--brass); flex-shrink:0; }
+.mini-entity strong{ font-size:14.5px; }
+
+.transform-diagram{ display:flex; flex-direction:column; gap:9px; }
+.transform-row{ display:flex; align-items:center; gap:12px; font-size:13.5px; }
+.transform-row .arrow{ color:var(--text-faint); }
+.transform-row .from{ color:var(--text-dim); }
+.transform-row .to{ font-weight:700; color:var(--teal); font-family:var(--font-mono); }
+
+/* Card sort */
+.sort-instructions{ font-size:14px; color:var(--text-dim); margin-bottom:14px; }
+.sort-board{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
+.sort-card{
+  padding:14px 10px; border-radius:var(--radius-md); border:1px solid var(--border); background:var(--surface);
+  text-align:center; font-weight:700; font-size:14px; min-height:74px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  transition:transform var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+}
+.sort-card:hover{ transform:translateY(-3px); }
+.sort-card small{ font-weight:600; font-size:10.5px; color:var(--text-faint); opacity:0; transition:opacity .2s; }
+.sort-card.revealed small{ opacity:1; }
+.sort-card.is-entity.revealed{ border-color:var(--brass); background:rgba(var(--brass-rgb),.12); }
+.sort-card.is-attribute.revealed{ border-color:var(--teal); background:rgba(var(--teal-rgb),.1); }
+.sort-actions{ margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Relacionamentos */
+.rel-visual{ display:flex; align-items:center; justify-content:center; gap:22px; margin-top:6px; flex-wrap:wrap; }
+.rel-box{ padding:15px 22px; border-radius:var(--radius-md); background:var(--surface); border:1px solid var(--border); font-weight:700; font-size:15px; min-width:110px; text-align:center; }
+.rel-line{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+.rel-line .rel-tag{ font-family:var(--font-mono); font-size:11.5px; font-weight:700; color:var(--teal); background:var(--surface-2); padding:3px 10px; border-radius:99px; }
+.rel-line svg{ width:60px; height:16px; stroke:var(--text-faint); }
+.rel-examples{ margin-top:28px; }
+
+/* Cardinalidade */
+.card-question{ text-align:center; }
+.card-question h3{ font-size:19px; font-weight:700; }
+.card-options{ margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+.card-option{ padding:18px 12px; border-radius:var(--radius-lg); border:1px solid var(--border); background:var(--surface); font-weight:700; font-size:14.5px; text-align:center; transition:transform var(--dur-fast), border-color var(--dur-fast); }
+.card-option:hover{ border-color:var(--brass); transform:translateY(-2px); }
+.card-option.correct{ border-color:var(--success); background:rgba(var(--success-rgb),.13); color:var(--success); }
+.card-option.wrong{ border-color:var(--danger); background:rgba(var(--danger-rgb),.1); opacity:.7; }
+.card-result{
+  margin-top:22px; padding:17px 20px; border-radius:var(--radius-lg); background:var(--surface-2);
+  border:1px solid var(--border); max-width:640px; margin-left:auto; margin-right:auto;
+  opacity:0; transform:translateY(10px); transition:opacity .4s var(--ease), transform .4s var(--ease);
+}
+.card-result.show{ opacity:1; transform:translateY(0); }
+.card-result .cr-formula{ font-family:var(--font-mono); font-weight:700; color:var(--teal); font-size:15.5px; }
+.cardinality-examples{ margin-top:28px; display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; }
+
+/* Diagrama ER final */
+.diagram-wrap{ display:grid; grid-template-columns:1.4fr 1fr; gap:24px; align-items:start; }
+.diagram-wrap > *{ min-width:0; }
+.er-svg-box{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:12px; box-shadow:var(--shadow-1); }
+.er-entity-box{ cursor:pointer; }
+.er-entity-box rect.card-bg{ transition:filter .2s, stroke .2s, stroke-width .2s; }
+.er-entity-box.dim{ opacity:.35; }
+.er-entity-box.selected rect.card-bg{ stroke:var(--teal); stroke-width:2.5; }
+.er-edge{ transition:stroke .2s, stroke-width .2s, opacity .2s; cursor:pointer; }
+.er-edge.dim{ opacity:.25; }
+.er-edge:hover, .er-edge.selected{ stroke:var(--teal); stroke-width:3; }
+.er-detail-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; min-height:240px; box-shadow:var(--shadow-1); }
+.er-detail-panel h3{ font-size:17px; font-weight:700; }
+.er-detail-panel .er-role{ margin-top:6px; font-size:12.5px; color:var(--teal); font-weight:700; font-family:var(--font-mono); }
+.er-detail-panel .er-desc{ margin-top:12px; font-size:13.5px; color:var(--text-dim); line-height:1.55; }
+.er-attr-list{ margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+.er-attr-list span{ font-family:var(--font-mono); font-size:11.5px; padding:5px 10px; border-radius:8px; background:var(--surface-2); border:1px solid var(--border); }
+.er-placeholder{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--text-faint); text-align:center; gap:10px; padding:36px 10px; }
+
+/* SQL panel */
+.sql-toggle-row{ margin-top:16px; display:flex; align-items:center; gap:12px; }
+.sql-panel{ margin-top:14px; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border); max-height:0; opacity:0; transition:max-height .4s var(--ease), opacity .3s var(--ease); }
+.sql-panel.open{ max-height:340px; opacity:1; }
+.sql-head{ display:flex; justify-content:space-between; align-items:center; background:var(--surface-2); padding:10px 16px; }
+.sql-head span{ font-size:11.5px; font-weight:700; color:var(--text-dim); font-family:var(--font-mono); }
+.sql-copy-btn{ background:var(--surface-3); border:none; color:var(--text); font-size:12px; font-weight:700; padding:7px 12px; border-radius:8px; display:flex; align-items:center; gap:6px; }
+.sql-copy-btn svg{ width:13px; height:13px; }
+pre.sql-code{ margin:0; padding:18px 20px; background:#0F141B; color:#E4E7EC; font-family:var(--font-mono); font-size:13px; line-height:1.7; overflow:auto; }
+.sql-kw{ color:#7FC7BC; } .sql-type{ color:#E0B675; }
+.copied-toast{
+  position:fixed; bottom:calc(var(--footer-h) + 14px); left:50%; transform:translateX(-50%) translateY(20px); z-index:70;
+  background:var(--success); color:#06331F; font-weight:800; font-size:13.5px;
+  padding:12px 22px; border-radius:99px; box-shadow:var(--shadow-2);
+  opacity:0; pointer-events:none; transition:opacity .25s var(--ease), transform .25s var(--ease);
+}
+.copied-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Mini desafio */
+.challenge-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px; margin-top:18px; }
+.challenge-card{
+  padding:20px 14px; border-radius:var(--radius-lg); background:var(--surface); border:1px solid var(--border);
+  text-align:center; font-weight:700; opacity:0; transform:translateY(14px) scale(.94);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.challenge-card.show{ opacity:1; transform:translateY(0) scale(1); }
+.challenge-rel{ margin-top:22px; display:flex; flex-direction:column; gap:8px; align-items:center; opacity:0; transition:opacity .5s var(--ease); }
+.challenge-rel.show{ opacity:1; }
+.challenge-rel .cr-line{ font-family:var(--font-mono); font-size:13.5px; color:var(--text-dim); }
+
+/* Atividade para casa */
+.activity-sheet{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:26px 28px; box-shadow:var(--shadow-1); max-width:820px; }
+.activity-sheet h3{ font-size:16.5px; font-weight:700; }
+.activity-sheet ol{ margin:14px 0 0; padding-left:20px; color:var(--text-dim); font-size:14.5px; line-height:1.8; }
+.criteria-list{ margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; }
+.criteria-list li{ list-style:none; display:flex; gap:9px; align-items:flex-start; font-size:13.5px; color:var(--text-dim); }
+.criteria-list li::before{ content:"✓"; color:var(--success); font-weight:800; flex-shrink:0; }
+.activity-actions{ margin-top:20px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.tip-box{
+  margin-top:14px; padding:14px 16px; border-radius:var(--radius-md); background:rgba(var(--teal-rgb),.08);
+  border:1px solid rgba(var(--teal-rgb),.3); font-size:13.5px; color:var(--text-dim);
+  max-height:0; opacity:0; overflow:hidden; transition:max-height .35s var(--ease), opacity .3s var(--ease), padding .35s;
+}
+.tip-box.open{ max-height:120px; opacity:1; }
+
+/* Revisão */
+.review-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; }
+.review-card{ text-align:center; padding:24px 16px; }
+.review-card .r-icon{ width:40px; height:40px; margin:0 auto 12px; color:var(--teal); }
+.review-flow{ margin-top:30px; }
+.final-quote{ margin-top:28px; text-align:center; font-size:18px; font-weight:600; font-style:italic; color:var(--text); max-width:680px; margin-left:auto; margin-right:auto; line-height:1.5; }
+.review-actions{ margin-top:26px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+/* Encerramento */
+.closing{ align-items:center; justify-content:center; text-align:center; }
+.closing .pill{ margin-bottom:20px; }
+.closing h1{ font-size:clamp(28px,4.2vw,50px); font-weight:700; }
+.closing .concept-tags{ margin-top:24px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:640px; }
+.closing .quote{ margin-top:28px; font-size:16.5px; font-style:italic; color:var(--text-dim); max-width:600px; }
+.closing .prof-name{ margin-top:32px; font-size:14px; color:var(--text-faint); font-family:var(--font-mono); }
+.closing .prof-name strong{ color:var(--text); font-size:17px; display:block; margin-top:4px; font-family:var(--font-display); }
+/* ===== ALTERE O NOME DO PROFESSOR NO HTML, id="professorName" e id="tbProfessorName" ===== */
+
+/* ---------- 9. RESPONSIVIDADE ---------- */
+@media (max-width:1180px){
+  .two-col, .diagram-wrap{ grid-template-columns:1fr; }
+}
+@media (max-width:760px){
+  .header-center{ display:none; }
+  .menu-list{ grid-template-columns:1fr; }
+  .compare-card{ width:100%; max-width:320px; }
+}
+@media (max-width:480px){
+  .header-left .discipline-tag{ display:none; }
+  .app-header{ gap:10px; padding:0 12px; }
+  .timer-chip .t-display{ min-width:44px; font-size:13px; }
+}
+
+/* ---------- 10. REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001s !important; transition-duration:.001s !important; }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<div id="app">
+
+  <div class="reg-marks" aria-hidden="true"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+  <!-- ===================== CABEÇALHO ÚNICO ===================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="discipline-tag">BD·03</span>
+      <span class="sep">/</span>
+      <span class="sheet-num" id="headerSheetNum">FL. 01/12</span>
+    </div>
+    <div class="header-center" id="headerTitle">Abertura</div>
+    <div class="header-right">
+      <div class="timer-chip" id="timerWidget">
+        <span class="t-display" id="timerDisplay">00:00</span>
+        <button id="timerToggle" aria-label="Iniciar ou pausar cronômetro" title="Iniciar/Pausar">
+          <svg id="timerIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+        </button>
+        <button id="timerReset" aria-label="Reiniciar cronômetro" title="Reiniciar cronômetro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 1 2.6 6.3"/><path d="M3 21v-6h6"/></svg>
+        </button>
+        <button id="timerHide" aria-label="Ocultar cronômetro" title="Ocultar cronômetro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M6.7 6.7C4.5 8.1 3 12 3 12s3.5 7 9 7c1.6 0 3-.5 4.2-1.3M9.9 4.2A10 10 0 0 1 12 4c5.5 0 9 7 9 7-.4.7-.9 1.5-1.6 2.3"/></svg>
+        </button>
+      </div>
+      <button class="icon-btn" id="timerShow" aria-label="Mostrar cronômetro" title="Mostrar cronômetro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 3h6"/></svg>
+      </button>
+      <button class="icon-btn" id="btnTheme" title="Alternar modo claro/escuro" aria-label="Alternar modo claro/escuro">
+        <svg id="iconTheme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn" id="btnNotes" title="Mostrar/ocultar anotações da aula" aria-label="Mostrar ou ocultar anotações da aula" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13l3 3v13H4z"/><path d="M8 9h8M8 13h8M8 17h4"/></svg>
+      </button>
+      <button class="icon-btn" id="btnFullscreen" title="Tela cheia" aria-label="Alternar tela cheia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+      <button class="icon-btn" id="btnRestart" title="Reiniciar aula" aria-label="Reiniciar aula">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 2.6 6.3"/><path d="M3 21v-6h6"/></svg>
+      </button>
+      <button class="icon-btn" id="btnMenu" title="Abrir menu de etapas" aria-label="Abrir menu de etapas" aria-haspopup="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== PALCO ===================== -->
+  <div class="stage">
+    <nav class="progress-rail" id="progressRail" aria-label="Progresso da aula"></nav>
+
+    <div class="slides" id="slides">
+
+      <!-- 0. ABERTURA -->
+      <section class="slide active opening" data-slide="0">
+        <span class="pill accent">Aula teste · Banco de Dados</span>
+        <h1>Introdução à <span class="accent-word">Modelagem</span> de Banco de Dados</h1>
+        <p class="lead">Como transformar informações do mundo real em uma estrutura organizada de dados.</p>
+
+        <p class="question-line">"Você começaria a construir um prédio sem uma planta?"</p>
+
+        <div class="blueprint-compare">
+          <div class="compare-card">
+            <svg class="blueprint-svg" viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
+              <rect width="300" height="210" fill="var(--surface-2)"/>
+              <g stroke="var(--brass)" stroke-width="1.6" fill="none" opacity="0.9">
+                <rect x="30" y="30" width="240" height="150"/>
+                <line x1="30" y1="90" x2="270" y2="90"/>
+                <line x1="130" y1="30" x2="130" y2="180"/>
+                <line x1="200" y1="90" x2="200" y2="180"/>
+                <rect x="50" y="45" width="24" height="16"/>
+                <rect x="150" y="45" width="24" height="16"/>
+                <rect x="50" y="105" width="24" height="16"/>
+                <circle cx="240" cy="60" r="10"/>
+              </g>
+            </svg>
+            <span class="label">Planta arquitetônica</span>
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="compare-card">
+            <svg class="datamodel-svg" viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
+              <rect width="300" height="210" fill="var(--surface-2)"/>
+              <g fill="none" stroke="var(--teal)" stroke-width="1.6">
+                <rect x="26" y="30" width="90" height="60" rx="8"/>
+                <rect x="184" y="30" width="90" height="60" rx="8"/>
+                <rect x="105" y="130" width="90" height="60" rx="8"/>
+                <line x1="116" y1="60" x2="184" y2="60"/>
+                <line x1="71" y1="90" x2="130" y2="130"/>
+                <line x1="229" y1="90" x2="170" y2="130"/>
+              </g>
+              <g fill="var(--text-dim)" font-size="9" font-family="monospace">
+                <text x="38" y="52">Aluno</text>
+                <text x="196" y="52">Curso</text>
+                <text x="118" y="152">Matrícula</text>
+              </g>
+            </svg>
+            <span class="label">Modelo de dados</span>
+          </div>
+        </div>
+
+        <p class="question-line" style="margin-top:22px;">Criar um banco de dados sem modelagem é como construir um prédio sem projeto.</p>
+
+        <div class="start-cta">
+          <button class="btn primary big" id="btnStart">
+            Iniciar aula
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+        <div class="titleblock" aria-label="Ficha técnica da aula">
+          <div class="tb-row"><span class="tb-label">Disciplina</span><span class="tb-value">Banco de Dados</span></div>
+          <div class="tb-row"><span class="tb-label">Turma</span><span class="tb-value">Tecnólogo · 3º Semestre</span></div>
+          <div class="tb-row"><span class="tb-label">Autoria</span><span class="tb-value" id="tbProfessorName">Esp. Gabriel Alencar Vale</span></div>
+          <div class="tb-row"><span class="tb-label">Folha</span><span class="tb-value">01 / 12</span></div>
+        </div>
+      </section>
+
+      <!-- 1. SITUAÇÃO-PROBLEMA -->
+      <section class="slide" data-slide="1">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 2 · Situação-problema <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Uma planilha para (quase) tudo</h2>
+        <p class="slide-subtitle">Como organizar os dados de alunos, cursos, disciplinas e matrículas sem criar informações duplicadas ou inconsistentes?</p>
+
+        <div class="slide-body">
+          <div class="messy-table-wrap">
+            <table class="messy-table">
+              <thead><tr><th>Aluno</th><th>E-mail</th><th>Curso</th><th>Disciplina</th><th>Professor</th><th>Nota</th><th>Semestre</th></tr></thead>
+              <tbody>
+                <tr><td class="dup">Marina Alves</td><td>marina.alves@fac.br</td><td class="dup">Análise e Desenv. de Sistemas</td><td>Banco de Dados</td><td class="dup">Carlos Reis</td><td>8.5</td><td>2026/1</td></tr>
+                <tr><td class="dup">Marina Alves</td><td>marina.alves@fac.br</td><td class="dup">Análise e Desenv. de Sistemas</td><td>Estrutura de Dados</td><td>Julia Nogueira</td><td>7.0</td><td>2026/1</td></tr>
+                <tr><td>Pedro Lima</td><td>pedro.lima@fac.br</td><td class="dup">Análise e Desenv. de Sistemas</td><td>Banco de Dados</td><td class="dup">Carlos Reis</td><td>9.0</td><td>2026/1</td></tr>
+                <tr><td>Beatriz Sousa</td><td>bia.sousa@fac.br</td><td>Engenharia de Software</td><td>Banco de Dados</td><td class="dup">Carlos Reis</td><td>6.5</td><td>2026/1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="problems-row">
+            <div class="problem-chip"><span class="p-icon">01 · Repetição</span><p>Nome, e-mail e curso do aluno se repetem em cada disciplina cursada.</p></div>
+            <div class="problem-chip"><span class="p-icon">02 · Atualização</span><p>Trocar um e-mail exige alterar várias linhas ao mesmo tempo.</p></div>
+            <div class="problem-chip"><span class="p-icon">03 · Inconsistência</span><p>Um erro de digitação pode gerar dois "professores" diferentes para a mesma pessoa.</p></div>
+            <div class="problem-chip"><span class="p-icon">04 · Crescimento</span><p>Adicionar um novo tipo de dado obriga a reestruturar a planilha inteira.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. O QUE É MODELAGEM -->
+      <section class="slide" data-slide="2">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 3 · Conceito <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">O que é modelagem de banco de dados</h2>
+        <p class="slide-subtitle">Modelagem de banco de dados é o processo de representar e organizar as informações de um sistema <strong>antes</strong> da criação das tabelas no banco.</p>
+
+        <div class="slide-body">
+          <div class="pill" style="margin:0 auto 30px;">Modelar é pensar antes de implementar</div>
+          <div class="flow-row" id="flowRow">
+            <div class="flow-node" data-i="0"><div class="fn-title">Mundo real</div><div class="fn-sub">Alunos, cursos, disciplinas</div></div>
+            <div class="flow-arrow" data-i="0"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node" data-i="1"><div class="fn-title">Regras de negócio</div><div class="fn-sub">Como tudo se relaciona</div></div>
+            <div class="flow-arrow" data-i="1"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node" data-i="2"><div class="fn-title">Modelo de dados</div><div class="fn-sub">Entidades, atributos, relações</div></div>
+            <div class="flow-arrow" data-i="2"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node" data-i="3"><div class="fn-title">Banco de dados</div><div class="fn-sub">Tabelas implementadas</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ENTIDADES E ATRIBUTOS -->
+      <section class="slide" data-slide="3">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 4 · Entidades e atributos <span class="sep">•</span><span class="slide-time">⏱ ~3 min</span></div>
+        <h2 class="slide-title">Entidades, atributos e relacionamentos</h2>
+        <p class="slide-subtitle">Os três blocos que formam qualquer modelo de dados — exemplificados com o nosso sistema acadêmico.</p>
+
+        <div class="slide-body">
+          <div class="two-col">
+            <div>
+              <div class="entity-list">
+                <div class="mini-entity"><div class="sq"></div><div><strong>Aluno</strong><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-dim);">id_aluno, nome, e-mail...</p></div></div>
+                <div class="mini-entity"><div class="sq"></div><div><strong>Curso</strong><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-dim);">um aluno pertence a um curso</p></div></div>
+                <div class="mini-entity"><div class="sq"></div><div><strong>Disciplina</strong><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-dim);">pode ter vários alunos</p></div></div>
+                <div class="mini-entity"><div class="sq"></div><div><strong>Matrícula</strong><p style="margin:2px 0 0;font-size:12.5px;color:var(--text-dim);">conecta aluno e disciplina</p></div></div>
+              </div>
+              <div class="transform-diagram" style="margin-top:22px;">
+                <div class="transform-row"><span class="from">Entidade</span><span class="arrow">→</span><span class="to">Tabela</span></div>
+                <div class="transform-row"><span class="from">Atributo</span><span class="arrow">→</span><span class="to">Coluna</span></div>
+                <div class="transform-row"><span class="from">Ocorrência da entidade</span><span class="arrow">→</span><span class="to">Registro (linha)</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Atividade rápida — entidade ou atributo?</h3>
+              <p class="sort-instructions" style="margin-top:10px;">Toque em cada cartão para descobrir a resposta.</p>
+              <div class="sort-board" id="sortBoard"></div>
+              <div class="sort-actions">
+                <button class="btn ghost" id="btnSortReveal">Mostrar solução</button>
+                <button class="btn ghost" id="btnSortReset">Reiniciar atividade</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. RELACIONAMENTOS -->
+      <section class="slide" data-slide="4">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 5 · Relacionamentos <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Como as entidades se relacionam</h2>
+        <p class="slide-subtitle">Um relacionamento representa uma ligação com significado entre duas entidades.</p>
+
+        <div class="slide-body">
+          <div class="rel-visual">
+            <div class="rel-box">Aluno</div>
+            <div class="rel-line"><span class="rel-tag">pertence a</span><svg viewBox="0 0 64 16"><path d="M0 8h60M50 2l10 6-10 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="rel-box">Curso</div>
+          </div>
+          <div class="rel-visual" style="margin-top:20px;">
+            <div class="rel-box">Aluno</div>
+            <div class="rel-line"><span class="rel-tag">cursa</span><svg viewBox="0 0 64 16"><path d="M0 8h60M50 2l10 6-10 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="rel-box">Disciplina</div>
+          </div>
+          <p style="text-align:center;margin-top:24px;color:var(--text-dim);font-size:14.5px;">A matrícula é o elo que conecta alunos e disciplinas, registrando semestre, nota e frequência.</p>
+          <div class="attention-tag" style="display:flex;margin:18px auto 0;width:fit-content;">Atenção à cardinalidade — é o próximo passo</div>
+        </div>
+      </section>
+
+      <!-- 5. CARDINALIDADE -->
+      <section class="slide" data-slide="5">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 6 · Cardinalidades <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Cardinalidade: quantas ocorrências participam?</h2>
+        <p class="slide-subtitle">1:1 — um para um · 1:N — um para muitos · N:N — muitos para muitos.</p>
+
+        <div class="slide-body">
+          <div class="card-question">
+            <span class="pill">Pergunta rápida</span>
+            <h3 style="margin-top:14px;">Um curso pode possuir quantos alunos?</h3>
+            <div class="card-options" id="cardOptions">
+              <button class="card-option" data-v="um">Apenas um</button>
+              <button class="card-option" data-v="varios">Vários</button>
+              <button class="card-option" data-v="nenhum">Nenhum</button>
+              <button class="card-option" data-v="dois">Exatamente dois</button>
+            </div>
+            <div class="card-result" id="cardResult">
+              <p class="cr-formula">Curso 1:N Aluno</p>
+              <p style="margin-top:8px;color:var(--text-dim);font-size:14px;">Um curso pode ter vários alunos matriculados, mas cada aluno pertence a apenas um curso — por isso a cardinalidade é <strong>um para muitos (1:N)</strong>.</p>
+            </div>
+          </div>
+
+          <div class="cardinality-examples">
+            <div class="card"><h3>1:1</h3><p>Pessoa e CPF — cada pessoa possui exatamente um CPF, e vice-versa.</p></div>
+            <div class="card"><h3>1:N</h3><p>Curso e Alunos — um curso reúne vários alunos.</p></div>
+            <div class="card"><h3>N:N</h3><p>Alunos e Disciplinas — resolvido pela entidade associativa Matrícula.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CONSTRUÇÃO DO MODELO -->
+      <section class="slide" data-slide="6">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 7 · Construção do modelo <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Do problema ao modelo, passo a passo</h2>
+        <p class="slide-subtitle">Nenhum modelo nasce pronto — ele é construído aos poucos.</p>
+
+        <div class="slide-body">
+          <div class="flow-row" id="buildSteps" style="flex-direction:column;align-items:stretch;gap:12px;max-width:640px;margin:0 auto;width:100%;">
+            <div class="flow-node show" style="text-align:left;" data-i="0"><div class="fn-title">1. Existe um problema</div><div class="fn-sub">Dados repetidos e inconsistentes numa planilha só</div></div>
+            <div class="flow-node show" style="text-align:left;" data-i="1"><div class="fn-title">2. Identificamos os elementos principais</div><div class="fn-sub">Aluno, Curso, Disciplina...</div></div>
+            <div class="flow-node show" style="text-align:left;" data-i="2"><div class="fn-title">3. Transformamos em entidades e atributos</div><div class="fn-sub">Cada elemento vira uma tabela em potencial</div></div>
+            <div class="flow-node show" style="text-align:left;" data-i="3"><div class="fn-title">4. Criamos os relacionamentos e a cardinalidade</div><div class="fn-sub">Surge a entidade Matrícula, resolvendo o N:N</div></div>
+            <div class="flow-node show" style="text-align:left;border-color:var(--teal);" data-i="4"><div class="fn-title">5. Chegamos a um modelo organizado ✓</div><div class="fn-sub">Pronto para virar banco de dados</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. MODELO FINAL (diagrama interativo + SQL) -->
+      <section class="slide" data-slide="7">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 8 · Modelo final <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Diagrama Entidade-Relacionamento</h2>
+        <p class="slide-subtitle">Toque em uma entidade ou em uma linha para explorar os detalhes.</p>
+
+        <div class="slide-body">
+          <div class="diagram-wrap">
+            <div class="er-svg-box">
+              <svg id="erDiagram" viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama entidade relacionamento com Curso, Aluno, Disciplina e Matrícula"></svg>
+            </div>
+            <div class="er-detail-panel" id="erDetailPanel">
+              <div class="er-placeholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/><path d="M11 7h6a2 2 0 0 1 2 2v4M7 11v6a2 2 0 0 0 2 2h4"/></svg>
+                <p>Selecione uma entidade ou relação para ver detalhes aqui.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="sql-toggle-row">
+            <button class="btn ghost" id="btnToggleSQL">Do modelo para o banco — mostrar SQL</button>
+          </div>
+          <div class="sql-panel" id="sqlPanel">
+            <div class="sql-head">
+              <span>CREATE TABLE aluno</span>
+              <button class="sql-copy-btn" id="btnCopySQL">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                Copiar código
+              </button>
+            </div>
+            <pre class="sql-code" id="sqlCode"><span class="sql-kw">CREATE TABLE</span> aluno (
+    id_aluno <span class="sql-type">INTEGER</span> <span class="sql-kw">PRIMARY KEY</span>,
+    nome <span class="sql-type">VARCHAR(100)</span> <span class="sql-kw">NOT NULL</span>,
+    email <span class="sql-type">VARCHAR(150)</span> <span class="sql-kw">UNIQUE</span>,
+    id_curso <span class="sql-type">INTEGER</span>
+);</pre>
+          </div>
+          <p style="margin-top:10px;font-size:12.5px;color:var(--text-faint);">O modelo orienta a criação das tabelas — mas o foco desta aula é o projeto, não a implementação.</p>
+        </div>
+      </section>
+
+      <!-- 8. MINI DESAFIO -->
+      <section class="slide" data-slide="8">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 9 · Mini desafio <span class="sep">•</span><span class="slide-time">⏱ ~1 min</span></div>
+        <h2 class="slide-title">Mini desafio — biblioteca</h2>
+        <p class="slide-subtitle">Uma biblioteca possui livros, autores e empréstimos. Quais poderiam ser as entidades?</p>
+
+        <div class="slide-body">
+          <div class="challenge-cards" id="challengeCards">
+            <div class="challenge-card" data-i="0">Livro</div>
+            <div class="challenge-card" data-i="1">Autor</div>
+            <div class="challenge-card" data-i="2">Usuário</div>
+            <div class="challenge-card" data-i="3">Empréstimo</div>
+          </div>
+          <button class="btn ghost" id="btnRevealChallenge" style="margin:24px auto 0;display:block;">Revelar entidades</button>
+          <div class="challenge-rel" id="challengeRel">
+            <p class="cr-line">Usuário 1:N Empréstimo</p>
+            <p class="cr-line">Livro 1:N Empréstimo</p>
+            <p class="cr-line">Autor N:N Livro</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. ATIVIDADE PARA CASA -->
+      <section class="slide" data-slide="9">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 10 · Atividade para casa <span class="sep">•</span><span class="slide-time">⏱ ~2 min</span></div>
+        <h2 class="slide-title">Atividade — modele um sistema de biblioteca</h2>
+
+        <div class="slide-body">
+          <div class="activity-sheet" id="activitySheetText">
+            <h3>Enunciado</h3>
+            <p style="margin-top:8px;color:var(--text-dim);font-size:14.5px;line-height:1.6;">Uma biblioteca precisa armazenar informações sobre livros, autores, usuários e empréstimos.</p>
+            <ol>
+              <li>Identifique pelo menos quatro entidades.</li>
+              <li>Defina pelo menos três atributos para cada entidade.</li>
+              <li>Identifique os relacionamentos entre as entidades.</li>
+              <li>Defina as cardinalidades de cada relacionamento.</li>
+              <li>Desenhe um pequeno Diagrama Entidade-Relacionamento.</li>
+            </ol>
+
+            <h3 style="margin-top:20px;">Critérios esperados</h3>
+            <ul class="criteria-list">
+              <li>Clareza na identificação das entidades</li>
+              <li>Coerência dos atributos escolhidos</li>
+              <li>Relacionamentos compatíveis com o problema</li>
+              <li>Cardinalidades justificadas</li>
+              <li>Organização visual do modelo</li>
+            </ul>
+
+            <button class="hint-btn" id="btnTip" style="margin-top:18px;">💡 Dica opcional</button>
+            <div class="tip-box" id="tipBox"><p>Pense no empréstimo como o elemento que conecta o usuário ao livro.</p></div>
+          </div>
+
+          <div class="activity-actions">
+            <button class="btn primary" id="btnCopyActivity">Copiar atividade</button>
+            <button class="btn ghost" id="btnDownloadActivity">Baixar atividade em TXT</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. REVISÃO -->
+      <section class="slide" data-slide="10">
+        <div class="slide-kicker"><span class="dot"></span> Etapa 11 · Revisão <span class="sep">•</span><span class="slide-time">⏱ ~3 min</span></div>
+        <h2 class="slide-title">O que vimos hoje</h2>
+
+        <div class="slide-body">
+          <div class="review-grid">
+            <div class="card review-card"><svg class="r-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="3"/></svg><h3>Entidades</h3><p>Representam os elementos principais do sistema.</p></div>
+            <div class="card review-card"><svg class="r-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><h3>Atributos</h3><p>Descrevem as características das entidades.</p></div>
+            <div class="card review-card"><svg class="r-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 8l8 8"/></svg><h3>Relacionamentos</h3><p>Mostram como as entidades estão conectadas.</p></div>
+            <div class="card review-card"><svg class="r-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12h4M16 12h4M9 7l-3 5 3 5M15 7l3 5-3 5"/></svg><h3>Cardinalidades</h3><p>Definem quantas ocorrências participam do relacionamento.</p></div>
+          </div>
+
+          <div class="flow-row review-flow">
+            <div class="flow-node show"><div class="fn-title">Problema real</div></div>
+            <div class="flow-arrow show"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node show"><div class="fn-title">Entidades</div></div>
+            <div class="flow-arrow show"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node show"><div class="fn-title">Atributos</div></div>
+            <div class="flow-arrow show"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node show"><div class="fn-title">Relacionamentos</div></div>
+            <div class="flow-arrow show"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node show"><div class="fn-title">Cardinalidades</div></div>
+            <div class="flow-arrow show"><svg viewBox="0 0 34 14"><path d="M0 7h30M22 1l8 6-8 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="flow-node show" style="border-color:var(--teal);"><div class="fn-title">Modelo</div></div>
+          </div>
+
+          <p class="final-quote">"Um bom banco de dados começa muito antes do primeiro comando SQL."</p>
+
+          <div class="review-actions">
+            <button class="btn ghost" id="btnReviewModel">Revisar o modelo</button>
+            <button class="btn primary" id="btnFinishLesson">Finalizar aula</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. ENCERRAMENTO -->
+      <section class="slide closing" data-slide="11">
+        <span class="pill accent">Aula concluída</span>
+        <h1>Introdução à Modelagem de Banco de Dados</h1>
+        <div class="concept-tags">
+          <span class="pill">Entidades</span><span class="pill">Atributos</span><span class="pill">Relacionamentos</span><span class="pill">Cardinalidades</span><span class="pill">Modelo ER</span>
+        </div>
+        <p class="quote">"Modelar é tomar decisões sobre os dados antes que os problemas apareçam. Quando a modelagem é bem feita, a implementação se torna mais simples, segura e escalável."</p>
+        <div class="prof-name">
+          Professor(a)
+          <!-- ===== ALTERE O NOME DO PROFESSOR AQUI ===== -->
+          <strong id="professorName">Esp. Gabriel Alencar Vale</strong>
+        </div>
+      </section>
+
+    </div><!-- /.slides -->
+  </div><!-- /.stage -->
+
+  <!-- ===================== RODAPÉ / NAVEGAÇÃO ===================== -->
+  <footer class="app-footer">
+    <div class="controlbar">
+      <button class="nav-btn" id="btnPrev" aria-label="Etapa anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="bar-progress"><span id="barProgressFill"></span></div>
+      <span class="step-label" id="stepLabel">1 / 12</span>
+      <button class="nav-btn" id="btnNext" aria-label="Próxima etapa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ===================== MENU DE ETAPAS ===================== -->
+  <div class="menu-overlay" id="menuOverlay" role="dialog" aria-modal="true" aria-label="Menu de etapas da aula">
+    <div class="menu-panel">
+      <h2>Etapas da aula</h2>
+      <p class="menu-sub">Toque para saltar diretamente para qualquer etapa.</p>
+      <ul class="menu-list" id="menuList"></ul>
+      <div class="menu-close-row"><button class="btn ghost" id="btnMenuClose">Fechar</button></div>
+    </div>
+  </div>
+
+  <!-- ===================== ANOTAÇÕES DA AULA (gaveta lateral) ===================== -->
+  <div class="notes-backdrop" id="notesBackdrop"></div>
+  <div class="notes-panel" id="notesPanel" role="region" aria-label="Anotações desta etapa">
+    <div class="notes-panel-head">
+      <div>
+        <h4>Anotações da aula</h4>
+        <div class="notes-step" id="notesStepLabel">Um único bloco, válido em todas as 12 etapas</div>
+      </div>
+      <button id="btnNotesClose" aria-label="Fechar anotações" title="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <textarea class="notes-textarea" id="notesText" placeholder="Digite aqui bizus, lembretes ou palavras-chave. Este bloco acompanha a aula inteira — o que você escrever aqui continua visível em qualquer etapa."></textarea>
+    <div class="notes-saved" id="notesSaved"></div>
+  </div>
+
+  <div class="copied-toast" id="copiedToast">Código copiado!</div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================================
+   DADOS DA AULA
+   ========================================================================= */
+var SLIDE_NAMES = [
+  "Abertura","Situação-problema","O que é modelagem","Entidades e atributos",
+  "Relacionamentos","Cardinalidades","Construção do modelo","Modelo final",
+  "Mini desafio","Atividade para casa","Revisão","Encerramento"
+];
+
+var SORT_CARDS = [
+  {label:"Aluno", type:"entity", info:"Entidade — elemento principal do sistema"},
+  {label:"Curso", type:"entity", info:"Entidade — elemento principal do sistema"},
+  {label:"Disciplina", type:"entity", info:"Entidade — elemento principal do sistema"},
+  {label:"Matrícula", type:"entity", info:"Entidade associativa — conecta Aluno e Disciplina"},
+  {label:"Nome", type:"attribute", info:"Atributo — característica do Aluno"},
+  {label:"E-mail", type:"attribute", info:"Atributo — característica do Aluno"},
+  {label:"Nota", type:"attribute", info:"Atributo — característica da Matrícula"},
+  {label:"Semestre", type:"attribute", info:"Atributo — característica da Matrícula"}
+];
+
+/* Entidades do modelo final, usadas no diagrama SVG interativo */
+var ER_ENTITIES = {
+  curso:      { name:"Curso", x:40,  y:40,  w:150, h:104, def:"Representa um curso oferecido pela faculdade.", role:"Entidade principal", attrs:["id_curso","nome","duração"] },
+  aluno:      { name:"Aluno", x:450, y:40,  w:150, h:104, def:"Representa a pessoa matriculada em um curso.", role:"Entidade principal", attrs:["id_aluno","nome","email","id_curso"] },
+  disciplina: { name:"Disciplina", x:450, y:270, w:150, h:104, def:"Representa uma disciplina ofertada dentro dos cursos.", role:"Entidade principal", attrs:["id_disciplina","nome","carga_horaria"] },
+  matricula:  { name:"Matrícula", x:220, y:270, w:150, h:104, def:"Conecta Aluno e Disciplina, resolvendo o relacionamento N:N entre eles.", role:"Entidade associativa", attrs:["id_matricula","id_aluno","id_disciplina","semestre","nota"] }
+};
+var ER_EDGES = [
+  {id:"e1", from:"curso", to:"aluno", label:"1:N", path:"M190,92 L450,92"},
+  {id:"e2", from:"aluno", to:"matricula", label:"1:N", path:"M480,144 L340,270"},
+  {id:"e3", from:"disciplina", to:"matricula", label:"1:N", path:"M480,322 L370,322"}
+];
+
+var ACTIVITY_TEXT =
+"Atividade — Modele um sistema de biblioteca\n\n" +
+"Enunciado:\nUma biblioteca precisa armazenar informações sobre livros, autores, usuários e empréstimos.\n\n" +
+"O que fazer:\n" +
+"1. Identifique pelo menos quatro entidades.\n" +
+"2. Defina pelo menos três atributos para cada entidade.\n" +
+"3. Identifique os relacionamentos entre as entidades.\n" +
+"4. Defina as cardinalidades de cada relacionamento.\n" +
+"5. Desenhe um pequeno Diagrama Entidade-Relacionamento.\n\n" +
+"Critérios esperados:\n" +
+"- Clareza na identificação das entidades\n" +
+"- Coerência dos atributos escolhidos\n" +
+"- Relacionamentos compatíveis com o problema\n" +
+"- Cardinalidades justificadas\n" +
+"- Organização visual do modelo\n";
+/* ===== ALTERE O ENUNCIADO DA ATIVIDADE ACIMA (variável ACTIVITY_TEXT) ===== */
+
+/* =========================================================================
+   ESTADO
+   ========================================================================= */
+var state = {
+  current: 0,
+  total: document.querySelectorAll(".slide").length,
+  theme: "dark",
+  notesOpen: false,
+  timerSeconds: 0,
+  timerRunning: false,
+  timerInterval: null,
+  cardinalityAnswered: false,
+  sqlOpen: false
+};
+
+/* Anotações guardadas em memória durante a sessão — um único bloco para a aula inteira */
+var sessionNotes = "";
+
+var slidesEl = document.getElementById("slides");
+var slideEls = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+
+/* =========================================================================
+   NAVEGAÇÃO
+   ========================================================================= */
+function pad2(n){ return (n < 10 ? "0" : "") + n; }
+
+function buildRail(){
+  var rail = document.getElementById("progressRail");
+  rail.innerHTML = "";
+  SLIDE_NAMES.forEach(function(name, i){
+    var b = document.createElement("button");
+    b.setAttribute("data-label", (i+1) + ". " + name);
+    b.setAttribute("aria-label", "Ir para etapa " + (i+1) + ": " + name);
+    b.addEventListener("click", function(){ goTo(i); });
+    rail.appendChild(b);
+  });
+}
+
+function buildMenu(){
+  var list = document.getElementById("menuList");
+  list.innerHTML = "";
+  SLIDE_NAMES.forEach(function(name, i){
+    var li = document.createElement("li");
+    var btn = document.createElement("button");
+    btn.innerHTML = '<span class="num">' + (i+1) + '</span><span>' + name + "</span>";
+    btn.addEventListener("click", function(){ goTo(i); closeMenu(); });
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+
+function updateUI(){
+  slideEls.forEach(function(s, i){
+    s.classList.toggle("active", i === state.current);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".progress-rail button"), function(b, i){
+    b.classList.toggle("active", i === state.current);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".menu-list li button"), function(b, i){
+    b.classList.toggle("current", i === state.current);
+  });
+  document.getElementById("stepLabel").textContent = (state.current+1) + " / " + state.total;
+  document.getElementById("barProgressFill").style.width = (((state.current+1)/state.total)*100) + "%";
+  document.getElementById("btnPrev").disabled = state.current === 0;
+  document.getElementById("btnNext").disabled = state.current === state.total - 1;
+
+  document.getElementById("headerSheetNum").textContent = "FL. " + pad2(state.current+1) + "/" + state.total;
+  document.getElementById("headerTitle").textContent = SLIDE_NAMES[state.current];
+
+  var slide = slideEls[state.current];
+  slide.scrollTop = 0;
+}
+
+function goTo(i){
+  if(i < 0 || i >= state.total || i === state.current) return;
+  state.current = i;
+  updateUI();
+  runSlideEffects(i);
+}
+function next(){ goTo(state.current + 1); }
+function prev(){ goTo(state.current - 1); }
+
+document.getElementById("btnNext").addEventListener("click", next);
+document.getElementById("btnPrev").addEventListener("click", prev);
+document.getElementById("btnStart").addEventListener("click", next);
+
+/* Efeitos de entrada específicos por slide (construção progressiva) */
+function runSlideEffects(i){
+  if(i === 2){ // fluxo mundo real -> banco de dados
+    var nodes = document.querySelectorAll("#flowRow .flow-node, #flowRow .flow-arrow");
+    nodes.forEach(function(n){ n.classList.remove("show"); });
+    nodes.forEach(function(n, idx){
+      setTimeout(function(){ n.classList.add("show"); }, 160*idx);
+    });
+  }
+  if(i === 8){ // mini desafio
+    document.querySelectorAll(".challenge-card").forEach(function(c){ c.classList.remove("show"); });
+    document.getElementById("challengeRel").classList.remove("show");
+  }
+}
+
+/* Teclado */
+document.addEventListener("keydown", function(e){
+  if(e.key === "ArrowRight"){ next(); }
+  else if(e.key === "ArrowLeft"){ prev(); }
+  else if(e.key === "Escape"){ closeMenu(); closeNotes(); }
+});
+
+/* Swipe (toque) */
+(function(){
+  var startX = null, startY = null;
+  var THRESHOLD = 60;
+  slidesEl.addEventListener("touchstart", function(e){
+    var t = e.changedTouches[0];
+    startX = t.clientX; startY = t.clientY;
+  }, {passive:true});
+  slidesEl.addEventListener("touchend", function(e){
+    if(startX === null) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - startX;
+    var dy = t.clientY - startY;
+    if(Math.abs(dx) > THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.4){
+      if(dx < 0){ next(); } else { prev(); }
+    }
+    startX = null; startY = null;
+  }, {passive:true});
+})();
+
+/* =========================================================================
+   MENU DE ETAPAS
+   ========================================================================= */
+var menuOverlay = document.getElementById("menuOverlay");
+function openMenu(){ menuOverlay.classList.add("open"); }
+function closeMenu(){ menuOverlay.classList.remove("open"); }
+document.getElementById("btnMenu").addEventListener("click", openMenu);
+document.getElementById("btnMenuClose").addEventListener("click", closeMenu);
+menuOverlay.addEventListener("click", function(e){ if(e.target === menuOverlay) closeMenu(); });
+
+/* =========================================================================
+   TEMA CLARO / ESCURO
+   ========================================================================= */
+document.getElementById("btnTheme").addEventListener("click", function(){
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  document.body.setAttribute("data-theme", state.theme);
+});
+
+/* =========================================================================
+   TELA CHEIA
+   ========================================================================= */
+document.getElementById("btnFullscreen").addEventListener("click", function(){
+  if(!document.fullscreenElement){
+    (document.documentElement.requestFullscreen || function(){}).call(document.documentElement);
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+/* =========================================================================
+   REINICIAR AULA
+   ========================================================================= */
+document.getElementById("btnRestart").addEventListener("click", function(){
+  goTo(0);
+  resetSort();
+  resetCardinality();
+  resetChallenge();
+  resetTimer();
+});
+
+/* =========================================================================
+   ANOTAÇÕES DA AULA — gaveta lateral, uma caixa de texto por etapa,
+   guardada em memória durante a sessão (não depende de localStorage).
+   ========================================================================= */
+var notesPanel = document.getElementById("notesPanel");
+var notesBackdrop = document.getElementById("notesBackdrop");
+var btnNotes = document.getElementById("btnNotes");
+var notesTextarea = document.getElementById("notesText");
+var notesSaved = document.getElementById("notesSaved");
+var notesSaveTimeout = null;
+
+function openNotes(){
+  state.notesOpen = true;
+  notesPanel.classList.add("open");
+  notesBackdrop.classList.add("open");
+  btnNotes.classList.add("active");
+  btnNotes.setAttribute("aria-pressed","true");
+  notesTextarea.focus();
+}
+function closeNotes(){
+  state.notesOpen = false;
+  notesPanel.classList.remove("open");
+  notesBackdrop.classList.remove("open");
+  btnNotes.classList.remove("active");
+  btnNotes.setAttribute("aria-pressed","false");
+}
+btnNotes.addEventListener("click", function(){
+  if(state.notesOpen){ closeNotes(); } else { openNotes(); }
+});
+document.getElementById("btnNotesClose").addEventListener("click", closeNotes);
+notesBackdrop.addEventListener("click", closeNotes);
+
+/* O bloco de anotações é único para toda a apresentação: o texto digitado
+   permanece visível ao reabrir a gaveta em qualquer etapa da aula. */
+notesTextarea.addEventListener("input", function(){
+  var text = notesTextarea.value;
+  clearTimeout(notesSaveTimeout);
+  notesSaveTimeout = setTimeout(function(){
+    sessionNotes = text;
+    notesSaved.textContent = "Salvo nesta sessão";
+    setTimeout(function(){ if(notesSaved.textContent === "Salvo nesta sessão") notesSaved.textContent = ""; }, 1500);
+  }, 300);
+});
+
+/* =========================================================================
+   TIMER
+   ========================================================================= */
+var timerDisplay = document.getElementById("timerDisplay");
+var timerWidget = document.getElementById("timerWidget");
+var timerIcon = document.getElementById("timerIcon");
+
+function formatTime(s){
+  var m = Math.floor(s/60); var sec = s%60;
+  return (m<10?"0":"")+m+":"+(sec<10?"0":"")+sec;
+}
+function tickTimer(){
+  state.timerSeconds++;
+  timerDisplay.textContent = formatTime(state.timerSeconds);
+  timerWidget.classList.toggle("warn", state.timerSeconds >= 900 && state.timerSeconds < 1080);
+  timerWidget.classList.toggle("alert", state.timerSeconds >= 1080);
+}
+document.getElementById("timerToggle").addEventListener("click", function(){
+  state.timerRunning = !state.timerRunning;
+  if(state.timerRunning){
+    state.timerInterval = setInterval(tickTimer, 1000);
+    timerIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+  } else {
+    clearInterval(state.timerInterval);
+    timerIcon.innerHTML = '<polygon points="6,4 20,12 6,20"/>';
+  }
+});
+function resetTimer(){
+  clearInterval(state.timerInterval);
+  state.timerRunning = false;
+  state.timerSeconds = 0;
+  timerDisplay.textContent = "00:00";
+  timerWidget.classList.remove("warn","alert");
+  timerIcon.innerHTML = '<polygon points="6,4 20,12 6,20"/>';
+}
+document.getElementById("timerReset").addEventListener("click", resetTimer);
+document.getElementById("timerHide").addEventListener("click", function(){
+  timerWidget.classList.add("is-hidden");
+  document.getElementById("timerShow").style.display = "flex";
+});
+document.getElementById("timerShow").addEventListener("click", function(){
+  timerWidget.classList.remove("is-hidden");
+  document.getElementById("timerShow").style.display = "none";
+});
+
+/* =========================================================================
+   ATIVIDADE: ENTIDADE OU ATRIBUTO (card sort)
+   ========================================================================= */
+var sortBoard = document.getElementById("sortBoard");
+function buildSort(){
+  sortBoard.innerHTML = "";
+  SORT_CARDS.forEach(function(c, idx){
+    var el = document.createElement("button");
+    el.className = "sort-card " + (c.type === "entity" ? "is-entity" : "is-attribute");
+    el.setAttribute("data-idx", idx);
+    el.innerHTML = "<span>" + c.label + "</span><small>" + (c.type === "entity" ? "Entidade" : "Atributo") + "</small>";
+    el.addEventListener("click", function(){
+      el.classList.add("revealed");
+    });
+    sortBoard.appendChild(el);
+  });
+}
+function resetSort(){
+  Array.prototype.forEach.call(sortBoard.querySelectorAll(".sort-card"), function(c){ c.classList.remove("revealed"); });
+}
+document.getElementById("btnSortReveal").addEventListener("click", function(){
+  Array.prototype.forEach.call(sortBoard.querySelectorAll(".sort-card"), function(c){ c.classList.add("revealed"); });
+});
+document.getElementById("btnSortReset").addEventListener("click", resetSort);
+buildSort();
+
+/* =========================================================================
+   CARDINALIDADE INTERATIVA
+   ========================================================================= */
+var cardOptions = document.getElementById("cardOptions");
+var cardResult = document.getElementById("cardResult");
+cardOptions.addEventListener("click", function(e){
+  var btn = e.target.closest(".card-option");
+  if(!btn || state.cardinalityAnswered) return;
+  state.cardinalityAnswered = true;
+  Array.prototype.forEach.call(cardOptions.children, function(b){
+    b.classList.remove("correct","wrong");
+    if(b.getAttribute("data-v") === "varios"){ b.classList.add("correct"); }
+    else if(b === btn){ b.classList.add("wrong"); }
+    else { b.style.opacity = ".55"; }
+  });
+  cardResult.classList.add("show");
+});
+function resetCardinality(){
+  state.cardinalityAnswered = false;
+  cardResult.classList.remove("show");
+  Array.prototype.forEach.call(cardOptions.children, function(b){
+    b.classList.remove("correct","wrong"); b.style.opacity = "1";
+  });
+}
+
+/* =========================================================================
+   DIAGRAMA ER INTERATIVO
+   ========================================================================= */
+var svgNS = "http://www.w3.org/2000/svg";
+function buildER(){
+  var svg = document.getElementById("erDiagram");
+  svg.innerHTML = "";
+
+  // edges first (fica atrás das caixas)
+  ER_EDGES.forEach(function(edge){
+    var g = document.createElementNS(svgNS,"g");
+    g.setAttribute("class","er-edge");
+    g.setAttribute("data-id", edge.id);
+    g.setAttribute("data-from", edge.from);
+    g.setAttribute("data-to", edge.to);
+
+    var path = document.createElementNS(svgNS,"path");
+    path.setAttribute("d", edge.path);
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke","var(--text-faint)");
+    path.setAttribute("stroke-width","2");
+    g.appendChild(path);
+
+    var mid = getMidpoint(edge.path);
+    var labelW = 46, labelH = 24;
+    var fo = document.createElementNS(svgNS, "foreignObject");
+    fo.setAttribute("x", mid.x - labelW/2);
+    fo.setAttribute("y", (mid.y - 14) - labelH/2);
+    fo.setAttribute("width", labelW);
+    fo.setAttribute("height", labelH);
+    fo.style.overflow = "visible";
+
+    var chip = document.createElementNS("http://www.w3.org/1999/xhtml","div");
+    chip.style.cssText = "width:100%;height:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.03em;white-space:nowrap;";
+    chip.textContent = edge.label;
+    fo.appendChild(chip);
+    g.appendChild(fo);
+
+    g.addEventListener("click", function(ev){ ev.stopPropagation(); selectEdge(edge.id); });
+    svg.appendChild(g);
+  });
+
+  Object.keys(ER_ENTITIES).forEach(function(key){
+    var ent = ER_ENTITIES[key];
+    var g = document.createElementNS(svgNS,"g");
+    g.setAttribute("class","er-entity-box");
+    g.setAttribute("data-key", key);
+
+    var rect = document.createElementNS(svgNS,"rect");
+    rect.setAttribute("class","card-bg");
+    rect.setAttribute("x", ent.x); rect.setAttribute("y", ent.y);
+    rect.setAttribute("width", ent.w); rect.setAttribute("height", ent.h);
+    rect.setAttribute("rx", 14);
+    rect.setAttribute("fill","var(--surface-2)");
+    rect.setAttribute("stroke","var(--border)");
+    rect.setAttribute("stroke-width","1.5");
+    g.appendChild(rect);
+
+    var title = document.createElementNS(svgNS,"text");
+    title.setAttribute("x", ent.x + 16); title.setAttribute("y", ent.y + 30);
+    title.setAttribute("font-family","inherit"); title.setAttribute("font-size","15");
+    title.setAttribute("font-weight","800"); title.setAttribute("fill","var(--text)");
+    title.textContent = ent.name;
+    g.appendChild(title);
+
+    var line = document.createElementNS(svgNS,"line");
+    line.setAttribute("x1", ent.x+16); line.setAttribute("x2", ent.x+ent.w-16);
+    line.setAttribute("y1", ent.y+42); line.setAttribute("y2", ent.y+42);
+    line.setAttribute("stroke","var(--border)");
+    g.appendChild(line);
+
+    ent.attrs.slice(0,3).forEach(function(a, idx){
+      var t = document.createElementNS(svgNS,"text");
+      t.setAttribute("x", ent.x+16); t.setAttribute("y", ent.y+62+idx*17);
+      t.setAttribute("font-family","monospace"); t.setAttribute("font-size","10.5");
+      t.setAttribute("fill","var(--text-dim)");
+      t.textContent = a;
+      g.appendChild(t);
+    });
+
+    g.addEventListener("click", function(ev){ ev.stopPropagation(); selectEntity(key); });
+    svg.appendChild(g);
+  });
+
+  svg.addEventListener("click", function(){ clearERSelection(); });
+}
+function getMidpoint(d){
+  var nums = d.match(/-?\d+(\.\d+)?/g).map(Number);
+  var xs = [], ys = [];
+  for(var i=0;i<nums.length;i+=2){ xs.push(nums[i]); ys.push(nums[i+1]); }
+  var mx = xs.reduce(function(a,b){return a+b;},0)/xs.length;
+  var my = ys.reduce(function(a,b){return a+b;},0)/ys.length;
+  return {x:mx,y:my};
+}
+
+function clearERSelection(){
+  document.querySelectorAll(".er-entity-box").forEach(function(g){ g.classList.remove("dim","selected"); });
+  document.querySelectorAll(".er-edge").forEach(function(g){ g.classList.remove("dim","selected"); });
+  document.getElementById("erDetailPanel").innerHTML =
+    '<div class="er-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/><path d="M11 7h6a2 2 0 0 1 2 2v4M7 11v6a2 2 0 0 0 2 2h4"/></svg><p>Selecione uma entidade ou relação para ver detalhes aqui.</p></div>';
+}
+
+function selectEntity(key){
+  var ent = ER_ENTITIES[key];
+  document.querySelectorAll(".er-entity-box").forEach(function(g){
+    var isSel = g.getAttribute("data-key") === key;
+    g.classList.toggle("selected", isSel);
+    g.classList.toggle("dim", !isSel);
+  });
+  document.querySelectorAll(".er-edge").forEach(function(g){
+    var touches = g.getAttribute("data-from") === key || g.getAttribute("data-to") === key;
+    g.classList.toggle("dim", !touches);
+    g.classList.toggle("selected", touches);
+  });
+  var panel = document.getElementById("erDetailPanel");
+  panel.innerHTML =
+    "<h3>" + ent.name + "</h3>" +
+    '<div class="er-role">' + ent.role + "</div>" +
+    '<p class="er-desc">' + ent.def + "</p>" +
+    '<div class="er-attr-list">' + ent.attrs.map(function(a){ return "<span>"+a+"</span>"; }).join("") + "</div>";
+}
+
+function selectEdge(edgeId){
+  var edge = ER_EDGES.filter(function(e){ return e.id === edgeId; })[0];
+  var fromE = ER_ENTITIES[edge.from], toE = ER_ENTITIES[edge.to];
+  document.querySelectorAll(".er-entity-box").forEach(function(g){
+    var k = g.getAttribute("data-key");
+    var involved = (k === edge.from || k === edge.to);
+    g.classList.toggle("dim", !involved);
+    g.classList.toggle("selected", involved);
+  });
+  document.querySelectorAll(".er-edge").forEach(function(g){
+    var isSel = g.getAttribute("data-id") === edgeId;
+    g.classList.toggle("dim", !isSel);
+    g.classList.toggle("selected", isSel);
+  });
+  var panel = document.getElementById("erDetailPanel");
+  panel.innerHTML =
+    "<h3>" + fromE.name + " → " + toE.name + "</h3>" +
+    '<div class="er-role">Cardinalidade ' + edge.label + "</div>" +
+    '<p class="er-desc">Cada ' + fromE.name.toLowerCase() + " pode se relacionar com vários registros de " + toE.name.toLowerCase() + ", caracterizando uma relação " + edge.label + ".</p>";
+}
+buildER();
+
+/* =========================================================================
+   PAINEL SQL
+   ========================================================================= */
+var sqlPanel = document.getElementById("sqlPanel");
+document.getElementById("btnToggleSQL").addEventListener("click", function(){
+  state.sqlOpen = !state.sqlOpen;
+  sqlPanel.classList.toggle("open", state.sqlOpen);
+  this.textContent = state.sqlOpen ? "Do modelo para o banco — ocultar SQL" : "Do modelo para o banco — mostrar SQL";
+});
+document.getElementById("btnCopySQL").addEventListener("click", function(){
+  copyText(document.getElementById("sqlCode").textContent);
+  showToast();
+});
+
+/* =========================================================================
+   MINI DESAFIO
+   ========================================================================= */
+document.getElementById("btnRevealChallenge").addEventListener("click", function(){
+  document.querySelectorAll(".challenge-card").forEach(function(c, idx){
+    setTimeout(function(){ c.classList.add("show"); }, idx*180);
+  });
+  setTimeout(function(){ document.getElementById("challengeRel").classList.add("show"); }, 4*180+150);
+});
+function resetChallenge(){
+  document.querySelectorAll(".challenge-card").forEach(function(c){ c.classList.remove("show"); });
+  document.getElementById("challengeRel").classList.remove("show");
+}
+
+/* =========================================================================
+   ATIVIDADE PARA CASA — copiar / baixar / dica
+   ========================================================================= */
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(function(){ fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text){
+  var ta = document.createElement("textarea");
+  ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+}
+var toast = document.getElementById("copiedToast");
+function showToast(msg){
+  toast.textContent = msg || "Código copiado!";
+  toast.classList.add("show");
+  setTimeout(function(){ toast.classList.remove("show"); }, 1800);
+}
+
+document.getElementById("btnCopyActivity").addEventListener("click", function(){
+  copyText(ACTIVITY_TEXT);
+  showToast("Atividade copiada!");
+});
+document.getElementById("btnDownloadActivity").addEventListener("click", function(){
+  var blob = new Blob([ACTIVITY_TEXT], {type:"text/plain;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "atividade-modelagem-biblioteca.txt";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById("btnTip").addEventListener("click", function(){
+  document.getElementById("tipBox").classList.toggle("open");
+});
+
+/* =========================================================================
+   REVISÃO — botões
+   ========================================================================= */
+document.getElementById("btnReviewModel").addEventListener("click", function(){ goTo(7); });
+document.getElementById("btnFinishLesson").addEventListener("click", function(){ goTo(11); });
+
+/* =========================================================================
+   INICIALIZAÇÃO
+   ========================================================================= */
+buildRail();
+buildMenu();
+updateUI();
+
+})();
+</script>
+</body>
+</html>
